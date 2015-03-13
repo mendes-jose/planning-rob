@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pylab
 import math 
 import scipy.interpolate as si
+import time as tm
 
 ## B-spline recursive algorithm
 # TODO: Say NO to losing time with recursive, use iteractive with execution stack instead!
@@ -76,8 +77,6 @@ n_ptctrl = n_knot + d - 1 # nb of ctrl points
 
 t = [x * t_fin/(N-1)  for x in range(0, N)]
 knots = gen_knots(0.0, t_fin, d, n_knot)
-print knots
-#knots = [x * t_fin/(n_knot-1) for x in range(15+2*d-1)]
 
 C = np.array(np.zeros(n_ptctrl))
 C[0] = 0
@@ -99,24 +98,23 @@ C[15] = -1
 C[16] = 1
 C[17] = -1
 
-print 'TIME',len(t)
-print 'C', C
-tup = (np.asarray(knots), C, d-1)
-print 'Tup', tup
-# time knots, C, d, deriv 
-curve2 = si.splev(np.asarray(t), (np.asarray(knots), np.asarray(C), d-1),der=0)
+print('TIME',np.asarray(t))
+tup = (np.asarray(knots), np.asarray(C), d-1)
+print('TUP', tup)
 
-print type(curve2)
+t0 = tm.clock()
+curve1 = si.splev(np.asarray(t), (np.asarray(knots), np.asarray(C), d-1),der=0)
+print('Tcurve1', tm.clock()-t0)
 
-print 'curve', len(curve2.transpose())
-
-curve = []
+t0 = tm.clock()
+curve2 = []
 # time, nptctrl,C,d,deriv,knots
 for i in t:
   tmp = comb_bsp(i,n_ptctrl,C,d,0,knots) #
-  curve = curve+[tmp]
+  curve2 = curve2+[tmp]
+print('Tcurve2', tm.clock()-t0)
 
 #print [x * t_fin/(n_ptctrl-1) for x in range(0,n_ptctrl)]
-plt.plot(t,curve2, t,curve)
+plt.plot(t,curve1, t,curve2)
 plt.axis('equal')
 plt.show()
