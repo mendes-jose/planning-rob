@@ -53,11 +53,6 @@ class Unicycle_Kine_Model(object):
       print('ERROR')
       return -1
 
-  def angle(x):
-    pi = math.pi
-    twopi = 2*pi
-    return (x+pi)%twopi-pi
-
 # Trajectory Generation -------------------------------------------------------
 class Trajectory_Generation(object):
   def __init__(self, mrobot):
@@ -105,7 +100,6 @@ class Trajectory_Generation(object):
     # (dist between intial and final positions) / (linear speed max value)
     self.t_fin = LA.norm(self.q_init[0:-1,0]-self.q_fin[0:-1,0])/ \
         self.u_abs_max[0,0]
-    #self.t_fin = 20
 
     # Initiate control points so the robot do a straight line from
     # inital and final positions
@@ -117,21 +111,18 @@ class Trajectory_Generation(object):
 
   ## Generate initial b-spline knots
     self.knots = self._gen_knots(self.t_fin)
-    self.U = np.append(self.t_fin, np.asarray(self.C))
-    print ('TIME', self._criteria(self.U))
+
   ## Call SLSQP solver
-    # U: argument wich will minimize the criteria given the constraints
-    
-    self.U = fmin_slsqp(self._criteria,
-                        self.U,
+    # C: argument wich will minimize the criteria given the constraints
+    self.C = fmin_slsqp(self._criteria,
+                        self.C,
                         eqcons=(),
                         f_eqcons=self._feqcons,
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=2,
-                        iter=15)
-    self.t_fin = self.U[0]
-    self.C = np.asmatrix(self.U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+                        iter=20)
+                        
 
   ## Generate time vector
   def _gen_time(self, t_fin):
@@ -143,12 +134,12 @@ class Trajectory_Generation(object):
     for j in range(1,self.d):
       knots_j = self.t_init
       knots = knots + [knots_j]
-
+    
     for j in range(self.d,self.d+self.n_knot):
       knots_j = self.t_init + (j-(self.d-1.0))* \
           (t_fin-self.t_init)/self.n_knot
       knots = knots + [knots_j]
-
+    
     for j in range(self.d+self.n_knot,2*self.d-1+self.n_knot):
       knots_j = t_fin
       knots = knots + [knots_j]
@@ -165,38 +156,29 @@ class Trajectory_Generation(object):
     return z
 
   ## Generate the trajectory
-  def _gen_dtraj(self, U, deriv_order):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+  def _gen_dtraj(self, C, deriv_order):
+    t_fin = self.t_fin
+    #C = np.asmatrix(C[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
     t = np.asarray(self._gen_time(t_fin))
     self.knots = self._gen_knots(t_fin)
     return self._comb_bsp(t, C, deriv_order)
 
   ## Calculate the criteria to be minimized
   # We want to minimize the time spent to go from q_init to q_final
-  # use a quadratic criterium (temps au carre)
-  def _criteria(self, U):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
-    S = self._gen_dtraj(U,0)
-    V = self._gen_dtraj(U,1)
+  def _criteria(self, C):
+    t_fin = self.t_fin
+    C = np.asmatrix(C.reshape(self.n_ptctrl, self.mrob.u_dim))
+    S = self._gen_dtraj(C,0)
+    V = self._gen_dtraj(C,1)
     # Integration to find the time spent to go from q_init to q_final
     # TODO: Improve this integration
-    self.t_fin=sum(abs(S[ind-1,0]-S[ind,0])/abs(V[ind-1,0]/2.0+V[ind,0]/2.0) \
+    return sum(abs(S[ind-1,0]-S[ind,0])/abs(V[ind-1,0]/2.0+V[ind,0]/2.0) \
         for ind in range(1, S.shape[0]))
-    return (self.t_fin-self.t_init)**2
     
-#  def _criteria(self, U):
-#    t_fin = U[0]
-#    # Integration to find the time spent to go from q_init to q_final
-#    # TODO: Improve this integration
-#    return (t_fin-self.t_init)**2
-
   ## Constraint Equations
-  def _feqcons(self, U):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
-
+  def _feqcons(self, C):
+    t_fin = self.t_fin
+    C = np.asmatrix(C.reshape(self.n_ptctrl, self.mrob.u_dim))
     # updtate knots
     self.knots = self._gen_knots(t_fin)
 
@@ -214,19 +196,16 @@ class Trajectory_Generation(object):
 
     # return array where each element is an equation constraint
     # dimension: 2*q_dim + 2*u_dim (=10 equations)
-    ret = np.append(np.append(np.append(
+    return np.append(np.append(np.append(
            np.asarray(self.mrob.phi1(zl_t_init)-self.q_init),
            np.asarray(self.mrob.phi1(zl_t_fin)-self.q_fin)),
            np.asarray(self.mrob.phi2(zl_t_init)-self.u_init)),
            np.asarray(self.mrob.phi2(zl_t_fin)-self.u_fin))
-    print('ERROR EQUATIONS CONS:', LA.norm(ret))
-    return ret
 
   ## Constraints Inequations
-  def _fieqcons(self, U):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
-
+  def _fieqcons(self, C):
+    t_fin = self.t_fin
+    C = np.asmatrix(C.reshape(self.n_ptctrl, self.mrob.u_dim))
     # updtate knots
     self.knots = self._gen_knots(t_fin)
 
@@ -241,27 +220,19 @@ class Trajectory_Generation(object):
     # get a list over time of command values u(t)
     all_us = [self.mrob.phi2(zl) for zl in all_zl]
 
-    # Obstacles constraints
-    # N_s*nb_obst_detected
-    ret = np.array([LA.norm(self.obst_map[0,0:-1]-zl[:,0]) \
-          - (self.mrob.rho + self.obst_map[0,-1]) for zl in all_zl])
-    #print('OBS1:', self.obst_map[0,0:-1])
-    #print('OBS RADIUS:', self.obst_map[0,-1])
-
-    for m in range(1,self.obst_map.shape[0]):
-      ret = np.append(ret, np.array([LA.norm(self.obst_map[m,0:-1]-zl[:,0]) \
-             - (self.mrob.rho + self.obst_map[m,-1]) for zl in all_zl]))
-
     # Max speed constraints
     # N_s*u_dim inequations
+    ret = np.array([LA.norm(self.obst_map[0,0:-1]-zl[:,0]) \
+          - self.mrob.rho - self.obst_map[0,-1] for zl in all_zl])
+    for m in range(1,self.obst_map.shape[0]):
+      ret = np.append(ret, np.array([LA.norm(self.obst_map[m,0:-1]-zl[:,0]) \
+             - self.mrob.rho - self.obst_map[m,-1] for zl in all_zl]))
+
+    # Obstacles constraints
+    # N_s*nb_obst_detected
     ret = np.append(ret, np.array([np.asarray(self.u_abs_max - abs(u)) \
         for u in all_us]))
 
-    tot = 0
-    for i in ret:
-      if i < 0:
-        tot = tot+1
-    print('NB CONS < 0:', tot)
     # return arrray where each element is an inequation constraint
     return ret
 
@@ -272,9 +243,10 @@ tic = time.clock()
 trajc = Trajectory_Generation(Unicycle_Kine_Model())
 toc = time.clock()
 
+C = np.asmatrix(trajc.C.reshape(trajc.n_ptctrl, trajc.mrob.u_dim))
 mtime = trajc._gen_time(trajc.t_fin)
-curve = trajc._gen_dtraj(trajc.U, 0)
-vit = trajc._gen_dtraj(trajc.U, 1)
+curve = trajc._gen_dtraj(C, 0)
+vit = trajc._gen_dtraj(C, 1)
 
 print('Elapsed time: ', toc-tic)
 
@@ -290,7 +262,7 @@ for r in range(trajc.obst_map.shape[0]):
       trajc.obst_map[r,2], color='g', fill=False)]
 
 ax = fig.gca()
-ax.plot(trajc.C[:,0], trajc.C[:,1], '.', curve[:,0], curve[:,1])
+ax.plot(curve[:,0], curve[:,1])
 
 [ax.add_artist(c) for c in circ]
 plt.xlabel('x(m)')
