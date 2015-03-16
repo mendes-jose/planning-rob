@@ -190,7 +190,7 @@ class Trajectory_Generation(object):
     self.knots = self._gen_knots(self.t_fin)
 
     return (self.t_fin-self.t_init)**2
-    
+
 #  def _criteria(self, U):
 #    t_fin = U[0]
 #    # Integration to find the time spent to go from q_init to q_final
@@ -279,7 +279,19 @@ toc = time.clock()
 
 mtime = trajc._gen_time(trajc.t_fin)
 curve = trajc._gen_dtraj(trajc.U, 0)
-vit = trajc._gen_dtraj(trajc.U, 1)
+
+C = np.asmatrix(trajc.U[1:].reshape(trajc.n_ptctrl, trajc.mrob.u_dim))
+# get a list over time of the matrix [z dz ddz](t)
+all_zl = [np.append(np.append(
+    trajc._comb_bsp(t, C, 0).transpose(),
+    trajc._comb_bsp(t, C, 1).transpose(), axis = 1),
+    trajc._comb_bsp(t, C, 2).transpose(), axis = 1) for t in mtime]
+
+# get a list over time of command values u(t)
+all_us = map(trajc.mrob.phi2, all_zl)
+
+linspeed = map(lambda x:x[0], all_us)
+angspeed = map(lambda x:x[1], all_us)
 
 print('Elapsed time: ', toc-tic)
 
@@ -305,10 +317,15 @@ ax.axis('equal')
 ax.axis([-2, 6, 0, 5])
 
 fig = plt.figure()
-plt.plot(trajc._gen_time(trajc.t_fin), map(lambda a:LA.norm(a), vit.tolist()))
+plt.plot(trajc._gen_time(trajc.t_fin), map(lambda x:x[0,0], linspeed))
 plt.xlabel('time(s)')
 plt.ylabel('v(m/s)')
 plt.title('Linear speed')
 
+fig = plt.figure()
+plt.plot(trajc._gen_time(trajc.t_fin), map(lambda x:x[0,0], angspeed))
+plt.xlabel('time(s)')
+plt.ylabel('w(rad/s)')
+plt.title('Angular speed')
 plt.show()
 
