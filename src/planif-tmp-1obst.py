@@ -80,7 +80,7 @@ class Trajectory_Generation(object):
     # initial state
     self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]])
     # final state
-    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]])
+    self.q_fin = np.matrix([[0.0], [5.0], [np.pi/2]])
     # initial control input
     self.u_init = np.matrix([[0.0], [0.0]])
     # final control input
@@ -90,15 +90,15 @@ class Trajectory_Generation(object):
     self.u_abs_max = self.mrob.u_abs_max
     # Obstacles (Q_occupied)
     # TODO: Obstacles random generation
-    self.obst_map =                          np.matrix([0.25, 2.5, 0.2])
-    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
-        axis = 0)
+    self.obst_map =                          np.matrix([0.0, 2.5, 0.5])
+#    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
+#        axis = 0)
 
   ## Unknown parameters (defining initial value)
     # TODO: chose a good way to initiate unknow parameters
@@ -106,7 +106,7 @@ class Trajectory_Generation(object):
     # (dist between intial and final positions) / (linear speed max value)
     self.t_fin = LA.norm(self.q_init[0:-1,0]-self.q_fin[0:-1,0])/ \
         self.u_abs_max[0,0]
-    self.t_fin = 20
+    #self.t_fin = 20
 
     # Initiate control points so the robot do a straight line from
     # inital and final positions
@@ -178,17 +178,18 @@ class Trajectory_Generation(object):
   # use a quadratic criterium (temps au carre)
   def _criteria(self, U):
     t_fin = U[0]
+    print('---------------_______________U-----------------', U)
     C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    print('--------------------C---------------', C)
     S = self._gen_dtraj(U,0)
+    print('--------------------S---------------', S)
     V = self._gen_dtraj(U,1)
+    print('--------------------V---------------', V)
     # Integration to find the time spent to go from q_init to q_final
     # TODO: Improve this integration
     self.t_fin=sum(abs(S[ind-1,0]-S[ind,0])/abs(V[ind-1,0]/2.0+V[ind,0]/2.0)/2.0+ \
         abs(S[ind-1,1]-S[ind,1])/abs(V[ind-1,1]/2.0+V[ind,1]/2.0)/2.0 \
         for ind in range(1, S.shape[0]))
-
-    self.knots = self._gen_knots(self.t_fin)
-
     return (self.t_fin-self.t_init)**2
     
 #  def _criteria(self, U):
@@ -206,7 +207,7 @@ class Trajectory_Generation(object):
     self.knots = self._gen_knots(t_fin)
 
     # get the matrix [z dz ddz] at t_initial
-    zl_t_init = np.append(np.append(
+    zl_t_init = np.append(np.append( \
         self._comb_bsp(self.t_init, C, 0).transpose(),
         self._comb_bsp(self.t_init, C, 1).transpose(), axis = 1),
         self._comb_bsp(self.t_init, C, 2).transpose(), axis = 1)
@@ -225,7 +226,6 @@ class Trajectory_Generation(object):
            np.asarray(self.mrob.phi2(zl_t_init)-self.u_init)),
            np.asarray(self.mrob.phi2(zl_t_fin)-self.u_fin))
     #print('ERROR EQUATIONS CONS:', LA.norm(ret))
-    print('*******************',ret)
     return ret
 
   ## Constraints Inequations
@@ -249,18 +249,20 @@ class Trajectory_Generation(object):
 
     # Obstacles constraints
     # N_s*nb_obst_detected
-    obst_cons = [LA.norm(self.obst_map[0,0:-1]-zl[:,0]) \
-          - (self.mrob.rho + self.obst_map[0,-1]) for zl in all_zl]
-    for m in range(1,self.obst_map.shape[0]):
-      obst_cons += [LA.norm(self.obst_map[m,0:-1]-zl[:,0]) \
-             - (self.mrob.rho + self.obst_map[m,-1]) for zl in all_zl]
+    #ret = np.array([LA.norm(self.obst_map[0,0:-1]-zl[:,0]) \
+    #      - (self.mrob.rho + self.obst_map[0,-1]) for zl in all_zl])
+    #print('OBS1:', self.obst_map[0,0:-1])
+    #print('OBS RADIUS:', self.obst_map[0,-1])
+
+    #for m in range(1,self.obst_map.shape[0]):
+    #  ret = np.append(ret, np.array([LA.norm(self.obst_map[m,0:-1]-zl[:,0]) \
+    #         - (self.mrob.rho + self.obst_map[m,-1]) for zl in all_zl]))
 
     # Max speed constraints
     # N_s*u_dim inequations
-    max_speed_cons = list(itertools.chain.from_iterable( \
-        map(lambda u:[u[0,0], u[1,0]], all_us)))
-
-    ret = obst_cons+max_speed_cons
+    ret = np.asarray(list(itertools.chain.from_iterable(map(lambda u:[u[0,0],
+        u[1,0]], all_us))))
+    raw_input()
 
     tot = 0
     for i in ret:
