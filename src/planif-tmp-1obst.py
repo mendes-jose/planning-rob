@@ -1,3 +1,7 @@
+# Planification for mobile robots
+# angles domain: [0, 2pi]
+
+
 import numpy as np
 import numpy.linalg as LA
 import matplotlib as mpl
@@ -83,7 +87,7 @@ class Trajectory_Generation(object):
     # initial state
     self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]])
     # final state
-    self.q_fin = np.matrix([[0.0], [5.0], [np.pi/2]])
+    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]])
     # initial control input
     self.u_init = np.matrix([[0.0], [0.0]])
     # final control input
@@ -94,14 +98,14 @@ class Trajectory_Generation(object):
     # Obstacles (Q_occupied)
     # TODO: Obstacles random generation
     self.obst_map =                          np.matrix([0.0, 2.5, 0.3])
-#    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
-#        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
+        axis = 0)
 
   ## Unknown parameters (defining initial value)
     # TODO: chose a good way to initiate unknow parameters
@@ -123,9 +127,42 @@ class Trajectory_Generation(object):
   ## Generate initial b-spline knots
     self.knots = self._gen_knots(self.t_fin)
     self.U = np.append(self.t_fin, np.asarray(self.C))
+
+  ## Plot initialization
+    plt.ion()
+    self.fig = plt.figure()
+    ax = self.fig.gca()
+
+    # creating obstacles' circles
+    self.circ = []
+    for r in range(self.obst_map.shape[0]):
+      # external dashed circles
+      self.circ = self.circ + \
+          [plt.Circle((self.obst_map[r,0], self.obst_map[r,1]),
+          self.obst_map[r,2]+self.mrob.rho,color='r',ls = 'dashed',fill=False)]
+      # internal continous circles
+      self.circ = self.circ + \
+          [plt.Circle((self.obst_map[r,0], self.obst_map[r,1]),
+          self.obst_map[r,2], color='r', fill=False)]
+
+    # adding circles to axis
+    [ax.add_artist(c) for c in self.circ]
+
+    # generate trajectory curve
+    curve = self._gen_dtraj(self.U, 0)
+    # plot curve and its control points
+    self.plt_ctrl_pts,self.plt_curve,  = ax.plot(self.C[:,0], self.C[:,1],
+        '.', curve[:,0], curve[:,1])
+    
+    # formating figure
+    plt.xlabel('x(m)')
+    plt.ylabel('y(m)')
+    plt.title('Generated trajectory')
+    ax.axis('equal')
+    ax.axis([-2, 6, 0, 5])
+
   ## Call SLSQP solver
     # U: argument wich will minimize the criteria given the constraints
-    
     self.U = fmin_slsqp(self._criteria,
                         self.U,
                         eqcons=(),
@@ -133,9 +170,9 @@ class Trajectory_Generation(object):
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=2,
-                        iter=200)
+                        iter=100,
+                        callback=self._plot_update)
 
-    print ('Final t_fin', mth.sqrt(self._criteria(self.U)))
     self.t_fin = self.U[0]
     self.C = np.asmatrix(self.U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
 
@@ -178,18 +215,16 @@ class Trajectory_Generation(object):
     self.knots = self._gen_knots(t_fin)
     return self._comb_bsp(t, C, deriv_order)
 
-  ## Calculate the criteria to be minimized
+  ##------------------------------Cost Function--------------------------------
+  #----------------------------------------------------------------------------
   # We want to minimize the time spent to go from q_init to q_final
-  # use a quadratic criterium (temps au carre)
+  # use a quadratic criterium so the Hessian don't be zero
   def _criteria(self, U):
     t_fin = U[0]
-    #print('--------------------U---------------', U)
+    #self.t_fin = U[0]
     C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
-    #print('--------------------C---------------', C)
     S = self._gen_dtraj(U,0)
-    #print('--------------------S---------------', S)
     V = self._gen_dtraj(U,1)
-    #print('--------------------V---------------', V)
     # Integration to find the time spent to go from q_init to q_final
     # TODO: Improve this integration
     self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
@@ -202,7 +237,8 @@ class Trajectory_Generation(object):
 #    # TODO: Improve this integration
 #    return (t_fin-self.t_init)**2
 
-  ## Constraint Equations
+  ##------------------------Constraints Equations------------------------------
+  #----------------------------------------------------------------------------
   def _feqcons(self, U):
     t_fin = U[0]
     C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
@@ -233,14 +269,17 @@ class Trajectory_Generation(object):
     #print('ERROR EQUATIONS CONS:', LA.norm(ret))
     return ret
 
-  ## Constraints Inequations
+  ##------------------------Constraints Inequations----------------------------
+  #----------------------------------------------------------------------------
   def _fieqcons(self, U):
+    # get time and control points from U array
     t_fin = U[0]
     C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
 
     # updtate knots
     self.knots = self._gen_knots(t_fin)
 
+    # create time vector
     mtime = self._gen_time(t_fin)
 
     # get a list over time of the matrix [z dz ddz](t)
@@ -252,40 +291,43 @@ class Trajectory_Generation(object):
     # get a list over time of command values u(t)
     all_us = map(self.mrob.phi2, all_zl)
 
-    # Obstacles constraints
+    ## Obstacles constraints
     # N_s*nb_obst_detected
-    #print('RADIUS:', self.mrob.rho + self.obst_map[0,-1])
-    #all_dists = map(lambda x:LA.norm(self.obst_map[0,0:-1].transpose()-x[:,0]), all_zl)
-    #all_xy = map(lambda x:x[:,0], all_zl)
-    #print('all robot positions over time', all_xy)
-    #print('1st obstacle position:', self.obst_map[0,0:-1].transpose())
-    #print('all dists over time:', all_dists)
     obst_cons = np.array([LA.norm(self.obst_map[0,0:-1].transpose()-zl[:,0]) \
           - (self.mrob.rho + self.obst_map[0,-1]) for zl in all_zl])
     for m in range(1,self.obst_map.shape[0]):
-      obst_cons = np.append(obst_cons, np.array([LA.norm(self.obst_map[m,0:-1].transpose()-zl[:,0]) \
-             - (self.mrob.rho + self.obst_map[m,-1]) for zl in all_zl]))
+      obst_cons = np.append(obst_cons,
+          np.array([LA.norm(self.obst_map[m,0:-1].transpose()-zl[:,0]) \
+          - (self.mrob.rho + self.obst_map[m,-1]) for zl in all_zl]))
 
-    # Max speed constraints
+    ## Max speed constraints
     # N_s*u_dim inequations
-
     max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
         map(lambda u:[self.u_abs_max[0,0] - abs(u[0,0]),
         self.u_abs_max[1,0] - abs(u[1,0])], all_us))))
-    #print('INEQCONS:', ret)
-    #raw_input()
 
+    # Create final array
     ret = np.append(obst_cons, max_speed_cons)
 
-    tot = 0
-    for i in ret:
-      if i < -1E-4:
-        tot = tot+1
-    print('NB CONS < 0:', tot)
-    #print('RET size:', ret.shape)
-    #print('INEQCONS:', ret)
+    # Count how many inequations are not respected
+#    tot = 0
+#    for i in ret:
+#      if i < -1E-4:
+#        tot = tot+1
+#    print('NB CONS < 0:', tot)
+
     # return arrray where each element is an inequation constraint
     return ret
+
+
+  def _plot_update(self, U):
+    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    curve = self._gen_dtraj(U, 0)
+    self.plt_curve.set_xdata(curve[:,0])
+    self.plt_curve.set_ydata(curve[:,1])
+    self.plt_ctrl_pts.set_xdata(C[:,0])
+    self.plt_ctrl_pts.set_ydata(C[:,1])
+    self.fig.canvas.draw()
 
 ##-----------------------------------------------------------------------------
 ## Initializations
@@ -295,7 +337,7 @@ trajc = Trajectory_Generation(Unicycle_Kine_Model())
 toc = time.clock()
 
 mtime = trajc._gen_time(trajc.t_fin)
-curve = trajc._gen_dtraj(trajc.U, 0)
+#curve = trajc._gen_dtraj(trajc.U, 0)
 
 # get a list over time of the matrix [z dz ddz](t)
 all_zl = [np.append(np.append(
@@ -310,38 +352,36 @@ angspeed = map(lambda x:x[1], all_us)
 
 print('Elapsed time: ', toc-tic)
 
-## Plot
+## Plot final speeds
 
-fig = plt.figure()
+#fig = plt.figure()
+#
+#circ = []
+#for r in range(trajc.obst_map.shape[0]):
+#  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
+#      trajc.obst_map[r,2]+trajc.mrob.rho,color='g',ls = 'dashed',fill=False)]
+#  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
+#      trajc.obst_map[r,2], color='g', fill=False)]
+#
+#ax = fig.gca()
+#ax.plot(trajc.C[:,0], trajc.C[:,1], '.', curve[:,0], curve[:,1])
+#
+#[ax.add_artist(c) for c in circ]
+#plt.xlabel('x(m)')
+#plt.ylabel('y(m)')
+#plt.title('Generated trajectory')
+#ax.axis('equal')
+#ax.axis([-2, 6, 0, 5])
 
-circ = []
-for r in range(trajc.obst_map.shape[0]):
-  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
-      trajc.obst_map[r,2]+trajc.mrob.rho,color='g',ls = 'dashed',fill=False)]
-  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
-      trajc.obst_map[r,2], color='g', fill=False)]
+f, axarr = plt.subplots(2)
+axarr[0].plot(mtime, map(lambda x:x[0,0], linspeed))
+axarr[0].set_xlabel('time(s)')
+axarr[0].set_ylabel('v(m/s)')
+axarr[0].set_title('Linear speed')
 
-ax = fig.gca()
-ax.plot(trajc.C[:,0], trajc.C[:,1], '.', curve[:,0], curve[:,1])
+axarr[1].plot(mtime, map(lambda x:x[0,0], angspeed))
+axarr[1].set_xlabel('time(s)')
+axarr[1].set_ylabel('w(rad/s)')
+axarr[1].set_title('Angular speed')
 
-[ax.add_artist(c) for c in circ]
-plt.xlabel('x(m)')
-plt.ylabel('y(m)')
-plt.title('Generated trajectory')
-ax.axis('equal')
-ax.axis([-2, 6, 0, 5])
-
-fig = plt.figure()
-plt.plot(mtime, map(lambda x:x[0,0], linspeed))
-plt.xlabel('time(s)')
-plt.ylabel('v(m/s)')
-plt.title('Linear speed')
-
-fig = plt.figure()
-plt.plot(mtime, map(lambda x:x[0,0], angspeed))
-plt.xlabel('time(s)')
-plt.ylabel('w(rad/s)')
-plt.title('Angular speed')
-
-plt.show()
-
+plt.show(block=True)
