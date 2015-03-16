@@ -310,11 +310,14 @@ class Trajectory_Generation(object):
     ret = np.append(obst_cons, max_speed_cons)
 
     # Count how many inequations are not respected
-#    tot = 0
-#    for i in ret:
-#      if i < -1E-4:
-#        tot = tot+1
-#    print('NB CONS < 0:', tot)
+    insatisf_index = map(lambda x:(x<0,x) if (x<0)), ret)
+    print('INS:', insatisf_index)
+    #insatisf_values = valuesmap
+    tot = 0
+    for i in ret:
+      if i < -1E-4:
+        tot = tot+1
+    print('NB CONS < 0:', tot)
 
     # return arrray where each element is an inequation constraint
     return ret
