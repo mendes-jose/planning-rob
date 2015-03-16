@@ -310,7 +310,7 @@ class Trajectory_Generation(object):
     ret = np.append(obst_cons, max_speed_cons)
 
     # Count how many inequations are not respected
-    insatisf_index = map(lambda x:(x<0,x) if (x<0)), ret)
+    insatisf_index = map(lambda x:(x<0,x) if (x<0) else ), ret)
     print('INS:', insatisf_index)
     #insatisf_values = valuesmap
     tot = 0
