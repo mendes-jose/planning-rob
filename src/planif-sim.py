@@ -106,6 +106,8 @@ class Trajectory_Generation(object):
         axis = 0)
     self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
         axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
+        axis = 0)
 
   ## Unknown parameters (defining initial value)
     # TODO: chose a good way to initiate unknow parameters
@@ -113,8 +115,7 @@ class Trajectory_Generation(object):
     # (dist between intial and final positions) / (linear speed max value)
     self.t_fin = LA.norm(self.q_init[0:-1,0]-self.q_fin[0:-1,0])/ \
         self.u_abs_max[0,0]
-    print('First guess for t_fin', self.t_fin)
-    #self.t_fin = 20
+    print('First guess for t_fin: {}'.format(self.t_fin))
 
     # Initiate control points so the robot do a straight line from
     # inital to final positions
@@ -127,6 +128,10 @@ class Trajectory_Generation(object):
   ## Generate initial b-spline knots
     self.knots = self._gen_knots(self.t_fin)
     self.U = np.append(self.t_fin, np.asarray(self.C))
+
+  ## Optimization results
+    self.unsatisf_eq_values = []
+    self.unsatisf_ieq_values = []
 
   ## Plot initialization
     plt.ion()
@@ -169,8 +174,8 @@ class Trajectory_Generation(object):
                         f_eqcons=self._feqcons,
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
-                        iprint=2,
-                        iter=100,
+                        iprint=0,
+                        iter=80,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
@@ -265,8 +270,10 @@ class Trajectory_Generation(object):
            np.asarray(self.mrob.phi1(zl_t_fin)-self.q_fin)),
            np.asarray(self.mrob.phi2(zl_t_init)-self.u_init)),
            np.asarray(self.mrob.phi2(zl_t_fin)-self.u_fin))
-    #print ('EQCONS:', ret)
-    #print('ERROR EQUATIONS CONS:', LA.norm(ret))
+
+    # Count how many equations are not respected
+    unsatisf_list = [x for x in ret if x is not 0]
+    self.unsatisf_eq_values = unsatisf_list
     return ret
 
   ##------------------------Constraints Inequations----------------------------
@@ -310,14 +317,8 @@ class Trajectory_Generation(object):
     ret = np.append(obst_cons, max_speed_cons)
 
     # Count how many inequations are not respected
-    insatisf_index = map(lambda x:(x<0,x) if (x<0) else ), ret)
-    print('INS:', insatisf_index)
-    #insatisf_values = valuesmap
-    tot = 0
-    for i in ret:
-      if i < -1E-4:
-        tot = tot+1
-    print('NB CONS < 0:', tot)
+    unsatisf_list = [x for x in ret if x < 0]
+    self.unsatisf_ieq_values = unsatisf_list
 
     # return arrray where each element is an inequation constraint
     return ret
@@ -353,7 +354,12 @@ all_us = map(trajc.mrob.phi2, all_zl)
 linspeed = map(lambda x:x[0], all_us)
 angspeed = map(lambda x:x[1], all_us)
 
-print('Elapsed time: ', toc-tic)
+print('Elapsed time: {}'.format(toc-tic))
+print('Final t_fin: {}'.format(trajc.t_fin))
+print('Number of unsatisfied equations: {}'.format(len(trajc.unsatisf_eq_values)))
+print('Number of unsatisfied inequations: {}'.format(len(trajc.unsatisf_ieq_values)))
+print('Average equations diff: {}'.format(sum(trajc.unsatisf_eq_values)/max(len(trajc.unsatisf_eq_values),1)))
+print('Average inequations diff: {}'.format(sum(trajc.unsatisf_ieq_values)/max(len(trajc.unsatisf_ieq_values),1)))
 
 ## Plot final speeds
 
