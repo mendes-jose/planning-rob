@@ -175,7 +175,7 @@ class Trajectory_Generation(object):
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=0,
-                        iter=80,
+                        iter=20,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
@@ -358,8 +358,8 @@ print('Elapsed time: {}'.format(toc-tic))
 print('Final t_fin: {}'.format(trajc.t_fin))
 print('Number of unsatisfied equations: {}'.format(len(trajc.unsatisf_eq_values)))
 print('Number of unsatisfied inequations: {}'.format(len(trajc.unsatisf_ieq_values)))
-print('Average equations diff: {}'.format(sum(trajc.unsatisf_eq_values)/max(len(trajc.unsatisf_eq_values),1)))
-print('Average inequations diff: {}'.format(sum(trajc.unsatisf_ieq_values)/max(len(trajc.unsatisf_ieq_values),1)))
+print('Mean and standard deviation of equations diff: ({},{})'.format(np.mean(trajc.unsatisf_eq_values), np.std(trajc.unsatisf_eq_values)))
+print('Mean and standard deviation of inequations diff: ({},{})'.format(np.mean(trajc.unsatisf_ieq_values), np.std(trajc.unsatisf_ieq_values)))
 
 ## Plot final speeds
 
