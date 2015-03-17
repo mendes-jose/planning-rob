@@ -1,2 +1,2 @@
-# planif-rob
+# planning-rob
 Mobile Robot Trajectory Planification
