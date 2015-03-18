@@ -85,9 +85,9 @@ class Trajectory_Generation(object):
   ## Constaints values...
   ## ...for equations:
     # initial state
-    self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]])
+    self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]]) #angle in [0, 2pi]
     # final state
-    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]])
+    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]]) #angle in [0, 2pi]
     # initial control input
     self.u_init = np.matrix([[0.0], [0.0]])
     # final control input
@@ -106,8 +106,8 @@ class Trajectory_Generation(object):
         axis = 0)
     self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
         axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
-        axis = 0)
+    #self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
+    #    axis = 0)
 
   ## Unknown parameters (defining initial value)
     # TODO: chose a good way to initiate unknow parameters
@@ -175,7 +175,7 @@ class Trajectory_Generation(object):
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=0,
-                        iter=20,
+                        iter=100,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
