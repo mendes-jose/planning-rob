@@ -89,7 +89,7 @@ class Trajectory_Generation(object):
     # initial state
     self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]]) #angle in [0, 2pi]
     # final state
-    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]]) #angle in [0, 2pi]
+    self.q_fin = np.matrix([[2.5], [5.0], [np.pi/2]]) #angle in [0, 2pi]
     # initial control input
     self.u_init = np.matrix([[0.0], [0.0]])
     # final control input
@@ -99,15 +99,15 @@ class Trajectory_Generation(object):
     self.u_abs_max = self.mrob.u_abs_max
     # Obstacles (Q_occupied)
     # TODO: Obstacles random generation
-    self.obst_map =                          np.matrix([0.25, 2.5, 0.2])
-    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
-        axis = 0)
-    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
-        axis = 0)
+    self.obst_map =                          np.matrix([1.0, 2.5, 0.2])
+#    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
+#        axis = 0)
+#    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
+#        axis = 0)
 #    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
 #        axis = 0)
 
@@ -171,9 +171,9 @@ class Trajectory_Generation(object):
   ## Call SLSQP solver
     # U: argument wich will minimize the criteria given the constraints
 
-    self.n_it = 100
+    n_it = 100
     if len(sys.argv) > 1:
-      self.n_it = sys.argv[1]
+      n_it = sys.argv[1]
 
     self.U = fmin_slsqp(self._criteria,
                         self.U,
@@ -182,8 +182,7 @@ class Trajectory_Generation(object):
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=2,
-                        iter=self.n_it,
-                        acc=1E-1,
+                        iter=n_it,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
@@ -232,22 +231,24 @@ class Trajectory_Generation(object):
   #----------------------------------------------------------------------------
   # We want to minimize the time spent to go from q_init to q_final
   # use a quadratic criterium so the Hessian don't be zero
-#  def _criteria(self, U):
+  def _criteria(self, U):
+    t_fin = U[0]
+    #self.t_fin = U[0]
 #    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
 #    S = self._gen_dtraj(U,0)
 #    V = self._gen_dtraj(U,1)
 #    # Integration to find the time spent to go from q_init to q_final
 #    # TODO: Improve this integration
-#    self.t_fin = \
-#        sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
+#    self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
 #        for ind in range(1, S.shape[0]))
 #    return (self.t_fin-self.t_init)**2
-    
-  def _criteria(self, U):
-    t_fin = U[0]
-    # Integration to find the time spent to go from q_init to q_final
-    # TODO: Improve this integration
     return (t_fin-self.t_init)**2
+    
+#  def _criteria(self, U):
+#    t_fin = U[0]
+#    # Integration to find the time spent to go from q_init to q_final
+#    # TODO: Improve this integration
+#    return (t_fin-self.t_init)**2
 
   ##------------------------Constraints Equations------------------------------
   #----------------------------------------------------------------------------
@@ -347,10 +348,10 @@ tic = time.clock()
 trajc = Trajectory_Generation(Unicycle_Kine_Model())
 toc = time.clock()
 
-#plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0][0:-3])+' \
-#    -trajc-'+str(trajc.n_it)+'it.png', bbox_inches='tight')
+plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0])+'-trajc.png', bbox_inches='tight')
 
 mtime = trajc._gen_time(trajc.t_fin)
+#curve = trajc._gen_dtraj(trajc.U, 0)
 
 # get a list over time of the matrix [z dz ddz](t)
 all_zl = [np.append(np.append(
@@ -365,16 +366,31 @@ angspeed = map(lambda x:x[1], all_us)
 
 print('Elapsed time: {}'.format(toc-tic))
 print('Final t_fin: {}'.format(trajc.t_fin))
-print('Number of unsatisfied equations: {}'.format(
-    len(trajc.unsatisf_eq_values)))
-print('Number of unsatisfied inequations: {}'.format(
-    len(trajc.unsatisf_ieq_values)))
-print('Mean and standard deviation of equations diff: ({},{})'.format(
-    np.mean(trajc.unsatisf_eq_values), np.std(trajc.unsatisf_eq_values)))
-print('Mean and standard deviation of inequations diff: ({},{})'.format(
-    np.mean(trajc.unsatisf_ieq_values), np.std(trajc.unsatisf_ieq_values)))
+print('Number of unsatisfied equations: {}'.format(len(trajc.unsatisf_eq_values)))
+print('Number of unsatisfied inequations: {}'.format(len(trajc.unsatisf_ieq_values)))
+print('Mean and standard deviation of equations diff: ({},{})'.format(np.mean(trajc.unsatisf_eq_values), np.std(trajc.unsatisf_eq_values)))
+print('Mean and standard deviation of inequations diff: ({},{})'.format(np.mean(trajc.unsatisf_ieq_values), np.std(trajc.unsatisf_ieq_values)))
 
 ## Plot final speeds
+
+#fig = plt.figure()
+#
+#circ = []
+#for r in range(trajc.obst_map.shape[0]):
+#  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
+#      trajc.obst_map[r,2]+trajc.mrob.rho,color='g',ls = 'dashed',fill=False)]
+#  circ = circ + [plt.Circle((trajc.obst_map[r,0], trajc.obst_map[r,1]), \
+#      trajc.obst_map[r,2], color='g', fill=False)]
+#
+#ax = fig.gca()
+#ax.plot(trajc.C[:,0], trajc.C[:,1], '.', curve[:,0], curve[:,1])
+#
+#[ax.add_artist(c) for c in circ]
+#plt.xlabel('x(m)')
+#plt.ylabel('y(m)')
+#plt.title('Generated trajectory')
+#ax.axis('equal')
+#ax.axis([-2, 6, 0, 5])
 
 f, axarr = plt.subplots(2)
 axarr[0].plot(mtime, map(lambda x:x[0,0], linspeed))
@@ -387,6 +403,4 @@ axarr[1].set_xlabel('time(s)')
 axarr[1].set_ylabel('w(rad/s)')
 axarr[1].set_title('Angular speed')
 
-plt.show(block=True)
-#plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0][0:-3])+ \
-#    '-vw-'+str(trajc.n_it)+'it.png', bbox_inches='tight')
+plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0])+'-vw.png', bbox_inches='tight')
