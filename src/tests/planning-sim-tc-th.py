@@ -89,7 +89,7 @@ class Trajectory_Generation(object):
     # initial state
     self.q_init = np.matrix([[0.0], [0.0], [np.pi/2]]) #angle in [0, 2pi]
     # final state
-    self.q_fin = np.matrix([[2.5], [5.0], [np.pi/2]]) #angle in [0, 2pi]
+    self.q_fin = np.matrix([[2.0], [5.0], [np.pi/2]]) #angle in [0, 2pi]
     # initial control input
     self.u_init = np.matrix([[0.0], [0.0]])
     # final control input
@@ -99,15 +99,15 @@ class Trajectory_Generation(object):
     self.u_abs_max = self.mrob.u_abs_max
     # Obstacles (Q_occupied)
     # TODO: Obstacles random generation
-    self.obst_map =                          np.matrix([1.0, 2.5, 0.2])
-#    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
-#        axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
-#        axis = 0)
+    self.obst_map =                          np.matrix([0.25, 2.5, 0.2])
+    self.obst_map = np.append(self.obst_map, np.matrix([2.3,  2.5, 0.5]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
+        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
+        axis = 0)
 #    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
 #        axis = 0)
 
@@ -171,9 +171,9 @@ class Trajectory_Generation(object):
   ## Call SLSQP solver
     # U: argument wich will minimize the criteria given the constraints
 
-    n_it = 100
+    self.n_it = 100
     if len(sys.argv) > 1:
-      n_it = sys.argv[1]
+      self.n_it = sys.argv[1]
 
     self.U = fmin_slsqp(self._criteria,
                         self.U,
@@ -182,7 +182,7 @@ class Trajectory_Generation(object):
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
                         iprint=2,
-                        iter=n_it,
+                        iter=self.n_it,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
@@ -348,7 +348,7 @@ tic = time.clock()
 trajc = Trajectory_Generation(Unicycle_Kine_Model())
 toc = time.clock()
 
-plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0])+'-trajc.png', bbox_inches='tight')
+plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0][0:-3])+'-trajc-'+str(trajc.n_it)+'it.png', bbox_inches='tight')
 
 mtime = trajc._gen_time(trajc.t_fin)
 #curve = trajc._gen_dtraj(trajc.U, 0)
@@ -403,4 +403,4 @@ axarr[1].set_xlabel('time(s)')
 axarr[1].set_ylabel('w(rad/s)')
 axarr[1].set_title('Angular speed')
 
-plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0])+'-vw.png', bbox_inches='tight')
+plt.savefig('/home/mendes/Desktop/planning-test/'+str(sys.argv[0][0:-3])+'-vw-'+str(trajc.n_it)+'it.png', bbox_inches='tight')
