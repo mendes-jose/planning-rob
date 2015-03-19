@@ -108,8 +108,8 @@ class Trajectory_Generation(object):
         axis = 0)
     self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
         axis = 0)
-#    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
-#        axis = 0)
+    self.obst_map = np.append(self.obst_map, np.matrix([1.6, 4.3, 0.2]),
+        axis = 0)
 
   ## Unknown parameters (defining initial value)
     # TODO: chose a good way to initiate unknow parameters
@@ -183,7 +183,7 @@ class Trajectory_Generation(object):
                         f_ieqcons=self._fieqcons,
                         iprint=2,
                         iter=self.n_it,
-                        acc=1E-1,
+                        acc=5E-2,
                         callback=self._plot_update)
 
     self.t_fin = self.U[0]
@@ -245,8 +245,6 @@ class Trajectory_Generation(object):
     
   def _criteria(self, U):
     t_fin = U[0]
-    # Integration to find the time spent to go from q_init to q_final
-    # TODO: Improve this integration
     return (t_fin-self.t_init)**2
 
   ##------------------------Constraints Equations------------------------------
