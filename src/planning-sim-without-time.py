@@ -127,9 +127,11 @@ class Trajectory_Generation(object):
 
   ## Generate initial b-spline knots
     self.knots = self._gen_knots(self.t_fin)
-    self.U = np.append(self.t_fin, np.asarray(self.C))
 
-  ## Optimization results
+  ## Independent variables
+    self.U = np.asarray(self.C)
+
+  ## Optimization statistics
     self.unsatisf_eq_values = []
     self.unsatisf_ieq_values = []
 
@@ -167,19 +169,20 @@ class Trajectory_Generation(object):
     ax.axis([-2, 6, 0, 5])
 
   ## Call SLSQP solver
-    # U: argument wich will minimize the criteria given the constraints
-    self.U = fmin_slsqp(self._criteria,
+    opt_output = fmin_slsqp(self._criteria,
                         self.U,
                         eqcons=(),
                         f_eqcons=self._feqcons,
                         ieqcons=(),
                         f_ieqcons=self._fieqcons,
-                        iprint=0,
                         iter=100,
+                        iprint=2,
+                        full_output=True,
                         callback=self._plot_update)
 
-    self.t_fin = self.U[0]
-    self.C = np.asmatrix(self.U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    self.U = opt_output[0]
+    self.t_fin = opt_output[1]
+    self.C = np.asmatrix(opt_output[0].reshape(self.n_ptctrl, self.mrob.u_dim))
 
   ## Generate time vector
   def _gen_time(self, t_fin):
@@ -204,6 +207,7 @@ class Trajectory_Generation(object):
 
   ## Combine base b-splines
   def _comb_bsp(self, t, C, deriv_order):
+    # build tuple with knots, 1-d list of ctrl points and b-spline degree
     tup = (self.knots, np.squeeze(np.asarray(C[:,0].transpose())), self.d-1)
     z = np.matrix(si.splev(t, tup, der=deriv_order)).transpose()
     for i in range(self.mrob.u_dim)[1:]:
@@ -214,8 +218,8 @@ class Trajectory_Generation(object):
 
   ## Generate the trajectory
   def _gen_dtraj(self, U, deriv_order):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    t_fin = self.t_fin
+    C = np.asmatrix(U.reshape(self.n_ptctrl, self.mrob.u_dim))
     t = np.asarray(self._gen_time(t_fin))
     self.knots = self._gen_knots(t_fin)
     return self._comb_bsp(t, C, deriv_order)
@@ -225,31 +229,27 @@ class Trajectory_Generation(object):
   # We want to minimize the time spent to go from q_init to q_final
   # use a quadratic criterium so the Hessian don't be zero
   def _criteria(self, U):
-    t_fin = U[0]
-    #self.t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
     S = self._gen_dtraj(U,0)
     V = self._gen_dtraj(U,1)
-    # Integration to find the time spent to go from q_init to q_final
+    # Integration to find the time spent to go from z_init to z_final
     # TODO: Improve this integration
     self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
         for ind in range(1, S.shape[0]))
-    return (self.t_fin-self.t_init)**2
+    return (self.t_fin-self.t_init)
     
-#  def _criteria(self, U):
-#    t_fin = U[0]
-#    # Integration to find the time spent to go from q_init to q_final
-#    # TODO: Improve this integration
-#    return (t_fin-self.t_init)**2
-
   ##------------------------Constraints Equations------------------------------
   #----------------------------------------------------------------------------
   def _feqcons(self, U):
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    S = self._gen_dtraj(U,0)
+    V = self._gen_dtraj(U,1)
+    # Integration to find the time spent to go from z_init to z_final
+    # TODO: Improve this integration
+    self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
+        for ind in range(1, S.shape[0]))
+    C = np.asmatrix(U.reshape(self.n_ptctrl, self.mrob.u_dim))
 
     # updtate knots
-    self.knots = self._gen_knots(t_fin)
+    self.knots = self._gen_knots(self.t_fin)
 
     # get the matrix [z dz ddz] at t_initial
     zl_t_init = np.append(np.append( \
@@ -259,9 +259,9 @@ class Trajectory_Generation(object):
 
     # get the matrix [z dz ddz] at t_final
     zl_t_fin = np.append(np.append(
-        self._comb_bsp(t_fin, C, 0).transpose(),
-        self._comb_bsp(t_fin, C, 1).transpose(), axis = 1),
-        self._comb_bsp(t_fin, C, 2).transpose(), axis = 1)
+        self._comb_bsp(self.t_fin, C, 0).transpose(),
+        self._comb_bsp(self.t_fin, C, 1).transpose(), axis = 1),
+        self._comb_bsp(self.t_fin, C, 2).transpose(), axis = 1)
 
     # return array where each element is an equation constraint
     # dimension: 2*q_dim + 2*u_dim (=10 equations)
@@ -271,23 +271,27 @@ class Trajectory_Generation(object):
            np.asarray(self.mrob.phi2(zl_t_init)-self.u_init)),
            np.asarray(self.mrob.phi2(zl_t_fin)-self.u_fin))
 
-    # Count how many equations are not respected
-    unsatisf_list = [x for x in ret if x is not 0]
-    self.unsatisf_eq_values = unsatisf_list
+    # Count how many equations were not respected
+    self.unsatisf_eq_values = [x for x in ret if x is not 0]
     return ret
 
   ##------------------------Constraints Inequations----------------------------
   #----------------------------------------------------------------------------
   def _fieqcons(self, U):
     # get time and control points from U array
-    t_fin = U[0]
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    S = self._gen_dtraj(U,0)
+    V = self._gen_dtraj(U,1)
+    # Integration to find the time spent to go from z_init to z_final
+    # TODO: Improve this integration
+    self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
+        for ind in range(1, S.shape[0]))
+    C = np.asmatrix(U.reshape(self.n_ptctrl, self.mrob.u_dim))
 
     # updtate knots
-    self.knots = self._gen_knots(t_fin)
+    self.knots = self._gen_knots(self.t_fin)
 
     # create time vector
-    mtime = self._gen_time(t_fin)
+    mtime = self._gen_time(self.t_fin)
 
     # get a list over time of the matrix [z dz ddz](t)
     all_zl = [np.append(np.append(
@@ -317,15 +321,13 @@ class Trajectory_Generation(object):
     ret = np.append(obst_cons, max_speed_cons)
 
     # Count how many inequations are not respected
-    unsatisf_list = [x for x in ret if x < 0]
-    self.unsatisf_ieq_values = unsatisf_list
+    self.unsatisf_ieq_values = [x for x in ret if x < 0]
 
     # return arrray where each element is an inequation constraint
     return ret
 
-
   def _plot_update(self, U):
-    C = np.asmatrix(U[1:].reshape(self.n_ptctrl, self.mrob.u_dim))
+    C = np.asmatrix(U.reshape(self.n_ptctrl, self.mrob.u_dim))
     curve = self._gen_dtraj(U, 0)
     self.plt_curve.set_xdata(curve[:,0])
     self.plt_curve.set_ydata(curve[:,1])

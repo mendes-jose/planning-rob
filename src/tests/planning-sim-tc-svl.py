@@ -242,7 +242,7 @@ class Trajectory_Generation(object):
 #    self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2.0) \
 #        for ind in range(1, S.shape[0]))
 #    return (self.t_fin-self.t_init)**2
-    return (t_fin-self.t_init)**2
+    return (t_fin-self.t_init)
     
 #  def _criteria(self, U):
 #    t_fin = U[0]
