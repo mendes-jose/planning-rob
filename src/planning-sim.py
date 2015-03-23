@@ -112,8 +112,8 @@ class Trajectory_Generation(object):
                 axis = 0)
         self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
                 axis = 0)
-        self.obst_map = np.append(self.obst_map, np.matrix([0.7, 1.45, 0.25]),
-                axis = 0)
+#        self.obst_map = np.append(self.obst_map, np.matrix([0.7, 1.45, 0.25]),
+ #               axis = 0)
 
         # Unknown parameters (defining initial value)
         # Initiate t_final with the limit inferior of time:
@@ -381,8 +381,8 @@ tic = time.clock()
 trajc = Trajectory_Generation(Unicycle_Kine_Model())
 toc = time.clock()
 
-plt.savefig('/home/mendes/Dropbox/planning-test/'+str(sys.argv[0][0:-3])+ \
-        '-trajc.png', bbox_inches='tight')
+#plt.savefig('/home/mendes/Dropbox/planning-test/'+str(sys.argv[0][0:-3])+ \
+#        '-trajc.png', bbox_inches='tight')
 
 mtime = trajc._gen_time(trajc.t_fin)
 
@@ -428,6 +428,6 @@ axarr[1].set_xlabel('time(s)')
 axarr[1].set_ylabel('w(rad/s)')
 axarr[1].set_title('Angular speed')
 
-#plt.show(block=True)
-plt.savefig('/home/mendes/Dropbox/planning-test/'+str(sys.argv[0][0:-3])+ \
-        '-vw.png', bbox_inches='tight')
+plt.show(block=True)
+#plt.savefig('/home/mendes/Dropbox/planning-test/'+str(sys.argv[0][0:-3])+ \
+#        '-vw.png', bbox_inches='tight')

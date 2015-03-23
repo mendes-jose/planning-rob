@@ -280,6 +280,88 @@ class Robot(object):
 
         return J, cons, 0
 
+    # Object Function (used when finding the path with optinline option)
+    def _obj_func_optinline(self, x):
+
+        # creating some useful variables
+        ctrl_pts = np.asmatrix(
+                np.asarray(x).reshape(self.n_ctrlpts, self.k_mod.u_dim))
+
+        # updatating knots
+        self.knots = self._gen_knots(self.Tp+self.t_init)
+
+        if self.interacPlot is True:
+            self.curve = self._gen_dtraj(x, 0)
+            self.ctrl_pts = ctrl_pts
+            self._plot_update_optsol()
+
+        # creating time
+        mtime = np.linspace(self.t_init, self.Tp+self.t_init, self.N_s)
+
+        # get a list over time of the matrix [z dz ddz](t)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, ctrl_pts, 0).transpose(),
+                self._comb_bsp(tk, ctrl_pts, 1).transpose(), axis = 1),
+                self._comb_bsp(tk, ctrl_pts, 2).transpose(), axis = 1) \
+                for tk in mtime]
+
+        # get a list over time of command values u(t)
+        all_us = map(self.k_mod.phi2, all_zl)
+
+        #----------------------------------------------------------------------
+        # Cost Object (criterium)
+        #----------------------------------------------------------------------
+        J = (t_final-self.t_init)**2
+        q_taukTp = self.k_mod.phi1(all_zl[-1])
+        J = LA.norm(q_taukTp-self.q_final)**2
+
+        #----------------------------------------------------------------------
+        # Final and initial values constraints
+        #----------------------------------------------------------------------
+        econs = np.append(np.append(np.append(
+                np.asarray(self.k_mod.phi1(all_zl[0])-self.k_mod.q_init),
+                np.asarray(self.k_mod.phi1(all_zl[-1])-self.k_mod.q_final)),
+                np.asarray(self.k_mod.phi2(all_zl[0])-self.k_mod.u_init)),
+                np.asarray(self.k_mod.phi2(all_zl[-1])-self.k_mod.u_final))
+
+        # Get equations that were not respected
+        self.unsatisf_eq_values = [ec for ec in econs if ec is not 0]
+
+        #----------------------------------------------------------------------
+        # Obstacles constraints at each time step
+        #----------------------------------------------------------------------
+        obst_cons = np.array([(self.rho + self.obst[0].radius()) - \
+                LA.norm(np.matrix(self.obst[0].pos).T - zl[:,0]) \
+                for zl in all_zl])
+        for m in range(1,len(self.obst)):
+            obst_cons = np.append(
+                    obst_cons,
+                    np.array([(self.rho + self.obst[m].radius()) - \
+                    LA.norm(np.matrix(self.obst[m].pos).T - zl[:,0]) \
+                    for zl in all_zl]))
+
+        #----------------------------------------------------------------------
+        # Discrete displacement constraints
+        #----------------------------------------------------------------------
+#        disc_dis = [LA.norm(all_zl[ind][:,0]-all_zl[ind+1][:,0])-0.1 \
+#                for ind in range(len(all_zl)-1)]
+
+        #----------------------------------------------------------------------
+        # Max speed constraints
+        #----------------------------------------------------------------------
+        max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
+                map(lambda u:[abs(u[0,0]) - self.k_mod.u_max[0,0],
+                abs(u[1,0]) - self.k_mod.u_max[1,0]], all_us))))
+
+        icons = np.append(obst_cons, max_speed_cons)
+#        icons = np.append(icons, disc_dis)
+
+        # Get inequations that were not respected
+        self.unsatisf_ieq_values = [ic for ic in icons if ic > 0]
+
+        cons = np.append(econs, icons)
+
+        return J, cons, 0
     def _init_optsol(self):
         # Optimal solution parameters
         self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
@@ -415,6 +497,8 @@ class Robot(object):
             self._gen_optsol()
             if self.interacPlot is True:
                 self._plot_update_optsol()
+
+        
             
         # Unknow method
         else:
