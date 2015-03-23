@@ -24,8 +24,6 @@ class Unicycle_Kine_Model(object):
     def __init__(self):
         self.u_dim = 2
         self.q_dim = 3
-        self.rho = 0.2 # m
-        self.u_abs_max = np.matrix('0.5; 5')
 
         self.l = 2 # number of need derivations
 
@@ -68,6 +66,47 @@ class Unicycle_Kine_Model(object):
             # TODO ERROR
             print('ERROR')
             return
+
+###############################################################################
+# Robot
+###############################################################################
+class Robot(object):
+    def __init__(self, kineModel):
+        self.kModel = kineModel
+        self.
+
+###############################################################################
+# Obstacle 
+###############################################################################
+class Obstacle(object):
+    def __init__(self, position, dimension):
+        self.pos = position
+        self.dimetions = dimension
+
+class RoundObstacle(Obstacle):
+    def x(self):
+        return self.position[0]
+    def y(self):
+        return self.position[1]
+    def radius(self):
+        return self.dimension
+    def pltCircle(self, color='b', linestyle='solid', isFill=False, extraRadius=0.0):
+        return plt.Circle(
+                (self.x(), self.y()), # position
+                self.radius()+extraRadius, # radius
+                color=color,
+                ls = linestyle,
+                fill=idFill)
+
+###############################################################################
+# World 
+###############################################################################
+class worldSim(object):
+    """ Where to instatiate the obstacles, the robot, the bonderies
+        initial and final conditions
+    """
+    def __init__(self):
+    
 
 ###############################################################################
 # Trajectroy Generation 

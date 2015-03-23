@@ -108,12 +108,12 @@ class Trajectory_Generation(object):
                 axis = 0)
         self.obst_map = np.append(self.obst_map, np.matrix([1.25, 3,   0.1]),
                 axis = 0)
-        self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1.0,   0.1]),
+        self.obst_map = np.append(self.obst_map, np.matrix([0.3,  1,   0.1]),
                 axis = 0)
         self.obst_map = np.append(self.obst_map, np.matrix([-0.5, 1.5, 0.3]),
                 axis = 0)
-        self.obst_map = np.append(self.obst_map, np.matrix([0.7, 1.45, 0.25]),
-                axis = 0)
+#        self.obst_map = np.append(self.obst_map, np.matrix([0.85, 1.45, 0.25]),
+#                axis = 0)
 
         # Unknown parameters (defining initial value)
         # Initiate t_final with the limit inferior of time:
@@ -134,10 +134,9 @@ class Trajectory_Generation(object):
         self.knots = self._gen_knots(self.t_fin)
 
         # Initial minimization arguments values
-        x_init = np.append(self.t_fin, np.asarray(self.ctrl_pts)).tolist()
-        U = np.append(self.t_fin, np.asarray(self.ctrl_pts))
-        x_lower = [x_init[0]] + [-5.0, -5.0]*self.n_ctrlpts
-        x_upper = [1e10*x_init[0]] + [10.0, 10.0]*self.n_ctrlpts
+        #x_init = np.append(self.t_fin, np.asarray(self.ctrl_pts)).tolist()
+        x_init = np.squeeze(self.ctrl_pts.reshape(self.n_ctrlpts*self.mrob.u_dim,1)).tolist()[0]
+        #U = np.append(self.t_fin, np.asarray(self.ctrl_pts))
 
         # Optimization statistics
         self.unsatisf_eq_values = []
@@ -165,19 +164,14 @@ class Trajectory_Generation(object):
         [ax.add_artist(c) for c in self.circ]
 
         # generate trajectory curve
-        curve = self._gen_dtraj(U, 0)
+        curve = self._gen_dtraj(np.asarray(x_init), 0)
         # plot curve and its control points
-        self.plt_ctrl_pts,self.cont_curve,self.plt_curve  = ax.plot(
-#        self.plt_curve,  = ax.plot(
+        self.plt_ctrl_pts,self.plt_curve,  = ax.plot(
                 self.ctrl_pts[:,0],
                 self.ctrl_pts[:,1],
-                '*',
+                '.',
                 curve[:,0],
-                curve[:,1],
-                'b-',
-                curve[:,0],
-                curve[:,1],
-                '.')
+                curve[:,1])
     
         # formating figure
         plt.xlabel('x(m)')
@@ -196,11 +190,9 @@ class Trajectory_Generation(object):
 
         opt_prob.addVarGroup( # minimization arguments
                 'x',
-                self.mrob.u_dim*self.n_ctrlpts + 1,
+                self.mrob.u_dim*self.n_ctrlpts,
                 'c',
-                lower=x_lower,
-                value=x_init,
-                upper=x_upper)
+                value=x_init)
 
         opt_prob.addConGroup( # equations constraints
                 'ec',
@@ -209,13 +201,13 @@ class Trajectory_Generation(object):
 
         opt_prob.addConGroup( # inequations constraints
                 'ic',
-                self.N_s*self.mrob.u_dim + self.N_s*len(self.obst_map) + self.N_s-1,
+                self.N_s*self.mrob.u_dim + self.N_s*len(self.obst_map),
                 'i')
 
         slsqp = pyOpt.SLSQP(pll_type='POA')
-        slsqp.setOption('ACC', 1e-6)
+        slsqp.setOption('ACC', 5e-2)
         slsqp.setOption('MAXIT', 100)
-        slsqp.setOption('IPRINT', -1)
+        slsqp.setOption('IPRINT', 0)
 
         [fstr, xstr, inform] = slsqp(opt_prob)
 
@@ -223,9 +215,8 @@ class Trajectory_Generation(object):
                 inform['text'],
                 inform['value']))
 
-        self.t_fin = xstr[0]
         self.ctrl_pts = \
-                np.asmatrix(xstr[1:].reshape(self.n_ctrlpts, self.mrob.u_dim))
+                np.asmatrix(xstr.reshape(self.n_ctrlpts, self.mrob.u_dim))
 
         self._plot_update(xstr)
 
@@ -273,9 +264,9 @@ class Trajectory_Generation(object):
         return z
 
     # Generate the trajectory
-    def _gen_dtraj(self, U, deriv_order):
-        t_fin = U[0]
-        ctrl_pts = np.asmatrix(U[1:].reshape(self.n_ctrlpts, self.mrob.u_dim))
+    def _gen_dtraj(self, x, deriv_order):
+        t_fin = self.t_fin
+        ctrl_pts = np.asmatrix(x.reshape(self.n_ctrlpts, self.mrob.u_dim))
         t = np.asarray(self._gen_time(t_fin))
         self.knots = self._gen_knots(t_fin)
         return self._comb_bsp(t, ctrl_pts, deriv_order)
@@ -286,9 +277,16 @@ class Trajectory_Generation(object):
     #########################################################################
     def _obj_func(self, x):
 
+        # estimating time
+        S = self._gen_dtraj(np.asarray(x),0)
+        V = self._gen_dtraj(np.asarray(x),1)
+        # Integration to find the time spent to go from z_init to z_final
+        self.t_fin=sum(LA.norm(S[ind-1,:]-S[ind,:])/LA.norm(V[ind-1,:]/2.0+V[ind,:]/2) \
+                for ind in range(1, S.shape[0]))
+
         # creating some useful variables
-        t_fin = x[0]
-        ctrl_pts = np.asmatrix(x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim))
+        t_fin = self.t_fin
+        ctrl_pts = np.asmatrix(np.asarray(x).reshape(self.n_ctrlpts, self.mrob.u_dim))
 
         # updtating knots
         self.knots = self._gen_knots(t_fin)
@@ -309,7 +307,13 @@ class Trajectory_Generation(object):
         #----------------------------------------------------------------------
         # Cost Object (criterium)
         #----------------------------------------------------------------------
-        J = (t_fin-self.t_init)**2
+#        J = (self.t_fin-self.t_init)**2
+        linspeed = sum([LA.norm(v) for v in V])
+        dist = sum([LA.norm(ctrl_pts[ind] - ctrl_pts[ind+1]) for ind in range(self.n_ctrlpts-1)])
+        #dist = sum([LA.norm(s) for s in S])
+        
+        J = dist - 100*linspeed
+#        J = -sum(V) + dist
 
         #----------------------------------------------------------------------
         # Final and initial values constraints
@@ -324,7 +328,7 @@ class Trajectory_Generation(object):
         self.unsatisf_eq_values = [ec for ec in econs if ec is not 0]
 
         #----------------------------------------------------------------------
-        # Obstacles constraints at each time step
+        # Obstacles constraints
         #----------------------------------------------------------------------
         obst_cons = np.array([(self.mrob.rho + self.obst_map[0,-1]) - \
                 LA.norm(self.obst_map[0,0:-1].transpose() - zl[:,0]) \
@@ -337,39 +341,26 @@ class Trajectory_Generation(object):
                     for zl in all_zl]))
 
         #----------------------------------------------------------------------
-        # Discrete displacement constraints
-        #----------------------------------------------------------------------
-        disc_dis = [LA.norm(all_zl[ind][:,0]-all_zl[ind+1][:,0])-0.1 for ind in range(len(all_zl)-1)]
-#        print('Z {}'.format(all_zl[0][:,0]))
-#        print('Z {}'.format(all_zl[-1][:,0]))
-#        print(LA.norm(all_zl[0][:,0]-all_zl[-1][:,0]))
-#        print disc_dis[0]
-#        ((y2 - y1)*x0 - (x2-x1)*y0 + x2*y1 - y2*x1)/LA.norm(P1-P2)
-
-        #----------------------------------------------------------------------
         # Max speed constraints
         #----------------------------------------------------------------------
         max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
                 map(lambda u:[abs(u[0,0]) - self.u_abs_max[0,0],
                 abs(u[1,0]) - self.u_abs_max[1,0]], all_us))))
 
-        icons = np.append(obst_cons, max_speed_cons)
-        icons = np.append(icons, disc_dis)
+        icons = np.append(obst_cons, max_speed_cons) 
 
         # Get inequations that were not respected
         self.unsatisf_ieq_values = [ic for ic in icons if ic > 0]
 
         cons = np.append(econs, icons)
-        self._plot_update(x)
+        self._plot_update(np.asarray(x))
         return J, cons, 0
 
-    def _plot_update(self, U):
-        ctrl_pts = np.asmatrix(U[1:].reshape(self.n_ctrlpts, self.mrob.u_dim))
-        curve = self._gen_dtraj(U, 0)
+    def _plot_update(self, x):
+        ctrl_pts = np.asmatrix(x.reshape(self.n_ctrlpts, self.mrob.u_dim))
+        curve = self._gen_dtraj(x, 0)
         self.plt_curve.set_xdata(curve[:,0])
         self.plt_curve.set_ydata(curve[:,1])
-        self.cont_curve.set_xdata(curve[:,0])
-        self.cont_curve.set_ydata(curve[:,1])
         self.plt_ctrl_pts.set_xdata(ctrl_pts[:,0])
         self.plt_ctrl_pts.set_ydata(ctrl_pts[:,1])
         self.fig.canvas.draw()
@@ -404,16 +395,14 @@ print('Elapsed time: {}'.format(toc-tic))
 print('Final t_fin: {}'.format(trajc.t_fin))
 print('Number of unsatisfied equations: {}'.format(
         len(trajc.unsatisf_eq_values)))
-if len(trajc.unsatisf_eq_values) > 0:
-    print('Mean and standard deviation of equations diff: ({},{})'.format(
-            np.mean(trajc.unsatisf_eq_values), np.std(trajc.unsatisf_eq_values)))
-    print('Equations diff values:\n{}'.format(trajc.unsatisf_eq_values))
 print('Number of unsatisfied inequations: {}'.format(
         len(trajc.unsatisf_ieq_values)))
-if len(trajc.unsatisf_ieq_values) > 0:
-    print('Mean and standard deviation of inequations diff: ({},{})'.format(
-            np.mean(trajc.unsatisf_ieq_values), np.std(trajc.unsatisf_ieq_values)))
-    print('Inequations diff values:\n{}'.format(trajc.unsatisf_ieq_values))
+print('Mean and standard deviation of equations diff: ({},{})'.format(
+        np.mean(trajc.unsatisf_eq_values), np.std(trajc.unsatisf_eq_values)))
+print('Equations diff values: {}'.format(trajc.unsatisf_eq_values))
+print('Mean and standard deviation of inequations diff: ({},{})'.format(
+        np.mean(trajc.unsatisf_ieq_values), np.std(trajc.unsatisf_ieq_values)))
+print('Inequations diff values: {}'.format(trajc.unsatisf_ieq_values))
 
 # Plot final speeds
 
