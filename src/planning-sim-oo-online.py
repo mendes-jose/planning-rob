@@ -111,6 +111,9 @@ class Robot(object):
         self.setOption('MAXIT')
         self.setOption('IPRINT')
 
+        self.q_tktk = self.k_mod.q_initial
+        self.q_tktik = self.k_mod.q_initial
+
     # set Options
     def setOption(self, name, value=None, extra_value=None):
         if name is 'ACC':
