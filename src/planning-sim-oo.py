@@ -101,7 +101,7 @@ class Robot(object):
         self.rho = rho
 
         # Generic params
-        self.setOption('ALGO')
+        self.setOption('LIB')
         self.setOption('IPLOT')
 
         # Optimal solver params
@@ -111,8 +111,12 @@ class Robot(object):
         self.setOption('MAXIT')
         self.setOption('IPRINT')
 
+        # Init plots
+        self.plot()
+        self.plotSpeeds()
+
     # set Options
-    def setOption(self, name, value=None, extra_value=None):
+    def setOption(self, name, value=None):
         if name is 'ACC':
             if value is None:
                 self.optAcc = 1e-6
@@ -125,7 +129,7 @@ class Robot(object):
                 self.optMaxIt = value
         elif name is 'IPRINT':
             if value is None:
-                self.optIprint = -1
+                self.optIprint = 0
             else:
                 self.optIprint = value
         elif name is 'NKNOTS':
@@ -133,11 +137,11 @@ class Robot(object):
                 self.n_knots = 15
             else:
                 self.n_knots = value
-        elif name is 'ALGO':
+        elif name is 'LIB':
             if value is None:
-                self.algo = 'optsol'
+                self.lib = 'pyopt'
             else:
-                self.algo = value
+                self.lib = value
         elif name is 'OPTMETHOD':
             if value is None:
                 self.optMethod = 'slsqp'
@@ -148,7 +152,6 @@ class Robot(object):
                 self.interacPlot = False
             else:
                 self.interacPlot = value
-                self.fig = extra_value
         else:
             logging.warning('Unknown parameter '+name+', nothing will be set')
 
@@ -198,8 +201,222 @@ class Robot(object):
         mtime = np.linspace(self.t_init, x[0], self.N_s)
         return self._comb_bsp(mtime, ctrl_pts, deriv_order)
 
-    # Object Function (used when finding the path with optsol option)
-    def _obj_func(self, x):
+    def _criteria(self, x):
+        #----------------------------------------------------------------------
+        # Cost Object (criterium)
+        #----------------------------------------------------------------------
+        return (x[0]-self.t_init)**2
+
+    def _feqcons(self, x):
+        # creating some useful variables
+        t_final = x[0]
+        ctrl_pts = np.asmatrix(
+                np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
+
+        # updatating knots
+        self.knots = self._gen_knots(t_final)
+
+        # get matrix [z dz ddz](t_init)
+        zl_t_init = np.append(np.append(
+                self._comb_bsp(self.t_init, ctrl_pts, 0).T,
+                self._comb_bsp(self.t_init, ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(self.t_init, ctrl_pts, 2).T, axis = 1)
+
+        # get matrix [z dz ddz](t_final)
+        zl_t_final = np.append(np.append(
+                self._comb_bsp(t_final, ctrl_pts, 0).T,
+                self._comb_bsp(t_final, ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(t_final, ctrl_pts, 2).T, axis = 1)
+
+        #----------------------------------------------------------------------
+        # Final and initial values constraints
+        #----------------------------------------------------------------------
+        econs = np.append(np.append(np.append(
+                np.asarray(self.k_mod.phi1(zl_t_init)-self.k_mod.q_init),
+                np.asarray(self.k_mod.phi1(zl_t_final)-self.k_mod.q_final)),
+                np.asarray(self.k_mod.phi2(zl_t_init)-self.k_mod.u_init)),
+                np.asarray(self.k_mod.phi2(zl_t_final)-self.k_mod.u_final))
+
+        # Get equations that were not respected
+        self.unsatisf_eq_values = [ec for ec in econs if ec is not 0]
+
+        return econs
+
+    def _fieqcons(self, x):
+        # creating some useful variables
+        t_final = x[0]
+        ctrl_pts = np.asmatrix(
+                np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
+
+        # updatating knots
+        self.knots = self._gen_knots(t_final)
+
+        # creating time
+        mtime = np.linspace(self.t_init, t_final, self.N_s)
+
+        # get a list over time of the matrix [z dz ddz](t)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, ctrl_pts, 0).T,
+                self._comb_bsp(tk, ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, ctrl_pts, 2).T, axis = 1) \
+                for tk in mtime]
+
+        # get a list over time of command values u(t)
+        all_us = map(self.k_mod.phi2, all_zl)
+
+        #----------------------------------------------------------------------
+        # Obstacles constraints at each time step
+        #----------------------------------------------------------------------
+        obst_cons = np.array([- (self.rho + self.obst[0].radius()) + \
+                LA.norm(np.matrix(self.obst[0].pos).T - zl[:,0]) \
+                for zl in all_zl])
+        for m in range(1,len(self.obst)):
+            obst_cons = np.append(
+                    obst_cons,
+                    np.array([- (self.rho + self.obst[m].radius()) + \
+                    LA.norm(np.matrix(self.obst[m].pos).T - zl[:,0]) \
+                    for zl in all_zl]))
+
+        #----------------------------------------------------------------------
+        # Discrete displacement constraints
+        #----------------------------------------------------------------------
+#        disc_dis = [-LA.norm(all_zl[ind][:,0]-all_zl[ind+1][:,0])+0.1 \
+#                for ind in range(len(all_zl)-1)]
+
+        #----------------------------------------------------------------------
+        # Max speed constraints
+        #----------------------------------------------------------------------
+        max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
+                map(lambda u:[-abs(u[0,0]) + self.k_mod.u_max[0,0],
+                -abs(u[1,0]) + self.k_mod.u_max[1,0]], all_us))))
+
+        icons = np.append(obst_cons, max_speed_cons)
+#        icons = np.append(icons, disc_dis)
+
+        # Get inequations that were not respected
+        self.unsatisf_ieq_values = [ic for ic in icons if ic > 0]
+
+        return icons
+
+    def _init_scipy(self):
+        # Optimal solution parameters
+        self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
+        self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
+
+        # Unknown parameters (defining initial value)
+        #   Initiate t_final with the limit inferior of time to go from   
+        #   q_init to q_final which is:
+        #   dist_between_intial_and_final_positions/linear_speed_max_value
+        self.t_inf=LA.norm(
+                self.k_mod.q_init[0:-1,0]-self.k_mod.q_final[0:-1,0])/ \
+                self.k_mod.u_max[0,0]
+        self.t_final = self.t_inf
+        logging.debug('t_sup: {}'.format(self.t_sup))
+        logging.debug('t_inf: {}'.format(self.t_inf))
+
+        # Initiate control points so the robot do a straight line from
+        #   inital to final positions
+        self.ctrl_pts=np.matrix(np.zeros((self.n_ctrlpts,self.k_mod.u_dim)))
+        self.ctrl_pts[:,0]=np.matrix(np.linspace( # linspace in x
+                self.k_mod.q_init[0,0],
+                self.k_mod.q_final[0,0],
+                self.n_ctrlpts)).T
+        self.ctrl_pts[:,1]=np.matrix(np.linspace( # linsapce in y
+                self.k_mod.q_init[1,0],
+                self.k_mod.q_final[1,0],
+                self.n_ctrlpts)).T
+
+        # Generate initial b-spline knots
+        self.knots = self._gen_knots(self.t_final)
+
+        # creating time
+        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+
+        # get a list over time of the matrix [z dz ddz](t)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, self.ctrl_pts, 0).T,
+                self._comb_bsp(tk, self.ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, self.ctrl_pts, 2).T, axis = 1) \
+                for tk in self.mtime]
+
+        # get a list over time of command values u(t)
+        all_us = map(self.k_mod.phi2, all_zl)
+
+        self.linspeed = map(lambda u:u[0,0], all_us)
+        self.angspeed = map(lambda u:u[1,0], all_us)
+
+        # Minimization argument (x)
+        self.x_init = np.append(self.t_inf, np.asarray(self.ctrl_pts)).tolist()
+
+        str_x_init = 'x_init: '
+        for i in self.x_init:
+            str_x_init = str_x_init+"%0.2f " % i
+        logging.debug(str_x_init)
+
+        self.x_lower = [self.t_inf] + \
+                [self.p_bound.x_min, self.p_bound.y_min]*self.n_ctrlpts
+        self.x_upper = [self.t_sup] + \
+                [self.p_bound.x_max, self.p_bound.y_max]*self.n_ctrlpts
+
+        # Initiate the path (interpolation of control points)
+        self.curve = self._gen_dtraj(self.x_init, 0)
+
+        # Optimization statistics
+        self.unsatisf_eq_values = []
+        self.unsatisf_ieq_values = []
+
+        # PLOTS
+        if self.fig is not None:
+            ax = self.fig.gca()
+            # plot curve and its control points
+            self.plt_ctrl_pts,self.cont_curve,self.plt_curve = ax.plot(
+                self.ctrl_pts[:,0],
+                self.ctrl_pts[:,1],
+                '*',
+                self.curve[:,0],
+                self.curve[:,1],
+                'b-',
+                self.curve[:,0],
+                self.curve[:,1],
+                '.')
+
+        if self.figSpeed is not None:
+            axarray = self.figSpeed.axes
+            self.plt_linspeed, = axarray[0].plot(
+                    self.mtime,
+                    self.linspeed)
+            self.plt_angspeed, = axarray[1].plot(
+                    self.mtime,
+                    self.angspeed)
+            axarray[0].set_ylabel('v(m/s)')
+            axarray[0].set_title('Linear speed')
+            axarray[1].set_xlabel('time(s)')
+            axarray[1].set_ylabel('w(rad/s)')
+            axarray[1].set_title('Angular speed')
+            axarray[0].grid()
+            axarray[1].grid()
+
+    def _gen_scipy(self):
+        if self.optMethod is 'slsqp':
+
+            x = fmin_slsqp(self._criteria,
+                    self.x_init,
+                    eqcons=(),
+                    f_eqcons=self._feqcons,
+                    ieqcons=(),
+                    f_ieqcons=self._fieqcons,
+                    iter=self.optMaxIt,
+                    acc=self.optAcc,
+                    iprint=self.optIprint,
+                    callback=self._update_scipy)
+
+            logging.info('Optimization_results:\n{}'.format(x))
+
+        else:
+            logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
+
+    # Object Function (used when finding the path with pyopt option)
+    def _obj_func_pyopt(self, x):
 
         # creating some useful variables
         t_final = x[0]
@@ -209,28 +426,32 @@ class Robot(object):
         # updatating knots
         self.knots = self._gen_knots(t_final)
 
-        if self.interacPlot is True:
-            self.curve = self._gen_dtraj(x, 0)
-            self.ctrl_pts = ctrl_pts
-            self._plot_update_optsol()
-
         # creating time
         mtime = np.linspace(self.t_init, t_final, self.N_s)
 
         # get a list over time of the matrix [z dz ddz](t)
         all_zl = [np.append(np.append(
-                self._comb_bsp(tk, ctrl_pts, 0).transpose(),
-                self._comb_bsp(tk, ctrl_pts, 1).transpose(), axis = 1),
-                self._comb_bsp(tk, ctrl_pts, 2).transpose(), axis = 1) \
+                self._comb_bsp(tk, ctrl_pts, 0).T,
+                self._comb_bsp(tk, ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, ctrl_pts, 2).T, axis = 1) \
                 for tk in mtime]
 
         # get a list over time of command values u(t)
         all_us = map(self.k_mod.phi2, all_zl)
 
+        # update plot if interactive plot is true
+        if self.interacPlot is True:
+            self.curve = self._gen_dtraj(x, 0)
+            self.ctrl_pts = ctrl_pts
+            self.linspeed = map(lambda x:x[0,0], all_us)
+            self.angspeed = map(lambda x:x[1,0], all_us)
+            self.mtime = mtime
+            self._plot_update()
+
         #----------------------------------------------------------------------
         # Cost Object (criterium)
         #----------------------------------------------------------------------
-        J = (t_final-self.t_init)**2
+        J = (t_final-self.t_init)
 
         #----------------------------------------------------------------------
         # Final and initial values constraints
@@ -280,7 +501,7 @@ class Robot(object):
 
         return J, cons, 0
 
-    def _init_optsol(self):
+    def _init_pyopt(self):
         # Optimal solution parameters
         self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
         self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
@@ -311,6 +532,22 @@ class Robot(object):
         # Generate initial b-spline knots
         self.knots = self._gen_knots(self.t_final)
 
+        # creating time
+        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+
+        # get a list over time of the matrix [z dz ddz](t)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, self.ctrl_pts, 0).T,
+                self._comb_bsp(tk, self.ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, self.ctrl_pts, 2).T, axis = 1) \
+                for tk in self.mtime]
+
+        # get a list over time of command values u(t)
+        all_us = map(self.k_mod.phi2, all_zl)
+
+        self.linspeed = map(lambda u:u[0,0], all_us)
+        self.angspeed = map(lambda u:u[1,0], all_us)
+
         # Minimization argument (x)
         x_init = np.append(self.t_inf, np.asarray(self.ctrl_pts)).tolist()
 
@@ -330,7 +567,7 @@ class Robot(object):
         # Define the optimization problem
         self.opt_prob = pyOpt.Optimization(
                 'Faster path with obstacles', # name of the problem
-                self._obj_func) # object function (criterium, eq. and ineq.)
+                self._obj_func_pyopt) # object function (criterium, eq. and ineq.)
 
         self.opt_prob.addObj('J')
 
@@ -358,63 +595,154 @@ class Robot(object):
         self.unsatisf_eq_values = []
         self.unsatisf_ieq_values = []
 
-        # Init plot
-        ax = self.fig.gca()
-        # plot curve and its control points
-        self.plt_ctrl_pts,self.cont_curve,self.plt_curve = ax.plot(
-            self.ctrl_pts[:,0],
-            self.ctrl_pts[:,1],
-            '*',
-            self.curve[:,0],
-            self.curve[:,1],
-            'b-',
-            self.curve[:,0],
-            self.curve[:,1],
-            '.')
+        # PLOTS
+        if self.fig is not None:
+            ax = self.fig.gca()
+            # plot curve and its control points
+            self.plt_ctrl_pts,self.cont_curve,self.plt_curve = ax.plot(
+                self.ctrl_pts[:,0],
+                self.ctrl_pts[:,1],
+                '*',
+                self.curve[:,0],
+                self.curve[:,1],
+                'b-',
+                self.curve[:,0],
+                self.curve[:,1],
+                '.')
 
-    def _gen_optsol(self):
+        if self.figSpeed is not None:
+            axarray = self.figSpeed.axes
+            self.plt_linspeed, = axarray[0].plot(
+                    self.mtime,
+                    self.linspeed)
+            self.plt_angspeed, = axarray[1].plot(
+                    self.mtime,
+                    self.angspeed)
+            axarray[0].set_ylabel('v(m/s)')
+            axarray[0].set_title('Linear speed')
+            axarray[1].set_xlabel('time(s)')
+            axarray[1].set_ylabel('w(rad/s)')
+            axarray[1].set_title('Angular speed')
+            axarray[0].grid()
+            axarray[1].grid()
+
+    def _gen_pyopt(self):
         if self.optMethod is 'slsqp':
-            slsqp = pyOpt.SLSQP(pll_type='POA') # parameter for parallel solv.
-            slsqp.setOption('ACC', self.optAcc) # accuracy param (1e-6)
-            slsqp.setOption('MAXIT', self.optMaxIt) # max no of iterations (50)
-            slsqp.setOption('IPRINT', self.optIprint) # output style (-1)
-
-            # find the near-optimal solution
-            [J, x, inform] = slsqp(self.opt_prob)
-            logging.info('Optimization result:\n{}'.format(x))
-
-            self.t_final = x[0]
-            self.ctrl_pts = np.asmatrix(
-                    np.asarray(x[1:]).reshape(self.n_ctrlpts,self.k_mod.u_dim))
-            self.knots = self._gen_knots(self.t_final)
-            self.curve = self._gen_dtraj(x, 0)
-
-            return ('Optimization summary: {} exit code {}'.format(
-                    inform['text'],
-                    inform['value']))
-
+            solver = pyOpt.pySLSQP.SLSQP(pll_type='POA') # parameter for parallel solv.
+            solver.setOption('ACC', self.optAcc) # accuracy param (1e-6)
+            solver.setOption('MAXIT', self.optMaxIt) # max no of iterations
+        elif self.optMethod is 'nlpql':
+            solver = pyOpt.pyNLPQLP.NLPQLP(pll_type='POA') # parameter for parallel solv.
+        elif self.optMethod is 'snopt':
+            solver = pyOpt.pySNOPT.SNOPT(pll_type='POA') # parameter for parallel solv.
+        elif self.optMethod is 'fsqp':
+            solver = pyOpt.pyFSQP.FSQP(pll_type='POA') # parameter for parallel solv.
+        elif self.optMethod is 'psqp':
+            solver = pyOpt.pyPSQP.PSQP(pll_type='POA') # parameter for parallel solv.
+            solver.setOption('MIT', self.optMaxIt) # max no of iterations
         else:
-            logging.warning('Unknown optimization method')
+            logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
+            return
 
-    def _plot_update_optsol(self):
-        logging.info('plot update')
+        solver.setOption('IPRINT', self.optIprint) # output style
+
+        # find the near-optimal solution
+        [J, x, inform] = solver(self.opt_prob)
+        logging.info('Optimization_results:\n{}'.format(x))
+
+        # update values according with optimization result
+        self.t_final = x[0]
+        self.ctrl_pts = np.asmatrix(
+                np.asarray(x[1:]).reshape(self.n_ctrlpts,self.k_mod.u_dim))
+        self.knots = self._gen_knots(self.t_final)
+        self.curve = self._gen_dtraj(x, 0)
+        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, self.ctrl_pts, 0).T,
+                self._comb_bsp(tk, self.ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, self.ctrl_pts, 2).T, axis = 1) \
+                for tk in self.mtime]
+        all_us = map(self.k_mod.phi2, all_zl)
+        self.linspeed = map(lambda u:u[0,0], all_us)
+        self.angspeed = map(lambda u:u[1,0], all_us)
+
+        return ('Optimization summary: {} exit code {}'.format(
+                inform['text'],
+                inform['value']))
+
+    def _update_scipy(self, x):
+        self.t_final = x[0]
+        self.ctrl_pts = np.asmatrix(
+                np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
+        self.knots = self._gen_knots(self.t_final)
+        self.curve = self._gen_dtraj(x, 0)
+        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+        all_zl = [np.append(np.append(
+                self._comb_bsp(tk, self.ctrl_pts, 0).T,
+                self._comb_bsp(tk, self.ctrl_pts, 1).T, axis = 1),
+                self._comb_bsp(tk, self.ctrl_pts, 2).T, axis = 1) \
+                for tk in self.mtime]
+        all_us = map(self.k_mod.phi2, all_zl)
+        self.linspeed = map(lambda u:u[0,0], all_us)
+        self.angspeed = map(lambda u:u[1,0], all_us)
+        self._plot_update()
+
+    def _plot_update(self):
+        # plot
         self.plt_curve.set_xdata(self.curve[:,0])
         self.plt_curve.set_ydata(self.curve[:,1])
         self.cont_curve.set_xdata(self.curve[:,0])
         self.cont_curve.set_ydata(self.curve[:,1])
         self.plt_ctrl_pts.set_xdata(self.ctrl_pts[:,0])
         self.plt_ctrl_pts.set_ydata(self.ctrl_pts[:,1])
+
+        ax = self.fig.gca()
+        ax.relim()
+        ax.autoscale_view(True,True,True)
+
         self.fig.canvas.draw()
+
+        if self.figSpeed is not None:
+            # speed plot
+            self.plt_angspeed.set_xdata(self.mtime)
+            self.plt_angspeed.set_ydata(self.angspeed)
+            self.plt_linspeed.set_xdata(self.mtime)
+            self.plt_linspeed.set_ydata(self.linspeed)
+    
+            axarray = self.figSpeed.axes
+            axarray[0].relim()
+            axarray[0].autoscale_view(True,True,True)
+            axarray[1].relim()
+            axarray[1].autoscale_view(True,True,True)
+    
+            self.figSpeed.canvas.draw()
+
+    def plot(self, figure=None):
+        self.fig = figure
+
+    def plotSpeeds(self, figure=None):
+        if figure is not None:
+            self.figSpeed = figure[0]
+        else:
+            self.figSpeed = None
 
     def gen_trajectory(self):
 
-        # Global optimal solution (knowledge of the whole map)
-        if self.algo is 'optsol':
-
-            self._init_optsol()
-            self._gen_optsol()
-            if self.interacPlot is True:
-                self._plot_update_optsol()
+        # Global optimal solution using pyopt (knowledge of the whole map)
+        if self.lib is 'pyopt':
+            self._init_pyopt()
+            self.elapsed_time = time.clock()
+            self._gen_pyopt()
+            self.elapsed_time = time.clock() - self.elapsed_time
+            self._plot_update()
+            
+        # Global optimal solution using scipy (knowledge of the whole map)
+        elif self.lib is 'scipy':
+            self._init_scipy()
+            self.elapsed_time = time.clock()
+            self._gen_scipy()
+            self.elapsed_time = time.clock() - self.elapsed_time
+            self._plot_update()
             
         # Unknow method
         else:
@@ -471,11 +799,13 @@ class WorldSim(object):
         self.obst = obstacles
         self.p_bound = phy_boundary
 
-    def run(self, interacPlot=False):
+    def run(self, interacPlot=False, speedPlot=False):
 
         # Interactive plot
         if interacPlot is True:
             plt.ion()
+            self.mrobot.setOption('IPLOT', True)
+            # TODO: in the future we may set IPLOT True for obstacles as well
 
         # Initiating plot
         self.fig = plt.figure()
@@ -490,14 +820,17 @@ class WorldSim(object):
 #                self.p_bound.y_min,
 #                self.p_bound.y_max])
 
-        if interacPlot is True:
-            self.mrobot.setOption('IPLOT', True, self.fig)
-            # TODO: in the future we may set IPLOT True for obstacles as well
-
         # Creating obstacles in the plot
         [obst.plot(self.fig, offset=self.mrobot.rho) for obst in self.obst]
 
-        # Creating robot path (and plot)
+        # Initiate robot path in plot
+        self.mrobot.plot(self.fig)
+
+        # Initiate robot speed plot
+        if speedPlot is True:
+            self.mrobot.plotSpeeds(plt.subplots(2))
+
+        # Creating robot path (and updating plot if IPLOT is true)
         self.mrobot.gen_trajectory()
 
         plt.show(block=True)
@@ -505,7 +838,7 @@ class WorldSim(object):
 #-----------------------------------------------------------------------------
 
 ###############################################################################
-# MAIN
+#                                   MAIN
 ###############################################################################
 if __name__ == "__main__":
 
@@ -515,8 +848,8 @@ if __name__ == "__main__":
                  RoundObstacle([ 2.30,  2.50], 0.50), 
                  RoundObstacle([ 1.25,  3.00], 0.10),
                  RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30)]
-#                 RoundObstacle([ 0.70,  1.45], 0.25)]
+                 RoundObstacle([-0.50,  1.50], 0.30),
+                 RoundObstacle([ 0.70,  1.45], 0.25)]
 
     boundary = Boundary([-5.0,10.0], [-5.0,10.0])
 
@@ -536,13 +869,37 @@ if __name__ == "__main__":
 #            t_sup=1e10,
             rho=0.2)
 
-#    robot.setOption('ALGO', 'optsol')
-#    robot.setOption('OPTMETHOD', 'slsqp')
+    robot.setOption('LIB', 'scipy') # only has slsqp method
+
+    robot.setOption('LIB', 'pyopt')
+    # free    
+    robot.setOption('OPTMETHOD', 'slsqp')
+#    robot.setOption('OPTMETHOD', 'psqp')
+#    robot.setOption('OPTMETHOD', 'algencan')
+#    robot.setOption('OPTMETHOD', 'filtersd')
+#    robot.setOption('OPTMETHOD', 'conmin')
+#    robot.setOption('OPTMETHOD', 'mmfd')
+#    robot.setOption('OPTMETHOD', 'ksopt')
+#    robot.setOption('OPTMETHOD', 'cobyla')
+#    robot.setOption('OPTMETHOD', 'sdpen')
+#    robot.setOption('OPTMETHOD', 'solvopt')
+#    robot.setOption('OPTMETHOD', 'alpso')
+#    robot.setOption('OPTMETHOD', 'nsga2')
+#    robot.setOption('OPTMETHOD', 'alhso')
+    # licenced
+#    robot.setOption('OPTMETHOD', 'snopt')
+#    robot.setOption('OPTMETHOD', 'nlpql')
+#    robot.setOption('OPTMETHOD', 'fsqp')
+#    robot.setOption('OPTMETHOD', 'mma')
+#    robot.setOption('OPTMETHOD', 'gcmma')
+#    robot.setOption('OPTMETHOD', 'midaco')
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('ACC', 1e-6)
-    robot.setOption('MAXIT', 50)
-    robot.setOption('IPRINT', -1)
+    robot.setOption('MAXIT', 10)
+    robot.setOption('IPRINT', 2)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
-    world_sim.run(interacPlot=True)
+    world_sim.run(interacPlot=True, speedPlot=True)
+
+    logging.info('Elapsed Time for path generation: {}'.format(robot.elapsed_time))
