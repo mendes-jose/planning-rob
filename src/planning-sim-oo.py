@@ -143,6 +143,7 @@ class Robot(object):
                 self.optAcc = 1e-6
             else:
                 self.optAcc = value
+            logging.debug('accuracy: {}'.format(self.optAcc))
         elif name == 'MAXIT':
             if value == None:
                 self.optMaxIt = 100
@@ -155,6 +156,7 @@ class Robot(object):
                 self.n_knots = 15
             else:
                 self.n_knots = value
+            logging.debug('no_bspline_knots: {}'.format(self.n_knots))
         elif name == 'LIB':
             if value == None:
                 self.lib = 'pyopt'
@@ -310,7 +312,7 @@ class Robot(object):
         icons = np.append(obst_cons, max_speed_cons)
 
         #----------------------------------------------------------------------
-        # Acceleration constraints
+        # Max acceleration constraints
         #----------------------------------------------------------------------
         if self.k_mod.l > 2:
             all_dv = map(self.k_mod.phi3, all_dz)
@@ -466,7 +468,7 @@ class Robot(object):
         #----------------------------------------------------------------------
         # Cost Object (criterium)
         #----------------------------------------------------------------------
-        J = (t_final-self.t_init)
+        J = (t_final-self.t_init)**2
 
         #----------------------------------------------------------------------
         # Final and initial values constraints
@@ -614,6 +616,35 @@ class Robot(object):
         self._init_opt_plot()
 
     def _gen_pyopt(self):
+        #--------------------------------------------------
+        #-----------------free and working-----------------
+        #--------------------------------------------------
+        #    'slsqp'
+        #    'psqp'
+        #    'algencan'
+        #    'alpso' # works but really bad
+        #    'alhso' # works but really bad
+        #--------------------------------------------------
+        #----------------free but does apply---------------
+        #--------------------------------------------------
+        #    'filtersd' # cannot handle eq cons
+        #    'conmin' # cannot handle eq cons
+        #    'mmfd' # didn't find the module
+        #    'ksopt' # cannot handle eq cons
+        #    'cobyla' # cannot handle eq cons
+        #    'sdpen' # cannot handle eq cons
+        #    'solvopt' # err constraints has no upper att
+        #    'nsga2' # cannot handle eq cons
+        #--------------------------------------------------
+        #------------------licenced------------------------
+        #--------------------------------------------------
+        #    'snopt'
+        #    'nlpql'
+        #    'fsqp'
+        #    'mma'
+        #    'gcmma'
+        #    'midaco'
+        #--------------------------------------------------
 
         logging.info('Optimization_method: {}'.format(self.optMethod))
 
@@ -748,7 +779,7 @@ class Robot(object):
         if self.lib == 'pyopt':
             self._init_pyopt()
             self.elapsed_time = time.clock()
-            self._gen_pyopt()
+                    print(self._gen_pyopt())
             self.elapsed_time = time.clock() - self.elapsed_time
             self._update_opt_plot()
             
@@ -850,40 +881,10 @@ class WorldSim(object):
 
         plt.show(block=True)
 
-###############################################################################
-#                                   MAIN
-###############################################################################
-if __name__ == "__main__":
-
-    logging.basicConfig(level=logging.DEBUG)
-
-    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
-                 RoundObstacle([ 2.30,  2.50], 0.50), 
-                 RoundObstacle([ 1.25,  3.00], 0.10),
-                 RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30)]
-#                 RoundObstacle([ 0.70,  1.45], 0.25)]
-
-    boundary = Boundary([-5.0,10.0], [-5.0,10.0])
-
-    kine_model = UnicycleKineModel(
-            [ 0.0,  0.0, np.pi/2],
-            [ 2.0,  5.0, np.pi/2],
-            [ 0.0,  0.0],
-            [ 0.0,  0.0],
-            [ 0.5,  5.0],
-            [ 1.6,  3.0])
-
-    robot = Robot(
-            kine_model,
-            obstacles,
-            boundary,
-#            N_s=100,
-#            t_init=0.0,
-#            t_sup=1e10,
-            rho=0.2)
-
+def parse_cmdline():
     # parsing command line eventual optmization method options
+    lib = None
+    method = None
     if len(sys.argv) > 1:
         lib = str(sys.argv[1])
         if len(sys.argv) > 2:
@@ -893,41 +894,50 @@ if __name__ == "__main__":
     else:
         lib = 'scipy'
 
+    return lib, method
+
+###############################################################################
+#                                   MAIN
+###############################################################################
+if __name__ == "__main__":
+
+    # set logging level (TODO receve from command line)
+    logging.basicConfig(level=logging.DEBUG)
+
+    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
+                 RoundObstacle([ 2.30,  2.50], 0.50), 
+                 RoundObstacle([ 1.25,  3.00], 0.10),
+                 RoundObstacle([ 0.30,  1.00], 0.10),
+                 RoundObstacle([-0.50,  1.50], 0.30),
+                 RoundObstacle([ 0.70,  1.45], 0.25)]
+
+    boundary = Boundary([-5.0,10.0], [-5.0,10.0])
+
+    kine_model = UnicycleKineModel(
+            [ 0.0,  0.0, np.pi/2], # q_initial
+            [ 2.0,  5.0, np.pi/2], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 0.5,  5.0],          # u_max
+            [ 1.6,  3.0])          # du_max
+
+    robot = Robot(
+            kine_model,
+            obstacles,
+            boundary,
+            N_s=200,
+#            t_init=0.0,
+#            t_sup=1e10,
+            rho=0.2)
+
+    lib, method = parse_cmdline()
+
     robot.setOption('LIB', lib) # only has slsqp method
     robot.setOption('OPTMETHOD', method)
-#--------------------------------------------------
-#-----------------free working---------------------
-#--------------------------------------------------
-#    'slsqp'
-#    'psqp'
-#    'algencan'
-#    'alpso' # works but really bad
-#    'alhso' # works but really bad
-#--------------------------------------------------
-#----------------free but not working--------------
-#--------------------------------------------------
-#    'filtersd' # cannot handle eq cons
-#    'conmin' # cannot handle eq cons
-#    'mmfd' # didn't find the module
-#    'ksopt' # cannot handle eq cons
-#    'cobyla' # cannot handle eq cons
-#    'sdpen' # cannot handle eq cons
-#    'solvopt' # err constraints has no upper att
-#    'nsga2' # cannot handle eq cons
-#--------------------------------------------------
-#------------------licenced------------------------
-#--------------------------------------------------
-#    'snopt'
-#    'nlpql'
-#    'fsqp'
-#    'mma'
-#    'gcmma'
-#    'midaco'
-#--------------------------------------------------
+    robot.setOption('ACC', 1e-6)
 #    robot.setOption('NKNOTS', 15)
-#    robot.setOption('ACC', 1e-6)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 50)
+    robot.setOption('MAXIT', 100)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
