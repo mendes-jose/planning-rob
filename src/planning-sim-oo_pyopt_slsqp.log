@@ -2,7 +2,7 @@ INFO:Optimization_lib: pyopt
 DEBUG:t_sup: 10000000000.0
 DEBUG:t_inf: 10.7703296143
 DEBUG:x_init: 10.77 0.00 0.00 0.12 0.29 0.24 0.59 0.35 0.88 0.47 1.18 0.59 1.47 0.71 1.76 0.82 2.06 0.94 2.35 1.06 2.65 1.18 2.94 1.29 3.24 1.41 3.53 1.53 3.82 1.65 4.12 1.76 4.41 1.88 4.71 2.00 5.00 
-DEBUG:1427466631.86
+DEBUG:1427468065.83
 INFO:Optimization_method: slsqp
 INFO:Optimization_results:
 [  1.11523176e+01   1.91403277e-17  -1.91403277e-17   2.31153934e-02
@@ -15,5 +15,7 @@ INFO:Optimization_results:
    3.95855744e+00   1.67821566e+00   4.28864571e+00   1.92686608e+00
    4.55252164e+00   1.97688472e+00   4.84875862e+00   2.00000000e+00
    5.00000000e+00]
-DEBUG:34.6783349514
+DEBUG:29.5887839794
 INFO:Fineshed planning
+INFO:Plannification summary Optimization summary: Iteration limit exceeded exit code 9
+INFO:Elapsed Time for path generation: 29.5888550282
