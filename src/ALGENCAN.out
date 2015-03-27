@@ -23,8 +23,8 @@
  rmfixv   =                    T
  slacks   =                    F
  scale    =                    T
- epsfeas  =           1.0000D-08
- epsopt   =           1.0000D-08
+ epsfeas  =           9.0000D-01
+ epsopt   =           9.0000D-01
  efacc    =           1.0000D-04
  eoacc    =           1.0000D-04
  iprint   =                   10
@@ -37,7 +37,7 @@
 
  Number of removed fixed variables :       0
 
- Objective function scale factor   : 1.0D+00
+ Objective function scale factor   : 4.6D-02
  Smallest constraints scale factor : 1.1D-01
 
  Entry to ALGENCAN.
@@ -46,5 +46,5 @@
 
 out penalt  objective infeas  scaled    scaled infeas norm   |Grad| inner Newton
 ite         function  ibilty  obj-funct infeas +compl graLag infeas totit forKKT
-  0         1.077D+01 1.D+00  1.077D+01 3.D-01 3.D-01 0.D+00 1.D+00    0   0   0
-  1 1.D+02  1.077D+01 3.D-01  1.077D+01 6.D-02 6.D-02 1.D+01 3.D-01   10C  0   0
+  0         1.160D+02 1.D+00  5.385D+00 3.D-01 3.D-01 0.D+00 1.D+00    0   0   0
+  1 5.D+01  1.160D+02 3.D-01  5.385D+00 8.D-02 8.D-02 6.D+00 1.D-01   10C  0   0

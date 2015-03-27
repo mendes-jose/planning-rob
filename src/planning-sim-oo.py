@@ -143,7 +143,6 @@ class Robot(object):
                 self.optAcc = 1e-6
             else:
                 self.optAcc = value
-            logging.debug('accuracy: {}'.format(self.optAcc))
         elif name == 'MAXIT':
             if value == None:
                 self.optMaxIt = 100
@@ -156,7 +155,6 @@ class Robot(object):
                 self.n_knots = 15
             else:
                 self.n_knots = value
-            logging.debug('no_bspline_knots: {}'.format(self.n_knots))
         elif name == 'LIB':
             if value == None:
                 self.lib = 'pyopt'
@@ -657,6 +655,9 @@ class Robot(object):
             solver.setOption('MIT', self.optMaxIt) # max no of iterations
         elif self.optMethod == 'algencan':
             solver = pyOpt.ALGENCAN(pll_type='POA') # parameter for parallel solv
+            solver.setOption('epsfeas', 9e-1)
+            solver.setOption('epsopt', 9e-1)
+            solver.setOption('iprint', 10)
         elif self.optMethod == 'alpso':
             solver = pyOpt.ALPSO(pll_type='POA') # parameter for parallel solv.
         elif self.optMethod == 'alhso':
@@ -778,22 +779,28 @@ class Robot(object):
         # Global optimal solution using pyopt (knowledge of the whole map)
         if self.lib == 'pyopt':
             self._init_pyopt()
-            self.elapsed_time = time.clock()
-                    print(self._gen_pyopt())
-            self.elapsed_time = time.clock() - self.elapsed_time
+            self.elapsed_time = time.time()
+            logging.debug(self.elapsed_time)
+            ret = self._gen_pyopt()
+            logging.debug(time.time() - self.elapsed_time)
+            self.elapsed_time = time.time() - self.elapsed_time
             self._update_opt_plot()
             
         # Global optimal solution using scipy (knowledge of the whole map)
         elif self.lib == 'scipy':
             self._init_scipy()
-            self.elapsed_time = time.clock()
-            self._gen_scipy()
-            self.elapsed_time = time.clock() - self.elapsed_time
+            self.elapsed_time = time.time()
+            logging.debug(self.elapsed_time)
+            ret = self._gen_scipy()
+            logging.debug(time.time() - self.elapsed_time)
+            self.elapsed_time = time.time() - self.elapsed_time
             self._update_opt_plot()
             
         # Unknow method
         else:
             logging.warning('Unknown optimization lib')
+            ret = None
+        return ret
 
 ###############################################################################
 # Obstacle/Boundary
@@ -860,11 +867,6 @@ class WorldSim(object):
         ax.set_ylabel('y(m)')
         ax.set_title('Generated trajectory')
         ax.axis('equal')
-#        ax.axis([
-#                self.p_bound.x_min,
-#                self.p_bound.x_max,
-#                self.p_bound.y_min,
-#                self.p_bound.y_max])
 
         # Creating obstacles in the plot
         [obst.plot(self.fig, offset=self.mrobot.rho) for obst in self.obst]
@@ -877,12 +879,17 @@ class WorldSim(object):
             self.mrobot.plotSpeeds(plt.subplots(2))
 
         # Creating robot path (and updating plot if IPLOT is true)
-        self.mrobot.gen_trajectory()
+        ret = self.mrobot.gen_trajectory()
+
+        logging.info('Fineshed planning')
 
         plt.show(block=True)
 
+        return ret
+
 def parse_cmdline():
     # parsing command line eventual optmization method options
+    scriptname = sys.argv[0]
     lib = None
     method = None
     if len(sys.argv) > 1:
@@ -894,22 +901,26 @@ def parse_cmdline():
     else:
         lib = 'scipy'
 
-    return lib, method
+    return scriptname, lib, method
 
 ###############################################################################
 #                                   MAIN
 ###############################################################################
 if __name__ == "__main__":
 
+    scriptname, lib, method = parse_cmdline()
+
     # set logging level (TODO receve from command line)
-    logging.basicConfig(level=logging.DEBUG)
+#    logging.basicConfig(level=logging.DEBUG)
+    fname = scriptname[0:-3]+'_'+lib+'_'+method+'.log'
+    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',filemode='w',level=logging.DEBUG)
 
     obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
                  RoundObstacle([ 2.30,  2.50], 0.50), 
                  RoundObstacle([ 1.25,  3.00], 0.10),
                  RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30),
-                 RoundObstacle([ 0.70,  1.45], 0.25)]
+                 RoundObstacle([-0.50,  1.50], 0.30)]
+#                 RoundObstacle([ 0.70,  1.45], 0.25)]
 
     boundary = Boundary([-5.0,10.0], [-5.0,10.0])
 
@@ -925,23 +936,22 @@ if __name__ == "__main__":
             kine_model,
             obstacles,
             boundary,
-            N_s=200,
+            N_s=100,
 #            t_init=0.0,
 #            t_sup=1e10,
             rho=0.2)
 
-    lib, method = parse_cmdline()
 
     robot.setOption('LIB', lib) # only has slsqp method
     robot.setOption('OPTMETHOD', method)
-    robot.setOption('ACC', 1e-6)
+    robot.setOption('ACC', 1e-1)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 100)
+    robot.setOption('MAXIT', 5)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
-    world_sim.run(interacPlot=True, speedPlot=True)
+    logging.info('Plannification summary {}'.format(world_sim.run(interacPlot=True, speedPlot=True)))
 
     if robot.k_mod.l > 2:
         f, axarr = plt.subplots(2)

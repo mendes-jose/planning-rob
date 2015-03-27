@@ -99,6 +99,17 @@ class UnicycleKineModel(object):
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0')
 
+
+###############################################################################
+# Planner
+###############################################################################
+class Planner(object):
+    def __init__(
+        self,
+        robot,
+        
+
+
 ###############################################################################
 # Robot
 ###############################################################################
@@ -108,6 +119,7 @@ class Robot(object):
             kine_model,
             obstacles,
             phy_boundary,
+            planner,
             N_s=100,
             t_init=0.0,
             t_sup=1e10,
@@ -121,17 +133,13 @@ class Robot(object):
         self.t_sup = t_sup # superior limit of time
         self.rho = rho
 
-        # online params
-        self.q_ref = self.k_mod.q_init
-        self.u_ref = self.k_mod.u_init
-
-        # interactive plot
+        # Generic params
+        self.setOption('LIB')
         self.setOption('IPLOT')
 
         # Optimal solver params
-        self.setOption('LIB')
-        self.setOption('OPTMETHOD')
         self.setOption('NKNOTS')
+        self.setOption('OPTMETHOD')
         self.setOption('ACC')
         self.setOption('MAXIT')
         self.setOption('IPRINT')
@@ -147,7 +155,6 @@ class Robot(object):
                 self.optAcc = 1e-6
             else:
                 self.optAcc = value
-            logging.debug('accuracy: {}'.format(self.optAcc))
         elif name == 'MAXIT':
             if value == None:
                 self.optMaxIt = 100
@@ -160,7 +167,6 @@ class Robot(object):
                 self.n_knots = 15
             else:
                 self.n_knots = value
-            logging.debug('no_bspline_knots: {}'.format(self.n_knots))
         elif name == 'LIB':
             if value == None:
                 self.lib = 'pyopt'
@@ -180,15 +186,15 @@ class Robot(object):
             logging.warning('Unknown parameter '+name+', nothing will be set')
 
     # Generate b-spline knots
-    def _gen_knots(self, t_init, t_final):
-        knots = [t_init]
+    def _gen_knots(self, t_final):
+        knots = [self.t_init]
         for j in range(1,self.d):
-            knots_j = t_init
+            knots_j = self.t_init
             knots = knots + [knots_j]
 
         for j in range(self.d,self.d+self.n_knots):
-            knots_j = t_init + (j-(self.d-1.0))* \
-                    (t_final-t_init)/self.n_knots
+            knots_j = self.t_init + (j-(self.d-1.0))* \
+                    (t_final-self.t_init)/self.n_knots
             knots = knots + [knots_j]
 
         for j in range(self.d+self.n_knots,2*self.d-1+self.n_knots):
@@ -218,7 +224,7 @@ class Robot(object):
                     axis=1)
         return z
 
-    # Give the curve which interpolates the control points (or its derivatives)
+    # Give the curve which interpolates the control points (or its derivates)
     def _gen_dtraj(self, x, deriv_order):
         ctrl_pts = np.asmatrix(
                 np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
@@ -238,7 +244,7 @@ class Robot(object):
                 np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
 
         # updatating knots
-        self.knots = self._gen_knots(self.t_init, t_final)
+        self.knots = self._gen_knots(t_final)
 
         # get matrix [z dz ddz](t_init)
         dz_t_init = self._comb_bsp(self.t_init, ctrl_pts, 0).T
@@ -271,7 +277,7 @@ class Robot(object):
                 np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
 
         # updatating knots
-        self.knots = self._gen_knots(self.t_init, t_final)
+        self.knots = self._gen_knots(t_final)
 
         # creating time
         mtime = np.linspace(self.t_init, t_final, self.N_s)
@@ -364,7 +370,7 @@ class Robot(object):
                 self.n_ctrlpts)).T
 
         # Generate initial b-spline knots
-        self.knots = self._gen_knots(self.t_init, self.t_final)
+        self.knots = self._gen_knots(self.t_final)
 
         # creating time
         self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
@@ -435,135 +441,7 @@ class Robot(object):
         else:
             logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
 
-    def _obj_func_pyopt_online(self, x):
-        # creating some useful variables
-        ctrl_pts = np.asmatrix(
-                np.asarray(x).reshape(self.n_ctrlpts, self.k_mod.u_dim))
-
-        # get a list over time of the matrix [z dz ddz dddz ...](t)
-        all_dz = []
-        for tk in self.tk_tk_Tp:
-            dz = self._comb_bsp(tk, ctrl_pts, 0).T
-            for dev in range(1,self.k_mod.l+1):
-                dz = np.append(dz,self._comb_bsp(tk, ctrl_pts, dev).T,axis=1)
-            all_dz += [dz]
-
-        # get a list over time of command values u(t)
-        all_us = map(self.k_mod.phi2, all_dz)
-
-        # update plot if interactive plot is true
-        if self.interacPlot == True:
-#            self.curve = self._gen_dtraj(x, 0)
-#            self.ctrl_pts = ctrl_pts
-#            self.linspeed = map(lambda x:x[0,0], all_us)
-#            self.angspeed = map(lambda x:x[1,0], all_us)
-#            self.mtime = mtime
-            self._update_opt_plot()
-
-        #----------------------------------------------------------------------
-        # Cost Object (criterium)
-        #----------------------------------------------------------------------
-        J = LA.norm(self.k_mod.phi1(all_dz[-1])-self.k_mod.q_final)**2
-
-        #----------------------------------------------------------------------
-        # Final and initial values constraints
-        #----------------------------------------------------------------------
-        econs = np.append(np.append(
-                np.asarray(self.k_mod.phi1(all_dz[0])-self.k_mod.q_ref)),
-                np.asarray(self.k_mod.phi2(all_dz[0])-self.k_mod.u_ref))
-
-        # Get equations that were not respected
-        self.unsatisf_eq_values = [ec for ec in econs if ec != 0]
-
-        #----------------------------------------------------------------------
-        # Obstacles constraints at each time step
-        #----------------------------------------------------------------------
-        if len(self.det_obst) > 0:
-            obst_cons = np.array([(self.rho + self.det_obst[0].radius()) - \
-                    LA.norm(np.matrix(self.det_obst[0].pos).T - zl[:,0]) \
-                    for zl in all_dz])
-            for m in range(1,len(self.det_obst)):
-                obst_cons = np.append(
-                        obst_cons,
-                        np.array([(self.rho + self.det_obst[m].radius()) - \
-                        LA.norm(np.matrix(self.det_obst[m].pos).T - zl[:,0]) \
-                        for zl in all_dz]))
-
-        #----------------------------------------------------------------------
-        # Max speed constraints
-        #----------------------------------------------------------------------
-        max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
-                map(lambda u:[abs(u[0,0]) - self.k_mod.u_max[0,0],
-                abs(u[1,0]) - self.k_mod.u_max[1,0]], all_us))))
-
-        icons = max_speed_cons
-        if len(self.det_obst) > 0:
-            icons = np.append(icons, obst_cons)
-
-        # Get inequations that were not respected
-        self.unsatisf_ieq_values = [ic for ic in icons if ic > 0]
-
-        cons = np.append(econs, icons)
-
-        return J, cons, 0
-
-    def _gen_pyopt_online(self):
-
-        logging.info('Optimization_method: {}'.format(self.optMethod))
-
-        if self.optMethod == 'slsqp':
-            solver = pyOpt.SLSQP(pll_type='POA') # parameter for parallel solv.
-            solver.setOption('ACC', self.optAcc) # accuracy param (1e-6)
-            solver.setOption('MAXIT', self.optMaxIt) # max no of iterations
-        elif self.optMethod == 'psqp':
-            solver = pyOpt.PSQP(pll_type='POA') # parameter for parallel solv.
-            solver.setOption('MIT', self.optMaxIt) # max no of iterations
-        elif self.optMethod == 'algencan':
-            solver = pyOpt.ALGENCAN(pll_type='POA') # parameter for parallel solv
-        elif self.optMethod == 'alpso':
-            solver = pyOpt.ALPSO(pll_type='POA') # parameter for parallel solv.
-        elif self.optMethod == 'alhso':
-            solver = pyOpt.ALHSO(pll_type='POA') # parameter for parallel solv.
-        else:
-            logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
-            return
-
-        if self.optIprint != None:
-            solver.setOption('IPRINT', self.optIprint) # output style
-
-        keep_planning = True
-        while keep_planning:
-
-            # find solution
-            [J, x, inform] = solver(self.opt_prob)
-            logging.info('Optimization_results:\n{}'.format(x))
-
-            self.q_ref = self.q()
-
-            self.knots = self._gen_knots()
-
-        # update values according with optimization result
-        self._update_opt(x)
-
-        return ('Optimization summary: {} exit code {}'.format(
-                inform['text'],
-                inform['value']))
-
-        logging.info('Optimization_method: {}'.format(self.optMethod))
-
-        if self.optMethod == 'slsqp':
-
-
-    
-                if self.interacPlot == None:
-                    self._update_opt()
-
-                self.tk_tk_Tp
-    
-                logging.info('Optimization_results:\n{}'.format(x))
-
-        else:
-            logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
+    # Object Function (used when finding the path with pyopt option)
     def _obj_func_pyopt(self, x):
 
         # creating some useful variables
@@ -572,7 +450,7 @@ class Robot(object):
                 np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
 
         # updatating knots
-        self.knots = self._gen_knots(self.t_init, t_final)
+        self.knots = self._gen_knots(t_final)
 
         # creating time
         mtime = np.linspace(self.t_init, t_final, self.N_s)
@@ -628,6 +506,12 @@ class Robot(object):
                     for zl in all_dz]))
 
         #----------------------------------------------------------------------
+        # Discrete displacement constraints
+        #----------------------------------------------------------------------
+#        disc_dis = [LA.norm(all_dz[ind][:,0]-all_dz[ind+1][:,0])-0.1 \
+#                for ind in range(len(all_dz)-1)]
+
+        #----------------------------------------------------------------------
         # Max speed constraints
         #----------------------------------------------------------------------
         max_speed_cons = np.asarray(list(itertools.chain.from_iterable(
@@ -673,7 +557,7 @@ class Robot(object):
                 self.n_ctrlpts)).T
 
         # Generate initial b-spline knots
-        self.knots = self._gen_knots(self.t_init, self.t_final)
+        self.knots = self._gen_knots(self.t_final)
 
         # creating time
         self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
@@ -731,6 +615,7 @@ class Robot(object):
         self.opt_prob.addConGroup( # inequations constraints
                 'ic',
                 self.N_s*self.k_mod.u_dim +
+#                        self.N_s-1+
                         self.N_s*len(self.obst), # dimenstion
                 'i') # inequations
 
@@ -808,7 +693,7 @@ class Robot(object):
         self.t_final = x[0]
         self.ctrl_pts = np.asmatrix(
                 np.asarray(x[1:]).reshape(self.n_ctrlpts, self.k_mod.u_dim))
-        self.knots = self._gen_knots(self.t_init, self.t_final)
+        self.knots = self._gen_knots(self.t_final)
         self.curve = self._gen_dtraj(x, 0)
         self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
         all_dz = []
@@ -898,46 +783,29 @@ class Robot(object):
 
     def gen_trajectory(self):
 
-        logging.info('online: {}'.format(self.online))
-
-        if self.online:
-            logging.info('Optimization_lib: {}'.format(self.lib))
-            # Global optimal solution using pyopt (knowledge of the whole map)
-            if self.lib == 'pyopt':
-            elif self.lib == 'scipy':
-                self.init_scipy_online()
-                self.elapsed_time = time.clock()
-                self._gen_scipy_online()
-                self.elapsed_time = time.clock() - self.elapsed_time
-                self._update_opt_plot()
-            # Unknow method
-            else:
-                logging.warning('Unknown optimization lib')
+        logging.info('Optimization_lib: {}'.format(self.lib))
+    
+        # Global optimal solution using pyopt (knowledge of the whole map)
+        if self.lib == 'pyopt':
+            self._init_pyopt()
+            self.elapsed_time = time.clock()
+            ret = self._gen_pyopt()
+            self.elapsed_time = time.clock() - self.elapsed_time
+            self._update_opt_plot()
             
+        # Global optimal solution using scipy (knowledge of the whole map)
+        elif self.lib == 'scipy':
+            self._init_scipy()
+            self.elapsed_time = time.clock()
+            ret = self._gen_scipy()
+            self.elapsed_time = time.clock() - self.elapsed_time
+            self._update_opt_plot()
+            
+        # Unknow method
         else:
-            logging.info('Optimization_lib: {}'.format(self.lib))
-        
-            # Global optimal solution using pyopt (knowledge of the whole map)
-            if self.lib == 'pyopt':
-                self._init_pyopt()
-                self.elapsed_time = time.clock()
-                ret = self._gen_pyopt()
-                self.elapsed_time = time.clock() - self.elapsed_time
-                self._update_opt_plot()
-                
-            # Global optimal solution using scipy (knowledge of the whole map)
-            elif self.lib == 'scipy':
-                self._init_scipy()
-                self.elapsed_time = time.clock()
-                ret = self._gen_scipy()
-                self.elapsed_time = time.clock() - self.elapsed_time
-                self._update_opt_plot()
-                
-            # Unknow method
-            else:
-                logging.warning('Unknown optimization lib')
-                ret = None
-            return ret
+            logging.warning('Unknown optimization lib')
+            ret = None
+        return ret
 
 ###############################################################################
 # Obstacle/Boundary
@@ -1004,11 +872,6 @@ class WorldSim(object):
         ax.set_ylabel('y(m)')
         ax.set_title('Generated trajectory')
         ax.axis('equal')
-#        ax.axis([
-#                self.p_bound.x_min,
-#                self.p_bound.x_max,
-#                self.p_bound.y_min,
-#                self.p_bound.y_max])
 
         # Creating obstacles in the plot
         [obst.plot(self.fig, offset=self.mrobot.rho) for obst in self.obst]
@@ -1021,12 +884,16 @@ class WorldSim(object):
             self.mrobot.plotSpeeds(plt.subplots(2))
 
         # Creating robot path (and updating plot if IPLOT is true)
-        self.mrobot.gen_trajectory()
+        ret = self.mrobot.gen_trajectory()
 
         plt.show(block=True)
 
+        return ret
+
 def parse_cmdline():
     # parsing command line eventual optmization method options
+    lib = None
+    method = None
     if len(sys.argv) > 1:
         lib = str(sys.argv[1])
         if len(sys.argv) > 2:
@@ -1050,8 +917,8 @@ if __name__ == "__main__":
                  RoundObstacle([ 2.30,  2.50], 0.50), 
                  RoundObstacle([ 1.25,  3.00], 0.10),
                  RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30)]
-#                 RoundObstacle([ 0.70,  1.45], 0.25)]
+                 RoundObstacle([-0.50,  1.50], 0.30),
+                 RoundObstacle([ 0.70,  1.45], 0.25)]
 
     boundary = Boundary([-5.0,10.0], [-5.0,10.0])
 
@@ -1067,7 +934,7 @@ if __name__ == "__main__":
             kine_model,
             obstacles,
             boundary,
-#            N_s=100,
+            N_s=200,
 #            t_init=0.0,
 #            t_sup=1e10,
             rho=0.2)
@@ -1079,11 +946,11 @@ if __name__ == "__main__":
     robot.setOption('ACC', 1e-6)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 50)
+    robot.setOption('MAXIT', 100)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
-    world_sim.run(interacPlot=True, speedPlot=True)
+    logging.info('Plannification summary {}'.format(world_sim.run(interacPlot=True, speedPlot=True)))
 
     if robot.k_mod.l > 2:
         f, axarr = plt.subplots(2)
