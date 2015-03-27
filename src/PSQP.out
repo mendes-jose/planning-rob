@@ -1,8 +1,14 @@
  ENTRY TO PSQP :
- NIT=   0  NFV=   1  NFG=   1  F= 116.000      C=0.1E+01  G=0.1E+61
- NIT=   1  NFV=   4  NFG=   2  F= 144.515      C=0.1E+01  G=0.9E+00
- NIT=   2  NFV=   5  NFG=   3  F= 255.058      C=0.6E+01  G=0.5E+02
- NIT=   3  NFV=   6  NFG=   4  F= 345.975      C=0.6E+01  G=0.1E+04
- NIT=   4  NFV=   7  NFG=   5  F= 147.014      C=0.5E+01  G=0.5E+03
- NIT=   5  NFV=   8  NFG=   6  F= 360.108      C=0.6E+01  G=0.4E+04
- NIT=   6  NFV=   9  NFG=   7  F=-27.9428      C=0.8E+02  G=0.3E+04
+ NIT=   0  NFV=   1  NFG=   1  F= 116.000      C=0.5E+01  G=0.1E+61
+ NIT=   1  NFV=   2  NFG=   2  F=0.337799E+09  C=0.4E+01  G=0.5E+04
+ NIT=   2  NFV=   3  NFG=   3  F=0.265881E+09  C=0.4E+01  G=0.4E+08
+ NIT=   3  NFV=   5  NFG=   4  F=0.358144E+07  C=0.4E+01  G=0.2E+07
+ NIT=   4  NFV=   7  NFG=   5  F=0.610358E+07  C=0.4E+01  G=0.1E+07
+ NIT=   5  NFV=   9  NFG=   6  F=0.547016E+07  C=0.4E+01  G=0.4E+07
+ NIT=   6  NFV=  11  NFG=   7  F=0.511002E+07  C=0.4E+01  G=0.2E+08
+ NIT=   7  NFV=  12  NFG=   8  F=0.832167E+07  C=0.4E+01  G=0.3E+09
+ NIT=   8  NFV=  13  NFG=   9  F= 469849.      C=0.4E+01  G=0.5E+08
+ NIT=   9  NFV=  14  NFG=  10  F= 16378.3      C=0.4E+01  G=0.6E+08
+ NIT=  10  NFV=  15  NFG=  11  F=-1055.85      C=0.4E+01  G=0.1E+09
+ EXIT FROM PSQP :
+ NIT=  11  NFV=  46  NFG=  11  F= 3515.88      C=0.4E+01  G=0.5E+02  ITERM= -6

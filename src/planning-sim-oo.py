@@ -329,6 +329,63 @@ class Robot(object):
         self._update_opt(x)
         self._update_opt_plot()
 
+    def _improve_init_guess(self):
+
+        no_obst = len(self.obstacles)
+
+        nrp = [] # narrow paths
+        for i in range(no_obst):
+            for j in range(i, no_obst):
+                if (self.obstacles[i].x()-self.obstacles[j].x())**2 + \ 
+                        (self.obstacles[i].y()-self.obstacles[j].y())**2 < \
+                        (self.obstacles[i].radius()+ \
+                        self.obstacles[j].radius()+2*self.rho)**2:
+                    nrp += [(i, j)]
+
+        if nrp == []:
+            return
+
+        # Now that we know that there are narrow paths let's check if
+        # they represent a problem:
+
+        # Generate initial b-spline knots
+        self.knots = self._gen_knots(self.t_final)
+
+        # creating time
+        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+
+        c = 4 #TODO find a appropriate value
+        epsilon = c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0])
+
+        # interpolate control points using combination of b-splines
+        z = [self._comb_bsp(tk, self.ctrl_pts, 0) for tk in self.mtime]
+
+        for i in nrp:
+
+            dcent2 = (self.obstacles[i[1]].y()-\
+            self.obstacles[narp[i][0]].y())**2+
+            (self.obstacles[i[1]].x()-\
+            self.obstacles[i[0]].x())**2
+
+            dists = map(lambda x:abs(x[0,0]*(self.obstacles[i[1]].y()- \
+                    self.obstacles[i[0]].y())-x[0,1]* \
+                    (self.obstacles[i[1]].x()-self.obstacles[i[0]].x())+\
+                    self.obstacles[i[1]].x()*self.obstacles[narp[i][0]].x()-\
+                    self.obstacles[i[1]].y()*self.obstacles[narp[i][0]].y())/\
+                    dcent2, z)
+
+            if min(dists) > epsilon
+                continue
+                
+            j = dists.index(min(dists))
+
+            # check if the found point is between the two obstacles' centers
+            if (z[j][0,0]-self.obstacles[i[0]].x())**2+\
+                    (z[j][0,1]-self.obstacles[i[0]].y())**2 <= dcent2 and \
+                    (z[j][0,0]-self.obstacles[i[1]].x())**2+\
+                    (z[j][0,1]-self.obstacles[i[1]].y())**2 <= dcent2:
+                # TODO FIX THE CURVE CHANGING THE CTRL PTS
+                    
     def _init_scipy(self):
         # Optimal solution parameters
         self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
@@ -356,6 +413,7 @@ class Robot(object):
                 self.k_mod.q_init[1,0],
                 self.k_mod.q_final[1,0],
                 self.n_ctrlpts)).T
+        self._improve_init_guess()
 
         # Generate initial b-spline knots
         self.knots = self._gen_knots(self.t_final)
@@ -410,6 +468,11 @@ class Robot(object):
             else:
                 f_callback = None
 
+            if self.optIprint != None:
+                iprint_option = self.optIprint
+            else:
+                iprint_option = 1
+
             x = fmin_slsqp(self._criteria,
                     self.x_init,
                     eqcons=(),
@@ -418,7 +481,7 @@ class Robot(object):
                     f_ieqcons=self._fieqcons,
                     iter=self.optMaxIt,
                     acc=self.optAcc,
-                    iprint=self.optIprint,
+                    iprint=iprint_option,
                     callback=f_callback)
 
             if self.interacPlot == None:
@@ -537,11 +600,13 @@ class Robot(object):
         self.ctrl_pts=np.matrix(np.zeros((self.n_ctrlpts,self.k_mod.u_dim)))
         self.ctrl_pts[:,0]=np.matrix(np.linspace( # linspace in x
                 self.k_mod.q_init[0,0],
-                self.k_mod.q_final[0,0],
+#                self.k_mod.q_final[0,0],
+                0.01,
                 self.n_ctrlpts)).T
         self.ctrl_pts[:,1]=np.matrix(np.linspace( # linsapce in y
                 self.k_mod.q_init[1,0],
-                self.k_mod.q_final[1,0],
+#                self.k_mod.q_final[1,0],
+                -0.01,
                 self.n_ctrlpts)).T
 
         # Generate initial b-spline knots
@@ -655,8 +720,8 @@ class Robot(object):
             solver.setOption('MIT', self.optMaxIt) # max no of iterations
         elif self.optMethod == 'algencan':
             solver = pyOpt.ALGENCAN(pll_type='POA') # parameter for parallel solv
-            solver.setOption('epsfeas', 9e-1)
-            solver.setOption('epsopt', 9e-1)
+#            solver.setOption('epsfeas', 9e-1)
+#            solver.setOption('epsopt', 9e-1)
             solver.setOption('iprint', 10)
         elif self.optMethod == 'alpso':
             solver = pyOpt.ALPSO(pll_type='POA') # parameter for parallel solv.
@@ -887,6 +952,33 @@ class WorldSim(object):
 
         return ret
 
+def _isobstok(obsts, c, r):
+    if len(obsts) > 0:
+        for obst in obsts:
+            if (c[0]-obst[0][0])**2 + (c[1]-obst[0][1])**2 < (r+obst[1])**2:
+                return False
+    return True
+
+def rand_round_obst(no, boundary):
+
+    N = 1/0.0001
+    min_radius = 0.15
+    max_radius = 0.6
+    radius_range = np.linspace(min_radius,max_radius,N)
+    x_range = np.linspace(boundary.x_min+max_radius,boundary.x_max-max_radius,N)
+    y_range = np.linspace(boundary.y_min+max_radius,boundary.y_max-max_radius,N)
+    
+    obsts = []
+    i=0
+    while i < no:
+        x = np.random.choice(x_range)
+        y = np.random.choice(y_range)
+        r = np.random.choice(radius_range)
+        if _isobstok(obsts, [x, y], r):
+            obsts += [([x, y], r)]
+            i += 1
+    return obsts
+
 def parse_cmdline():
     # parsing command line eventual optmization method options
     scriptname = sys.argv[0]
@@ -915,14 +1007,22 @@ if __name__ == "__main__":
     fname = scriptname[0:-3]+'_'+lib+'_'+method+'.log'
     logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',filemode='w',level=logging.DEBUG)
 
+    boundary = Boundary([-5.0,5.0], [-1.0,6.0])
+
+    n_obsts = 5
+
+    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,3.0],[0.0,5.0]))
+    print(obst_info)
+    obstacles = []
+    for i in obst_info:
+        obstacles += [RoundObstacle(i[0], i[1])]
+
     obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
                  RoundObstacle([ 2.30,  2.50], 0.50), 
                  RoundObstacle([ 1.25,  3.00], 0.10),
                  RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30)]
-#                 RoundObstacle([ 0.70,  1.45], 0.25)]
-
-    boundary = Boundary([-5.0,10.0], [-5.0,10.0])
+                 RoundObstacle([-0.50,  1.50], 0.30),
+                 RoundObstacle([ 0.70,  1.45], 0.25)]
 
     kine_model = UnicycleKineModel(
             [ 0.0,  0.0, np.pi/2], # q_initial
@@ -944,10 +1044,10 @@ if __name__ == "__main__":
 
     robot.setOption('LIB', lib) # only has slsqp method
     robot.setOption('OPTMETHOD', method)
-    robot.setOption('ACC', 1e-1)
+    robot.setOption('ACC', 1e-6)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 5)
+    robot.setOption('MAXIT', 100)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
