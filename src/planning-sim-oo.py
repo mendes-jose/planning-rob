@@ -15,6 +15,7 @@ import itertools
 import sys
 import pyOpt
 import logging
+import copy
 
 ###############################################################################
 # Unicycle Kinematic Model 
@@ -331,19 +332,21 @@ class Robot(object):
 
     def _improve_init_guess(self):
 
-        no_obst = len(self.obstacles)
+        no_obst = len(self.obst)
 
         nrp = [] # narrow paths
         for i in range(no_obst):
-            for j in range(i, no_obst):
-                if (self.obstacles[i].x()-self.obstacles[j].x())**2 + \ 
-                        (self.obstacles[i].y()-self.obstacles[j].y())**2 < \
-                        (self.obstacles[i].radius()+ \
-                        self.obstacles[j].radius()+2*self.rho)**2:
+            for j in range(i+1, no_obst):
+                if (self.obst[i].x()-self.obst[j].x())**2 + \
+                        (self.obst[i].y()-self.obst[j].y())**2 < \
+                        (self.obst[i].radius()+ \
+                        self.obst[j].radius()+2*self.rho)**2:
                     nrp += [(i, j)]
 
         if nrp == []:
             return
+
+        logging.debug('attempt to improve first guess')
 
         # Now that we know that there are narrow paths let's check if
         # they represent a problem:
@@ -354,38 +357,83 @@ class Robot(object):
         # creating time
         self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
 
-        c = 4 #TODO find a appropriate value
-        epsilon = c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0])
+        c = 1 #TODO find a appropriate value
+        epsilon = (c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0]))[0,0]
 
         # interpolate control points using combination of b-splines
         z = [self._comb_bsp(tk, self.ctrl_pts, 0) for tk in self.mtime]
-
         for i in nrp:
 
-            dcent2 = (self.obstacles[i[1]].y()-\
-            self.obstacles[narp[i][0]].y())**2+
-            (self.obstacles[i[1]].x()-\
-            self.obstacles[i[0]].x())**2
+            dcent2 = (self.obst[i[1]].y()- self.obst[i[0]].y())**2+\
+                    (self.obst[i[1]].x()- self.obst[i[0]].x())**2
 
-            dists = map(lambda x:abs(x[0,0]*(self.obstacles[i[1]].y()- \
-                    self.obstacles[i[0]].y())-x[0,1]* \
-                    (self.obstacles[i[1]].x()-self.obstacles[i[0]].x())+\
-                    self.obstacles[i[1]].x()*self.obstacles[narp[i][0]].x()-\
-                    self.obstacles[i[1]].y()*self.obstacles[narp[i][0]].y())/\
-                    dcent2, z)
+            thir_n_fourth = self.obst[i[1]].x()*self.obst[i[0]].y()-\
+                    self.obst[i[1]].y()*self.obst[i[0]].x()
 
-            if min(dists) > epsilon
+            # compute all distances from the Ns points on the path to the line passing thru the 2 centers
+            dists = map(lambda x:abs(x[0,0]*(self.obst[i[1]].y()- \
+                    self.obst[i[0]].y())-x[0,1]* \
+                    (self.obst[i[1]].x()-self.obst[i[0]].x()) +\
+                    thir_n_fourth)**2/dcent2, z)
+
+            sorteddists = copy.deepcopy(dists)
+
+            sorteddists.sort()
+
+            # save index of the 2 closest
+            j1 = dists.index(sorteddists[0])
+            j2 = dists.index(sorteddists[1])
+
+            # if distance bigger than epsilon the curve does not cross the line passing thru the 2 centers
+            if dists[j1] > epsilon**2:
                 continue
-                
-            j = dists.index(min(dists))
+            
+            # check if the found intersection point is between the two obstacles' centers
+            intersec2c12 = (z[j1][0,0]-self.obst[i[0]].x())**2+\
+                    (z[j1][0,1]-self.obst[i[0]].y())**2
+            intersec2c22 = (z[j1][0,0]-self.obst[i[1]].x())**2+\
+                    (z[j1][0,1]-self.obst[i[1]].y())**2
 
-            # check if the found point is between the two obstacles' centers
-            if (z[j][0,0]-self.obstacles[i[0]].x())**2+\
-                    (z[j][0,1]-self.obstacles[i[0]].y())**2 <= dcent2 and \
-                    (z[j][0,0]-self.obstacles[i[1]].x())**2+\
-                    (z[j][0,1]-self.obstacles[i[1]].y())**2 <= dcent2:
+            if intersec2c12 <= dcent2 and intersec2c22 <= dcent2:
                 # TODO FIX THE CURVE CHANGING THE CTRL PTS
-                    
+
+                # choose the closest obstacle to be the one to avoid
+                if intersec2c12 < intersec2c22:
+                    to_be_avoided = self.obst[i[0]]
+                    other = self.obst[i[1]]
+                else:
+                    to_be_avoided = self.obst[i[1]]
+                    other = self.obst[i[0]]
+
+                # find which 2 control points are the closest to the obst. to be avoided
+                dpts = map(lambda cp:(cp[0,0]-to_be_avoided.x())**2 + \
+                        (cp[0,1]-to_be_avoided.y())**2, self.ctrl_pts)
+
+                sorteddpts = copy.deepcopy(dpts)
+
+                sorteddpts.sort()
+
+                ctrlpt_index1 = dpts.index(sorteddpts[0])
+                ctrlpt_index2 = dpts.index(sorteddpts[1])
+                ctrlpt_index3 = dpts.index(sorteddpts[2])
+
+                ctrl_pt_2b_moved = self.ctrl_pts[ctrlpt_index1]
+                ctrl_pt_aux = self.ctrl_pts[ctrlpt_index2]
+
+                path = ctrl_pt_2b_moved - ctrl_pt_aux
+                path = path/LA.norm(path)
+
+                dp = ((to_be_avoided.cp-ctrl_pt_aux)*path.T)[0,0]
+
+                ctrlaux2x = dp*path
+
+                x2to_be_avoided = (to_be_avoided.cp-ctrl_pt_aux) - ctrlaux2x
+
+#                self.ctrl_pts[ctrlpt_index1] = np.matrix('0.02, 1.0') # 0.02, 1.0
+                self.ctrl_pts[ctrlpt_index1] += 2*x2to_be_avoided
+                self.ctrl_pts[ctrlpt_index2] += x2to_be_avoided
+                self.ctrl_pts[ctrlpt_index3] += x2to_be_avoided
+
     def _init_scipy(self):
         # Optimal solution parameters
         self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
@@ -876,6 +924,14 @@ class Obstacle(object):
         self.dim = dimension
 
 class RoundObstacle(Obstacle):
+#    def __init__(self, position, dimension):
+#        self = Obstacle(position, dimension)
+#        self.cp = np.matrix(position)
+
+    def __init__(self, position, dimension):
+        Obstacle.__init__(self, position, dimension)
+        self.cp = np.matrix(self.pos)
+
     def x(self):
         return self.pos[0]
 
@@ -1011,18 +1067,18 @@ if __name__ == "__main__":
 
     n_obsts = 5
 
-    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,3.0],[0.0,5.0]))
+    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
     print(obst_info)
     obstacles = []
     for i in obst_info:
         obstacles += [RoundObstacle(i[0], i[1])]
 
-    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
-                 RoundObstacle([ 2.30,  2.50], 0.50), 
-                 RoundObstacle([ 1.25,  3.00], 0.10),
-                 RoundObstacle([ 0.30,  1.00], 0.10),
-                 RoundObstacle([-0.50,  1.50], 0.30),
-                 RoundObstacle([ 0.70,  1.45], 0.25)]
+#    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
+#                 RoundObstacle([ 2.30,  2.50], 0.50), 
+#                 RoundObstacle([ 1.25,  3.00], 0.10),
+#                 RoundObstacle([ 0.30,  1.00], 0.10),
+#                 RoundObstacle([-0.50,  1.50], 0.30)]
+#                 RoundObstacle([ 0.70,  1.45], 0.25)]
 
     kine_model = UnicycleKineModel(
             [ 0.0,  0.0, np.pi/2], # q_initial
@@ -1044,7 +1100,7 @@ if __name__ == "__main__":
 
     robot.setOption('LIB', lib) # only has slsqp method
     robot.setOption('OPTMETHOD', method)
-    robot.setOption('ACC', 1e-6)
+    robot.setOption('ACC', 1e-1)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
     robot.setOption('MAXIT', 100)
