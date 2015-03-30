@@ -346,93 +346,193 @@ class Robot(object):
         if nrp == []:
             return
 
-        logging.debug('attempt to improve first guess')
-
         # Now that we know that there are narrow paths let's check if
         # they represent a problem:
-
-        # Generate initial b-spline knots
-        self.knots = self._gen_knots(self.t_final)
-
-        # creating time
-        self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
 
         c = 1 #TODO find a appropriate value
         epsilon = (c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0]))[0,0]
 
         # interpolate control points using combination of b-splines
         z = [self._comb_bsp(tk, self.ctrl_pts, 0) for tk in self.mtime]
-        for i in nrp:
 
-            dcent2 = (self.obst[i[1]].y()- self.obst[i[0]].y())**2+\
-                    (self.obst[i[1]].x()- self.obst[i[0]].x())**2
+        maxit = len(nrp)*2
+        print('MAX iter {}'.format(maxit))
 
-            thir_n_fourth = self.obst[i[1]].x()*self.obst[i[0]].y()-\
-                    self.obst[i[1]].y()*self.obst[i[0]].x()
+        mov_hist = []
+        while maxit > 0:
+            done = 0
+            for i in nrp:
+                print('NRP: {}'.format(i))
+    
+                dcent2 = (self.obst[i[1]].y()- self.obst[i[0]].y())**2+\
+                        (self.obst[i[1]].x()- self.obst[i[0]].x())**2
+    
+                thir_n_fourth = self.obst[i[1]].x()*self.obst[i[0]].y()-\
+                        self.obst[i[1]].y()*self.obst[i[0]].x()
+    
+                # compute all distances from the Ns points on the path to the line passing thru the 2 centers
+                dists = map(lambda x:abs(x[0,0]*(self.obst[i[1]].y()- \
+                        self.obst[i[0]].y())-x[0,1]* \
+                        (self.obst[i[1]].x()-self.obst[i[0]].x()) +\
+                        thir_n_fourth)**2/dcent2, z)
+    
+                sorteddists = copy.deepcopy(dists)
+    
+                sorteddists.sort()
+    
+                # save index of the closest
+                j = dists.index(sorteddists[0])
+    
+                # if distance bigger than epsilon the curve does not cross the line passing thru the 2 centers
+                if dists[j] > epsilon**2:
+                    done += 1
+                    continue
+                
+                # check if there are multiples intersection points
+                closest_dists = [x for x in dists if x <= epsilon**2]
+                print('-----CLOSEST DISTS: {}'.format(closest_dists))
+                idx_clst_d = [dists.index(value) for value in closest_dists]
+                print('-----IDX {}'.format(idx_clst_d))
 
-            # compute all distances from the Ns points on the path to the line passing thru the 2 centers
-            dists = map(lambda x:abs(x[0,0]*(self.obst[i[1]].y()- \
-                    self.obst[i[0]].y())-x[0,1]* \
-                    (self.obst[i[1]].x()-self.obst[i[0]].x()) +\
-                    thir_n_fourth)**2/dcent2, z)
+                j = [idx_clst_d[0]]
+                for idx in range(1, len(idx_clst_d)):
+                    if abs(idx_clst_d[idx-1] - idx_clst_d[idx]) > 1:
+                        j += [idx_clst_d[idx]]
 
-            sorteddists = copy.deepcopy(dists)
+                print('No of intersections: {}'.format(len(j)+1))
 
-            sorteddists.sort()
+                # check if the found intersection point is between the two obstacles' centers
+                intersec2c12 = []
+                intersec2c22 = []
+                for ij in j:
+                    intersec2c12 += [(z[ij][0,0]-self.obst[i[0]].x())**2+\
+                            (z[ij][0,1]-self.obst[i[0]].y())**2]
+                    intersec2c22 += [(z[ij][0,0]-self.obst[i[1]].x())**2+\
+                            (z[ij][0,1]-self.obst[i[1]].y())**2]
 
-            # save index of the 2 closest
-            j1 = dists.index(sorteddists[0])
-            j2 = dists.index(sorteddists[1])
-
-            # if distance bigger than epsilon the curve does not cross the line passing thru the 2 centers
-            if dists[j1] > epsilon**2:
-                continue
-            
-            # check if the found intersection point is between the two obstacles' centers
-            intersec2c12 = (z[j1][0,0]-self.obst[i[0]].x())**2+\
-                    (z[j1][0,1]-self.obst[i[0]].y())**2
-            intersec2c22 = (z[j1][0,0]-self.obst[i[1]].x())**2+\
-                    (z[j1][0,1]-self.obst[i[1]].y())**2
-
-            if intersec2c12 <= dcent2 and intersec2c22 <= dcent2:
-                # TODO FIX THE CURVE CHANGING THE CTRL PTS
-
-                # choose the closest obstacle to be the one to avoid
-                if intersec2c12 < intersec2c22:
-                    to_be_avoided = self.obst[i[0]]
-                    other = self.obst[i[1]]
+                if intersec2c12 > dcent2 or intersec2c22 > dcent2:
+                    done += 1
+                    continue
                 else:
-                    to_be_avoided = self.obst[i[1]]
-                    other = self.obst[i[0]]
+                    # TODO Change several ctrl points using something like a exponential curve
+                    logging.debug('Attempt to improve first guess')
+    
+                    # choose the closest obstacle to be the one to avoid
+                    print('----------------------\nMOV HIST {}'.format(mov_hist))
+                    print('PT to test {}'.format(self.obst[i[0]]))
+                    print('Its ceter pos {}'.format(self.obst[i[0]].cp))
+                    print('Is on hist {}'.format(self.obst[i[0]] in mov_hist))
 
-                # find which 2 control points are the closest to the obst. to be avoided
-                dpts = map(lambda cp:(cp[0,0]-to_be_avoided.x())**2 + \
-                        (cp[0,1]-to_be_avoided.y())**2, self.ctrl_pts)
+                    if (self.obst[i[0]] in mov_hist) == (self.obst[i[1]] in mov_hist): # not xor
+                        if intersec2c12 < intersec2c22:
+                            to_be_avoided = self.obst[i[0]]
+                            other = self.obst[i[1]]
+                            if not self.obst[i[0]] in mov_hist:
+                                mov_hist += [self.obst[i[0]]]
+                            print('1.appeded to hist {}'.format(self.obst[i[0]]))
+                        else:
+                            to_be_avoided = self.obst[i[1]]
+                            other = self.obst[i[0]]
+                            if not self.obst[i[1]] in mov_hist:
+                                mov_hist += [self.obst[i[1]]]
+                            print('2.appeded to hist {}'.format(self.obst[i[1]]))
+                    elif not self.obst[i[0]] in mov_hist:
+                        to_be_avoided = self.obst[i[0]]
+                        other = self.obst[i[1]]
+                        mov_hist += [self.obst[i[0]]]
+                        print('3.appeded to hist {}'.format(self.obst[i[0]]))
+                    else:
+                        to_be_avoided = self.obst[i[1]]
+                        other = self.obst[i[0]]
+                        mov_hist += [self.obst[i[1]]]
+                        print('4.appeded to hist {}'.format(self.obst[i[1]]))
 
-                sorteddpts = copy.deepcopy(dpts)
+                    print('Its center pos {}'.format(to_be_avoided.cp))
 
-                sorteddpts.sort()
+                    # find which 2 control points are the closest to the obst. to be avoided
+                    distcp = map(lambda cp:(cp[0,0]-to_be_avoided.x())**2 + \
+                            (cp[0,1]-to_be_avoided.y())**2, self.ctrl_pts)
 
-                ctrlpt_index1 = dpts.index(sorteddpts[0])
-                ctrlpt_index2 = dpts.index(sorteddpts[1])
-                ctrlpt_index3 = dpts.index(sorteddpts[2])
+                    distz = map(lambda az:(az[0,0]-to_be_avoided.x())**2 + \
+                            (az[0,1]-to_be_avoided.y())**2, z)
 
-                ctrl_pt_2b_moved = self.ctrl_pts[ctrlpt_index1]
-                ctrl_pt_aux = self.ctrl_pts[ctrlpt_index2]
+                    sorteddistcp = copy.deepcopy(distcp)
+                    sorteddistz = copy.deepcopy(distz)
+    
+                    sorteddistcp.sort()
+                    sorteddistz.sort()
+    
+                    ctrlpt_index1 = distcp.index(sorteddistcp[0])
+                    ctrlpt_index2 = distcp.index(sorteddistcp[1])
+                    ctrlpt_index3 = distcp.index(sorteddistcp[2])
+    
+                    z_index1 = distz.index(sorteddistz[0])
+                    z_index2 = distz.index(sorteddistz[1])
+                    closest_z = z[z_index1]
+                    z_aux = z[z_index2]
 
-                path = ctrl_pt_2b_moved - ctrl_pt_aux
-                path = path/LA.norm(path)
+                    ctrl_pt_2b_moved = self.ctrl_pts[ctrlpt_index1]
+    
+                    path = closest_z - z_aux
+                    path = path/LA.norm(path)
+    
+                    dp = ((to_be_avoided.cp-z_aux)*path.T)[0,0]
+    
+                    ctrlaux2x = dp*path
+    
+                    x2to_be_avoided = (to_be_avoided.cp-z_aux) - ctrlaux2x
+    
+                    radius_ortho = (self.rho+to_be_avoided.radius())*x2to_be_avoided/LA.norm(x2to_be_avoided)
+    
+    #                self.ctrl_pts[ctrlpt_index1] = np.matrix('0.02, 1.0') # 0.02, 1.0
+                    no_ctrl_to_be_moved = int(
+                            3*to_be_avoided.radius()/\
+                            LA.norm(self.ctrl_pts[ctrlpt_index1]-\
+                            self.ctrl_pts[ctrlpt_index2]))
 
-                dp = ((to_be_avoided.cp-ctrl_pt_aux)*path.T)[0,0]
+                    pltmoved = []
+                    for k in range(no_ctrl_to_be_moved):
+                        idx = distcp.index(sorteddistcp[k])
+                        self.ctrl_pts[idx] += x2to_be_avoided+\
+                                radius_ortho*(no_ctrl_to_be_moved-k)/no_ctrl_to_be_moved
+                        pltmoved += [self.ctrl_pts[idx,0], self.ctrl_pts[idx,1], 'o']
 
-                ctrlaux2x = dp*path
+                    # interpolate control points using combination of b-splines
+                    z = [self._comb_bsp(tk,self.ctrl_pts,0) for tk in self.mtime]
+    
+                    # Recalculate t_final approx.
+                    self.t_final = sum(LA.norm(z[ind-1]-z[ind])/ \
+                            self.k_mod.u_max[0,0] \
+                            for ind in range(1, len(z)))
 
-                x2to_be_avoided = (to_be_avoided.cp-ctrl_pt_aux) - ctrlaux2x
+                    logging.debug('New t_final: {}'.format(self.t_final))
 
-#                self.ctrl_pts[ctrlpt_index1] = np.matrix('0.02, 1.0') # 0.02, 1.0
-                self.ctrl_pts[ctrlpt_index1] += 2*x2to_be_avoided
-                self.ctrl_pts[ctrlpt_index2] += x2to_be_avoided
-                self.ctrl_pts[ctrlpt_index3] += x2to_be_avoided
+                    # Generate initial b-spline knots
+                    self.knots = self._gen_knots(self.t_final)
+    
+                    # creating time
+                    self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+                    f = plt.figure()
+                    pltarg = []
+                    pltarg += [self.ctrl_pts[:,0], self.ctrl_pts[:,1], '*']
+                    pltarg += pltmoved
+                    pltarg += [to_be_avoided.x(), to_be_avoided.y(), 'r.',
+                            other.x(), other.y(), 'b.',
+                            map(lambda x:x[0,0], z), map(lambda x:x[0,1], z), 'g-']
+                    plt.plot(*pltarg)
+                    ax = f.gca()
+                    for o in self.obst:
+                        o.plot(f, self.rho)
+                    ax.axis('equal')
+                #endif
+            #endfor
+            if done == len(nrp):
+                print('DONE')    
+                break
+            maxit -= 1
+        #endfor
+        plt.show(block=True)
+    #endfunc
 
     def _init_scipy(self):
         # Optimal solution parameters
@@ -461,13 +561,15 @@ class Robot(object):
                 self.k_mod.q_init[1,0],
                 self.k_mod.q_final[1,0],
                 self.n_ctrlpts)).T
-        self._improve_init_guess()
 
         # Generate initial b-spline knots
         self.knots = self._gen_knots(self.t_final)
 
         # creating time
         self.mtime = np.linspace(self.t_init, self.t_final, self.N_s)
+
+        # if need be:
+        self._improve_init_guess()
 
         # get a list over time of the matrix [z dz ddz dddz ...](t)
         all_dz = []
@@ -484,7 +586,7 @@ class Robot(object):
         self.angspeed = map(lambda u:u[1,0], all_us)
 
         # Minimization argument (x)
-        self.x_init = np.append(self.t_inf, np.asarray(self.ctrl_pts)).tolist()
+        self.x_init = np.append(self.t_final, np.asarray(self.ctrl_pts)).tolist()
 
         str_x_init = 'x_init: '
         for i in self.x_init:
@@ -893,7 +995,6 @@ class Robot(object):
         if self.lib == 'pyopt':
             self._init_pyopt()
             self.elapsed_time = time.time()
-            logging.debug(self.elapsed_time)
             ret = self._gen_pyopt()
             logging.debug(time.time() - self.elapsed_time)
             self.elapsed_time = time.time() - self.elapsed_time
@@ -903,7 +1004,6 @@ class Robot(object):
         elif self.lib == 'scipy':
             self._init_scipy()
             self.elapsed_time = time.time()
-            logging.debug(self.elapsed_time)
             ret = self._gen_scipy()
             logging.debug(time.time() - self.elapsed_time)
             self.elapsed_time = time.time() - self.elapsed_time
@@ -1068,6 +1168,15 @@ if __name__ == "__main__":
     n_obsts = 5
 
     obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
+#    obst_info = [([1.6757675767576758, 1.9096909690969095], 0.27628262826282624),
+#            ([0.70021002100210017, 1.8473147314731473], 0.29225922592259224),
+#            ([1.8783278327832784, 2.8722172217221722], 0.44252925292529255), 
+#            ([3.1392939293929389, 1.3825382538253823], 0.38249324932493245),
+#            ([0.70933093309330919, 2.6199819981998198], 0.43951395139513949)]
+
+#    obst_info = [([1.776097609760976, 3.2933093309330932], 0.44752475247524748), ([0.25746574657465737, 2.1951095109510952], 0.32043204320432039), ([-0.37567756775677569, 3.3804680468046802], 0.23195319531953196), ([0.72035203520352031, 2.9929792979297929], 0.49702970297029703), ([2.7824382438243824, 2.8625562556255622], 0.55828082808280821)]
+
+    obst_info = [([-0.1077507750775078, 3.2611761176117611], 0.46417641764176421), ([2.2994099409940993, 1.7433543354335432], 0.17848784878487847), ([1.3154915491549155, 2.4402040204020401], 0.59635463546354628), ([0.13053305330533049, 2.0588058805880585], 0.492979297929793), ([1.8213221322132211, 1.7185718571857185], 0.28069306930693072)]
     print(obst_info)
     obstacles = []
     for i in obst_info:
@@ -1077,9 +1186,8 @@ if __name__ == "__main__":
 #                 RoundObstacle([ 2.30,  2.50], 0.50), 
 #                 RoundObstacle([ 1.25,  3.00], 0.10),
 #                 RoundObstacle([ 0.30,  1.00], 0.10),
-#                 RoundObstacle([-0.50,  1.50], 0.30)]
+#                 RoundObstacle([-0.50,  1.50], 0.30),
 #                 RoundObstacle([ 0.70,  1.45], 0.25)]
-
     kine_model = UnicycleKineModel(
             [ 0.0,  0.0, np.pi/2], # q_initial
             [ 2.0,  5.0, np.pi/2], # q_final
@@ -1103,7 +1211,7 @@ if __name__ == "__main__":
     robot.setOption('ACC', 1e-1)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 100)
+    robot.setOption('MAXIT', 50)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
