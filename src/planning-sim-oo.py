@@ -1196,7 +1196,7 @@ if __name__ == "__main__":
     for i in obst_info:
         obstacles += [RoundObstacle(i[0], i[1])]
 
-    obstacles = [RoundObstacle([ 0.0,  2.50], 0.20)]
+#    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
 #                 RoundObstacle([ 2.30,  2.50], 0.50), 
 #                 RoundObstacle([ 1.25,  3.00], 0.10),
 #                 RoundObstacle([ 0.30,  1.00], 0.10),
@@ -1204,7 +1204,7 @@ if __name__ == "__main__":
 #                 RoundObstacle([ 0.70,  1.45], 0.25)]
     kine_model = UnicycleKineModel(
             [ 0.0,  0.0, np.pi/2], # q_initial
-            [ 0.0,  5.0, np.pi/2], # q_final
+            [ 2.0,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 0.5,  5.0],          # u_max
