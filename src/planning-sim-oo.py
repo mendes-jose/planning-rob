@@ -62,7 +62,7 @@ class UnicycleKineModel(object):
         if z.shape >= (self.u_dim, self.l+1):
             return np.append(z[:,0], \
                     np.matrix(
-                    self._unsigned_angle(np.arctan2(z[1,1], z[0,1]))), axis = 0)
+                    np.arctan2(z[1,1], z[0,1])), axis = 0)
         else:
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0; 0.0')
