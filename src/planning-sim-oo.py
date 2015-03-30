@@ -289,13 +289,13 @@ class Robot(object):
         #----------------------------------------------------------------------
         # Obstacles constraints at each time step
         #----------------------------------------------------------------------
-        obst_cons = np.array([- (self.rho + self.obst[0].radius()) + \
+        obst_cons = np.array([- (self.rho + self.obst[0].radius) + \
                 LA.norm(np.matrix(self.obst[0].pos).T - zl[:,0]) \
                 for zl in all_dz])
         for m in range(1,len(self.obst)):
             obst_cons = np.append(
                     obst_cons,
-                    np.array([- (self.rho + self.obst[m].radius()) + \
+                    np.array([- (self.rho + self.obst[m].radius) + \
                     LA.norm(np.matrix(self.obst[m].pos).T - zl[:,0]) \
                     for zl in all_dz]))
 
@@ -351,10 +351,10 @@ class Robot(object):
         nrp = [] # narrow paths
         for i in range(no_obst):
             for j in range(i+1, no_obst):
-                if (self.obst[i].x()-self.obst[j].x())**2 + \
-                        (self.obst[i].y()-self.obst[j].y())**2 < \
-                        (self.obst[i].radius()+ \
-                        self.obst[j].radius()+2*self.rho)**2:
+                if (self.obst[i].x-self.obst[j].x)**2 + \
+                        (self.obst[i].y-self.obst[j].y)**2 < \
+                        (self.obst[i].radius+ \
+                        self.obst[j].radius+2*self.rho)**2:
                     nrp += [(i, j)]
 
         if nrp == []:
@@ -362,9 +362,6 @@ class Robot(object):
 
         # Now that we know that there are narrow paths let's check if
         # they represent a problem:
-
-        c = 3 #TODO find a appropriate value
-        epsilon = (c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0]))[0,0]
 
         # interpolate control points using combination of b-splines
         z = [self._comb_bsp(tk, self.ctrl_pts, 0) for tk in self.mtime]
@@ -376,18 +373,19 @@ class Robot(object):
         while maxit > 0:
             done = 0
             for i in nrp:
+
                 logging.debug('\n\n/////////////////////NRP////////////////////: {}'.format(i))
     
-                dcent2 = (self.obst[i[1]].y()- self.obst[i[0]].y())**2+\
-                        (self.obst[i[1]].x()- self.obst[i[0]].x())**2
+                dcent2 = (self.obst[i[1]].y- self.obst[i[0]].y)**2+\
+                        (self.obst[i[1]].x- self.obst[i[0]].x)**2
     
-                thir_n_fourth = self.obst[i[1]].x()*self.obst[i[0]].y()-\
-                        self.obst[i[1]].y()*self.obst[i[0]].x()
+                thir_n_fourth = self.obst[i[1]].x*self.obst[i[0]].y-\
+                        self.obst[i[1]].y*self.obst[i[0]].x
     
                 # compute all distances from the Ns points on the path to the line passing thru the 2 centers
-                dists = map(lambda x:abs(x[0,0]*(self.obst[i[1]].y()- \
-                        self.obst[i[0]].y())-x[0,1]* \
-                        (self.obst[i[1]].x()-self.obst[i[0]].x()) +\
+                dists = map(lambda x:abs(x[0,0]*(self.obst[i[1]].y- \
+                        self.obst[i[0]].y)-x[0,1]* \
+                        (self.obst[i[1]].x-self.obst[i[0]].x) +\
                         thir_n_fourth)**2/dcent2, z)
     
                 sorteddists = copy.deepcopy(dists)
@@ -397,6 +395,10 @@ class Robot(object):
                 # save index of the closest
                 j = dists.index(sorteddists[0])
     
+                c = 1 #TODO find a appropriate value
+                #epsilon = c*LA.norm(z[j]-z[dists.index(sorteddists[1])])
+                epsilon = (c*self.k_mod.u_max[0]*(self.mtime[1]-self.mtime[0]))[0,0]
+
                 # if distance bigger than epsilon the curve does not cross the line passing thru the 2 centers
                 if dists[j] > epsilon**2:
                     done += 1
@@ -418,10 +420,10 @@ class Robot(object):
                 isecc1_list = []
                 isecc2_list = []
                 for ij in j:
-                    isecc1_list += [(z[ij][0,0]-self.obst[i[0]].x())**2+\
-                            (z[ij][0,1]-self.obst[i[0]].y())**2]
-                    isecc2_list += [(z[ij][0,0]-self.obst[i[1]].x())**2+\
-                            (z[ij][0,1]-self.obst[i[1]].y())**2]
+                    isecc1_list += [(z[ij][0,0]-self.obst[i[0]].x)**2+\
+                            (z[ij][0,1]-self.obst[i[0]].y)**2]
+                    isecc2_list += [(z[ij][0,0]-self.obst[i[1]].x)**2+\
+                            (z[ij][0,1]-self.obst[i[1]].y)**2]
                 internal_intersecc1 = []
                 internal_intersecc2 = []
                 for ij in range(len(isecc1_list)):
@@ -432,10 +434,14 @@ class Robot(object):
                 if internal_intersecc1 == []:
                     done += 1
                     continue
-                elif len(internal_intersecc1) == 1:
+                elif len(internal_intersecc1) > 1: # TODO take care of multiple
+                                                   # intersections along the line segment
+                    done += 1
+                    continue
+                else: # One intersection
                     isecc1 = isecc1_list[0]
                     isecc2 = isecc2_list[0]
-                    # TODO Change several ctrl points using something like a exponential curve
+
                     logging.debug('Attempt to improve first guess by moving control points')
     
                     # choose the closest obstacle to be the one to avoid
@@ -445,32 +451,28 @@ class Robot(object):
                             other = self.obst[i[1]]
                             if not self.obst[i[0]] in mov_hist:
                                 mov_hist += [self.obst[i[0]]]
-                            logging.debug('1.appeded to hist {}'.format(self.obst[i[0]]))
                         else:
                             to_be_avoided = self.obst[i[1]]
                             other = self.obst[i[0]]
                             if not self.obst[i[1]] in mov_hist:
                                 mov_hist += [self.obst[i[1]]]
-                            logging.debug('2.appeded to hist {}'.format(self.obst[i[1]]))
                     elif not self.obst[i[0]] in mov_hist:
                         to_be_avoided = self.obst[i[0]]
                         other = self.obst[i[1]]
                         mov_hist += [self.obst[i[0]]]
-                        logging.debug('3.appeded to hist {}'.format(self.obst[i[0]]))
                     else:
                         to_be_avoided = self.obst[i[1]]
                         other = self.obst[i[0]]
                         mov_hist += [self.obst[i[1]]]
-                        logging.debug('4.appeded to hist {}'.format(self.obst[i[1]]))
 
                     logging.debug('Its center pos {}'.format(to_be_avoided.cp))
 
-                    # find which 2 control points are the closest to the obst. to be avoided
-                    distcp = map(lambda cp:(cp[0,0]-to_be_avoided.x())**2 + \
-                            (cp[0,1]-to_be_avoided.y())**2, self.ctrl_pts)
+                    # sort control points by distance to the obst. to be avoided
+                    distcp = map(lambda cp:(cp[0,0]-to_be_avoided.x)**2 + \
+                            (cp[0,1]-to_be_avoided.y)**2, self.ctrl_pts)
 
-                    distz = map(lambda az:(az[0,0]-to_be_avoided.x())**2 + \
-                            (az[0,1]-to_be_avoided.y())**2, z)
+                    distz = map(lambda az:(az[0,0]-to_be_avoided.x)**2 + \
+                            (az[0,1]-to_be_avoided.y)**2, z)
 
                     sorteddistcp = copy.deepcopy(distcp)
                     sorteddistz = copy.deepcopy(distz)
@@ -490,7 +492,7 @@ class Robot(object):
                     ctrl_pt_2b_moved = self.ctrl_pts[ctrlpt_index1]
     
                     path = closest_z - z_aux
-                    path = path/LA.norm(path)
+                    path = path/LA.norm(path) # unit path orientation vector
     
                     dp = ((to_be_avoided.cp-z_aux)*path.T)[0,0]
     
@@ -498,14 +500,13 @@ class Robot(object):
     
                     x2to_be_avoided = (to_be_avoided.cp-z_aux) - ctrlaux2x
     
-                    radius_ortho = (self.rho+to_be_avoided.radius())*x2to_be_avoided/LA.norm(x2to_be_avoided)
+                    radius_ortho = (self.rho+to_be_avoided.radius)*x2to_be_avoided/LA.norm(x2to_be_avoided)
     
-    #                self.ctrl_pts[ctrlpt_index1] = np.matrix('0.02, 1.0') # 0.02, 1.0
                     no_ctrl_to_be_moved = int(
-                            (2*to_be_avoided.radius()+2*self.rho)/\
+                            (4*to_be_avoided.radius+2*self.rho)/\
                             LA.norm(self.ctrl_pts[ctrlpt_index1]-\
                             self.ctrl_pts[ctrlpt_index2]))
-                    if no_ctrl_to_be_moved < 1:
+                    if no_ctrl_to_be_moved < 1: # never leave without moving a ctrl pt at least
                         no_ctrl_to_be_moved = 1
 
                     logging.debug('+++++++++++ no ctrl tb moved ++++++++++++ {}'.format(no_ctrl_to_be_moved))
@@ -514,7 +515,7 @@ class Robot(object):
                     for k in range(no_ctrl_to_be_moved):
                         idx = distcp.index(sorteddistcp[k])
                         self.ctrl_pts[idx] += x2to_be_avoided+\
-                                radius_ortho*(no_ctrl_to_be_moved-k)/no_ctrl_to_be_moved
+                                radius_ortho*(1.0*no_ctrl_to_be_moved-k)/no_ctrl_to_be_moved
                         pltmoved += [self.ctrl_pts[idx,0], self.ctrl_pts[idx,1], 'o']
 
                     # interpolate control points using combination of b-splines
@@ -536,8 +537,8 @@ class Robot(object):
                     pltarg = []
                     pltarg += [self.ctrl_pts[:,0], self.ctrl_pts[:,1], '*']
                     pltarg += pltmoved
-                    pltarg += [to_be_avoided.x(), to_be_avoided.y(), 'k.',
-                            other.x(), other.y(), 'b.',
+                    pltarg += [to_be_avoided.x, to_be_avoided.y, 'kx',
+                            other.x, other.y, 'b.',
                             map(lambda x:x[0,0], z), map(lambda x:x[0,1], z), 'g-']
                     pltarg += [[self.k_mod.q_init[0,0], self.k_mod.q_final[0,0]], [self.k_mod.q_init[1,0], self.k_mod.q_final[1,0]], 'y--']
                     plt.plot(*pltarg)
@@ -718,13 +719,13 @@ class Robot(object):
         #----------------------------------------------------------------------
         # Obstacles constraints at each time step
         #----------------------------------------------------------------------
-        obst_cons = np.array([(self.rho + self.obst[0].radius()) - \
+        obst_cons = np.array([(self.rho + self.obst[0].radius) - \
                 LA.norm(np.matrix(self.obst[0].pos).T - zl[:,0]) \
                 for zl in all_dz])
         for m in range(1,len(self.obst)):
             obst_cons = np.append(
                     obst_cons,
-                    np.array([(self.rho + self.obst[m].radius()) - \
+                    np.array([(self.rho + self.obst[m].radius) - \
                     LA.norm(np.matrix(self.obst[m].pos).T - zl[:,0]) \
                     for zl in all_dz]))
 
@@ -1049,27 +1050,17 @@ class Obstacle(object):
         self.dim = dimension
 
 class RoundObstacle(Obstacle):
-#    def __init__(self, position, dimension):
-#        self = Obstacle(position, dimension)
-#        self.cp = np.matrix(position)
-
     def __init__(self, position, dimension):
         Obstacle.__init__(self, position, dimension)
         self.cp = np.matrix(self.pos)
-
-    def x(self):
-        return self.pos[0]
-
-    def y(self):
-        return self.pos[1]
-
-    def radius(self):
-        return self.dim
+        self.x = self.pos[0]
+        self.y = self.pos[1]
+        self.radius = self.dim
 
     def pltCircle(self, color='r',linestyle='solid',isFill=False, offset=0.0):
         return plt.Circle(
-                (self.x(), self.y()), # position
-                self.radius()+offset, # radius
+                (self.x, self.y), # position
+                self.radius+offset, # radius
                 color=color,
                 ls = linestyle,
                 fill=isFill)
@@ -1184,9 +1175,9 @@ if __name__ == "__main__":
     scriptname, lib, method = parse_cmdline()
 
     # set logging level (TODO receve from command line)
-#    logging.basicConfig(level=logging.DEBUG)
     fname = scriptname[0:-3]+'_'+lib+'_'+method+'.log'
     logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',filemode='w',level=logging.DEBUG)
+#    logging.basicConfig(level=logging.DEBUG)
 
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
@@ -1205,7 +1196,7 @@ if __name__ == "__main__":
     for i in obst_info:
         obstacles += [RoundObstacle(i[0], i[1])]
 
-#    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
+    obstacles = [RoundObstacle([ 0.0,  2.50], 0.20)]
 #                 RoundObstacle([ 2.30,  2.50], 0.50), 
 #                 RoundObstacle([ 1.25,  3.00], 0.10),
 #                 RoundObstacle([ 0.30,  1.00], 0.10),
@@ -1213,7 +1204,7 @@ if __name__ == "__main__":
 #                 RoundObstacle([ 0.70,  1.45], 0.25)]
     kine_model = UnicycleKineModel(
             [ 0.0,  0.0, np.pi/2], # q_initial
-            [ 2.0,  5.0, np.pi/2], # q_final
+            [ 0.0,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 0.5,  5.0],          # u_max
