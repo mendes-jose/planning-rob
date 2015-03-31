@@ -515,7 +515,7 @@ class Robot(object):
                     for k in range(no_ctrl_to_be_moved):
                         idx = distcp.index(sorteddistcp[k])
                         self.ctrl_pts[idx] += x2to_be_avoided+\
-                                radius_ortho*(1.0*no_ctrl_to_be_moved-k)/no_ctrl_to_be_moved
+                                radius_ortho*(-((1.0*k)/no_ctrl_to_be_moved)**1.6+1)
                         pltmoved += [self.ctrl_pts[idx,0], self.ctrl_pts[idx,1], 'o']
 
                     # interpolate control points using combination of b-splines
@@ -664,6 +664,10 @@ class Robot(object):
 
         else:
             logging.warning('Unknown optimization method inside lib {}'.format(self.lib))
+            return
+
+        return ('No of unsatisfied eq: {}'.format(len(self.unsatisf_eq_values))+
+                '\nNo of unsatisfied ieq: {}'.format(len(self.unsatisf_ieq_values)))
 
     # Object Function (used when finding the path with pyopt option)
     def _obj_func_pyopt(self, x):
@@ -919,7 +923,9 @@ class Robot(object):
 
         return ('Optimization summary: {} exit code {}'.format(
                 inform['text'],
-                inform['value']))
+                inform['value'])+
+                '\nNo of unsatisfied eq: {}'.format(len(self.unsatisf_eq_values))+
+                '\nNo of unsatisfied ieq: {}'.format(len(self.unsatisf_ieq_values)))
 
     def _update_opt(self, x):
         self.t_final = x[0]
@@ -1184,19 +1190,31 @@ if __name__ == "__main__":
     n_obsts = 5
 
     obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
-    obst_info = [([1.6757675767576758, 1.9096909690969095], 0.27628262826282624),([0.70021002100210017, 1.8473147314731473], 0.29225922592259224),([1.8783278327832784, 2.8722172217221722], 0.44252925292529255),([3.1392939293929389, 1.3825382538253823], 0.38249324932493245),([0.70933093309330919, 2.6199819981998198], 0.43951395139513949)]
 
+    # 1 move
+#    obst_info = [([1.6757675767576758, 1.9096909690969095], 0.27628262826282624),([0.70021002100210017, 1.8473147314731473], 0.29225922592259224),([1.8783278327832784, 2.8722172217221722], 0.44252925292529255),([3.1392939293929389, 1.3825382538253823], 0.38249324932493245),([0.70933093309330919, 2.6199819981998198], 0.43951395139513949)]
+
+    # 2 moves
 #    obst_info = [([1.776097609760976, 3.2933093309330932], 0.44752475247524748), ([0.25746574657465737, 2.1951095109510952], 0.32043204320432039), ([-0.37567756775677569, 3.3804680468046802], 0.23195319531953196), ([0.72035203520352031, 2.9929792979297929], 0.49702970297029703), ([2.7824382438243824, 2.8625562556255622], 0.55828082808280821)]
 
+    # 3 moves
 #    obst_info = [([-0.1077507750775078, 3.2611761176117611], 0.46417641764176421), ([2.2994099409940993, 1.7433543354335432], 0.17848784878487847), ([1.3154915491549155, 2.4402040204020401], 0.59635463546354628), ([0.13053305330533049, 2.0588058805880585], 0.492979297929793), ([1.8213221322132211, 1.7185718571857185], 0.28069306930693072)]
 
+    # 4 moves
 #    obst_info = [([0.25404540454045399, 3.2559255925592558], 0.59972997299729969), ([2.1686768676867687, 2.3488448844884484], 0.57542754275427543), ([3.0028602860286027, 3.3941194119411939], 0.59135913591359135), ([1.0164016401640161, 2.3614461446144612], 0.23717371737173715), ([1.48004800480048, 1.4468046804680466], 0.52038703870387037)]
+
+    # these + 1
+#    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),([-0.50,  1.50], 0.30),([ 0.70,  1.45], 0.25)]
+
+    # these
+#    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),([-0.50,  1.50], 0.30)]
+
     logging.debug(obst_info)
     obstacles = []
     for i in obst_info:
         obstacles += [RoundObstacle(i[0], i[1])]
 
-#    obstacles = [RoundObstacle([ 0.25,  2.50], 0.20),
+#    obstacles = [RoundObstacle([], 0.20),
 #                 RoundObstacle([ 2.30,  2.50], 0.50), 
 #                 RoundObstacle([ 1.25,  3.00], 0.10),
 #                 RoundObstacle([ 0.30,  1.00], 0.10),
@@ -1225,16 +1243,21 @@ if __name__ == "__main__":
     robot.setOption('ACC', 5e-2)
 #    robot.setOption('NKNOTS', 15)
 #    robot.setOption('IPRINT', 2)
-    robot.setOption('MAXIT', 100)
+    robot.setOption('MAXIT', 50)
 
     world_sim = WorldSim(robot,obstacles,boundary)
 
-    logging.info('Plannification summary {}'.format(world_sim.run(interacPlot=True, speedPlot=True)))
+    summary_info = world_sim.run(interacPlot=True, speedPlot=True)
 
-    if robot.k_mod.l > 2:
+    logging.info('Elapsed Time for path generation: {}'.format(robot.elapsed_time))
+
+    if summary_info != None:
+        logging.info('Plannification summary:\n{}'.format(summary_info))
+    else:
+        logging.info('Plannification summary:\n')
+        
+    if robot.k_mod.l > 2 and True:
         f, axarr = plt.subplots(2)
         axarr[0].plot(robot.mtime, robot.linacc)
         axarr[1].plot(robot.mtime, robot.angacc)
         plt.show(block=True)
-
-    logging.info('Elapsed Time for path generation: {}'.format(robot.elapsed_time))
