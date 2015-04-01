@@ -1,14 +1,113 @@
-DEBUG:[([-0.082288228822882337, 2.5471047104710469], 0.19342934293429342), ([0.31865186518651856, 1.7790579057905789], 0.24342934293429341), ([3.3141114111411141, 3.1204620462046204], 0.45567056705670561), ([-0.32969296929692971, 1.4358835883588357], 0.44860486048604864), ([1.7342934293429342, 1.6855985598559855], 0.47173717371737167)]
+DEBUG:[([0.254045404540454, 3.255925592559256], 0.5997299729972997), ([2.1686768676867687, 2.3488448844884484], 0.5754275427542754), ([3.0028602860286027, 3.394119411941194], 0.5913591359135913), ([1.0164016401640161, 2.3614461446144612], 0.23717371737173715), ([1.48004800480048, 1.4468046804680466], 0.5203870387038704)]
 INFO:Optimization_lib: pyopt
 DEBUG:t_sup: 10000000000.0
 DEBUG:t_inf: 10.7703296143
-DEBUG:Max iter of improving algo 2
+DEBUG:Max iter of improving algo 10
+DEBUG:
+
+/////////////////////NRP////////////////////: (0, 3)
+DEBUG:No of intersections: 1
+DEBUG:[47, 48]
+DEBUG:[47]
+DEBUG:Attempt to improve first guess by moving control points
+DEBUG:Its center pos [[ 1.01640164  2.36144614]]
+DEBUG:+++++++++++ no ctrl tb moved ++++++++++++ 4
+DEBUG:New t_final: 11.3611459519
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 2)
 DEBUG:
 
 /////////////////////NRP////////////////////: (1, 3)
 DEBUG:No of intersections: 1
-DEBUG:[38, 39, 40]
-DEBUG:[38]
+DEBUG:[49, 50, 51]
+DEBUG:[49]
+DEBUG:Attempt to improve first guess by moving control points
+DEBUG:Its center pos [[ 2.16867687  2.34884488]]
+DEBUG:+++++++++++ no ctrl tb moved ++++++++++++ 8
+DEBUG:New t_final: 14.6908918818
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 4)
+DEBUG:No of intersections: 2
+DEBUG:[33, 62, 63, 64]
+DEBUG:[33, 62]
+DEBUG:Attempt to improve first guess by moving control points
+DEBUG:Its center pos [[ 1.480048    1.44680468]]
+DEBUG:+++++++++++ no ctrl tb moved ++++++++++++ 2
+DEBUG:New t_final: 15.1576573063
+DEBUG:
+
+/////////////////////NRP////////////////////: (3, 4)
+DEBUG:No of intersections: 1
+DEBUG:[33]
+DEBUG:[33]
+DEBUG:Max it: 9
+DEBUG:
+
+/////////////////////NRP////////////////////: (0, 3)
+DEBUG:No of intersections: 1
+DEBUG:[35]
+DEBUG:[35]
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 2)
+DEBUG:No of intersections: 2
+DEBUG:[27, 62, 63, 64]
+DEBUG:[27, 62]
+DEBUG:Attempt to improve first guess by moving control points
+DEBUG:Its center pos [[ 3.00286029  3.39411941]]
+DEBUG:+++++++++++ no ctrl tb moved ++++++++++++ 9
+DEBUG:New t_final: 17.7389750858
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 3)
+DEBUG:No of intersections: 1
+DEBUG:[48, 49, 50]
+DEBUG:[48]
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 4)
+DEBUG:No of intersections: 2
+DEBUG:[27, 28, 79, 80]
+DEBUG:[27, 79]
+DEBUG:
+
+/////////////////////NRP////////////////////: (3, 4)
+DEBUG:No of intersections: 1
+DEBUG:[32, 33]
+DEBUG:[32]
+DEBUG:Max it: 8
+DEBUG:
+
+/////////////////////NRP////////////////////: (0, 3)
+DEBUG:No of intersections: 1
+DEBUG:[35]
+DEBUG:[35]
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 2)
+DEBUG:No of intersections: 2
+DEBUG:[27, 28, 79]
+DEBUG:[27, 79]
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 3)
+DEBUG:No of intersections: 1
+DEBUG:[48, 49, 50]
+DEBUG:[48]
+DEBUG:
+
+/////////////////////NRP////////////////////: (1, 4)
+DEBUG:No of intersections: 2
+DEBUG:[27, 28, 79, 80]
+DEBUG:[27, 79]
+DEBUG:
+
+/////////////////////NRP////////////////////: (3, 4)
+DEBUG:No of intersections: 1
+DEBUG:[32, 33]
+DEBUG:[32]
 DEBUG:DONE
-DEBUG:x_init: 10.77 0.00 0.00 0.00 0.32 0.24 0.59 0.35 0.88 0.47 1.18 0.59 1.47 0.71 1.76 0.82 2.06 0.94 2.35 1.06 2.65 1.18 2.94 1.29 3.24 1.41 3.53 1.53 3.82 1.65 4.12 1.76 4.41 2.00 4.68 2.00 5.00 
+DEBUG:x_init: 17.74 0.00 0.00 0.00 0.32 0.24 0.59 0.35 0.88 0.47 1.18 0.72 0.80 1.89 0.80 2.49 1.83 3.82 2.20 4.01 2.52 3.98 2.92 3.76 3.32 3.79 3.63 3.51 3.92 2.49 4.24 2.49 4.51 2.60 4.77 2.00 5.00 
 INFO:Optimization_method: slsqp
