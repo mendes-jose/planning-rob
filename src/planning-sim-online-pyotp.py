@@ -78,11 +78,11 @@ class Trajectory_Generation(object):
   def __init__(self, mrobot):
 
   ## "Arbitrary" parameters
-    self.N_s = 25 # nb of samples for discretization
+    self.N_s = 20 # nb of samples for discretization
     self.n_knot = 6 # nb of non zero lenght intervals of the knot series
     self.t_init = 0.0
     self.Tc = 1.0
-    self.Tp = 2.0
+    self.Tp = 2.5
     tstep = (self.Tp-self.t_init)/(self.N_s-1)
     Tc_idx = int(round(self.Tc/tstep))
     self.detection_radius = 2.0
@@ -164,7 +164,8 @@ class Trajectory_Generation(object):
     [ax.add_artist(c) for c in circ]
 
     # plot curve and its control points
-    self.plt_ctrl_pts,self.plt_curve,self.plt_dot_curve,self.seg_pts = ax.plot(
+    self.rejected_path,self.plt_ctrl_pts,self.plt_curve,self.plt_dot_curve,self.seg_pts = ax.plot(
+            0.0, 0.0, 'k-',
             0.0, 0.0, '*',
             0.0, 0.0, 'b-',
             0.0, 0.0, 'g.',
@@ -181,7 +182,8 @@ class Trajectory_Generation(object):
     self.last_u = self.u_init
     last_z = self.mrob.phi0(self.last_q)
     self.all_dz = []
-    while LA.norm(last_z - final_z) > 0.2:
+    self.all_rejected_z = []
+    while LA.norm(last_z - final_z) > 0.4:
 
         self.detected_obst_idxs = self._detected_obst_idx(last_z)
 #        print('No of detected obst: {}'.format(len(self.detected_obst_idxs)))
@@ -227,7 +229,7 @@ class Trajectory_Generation(object):
 #            solver.setOption('ACC', 1e-6)
 #            solver.setOption('MAXIT', 50)
             solver = pyOpt.ALGENCAN(pll_type='POA')
-            solver.setOption('epsfeas', 5e-1)
+            solver.setOption('epsfeas', 1e-1)
             solver.setOption('epsopt', 9e-1)
     
             [J, C_aux, information] = solver(self.opt_prob) 
@@ -242,8 +244,8 @@ class Trajectory_Generation(object):
                                 ieqcons=(),
                                 f_ieqcons=self._fieqcons,
                                 iprint=1,
-                                iter=100,
-                                acc=1e-4,
+                                iter=50,
+                                acc=1e-6,
                                 callback=self._plot_update)
 
         # test if opt went well
@@ -261,13 +263,16 @@ class Trajectory_Generation(object):
                     self.mtime[0:Tc_idx], C, dev).T,axis=0)
         self.all_dz += [dz]
 
-        plt.figure()
-        my_dz = [self.all_dz[-1][:,i].reshape(self.mrob.l+1, self.mrob.u_dim).T \
-                for i in range(len(self.mtime[0:Tc_idx]))]
-        my_u = map(self.mrob.phi2, my_dz)
-        linspeed = map(lambda x:x[0,0], my_u)
-        angspeed = map(lambda x:x[1,0], my_u)
-        plt.plot(self.mtime[0:Tc_idx], linspeed)
+        rejected_z = self._comb_bsp(self.mtime[Tc_idx:-1], C, 0).T
+        self.all_rejected_z += [np.append(np.append(dz[0:2,:], rejected_z, axis=1), np.fliplr(rejected_z), axis=1)]
+        
+#        plt.figure()
+#        my_dz = [self.all_dz[-1][:,i].reshape(self.mrob.l+1, self.mrob.u_dim).T \
+#                for i in range(len(self.mtime[0:Tc_idx]))]
+#        my_u = map(self.mrob.phi2, my_dz)
+#        linspeed = map(lambda x:x[0,0], my_u)
+#        angspeed = map(lambda x:x[1,0], my_u)
+#        plt.plot(self.mtime[0:Tc_idx], linspeed)
 
         # update needed values
         self.knots = self.knots + self.Tc
@@ -342,8 +347,8 @@ class Trajectory_Generation(object):
 
     # return array where each element is an equation constraint
     # dimension: q_dim + u_dim (=5 equations)
-    print('last U: {}'.format(self.last_u))
-    print('last Q: {}'.format(self.last_q))
+#    print('last U: {}'.format(self.last_u))
+#    print('last Q: {}'.format(self.last_q))
     eq_cons = list(np.squeeze(np.array(qtTp[0]-self.last_q)))+\
            list(np.squeeze(np.array(utTp[0]-self.last_u)))
 
@@ -458,16 +463,26 @@ class Trajectory_Generation(object):
   def _plot_update(self, x):
     C = x.reshape(self.n_ctrlpts, self.mrob.u_dim)
     curve = self._comb_bsp(self.mtime, C, 0)
-    seg_pts = []
+    seg_pts = [] # segmentation red diamonds
     for past_path in reversed(self.all_dz):
         curve = np.append(past_path[0:2,:].T, curve, axis=0)
         seg_pts += [past_path[0:2,-1].T]
+    
+    # transform list of segmentation points in an array
     if seg_pts != []:
         seg_arr = seg_pts[0]
         for i in range(1, len(self.all_dz)):
             seg_arr = np.append(seg_arr, seg_pts[i], axis=0)
         self.seg_pts.set_xdata(seg_arr[:,0])
         self.seg_pts.set_ydata(seg_arr[:,1])
+
+    
+    if self.all_rejected_z != []:
+        reject = self.all_rejected_z[0].T
+        for prejpath in self.all_rejected_z[1:-1]:
+            reject = np.append(reject, prejpath.T, axis=0)
+        self.rejected_path.set_xdata(reject[:,0])
+        self.rejected_path.set_ydata(reject[:,1])
     self.plt_curve.set_xdata(curve[:,0])
     self.plt_curve.set_ydata(curve[:,1])
     self.plt_dot_curve.set_xdata(curve[:,0])
