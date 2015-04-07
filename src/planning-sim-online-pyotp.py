@@ -20,7 +20,7 @@ class Unicycle_Kine_Model(object):
     self.u_dim = 2
     self.q_dim = 3
     self.rho = 0.2 # m
-    self.u_abs_max = np.matrix('0.5; 5')
+    self.u_abs_max = np.matrix('1.0; 5')
 
     self.l = 2 # number of need derivations
 
@@ -78,11 +78,11 @@ class Trajectory_Generation(object):
   def __init__(self, mrobot):
 
   ## "Arbitrary" parameters
-    self.N_s = 20 # nb of samples for discretization
-    self.n_knot = 6 # nb of non zero lenght intervals of the knot series
+    self.N_s = 30 # nb of samples for discretization
+    self.n_knot = 7 # nb of non zero lenght intervals of the knot series
     self.t_init = 0.0
     self.Tc = 1.0
-    self.Tp = 2.5
+    self.Tp = 2.2
     tstep = (self.Tp-self.t_init)/(self.N_s-1)
     Tc_idx = int(round(self.Tc/tstep))
     self.detection_radius = 2.0
@@ -154,18 +154,18 @@ class Trajectory_Generation(object):
       # external dashed circles
       circ = circ + \
           [plt.Circle((self.obst_map[r,0], self.obst_map[r,1]),
-          self.obst_map[r,2]+self.mrob.rho,color='r',ls = 'dashed',fill=False)]
+          self.obst_map[r,2]+self.mrob.rho,color='k',ls = 'dashed',fill=False)]
       # internal continous circles
       circ = circ + \
           [plt.Circle((self.obst_map[r,0], self.obst_map[r,1]),
-          self.obst_map[r,2], color='r', fill=False)]
+          self.obst_map[r,2], color='k', fill=False)]
 
     # adding circles to axis
     [ax.add_artist(c) for c in circ]
 
     # plot curve and its control points
     self.rejected_path,self.plt_ctrl_pts,self.plt_curve,self.plt_dot_curve,self.seg_pts = ax.plot(
-            0.0, 0.0, 'k-',
+            0.0, 0.0, 'm:',
             0.0, 0.0, '*',
             0.0, 0.0, 'b-',
             0.0, 0.0, 'g.',
@@ -183,7 +183,11 @@ class Trajectory_Generation(object):
     last_z = self.mrob.phi0(self.last_q)
     self.all_dz = []
     self.all_rejected_z = []
-    while LA.norm(last_z - final_z) > 0.4:
+    self.itcount = 0
+
+    usepyopt = True
+
+    while LA.norm(last_z - final_z) > self.D: # while the remaining dist (straight line) is greater than the max dist during Tp
 
         self.detected_obst_idxs = self._detected_obst_idx(last_z)
 #        print('No of detected obst: {}'.format(len(self.detected_obst_idxs)))
@@ -197,7 +201,8 @@ class Trajectory_Generation(object):
         C[:,1] =np.array(np.linspace(last_z[1,0],\
                 last_z[1,0]+self.D*direc[1,0], self.n_ctrlpts)).T
 
-        if True:
+        tic = time.time()
+        if usepyopt:
             # Define the optimization problem
             self.opt_prob = pyOpt.Optimization(
                     'Faster path with obstacles', # name of the problem
@@ -227,9 +232,9 @@ class Trajectory_Generation(object):
             # solve constrained optmization
 #            solver = pyOpt.SLSQP(pll_type='POA')
 #            solver.setOption('ACC', 1e-6)
-#            solver.setOption('MAXIT', 50)
+#            solver.setOption('MAXIT', 30)
             solver = pyOpt.ALGENCAN(pll_type='POA')
-            solver.setOption('epsfeas', 1e-1)
+            solver.setOption('epsfeas', 2e-1)
             solver.setOption('epsopt', 9e-1)
     
             [J, C_aux, information] = solver(self.opt_prob) 
@@ -244,9 +249,16 @@ class Trajectory_Generation(object):
                                 ieqcons=(),
                                 f_ieqcons=self._fieqcons,
                                 iprint=1,
-                                iter=50,
+                                iter=30,
                                 acc=1e-6,
                                 callback=self._plot_update)
+
+        print('Elapsed time for {} iteraction: {}'.format(self.itcount, time.time()-tic))
+
+        print('No of equations unsatisfied: {}'.format(len(self.unsatisf_eq_values)))
+        print('Mean and variance of equations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_eq_values), np.std(self.unsatisf_eq_values)))
+        print('No of inequations unsatisfied: {}'.format(len(self.unsatisf_ieq_values)))
+        print('Mean and variance of inequations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_ieq_values), np.std(self.unsatisf_ieq_values)))
 
         # test if opt went well
         # if yes
@@ -263,7 +275,7 @@ class Trajectory_Generation(object):
                     self.mtime[0:Tc_idx], C, dev).T,axis=0)
         self.all_dz += [dz]
 
-        rejected_z = self._comb_bsp(self.mtime[Tc_idx:-1], C, 0).T
+        rejected_z = self._comb_bsp(self.mtime[Tc_idx:], C, 0).T
         self.all_rejected_z += [np.append(np.append(dz[0:2,:], rejected_z, axis=1), np.fliplr(rejected_z), axis=1)]
         
 #        plt.figure()
@@ -287,8 +299,106 @@ class Trajectory_Generation(object):
                 self.mrob.l+1, self.mrob.u_dim).T)
 
         #raw_input('paradinha')
+        self.itcount += 1
     #endwhile
+    
+    self.detected_obst_idxs = self._detected_obst_idx(last_z)
+    print(self.detected_obst_idxs)
 
+    # initiate ctrl points (straight line towards final z)
+    C[:,0] =np.array(np.linspace(last_z[0,0],\
+            final_z[0,0], self.n_ctrlpts)).T
+    C[:,1] =np.array(np.linspace(last_z[1,0],\
+            final_z[1,0], self.n_ctrlpts)).T
+    x_aux = np.append(np.asarray([self.Tp]), np.squeeze(C.reshape(1,self.n_ctrlpts*self.mrob.u_dim)), axis=1)
+
+    print(x_aux)
+    self._lstep_plot_update(x_aux)
+
+    tic = time.time()
+
+    if usepyopt:
+        # Define the optimization problem
+        self.opt_prob = pyOpt.Optimization(
+                'Faster path with obstacles', # name of the problem
+                self._lstep_obj_func) # object function (criterium, eq. and ineq.)
+    
+        self.opt_prob.addObj('J')
+    
+        self.opt_prob.addVarGroup( # minimization arguments
+                'x',
+                self.mrob.u_dim*self.n_ctrlpts+1, # dimension
+                'c', # continous
+                lower=[0.0]+list(C_lower),
+                value=[self.Tp]+list(np.squeeze(C.reshape(1,self.n_ctrlpts*self.mrob.u_dim))),
+                upper=[1e10]+list(C_upper))
+    
+        self.opt_prob.addConGroup( # equations constraints
+                'ec',
+                2*self.mrob.q_dim + 2*self.mrob.u_dim, # dimension
+                'e') # equations
+    
+        self.opt_prob.addConGroup( # inequations constraints
+                'ic',
+                self.N_s*self.mrob.u_dim +
+                        self.N_s*len(self.detected_obst_idxs), # dimenstion
+                'i') # inequations
+    
+        # solve constrained optmization
+#        solver = pyOpt.SLSQP(pll_type='POA')
+#        solver.setOption('ACC', 1e-6)
+#        solver.setOption('MAXIT', 30)
+        solver = pyOpt.ALGENCAN(pll_type='POA')
+        solver.setOption('epsfeas', 9e-1)
+        solver.setOption('epsopt', 9e-1)
+    
+        [J, C_aux, information] = solver(self.opt_prob) 
+        C_aux = np.array(C_aux)
+
+
+    else:
+        # solve constrained optmization
+        x_aux = fmin_slsqp(self._lstep_criteria,
+                            x_aux,
+                            eqcons=(),
+                            f_eqcons=self._lstep_feqcons,
+                            ieqcons=(),
+                            f_ieqcons=self._lstep_fieqcons,
+                            iprint=1,
+                            iter=30,
+                            acc=1e-6,
+                            callback=self._lstep_plot_update)
+    
+
+    print('Elapsed time for {} (last) iteraction: {}'.format(self.itcount, time.time()-tic))
+    print('No of equations unsatisfied: {}'.format(len(self.unsatisf_eq_values)))
+    print('Mean and variance of equations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_eq_values), np.std(self.unsatisf_eq_values)))
+    print('No of inequations unsatisfied: {}'.format(len(self.unsatisf_ieq_values)))
+    print('Mean and variance of inequations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_ieq_values), np.std(self.unsatisf_ieq_values)))
+
+    # test if opt went well
+    # if yes
+    dt_final = x_aux[0]
+    print(x_aux)
+    self.t_final = self.mtime[0] + dt_final
+    C = x_aux[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+    # if no
+    # continue
+
+    print('Final time: {}'.format(self.t_final))
+
+    # store ctrl points and [z dz ddz](t)
+    self.C_ref += [C]
+
+    self.mtime = np.linspace(self.mtime[0], self.t_final, self.N_s)
+
+    dz = self._comb_bsp(self.mtime, C, 0).T
+    for dev in range(1,self.mrob.l+1):
+        dz = np.append(dz,self._comb_bsp(
+                self.mtime, C, dev).T,axis=0)
+    self.all_dz += [dz]
+
+        
   def _detected_obst_idx(self, pos):
     idx_list = []
     for idx in range(0, self.obst_map.shape[0]):
@@ -324,11 +434,75 @@ class Trajectory_Generation(object):
           der=deriv_order)).T, axis=1)
     return z
 
+  def _lstep_obj_func(self, x):
+
+    dt_final = x[0]
+    t_final = self.mtime[0]+dt_final
+    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+    
+    # updatating knots
+    self.knots = self._gen_knots(self.mtime[0], t_final)
+
+    # creating time
+    mtime = np.linspace(self.mtime[0], t_final, self.N_s)
+
+    self._lstep_plot_update(x)
+
+    # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
+    dz = self._comb_bsp(mtime, C, 0).T
+    for dev in range(1,self.mrob.l+1):
+        dz = np.append(dz,self._comb_bsp(mtime, C, dev).T,axis=0)
+
+    dztTp = map(lambda dzt:dzt.reshape(self.mrob.l+1, self.mrob.u_dim).T, dz.T)
+
+    # get a list over time of command values u(t)
+    utTp = map(self.mrob.phi2, dztTp)
+
+    # get a list over time of values q(t)
+    qtTp = map(self.mrob.phi1, dztTp)
+
+    J = dt_final**2
+
+    # return array where each element is an equation constraint
+    # dimension: q_dim + u_dim (=5 equations)
+#    print('last U: {}'.format(self.last_u))
+#    print('last Q: {}'.format(self.last_q))
+    eq_cons = list(np.squeeze(np.array(qtTp[0]-self.last_q)))+\
+            list(np.squeeze(np.array(qtTp[-1]-self.q_fin)))+\
+            list(np.squeeze(np.array(utTp[0]-self.last_u)))+\
+            list(np.squeeze(np.array(utTp[-1]-self.u_fin)))
+
+    # Count how many equations are not respected
+    self.unsatisf_eq_values = [eq for eq in eq_cons if eq != 0]
+
+    ## Obstacles constraints
+    # N_s*nb_obst_detected
+    obst_cons = []
+    for m in self.detected_obst_idxs:
+        obst_cons += [-1.0*LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
+          + (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+
+    ## Max speed constraints
+    # N_s*u_dim inequations
+    max_speed_cons = list(itertools.chain.from_iterable(
+        map(lambda ut:[-1.0*self.u_abs_max[i,0]+abs(ut[i,0])\
+        for i in range(self.mrob.u_dim)], utTp)))
+
+    # Create final array
+    ieq_cons = obst_cons + max_speed_cons
+
+    # Count how many equations are not respected
+    self.unsatisf_ieq_values = [ieq for ieq in ieq_cons if eq > 0]
+
+    cons = eq_cons + ieq_cons
+
+    return J, np.asarray(cons), 0
+
   def _obj_func(self, x):
 
     self._plot_update(x)
 
-    C = np.asarray(x).reshape(self.n_ctrlpts, self.mrob.u_dim)
+    C = x.reshape(self.n_ctrlpts, self.mrob.u_dim)
     
     # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
     dz = self._comb_bsp(self.mtime, C, 0).T
@@ -381,6 +555,98 @@ class Trajectory_Generation(object):
 
     return J, np.asarray(cons), 0
 
+  def _lstep_criteria(self, x):
+    dt_final = x[0]
+    t_final = self.mtime[0]+dt_final
+#    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+#
+#    self.knots = self._gen_knots(self.mtime[0], t_final)
+#    
+#    dz = self._comb_bsp(t_final, C, 0).T
+#    for dev in range(1,self.mrob.l+1):
+#        dz = np.append(dz,self._comb_bsp(t_final, C, dev).T,axis=1)
+#    qTp = self.mrob.phi1(dz)
+    return \
+            t_final**2
+#            LA.norm(qTp - self.q_fin)**2\
+#            +\
+
+#  def _lstep_criteria(self, x):
+#    dt_final = x[0]
+#    t_final = self.mtime[0]+dt_final
+#    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+#    
+#    return t_final**2 # delta t for the last section of the path
+
+  def _lstep_feqcons(self, x):
+    dt_final = x[0]
+    t_final = self.mtime[0]+dt_final
+    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+    
+    self.knots = self._gen_knots(self.mtime[0], t_final)
+
+    dztinit = self._comb_bsp(self.mtime[0], C, 0).T
+    for dev in range(1,self.mrob.l+1):
+        dztinit = np.append(dztinit,self._comb_bsp(self.mtime[0], C, dev).T,axis=1)
+
+    # get matrix [z dz ddz](t_final)
+    dztfinal = self._comb_bsp(t_final, C, 0).T
+    for dev in range(1,self.mrob.l+1):
+        dztfinal=np.append(dztfinal,self._comb_bsp(t_final, C, dev).T,axis=1)
+
+    #----------------------------------------------------------------------
+    # Final and initial values constraints
+    #----------------------------------------------------------------------
+    eq_cons = list(np.squeeze(np.array(self.mrob.phi1(dztinit)-self.last_q)))+\
+            list(np.squeeze(np.array(self.mrob.phi1(dztfinal)-self.q_fin)))+\
+            list(np.squeeze(np.array(self.mrob.phi2(dztinit)-self.last_u)))+\
+            list(np.squeeze(np.array(self.mrob.phi2(dztfinal)-self.u_fin)))
+
+    self.unsatisf_eq_values = [ec for ec in eq_cons if ec != 0]
+    return np.asarray(eq_cons)
+
+  def _lstep_fieqcons(self, x):
+    dt_final = x[0]
+    t_final = self.mtime[0]+dt_final
+    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+    
+    self.knots = self._gen_knots(self.mtime[0], t_final)
+
+    mtime = np.linspace(self.mtime[0], t_final, self.N_s)
+
+    # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
+    dz = self._comb_bsp(mtime, C, 0).T
+    for dev in range(1,self.mrob.l+1):
+        dz = np.append(dz,self._comb_bsp(mtime, C, dev).T,axis=0)
+
+    dztTp = map(lambda dzt:dzt.reshape(self.mrob.l+1, self.mrob.u_dim).T, dz.T)
+
+    # get a list over time of command values u(t)
+    utTp = map(self.mrob.phi2, dztTp)
+
+    # get a list over time of values q(t)
+    qtTp = map(self.mrob.phi1, dztTp)
+    
+    ## Obstacles constraints
+    # N_s*nb_obst_detected
+    obst_cons = []
+    for m in self.detected_obst_idxs:
+        obst_cons += [LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
+          - (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+
+    ## Max speed constraints
+    # N_s*u_dim inequations
+    max_speed_cons = list(itertools.chain.from_iterable(
+        map(lambda ut:[self.u_abs_max[i,0]-abs(ut[i,0])\
+        for i in range(self.mrob.u_dim)],utTp)))
+
+    # Create final array
+    ieq_cons = obst_cons + max_speed_cons
+    
+    # Count how many inequations are not respected
+    self.unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
+    return np.asarray(ieq_cons)
+
   ##------------------------------Cost Function--------------------------------
   #----------------------------------------------------------------------------
   def _criteria(self, x):
@@ -410,7 +676,7 @@ class Trajectory_Generation(object):
     unsatisf_list = [eq for eq in eq_cons if eq != 0]
     self.unsatisf_eq_values = unsatisf_list
 
-    return np.array(eq_cons)
+    return np.asarray(eq_cons)
 
   ##------------------------Constraints Inequations----------------------------
   #----------------------------------------------------------------------------
@@ -458,7 +724,7 @@ class Trajectory_Generation(object):
 #    print(len(obst_cons))
 #    print(self.detected_obst_idxs)
     # return arrray where each element is an inequation constraint
-    return np.array(ieq_cons)
+    return np.asarray(ieq_cons)
 
   def _plot_update(self, x):
     C = x.reshape(self.n_ctrlpts, self.mrob.u_dim)
@@ -478,8 +744,9 @@ class Trajectory_Generation(object):
 
     
     if self.all_rejected_z != []:
+#        raw_input('haha')
         reject = self.all_rejected_z[0].T
-        for prejpath in self.all_rejected_z[1:-1]:
+        for prejpath in self.all_rejected_z[1:]:
             reject = np.append(reject, prejpath.T, axis=0)
         self.rejected_path.set_xdata(reject[:,0])
         self.rejected_path.set_ydata(reject[:,1])
@@ -493,6 +760,56 @@ class Trajectory_Generation(object):
     ax.relim()
     ax.autoscale_view(True,True,True)
     self.fig.canvas.draw()
+
+  def _lstep_plot_update(self, x):
+    dt_final = x[0]
+    C = x[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
+    t_final = self.mtime[0] + dt_final
+    self.knots = self._gen_knots(self.mtime[0], t_final)
+    mtime = np.linspace(self.mtime[0], t_final, self.N_s)
+    curve = self._comb_bsp(mtime, C, 0)
+    seg_pts = [] # segmentation red diamonds
+    for past_path in reversed(self.all_dz):
+        curve = np.append(past_path[0:2,:].T, curve, axis=0)
+        seg_pts += [past_path[0:2,-1].T]
+
+    # transform list of segmentation points in an array
+    if seg_pts != []:
+        seg_arr = seg_pts[0]
+        for i in range(1, len(self.all_dz)):
+            seg_arr = np.append(seg_arr, seg_pts[i], axis=0)
+        self.seg_pts.set_xdata(seg_arr[:,0])
+        self.seg_pts.set_ydata(seg_arr[:,1])
+    
+    if self.all_rejected_z != []:
+        reject = self.all_rejected_z[0].T
+        for prejpath in self.all_rejected_z[1:]:
+            reject = np.append(reject, prejpath.T, axis=0)
+        self.rejected_path.set_xdata(reject[:,0])
+        self.rejected_path.set_ydata(reject[:,1])
+
+    self.plt_curve.set_xdata(curve[:,0])
+    self.plt_curve.set_ydata(curve[:,1])
+    self.plt_dot_curve.set_xdata(curve[:,0])
+    self.plt_dot_curve.set_ydata(curve[:,1])
+    self.plt_ctrl_pts.set_xdata(C[:,0])
+    self.plt_ctrl_pts.set_ydata(C[:,1])
+    ax = self.fig.gca()
+    ax.relim()
+    ax.autoscale_view(True,True,True)
+    self.fig.canvas.draw()
+
+  def _improve_init_guess(self):
+    mag = LA.norm(self.ctrl_pts[0]-self.ctrl_pts[1])
+    self.ctrl_pts[1]+np.matrix([1,2])
+    dx = mag*np.cos(self.k_mod.q_init[-1,0])
+    dy = mag*np.sin(self.k_mod.q_init[-1,0])
+    self.ctrl_pts[1] = self.ctrl_pts[0] + np.matrix([dx, dy])
+
+    dx = mag*np.cos(self.k_mod.q_final[-1,0])
+    dy = mag*np.sin(self.k_mod.q_final[-1,0])
+    self.ctrl_pts[-2] = self.ctrl_pts[-1] - np.matrix([dx, dy])
+
 
 ##-----------------------------------------------------------------------------
 ## Initializations
