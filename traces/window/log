@@ -1,0 +1,404 @@
+Iteration limit exceeded    (Exit mode 9)
+            Current function value: 20.2862059874
+            Iterations: 51
+            Function evaluations: 866
+            Gradient evaluations: 51
+
+
+Elapsed time for 0 iteraction: 6.52698707581
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (0.331354353504,0.468140357464)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-0.00145974258207,0.000720604996833)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 16.7060810782
+            Iterations: 32
+            Function evaluations: 524
+            Gradient evaluations: 32
+
+
+Elapsed time for 1 iteraction: 4.07269501686
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (4.4408920985e-16,8.64739498196e-16)
+No of inequations unsatisfied: 7
+Mean and variance of inequations unsatisfied: (-8.3004468378e-11,1.11293409193e-10)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 13.6753604489
+            Iterations: 28
+            Function evaluations: 459
+            Gradient evaluations: 28
+
+
+Elapsed time for 2 iteraction: 3.58016991615
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-1.03620815632e-15,1.46822068761e-15)
+No of inequations unsatisfied: 3
+Mean and variance of inequations unsatisfied: (-5.28581158103e-08,6.95344479511e-08)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 10.9275946021
+            Iterations: 19
+            Function evaluations: 311
+            Gradient evaluations: 19
+
+
+Elapsed time for 3 iteraction: 2.46732211113
+No of equations unsatisfied: 2
+Mean and variance of equations unsatisfied: (2.22044604925e-16,8.881784197e-16)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-2.728435744e-09,4.05665422315e-09)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 8.48501966186
+            Iterations: 13
+            Function evaluations: 212
+            Gradient evaluations: 13
+
+
+Elapsed time for 4 iteraction: 1.86100506783
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (7.52869988574e-16,1.08004427862e-15)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-1.57134698098e-07,1.85226996698e-07)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 6.35127664084
+            Iterations: 18
+            Function evaluations: 293
+            Gradient evaluations: 18
+
+
+Elapsed time for 5 iteraction: 2.78706598282
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-8.31510786152e-16,2.29119491139e-15)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-3.70382970516e-08,6.5613919519e-08)
+Iteration limit exceeded    (Exit mode 9)
+            Current function value: 4.7670635965
+            Iterations: 51
+            Function evaluations: 840
+            Gradient evaluations: 51
+
+
+Elapsed time for 6 iteraction: 8.04241418839
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-2.01227923213e-15,3.1598110731e-15)
+No of inequations unsatisfied: 4
+Mean and variance of inequations unsatisfied: (-1.07743853436e-07,7.53248764788e-08)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 3.17644797918
+            Iterations: 13
+            Function evaluations: 212
+            Gradient evaluations: 13
+
+
+Elapsed time for 7 iteraction: 1.97002005577
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-1.2952601954e-15,3.4450721158e-15)
+No of inequations unsatisfied: 6
+Mean and variance of inequations unsatisfied: (-4.90996909797e-10,4.32300907323e-10)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 1.93344693023
+            Iterations: 15
+            Function evaluations: 244
+            Gradient evaluations: 15
+
+
+Elapsed time for 8 iteraction: 2.13780403137
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-3.70074341542e-16,1.31154680795e-15)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-3.35948958763e-08,6.48689760877e-08)
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: 0.995380528472
+            Iterations: 14
+            Function evaluations: 230
+            Gradient evaluations: 14
+
+
+Elapsed time for 9 iteraction: 1.88724803925
+No of equations unsatisfied: 3
+Mean and variance of equations unsatisfied: (-8.17864294807e-15,1.38436496367e-14)
+No of inequations unsatisfied: 5
+Mean and variance of inequations unsatisfied: (-1.5852191817e-07,2.58406112968e-07)
+Positive directional derivative for linesearch    (Exit mode 8)
+            Current function value: 0.405261206588
+            Iterations: 5
+            Function evaluations: 16
+            Gradient evaluations: 1
+
+
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+Elapsed time for 10 iteraction: 34.2581620216
+No of equations unsatisfied: 5
+Mean and variance of equations unsatisfied: (0.00704429864441,0.0150834524081)
+No of inequations unsatisfied: 0
+/usr/lib/python2.7/dist-packages/numpy/core/_methods.py:55: RuntimeWarning: Mean of empty slice.
+  warnings.warn("Mean of empty slice.", RuntimeWarning)
+/usr/lib/python2.7/dist-packages/numpy/core/_methods.py:67: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+/usr/lib/python2.7/dist-packages/numpy/core/_methods.py:79: RuntimeWarning: Degrees of freedom <= 0 for slice
+  warnings.warn("Degrees of freedom <= 0 for slice", RuntimeWarning)
+/usr/lib/python2.7/dist-packages/numpy/core/_methods.py:91: RuntimeWarning: invalid value encountered in true_divide
+  arrmean, rcount, out=arrmean, casting='unsafe', subok=False)
+/usr/lib/python2.7/dist-packages/numpy/core/_methods.py:113: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+Mean and variance of inequations unsatisfied: (nan,nan)
+Positive directional derivative for linesearch    (Exit mode 8)
+            Current function value: 0.00230311088518
+            Iterations: 21
+            Function evaluations: 276
+            Gradient evaluations: 17
+
+
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+Elapsed time for 11 iteraction: 35.9387469292
+No of equations unsatisfied: 5
+Mean and variance of equations unsatisfied: (0.00335664073737,0.00760098170354)
+No of inequations unsatisfied: 75
+Mean and variance of inequations unsatisfied: (-1.64479336889,1.44723187364)
+[1, 2]
+[ 1.1         1.8383894   4.11264567  1.8653245   4.26053806  1.8922596
+  4.40843045  1.9191947   4.55632284  1.9461298   4.70421522  1.9730649
+  4.85210761  2.          5.        ]
+Positive directional derivative for linesearch    (Exit mode 8)
+            Current function value: 50.41
+            Iterations: 5
+            Function evaluations: 17
+            Gradient evaluations: 1
+
+
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+x' and y' are zero! Unsing angspeed=0
+Elapsed time for 12 (last) iteraction: 119.381319046
+No of equations unsatisfied: 10
+Mean and variance of equations unsatisfied: (-0.0010505981506,0.00609217476532)
+No of inequations unsatisfied: 0
+Mean and variance of inequations unsatisfied: (nan,nan)
+[ 0.98343067  1.83697034  4.11051263  1.854371    4.19055349  1.87811382
+  4.35245493  1.91832958  4.59530413  1.99029421  4.82967817  1.98841588
+  5.0007254   1.98841265  5.00101998]
+Final time: 6.9834306707
+
+ ==============================================================================
+ This is ALGENCAN 2.4.0.
+ ALGENCAN, an augmented Lagrangian method for nonlinear programming, is part of
+ the TANGO Project: Trustable Algorithms for Nonlinear General Optimization.
+ See http://www.ime.usp.br/~egbirgin/tango/ for details.
+ ==============================================================================
+
+ The optional specification file algencan.dat was not found in the current
+ directory (this is not a problem nor an error). The default values for the
+ ALGENCAN parameters will be used.
+
+ ALGENCAN PARAMETERS:
+ firstde  =                    T
+ seconde  =                    F
+ truehpr  =                    F
+ hptype   =               HAPPRO
+ innslvr  =                   TN
+ sclsys   =                    F
+ skipacc  =                    T
+ lsssub   =                 NONE
+ sclsub   =                 NONE
+ rmfixv   =                    T
+ slacks   =                    F
+ scale    =                    T
+ epsfeas  =           5.0000D-01
+ epsopt   =           9.0000D-01
+ efacc    =           1.0000D-04
+ eoacc    =           1.0000D-04
+ iprint   =                   10
+ ncomp    =                    6
+
+ Number of variables               :      15
+ Number of equality constraints    :      10
+ Number of inequality constraints  :      60
+ Number of bound constraints       :      30
+
+ Number of removed fixed variables :       0
+
+ Objective function scale factor   : 4.5D-01
+ Smallest constraints scale factor : 1.8D-02
+
+ Entry to ALGENCAN.
+ Number of variables  :      15
+ Number of constraints:      70
+
+out penalt  objective infeas  scaled    scaled infeas norm   |Grad| inner Newton
+ite         function  ibilty  obj-funct infeas +compl graLag infeas totit forKKT
+  0         1.210D+00 2.D+00  5.500D-01 2.D-01 2.D-01 1.D+00 2.D-01    0   0   0
+  1 1.D+01  5.989D-01 5.D-01  2.722D-01 7.D-02 7.D-02 2.D-01 8.D-02    6C  0   0
+  2 1.D+01  5.989D-01 5.D-01  2.722D-01 7.D-02 7.D-02 8.D-01 8.D-02    6C  0   0
+  3 1.D+02  9.671D-01 1.D-02  4.396D-01 1.D-02 1.D-02 7.D-01 1.D+01   69C  0   0
+
+ Flag of ALGENCAN: Solution was found.
+
+FINAL POINT:
+
+  INDEX                X(INDEX)
+      1  9.8343067069802836D-01
+      2  1.8369703427458868D+00
+      3  4.1105126301362622D+00
+      4  1.8543709972793505D+00
+      5  4.1905534867742897D+00
+      6  1.8781138165432962D+00
+      7  4.3524549307294800D+00
+      8  1.9183295828406577D+00
+      9  4.5953041272918300D+00
+     10  1.9902942115279350D+00
+     11  4.8296781731353242D+00
+     12  1.9884158837797339D+00
+     13  5.0007253968932170D+00
+     14  1.9884126492496479D+00
+     15  5.0010199816465963D+00
+
+FINAL ESTIMATION OF THE LAGRANGE MULTIPLIERS: 
+
+  INDEX           LAMBDA(INDEX)
+      1  3.6685275697051384D-01
+      2  2.1086298075921559D+00
+      3  1.1672574565660325D-03
+      4 -3.1106301001849377D+00
+      5 -2.6396851932155352D+00
+      6  8.9166669396973566D-03
+      7  4.5070389895479845D-02
+      8 -3.9263274465989767D-04
+      9  2.0230228206905601D-01
+     10 -3.9942565706362774D-06
+     11  0.0000000000000000D+00
+     12  0.0000000000000000D+00
+     13  0.0000000000000000D+00
+     14  0.0000000000000000D+00
+     15  0.0000000000000000D+00
+     16  0.0000000000000000D+00
+     17  0.0000000000000000D+00
+     18  0.0000000000000000D+00
+     19  0.0000000000000000D+00
+     20  0.0000000000000000D+00
+     21  0.0000000000000000D+00
+     22  0.0000000000000000D+00
+     23  0.0000000000000000D+00
+     24  0.0000000000000000D+00
+     25  0.0000000000000000D+00
+     26  0.0000000000000000D+00
+     27  0.0000000000000000D+00
+     28  0.0000000000000000D+00
+     29  0.0000000000000000D+00
+     30  0.0000000000000000D+00
+     31  0.0000000000000000D+00
+     32  0.0000000000000000D+00
+     33  0.0000000000000000D+00
+     34  0.0000000000000000D+00
+     35  0.0000000000000000D+00
+     36  0.0000000000000000D+00
+     37  0.0000000000000000D+00
+     38  0.0000000000000000D+00
+     39  0.0000000000000000D+00
+     40  0.0000000000000000D+00
+     41  4.9585930702938041D-02
+     42  0.0000000000000000D+00
+     43  9.6395791442251369D-02
+     44  0.0000000000000000D+00
+     45  1.5885559441219660D-01
+     46  0.0000000000000000D+00
+     47  9.6966485048279399D-02
+     48  0.0000000000000000D+00
+     49  2.7129747812520882D-01
+     50  0.0000000000000000D+00
+     51  2.3880147566729143D-01
+     52  0.0000000000000000D+00
+     53  1.4805781330088078D-01
+     54  0.0000000000000000D+00
+     55  0.0000000000000000D+00
+     56  0.0000000000000000D+00
+     57  0.0000000000000000D+00
+     58  0.0000000000000000D+00
+     59  5.3517282170394795D-02
+     60  0.0000000000000000D+00
+     61  5.4912589564552117D-01
+     62  0.0000000000000000D+00
+     63  2.2714080553290666D-01
+     64  0.0000000000000000D+00
+     65  0.0000000000000000D+00
+     66  0.0000000000000000D+00
+     67  0.0000000000000000D+00
+     68  0.0000000000000000D+00
+     69  0.0000000000000000D+00
+     70  0.0000000000000000D+00
+
+ Total CPU time in seconds:   117.90
+
+ User-provided subroutines calls counters: 
+
+ Subroutine evalf     (coded=F):      0
+ Subroutine evalg     (coded=F):      0
+ Subroutine evalh     (coded=F):      0
+ Subroutine evalc     (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evaljac   (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evalhc    (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evalfc    (coded=T):    269
+ Subroutine evalgjac  (coded=T):     84
+ Subroutine evalgjacp (coded=F):      0
+ Subroutine evalhl    (coded=F):      0
+ Subroutine evalhlp   (coded=T):      0
+
