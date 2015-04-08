@@ -78,14 +78,14 @@ class Trajectory_Generation(object):
   def __init__(self, mrobot):
 
   ## "Arbitrary" parameters
-    self.N_s = 15 # nb of samples for discretization
-    self.n_knot = 4 # nb of non zero lenght intervals of the knot series
+    self.N_s = 80 # nb of samples for discretization
+    self.n_knot = 12 # nb of non zero lenght intervals of the knot series
     self.t_init = 0.0
-    self.Tc = 0.5
-    self.Tp = 1.1
+    self.Tc = 1.0
+    self.Tp = 12.0
     tstep = (self.Tp-self.t_init)/(self.N_s-1)
     Tc_idx = int(round(self.Tc/tstep))
-    self.detection_radius = 2.0
+    self.detection_radius = 12.0
 
   ## Mobile Robot object
     self.mrob = mrobot
@@ -206,7 +206,8 @@ class Trajectory_Generation(object):
 
         # initiate ctrl points (straight line towards final z)
         direc = final_z - last_z
-        direc = direc/LA.norm(direc)
+        self.normalization_dist = LA.norm(direc)
+        direc = direc/self.normalization_dist
         C[:,0] =np.array(np.linspace(last_z[0,0],\
                 last_z[0,0]+self.D*direc[0,0], self.n_ctrlpts)).T
         C[:,1] =np.array(np.linspace(last_z[1,0],\
@@ -241,12 +242,12 @@ class Trajectory_Generation(object):
                     'i') # inequations
     
             # solve constrained optmization
-#            solver = pyOpt.SLSQP(pll_type='POA')
+#            solver = pyOpt.PSQP(pll_type='POA')
 #            solver.setOption('ACC', 1e-6)
 #            solver.setOption('MAXIT', 30)
             solver = pyOpt.ALGENCAN(pll_type='POA')
-            solver.setOption('epsfeas', 1e-1)
-            solver.setOption('epsopt', 9e-1)
+            solver.setOption('epsfeas', 1e-2)
+            solver.setOption('epsopt', 8e-1)
     
             [J, C_aux, information] = solver(self.opt_prob) 
             C_aux = np.array(C_aux)
@@ -268,13 +269,13 @@ class Trajectory_Generation(object):
                                 callback=self._plot_update)
             C_aux = outp[0]
             imode = outp[3]
-            print('\n'.format(imode))
+            print('Exit mode: {}'.format(imode))
             if imode != 0 and imode != 9:
                 usepyopt = True
                 continue
         
 
-        print('Elapsed time for {} iteraction: {}'.format(self.itcount, time.time()-tic))
+        print('------------------------\nElapsed time for {} iteraction: {}'.format(self.itcount, time.time()-tic))
 
         print('No of equations unsatisfied: {}'.format(len(self.unsatisf_eq_values)))
         print('Mean and variance of equations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_eq_values), np.std(self.unsatisf_eq_values)))
@@ -311,12 +312,15 @@ class Trajectory_Generation(object):
         self.last_u = self.mrob.phi2(self.all_dz[-1][:,-1].reshape(
                 self.mrob.l+1, self.mrob.u_dim).T)
 
+        for i in range(len(self.last_u)):
+            if abs(self.last_u[i]) > self.u_abs_max[i]:
+                self.last_u[i] = mth.copysign(self.u_abs_max[i], self.last_u[i])
+
         #raw_input('paradinha')
         self.itcount += 1
     #endwhile
     
     self.detected_obst_idxs = self._detected_obst_idx(last_z)
-    print(self.detected_obst_idxs)
 
     # initiate ctrl points (straight line towards final z)
     C[:,0] =np.array(np.linspace(last_z[0,0],\
@@ -325,13 +329,12 @@ class Trajectory_Generation(object):
             final_z[1,0], self.n_ctrlpts)).T
     x_aux = np.append(np.asarray([self.Tp]), np.squeeze(C.reshape(1,self.n_ctrlpts*self.mrob.u_dim)), axis=1)
 
-    print(x_aux)
     self._lstep_plot_update(x_aux)
 
     tic = time.time()
 
     while True:
-        if usepyopt:
+        if False:
             # Define the optimization problem
             self.opt_prob = pyOpt.Optimization(
                     'Faster path with obstacles', # name of the problem
@@ -359,7 +362,7 @@ class Trajectory_Generation(object):
                     'i') # inequations
         
             # solve constrained optmization
-#            solver = pyOpt.SLSQP(pll_type='POA')
+#            solver = pyOpt.PSQP(pll_type='POA')
 #            solver.setOption('ACC', 1e-6)
 #            solver.setOption('MAXIT', 30)
             solver = pyOpt.ALGENCAN(pll_type='POA')
@@ -367,6 +370,7 @@ class Trajectory_Generation(object):
             solver.setOption('epsopt', 9e-1)
         
             [J, x_aux, information] = solver(self.opt_prob) 
+            self._lstep_plot_update(x_aux)
             x_aux = np.array(x_aux)
             break
 
@@ -379,20 +383,20 @@ class Trajectory_Generation(object):
                                 ieqcons=(),
                                 f_ieqcons=self._lstep_fieqcons,
                                 iprint=1,
-                                iter=30,
-                                acc=1e-6,
+                                iter=50,
+                                acc=1e-8,
                                 full_output=True,
                                 callback=self._lstep_plot_update)
 
             x_aux = outp[0]
             imode = outp[3]
-            print('\n'.format(imode))
+            print('Exit mode: {}'.format(imode))
             if imode != 0 and imode != 9:
                 usepyopt = True
                 continue
             break
 
-    print('Elapsed time for {} (last) iteraction: {}'.format(self.itcount, time.time()-tic))
+    print('------------------------\nElapsed time for {} (last) iteraction: {}'.format(self.itcount, time.time()-tic))
     print('No of equations unsatisfied: {}'.format(len(self.unsatisf_eq_values)))
     print('Mean and variance of equations unsatisfied: ({},{})'.format(np.mean(self.unsatisf_eq_values), np.std(self.unsatisf_eq_values)))
     print('No of inequations unsatisfied: {}'.format(len(self.unsatisf_ieq_values)))
@@ -401,7 +405,6 @@ class Trajectory_Generation(object):
     # test if opt went well
     # if yes
     dt_final = x_aux[0]
-    print(x_aux)
     self.t_final = self.mtime[0] + dt_final
     C = x_aux[1:].reshape(self.n_ctrlpts, self.mrob.u_dim)
     # if no
@@ -467,7 +470,7 @@ class Trajectory_Generation(object):
     # creating time
     mtime = np.linspace(self.mtime[0], t_final, self.N_s)
 
-    self._lstep_plot_update(x)
+#    self._lstep_plot_update(x)
 
     # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
     dz = self._comb_bsp(mtime, C, 0).T
@@ -521,7 +524,7 @@ class Trajectory_Generation(object):
 
   def _obj_func(self, x):
 
-    self._plot_update(x)
+#    self._plot_update(x)
 
     C = x.reshape(self.n_ctrlpts, self.mrob.u_dim)
     
@@ -589,7 +592,7 @@ class Trajectory_Generation(object):
 #        dz = np.append(dz,self._comb_bsp(t_final, C, dev).T,axis=1)
 #    qTp = self.mrob.phi1(dz)
     return \
-            t_final**2
+            (t_final**2)
 #            LA.norm(qTp - self.q_fin)**2\
 #            +\
 
@@ -678,7 +681,7 @@ class Trajectory_Generation(object):
     for dev in range(1,self.mrob.l+1):
         dz = np.append(dz,self._comb_bsp(self.mtime[-1], C, dev).T,axis=1)
     qTp = self.mrob.phi1(dz)
-    return LA.norm(qTp - self.q_fin)**2
+    return (LA.norm(qTp - self.q_fin))**4
 
   ##------------------------Constraints Equations------------------------------
   #----------------------------------------------------------------------------
@@ -695,9 +698,7 @@ class Trajectory_Generation(object):
            list(np.squeeze(np.array(self.mrob.phi2(dzt)-self.last_u)))
 
     # Count how many equations are not respected
-    unsatisf_list = [eq for eq in eq_cons if eq != 0]
-    self.unsatisf_eq_values = unsatisf_list
-
+    self.unsatisf_eq_values = [eq for eq in eq_cons if eq != 0]
     return np.asarray(eq_cons)
 
   ##------------------------Constraints Inequations----------------------------
