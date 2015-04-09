@@ -82,7 +82,7 @@ class Trajectory_Generation(object):
     self.n_knot = 12 # nb of non zero lenght intervals of the knot series
     self.t_init = 0.0
     self.Tc = 1.0
-    self.Tp = 12.0
+    self.Tp = 12.2
     tstep = (self.Tp-self.t_init)/(self.N_s-1)
     Tc_idx = int(round(self.Tc/tstep))
     self.detection_radius = 12.0
@@ -201,17 +201,15 @@ class Trajectory_Generation(object):
     while LA.norm(last_z - final_z) > self.D: # while the remaining dist (straight line) is greater than the max dist during Tp
 
         self.detected_obst_idxs = self._detected_obst_idx(last_z)
-#        print('No of detected obst: {}'.format(len(self.detected_obst_idxs)))
-#        print('Detected obst: {}'.format(self.obst_map[self.detected_obst_idxs,:]))
 
         # initiate ctrl points (straight line towards final z)
         direc = final_z - last_z
         self.normalization_dist = LA.norm(direc)
         direc = direc/self.normalization_dist
-        C[:,0] =np.array(np.linspace(last_z[0,0],\
-                last_z[0,0]+self.D*direc[0,0], self.n_ctrlpts)).T
-        C[:,1] =np.array(np.linspace(last_z[1,0],\
-                last_z[1,0]+self.D*direc[1,0], self.n_ctrlpts)).T
+#        C[:,0] =np.array(np.linspace(last_z[0,0],\
+#                last_z[0,0]+self.D*direc[0,0], self.n_ctrlpts)).T
+#        C[:,1] =np.array(np.linspace(last_z[1,0],\
+#                last_z[1,0]+self.D*direc[1,0], self.n_ctrlpts)).T
 
         tic = time.time()
         if usepyopt:
@@ -263,8 +261,8 @@ class Trajectory_Generation(object):
                                 ieqcons=(),
                                 f_ieqcons=self._fieqcons,
                                 iprint=1,
-                                iter=50,
-                                acc=1e-6,
+                                iter=30,
+                                acc=1e-4,
                                 full_output=True,
                                 callback=self._plot_update)
             C_aux = outp[0]
@@ -304,19 +302,15 @@ class Trajectory_Generation(object):
         self.knots = self.knots + self.Tc
         self.mtime = [tk+self.Tc for tk in self.mtime]
         last_z = self.all_dz[-1][0:self.mrob.u_dim,-1]
-#        print('Last z: {}', last_z)
-#        print(self.all_dz[-1][:,-1].reshape(
-#                self.mrob.l+1, self.mrob.u_dim).T)
         self.last_q = self.mrob.phi1(self.all_dz[-1][:,-1].reshape(
                 self.mrob.l+1, self.mrob.u_dim).T)
         self.last_u = self.mrob.phi2(self.all_dz[-1][:,-1].reshape(
                 self.mrob.l+1, self.mrob.u_dim).T)
 
-        for i in range(len(self.last_u)):
-            if abs(self.last_u[i]) > self.u_abs_max[i]:
-                self.last_u[i] = mth.copysign(self.u_abs_max[i], self.last_u[i])
+#        for i in range(len(self.last_u)):
+#            if abs(self.last_u[i]) > self.u_abs_max[i]:
+#                self.last_u[i] = mth.copysign(self.u_abs_max[i], self.last_u[i])
 
-        #raw_input('paradinha')
         self.itcount += 1
     #endwhile
     
@@ -357,8 +351,8 @@ class Trajectory_Generation(object):
         
             self.opt_prob.addConGroup( # inequations constraints
                     'ic',
-                    self.N_s*self.mrob.u_dim +
-                            self.N_s*len(self.detected_obst_idxs), # dimenstion
+                    (self.N_s-2)*self.mrob.u_dim +
+                            (self.N_s-2)*len(self.detected_obst_idxs), # dimenstion
                     'i') # inequations
         
             # solve constrained optmization
@@ -383,8 +377,8 @@ class Trajectory_Generation(object):
                                 ieqcons=(),
                                 f_ieqcons=self._lstep_fieqcons,
                                 iprint=1,
-                                iter=50,
-                                acc=1e-8,
+                                iter=30,
+                                acc=1e-4,
                                 full_output=True,
                                 callback=self._lstep_plot_update)
 
@@ -500,17 +494,17 @@ class Trajectory_Generation(object):
     self.unsatisf_eq_values = [eq for eq in eq_cons if eq != 0]
 
     ## Obstacles constraints
-    # N_s*nb_obst_detected
+    # (N_s-2)*nb_obst_detected. The -2 is to account for initial and final cond.
     obst_cons = []
     for m in self.detected_obst_idxs:
         obst_cons += [-1.0*LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
-          + (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+          + (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp[1:-1]]
 
     ## Max speed constraints
-    # N_s*u_dim inequations
+    # (N_s-2)*u_dim inequations. The -2 is to account for initial and final cond.
     max_speed_cons = list(itertools.chain.from_iterable(
         map(lambda ut:[-1.0*self.u_abs_max[i,0]+abs(ut[i,0])\
-        for i in range(self.mrob.u_dim)], utTp)))
+        for i in range(self.mrob.u_dim)], utTp[1:-1])))
 
     # Create final array
     ieq_cons = obst_cons + max_speed_cons
@@ -555,17 +549,17 @@ class Trajectory_Generation(object):
     self.unsatisf_eq_values = [eq for eq in eq_cons if eq != 0]
 
     ## Obstacles constraints
-    # N_s*nb_obst_detected
+    # (N_s-1)*nb_obst_detected
     obst_cons = []
     for m in self.detected_obst_idxs:
         obst_cons += [-1.0*LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
-          + (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+          + (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp[1:]]
 
     ## Max speed constraints
-    # N_s*u_dim inequations
+    # (N_s-1)*u_dim inequations
     max_speed_cons = list(itertools.chain.from_iterable(
         map(lambda ut:[-1.0*self.u_abs_max[i,0]+abs(ut[i,0])\
-        for i in range(self.mrob.u_dim)], utTp)))
+        for i in range(self.mrob.u_dim)], utTp[1:])))
 
     # Create final array
     ieq_cons = obst_cons + max_speed_cons
@@ -653,17 +647,17 @@ class Trajectory_Generation(object):
     qtTp = map(self.mrob.phi1, dztTp)
     
     ## Obstacles constraints
-    # N_s*nb_obst_detected
+    # (N_s-2)*nb_obst_detected
     obst_cons = []
     for m in self.detected_obst_idxs:
         obst_cons += [LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
-          - (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+          - (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp[1:-1]]
 
     ## Max speed constraints
-    # N_s*u_dim inequations
+    # (N_s-2)*u_dim inequations
     max_speed_cons = list(itertools.chain.from_iterable(
         map(lambda ut:[self.u_abs_max[i,0]-abs(ut[i,0])\
-        for i in range(self.mrob.u_dim)],utTp)))
+        for i in range(self.mrob.u_dim)],utTp[1:-1])))
 
     # Create final array
     ieq_cons = obst_cons + max_speed_cons
@@ -681,7 +675,7 @@ class Trajectory_Generation(object):
     for dev in range(1,self.mrob.l+1):
         dz = np.append(dz,self._comb_bsp(self.mtime[-1], C, dev).T,axis=1)
     qTp = self.mrob.phi1(dz)
-    return (LA.norm(qTp - self.q_fin))**4
+    return 1e1*(LA.norm(qTp - self.q_fin))**2
 
   ##------------------------Constraints Equations------------------------------
   #----------------------------------------------------------------------------
@@ -725,17 +719,17 @@ class Trajectory_Generation(object):
 #    print('LA:: {}'.format(LA.norm(self.obst_map[self.detected_obst_idxs[0],0:-1].T-dztTp[0][0:2,0])-self.mrob.rho-self.obst_map[self.detected_obst_idxs[0], -1]))
 
     ## Obstacles constraints
-    # N_s*nb_obst_detected
+    # (N_s-1)*nb_obst_detected
     obst_cons = []
     for m in self.detected_obst_idxs:
         obst_cons += [LA.norm(self.obst_map[m,0:-1].T-qt[0:2,0]) \
-          - (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp]
+          - (self.mrob.rho + self.obst_map[m,-1]) for qt in qtTp[1:]]
 
     ## Max speed constraints
-    # N_s*u_dim inequations
+    # (N_s-1)*u_dim inequations
     max_speed_cons = list(itertools.chain.from_iterable(
         map(lambda ut:[self.u_abs_max[i,0]-abs(ut[i,0])\
-        for i in range(self.mrob.u_dim)],utTp)))
+        for i in range(self.mrob.u_dim)],utTp[1:])))
 
     # Create final array
     ieq_cons = obst_cons + max_speed_cons
