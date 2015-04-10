@@ -1201,7 +1201,6 @@ if __name__ == "__main__":
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
     n_obsts = 7
-
     obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
 
     # 1 move

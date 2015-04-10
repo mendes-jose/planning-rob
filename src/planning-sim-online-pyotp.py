@@ -198,7 +198,8 @@ class Trajectory_Generation(object):
 
     usepyopt = False
 
-    while LA.norm(last_z - final_z) > self.D: # while the remaining dist (straight line) is greater than the max dist during Tp
+    while LA.norm(last_z - final_z) > self.D: 
+# while the remaining dist (straight line) is greater than the max dist during Tp
 
         self.detected_obst_idxs = self._detected_obst_idx(last_z)
 #        print('No of detected obst: {}'.format(len(self.detected_obst_idxs)))
