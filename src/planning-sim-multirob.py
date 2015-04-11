@@ -8,7 +8,9 @@ import time
 import itertools
 import pyOpt
 import multiprocessing as mpc
-from scipy.optimize import f_min_slsqp
+import sys
+import logging
+from scipy.optimize import fmin_slsqp
 
 ###############################################################################
 # Obstacle
@@ -84,10 +86,12 @@ class UnicycleKineModel(object):
         self.q_dim = 3
         self.q_init = np.matrix(q_init).T #angle in [0, 2pi]
         self.q_final = np.matrix(q_final).T #angle in [0, 2pi]
-        
+        # Flat output
+        self.z_init = self.phi0(self.q_init)
+        self.z_final = self.phi0(self.q_final)
         self.l = 2 # number of need derivations
 
-    def phi0(sefl, q)
+    def phi0(sefl, q):
         """ Returns z given q
         """
         return q[0:2,0]
@@ -145,21 +149,24 @@ class UnicycleKineModel(object):
 class Robot(object):
     def __init__(
             self,
+            eyed,
             kine_model,
             obstacles,
             phy_boundary,
             com_link,
+            process_counter,
             N_s=20,
             n_knots=6,
             t_init=0.0,
             t_sup=1e10,
             Tc=1.0,
-            Tp=2.0,
-            Td=2.5,
+            Tp=12.0,
+            Td=12.5,
             rho=0.2,
             detec_rho=2.0,
             log_lock=None):
 
+        self.eyed = eyed
         self.k_mod = kine_model
         self.obst = obstacles
         self.p_bound = phy_boundary
@@ -173,17 +180,37 @@ class Robot(object):
         self.rho = rho
         self.d_rho = detec_rho
 
-        slelf.log_lock = log_lock
+        self.log_lock = log_lock
+
+        td_step = (self.Td-self.t_init)/(self.N_s-1)
+        tp_step = (self.Tp-self.t_init)/(self.N_s-1)
+        self.Tcd_idx = int(round(self.Tc/td_step))
+        self.Tcp_idx = int(round(self.Tc/tp_step))
+
+        self.set_option('iplot')
+        self.set_option('maxit')
+        self.set_option('acc')
 
         # Declaring the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self,))
 
+    def set_option(self, name, value=None):
+        if name == 'iplot':
+            self.interac_plot = False if value == None else value
+        elif name == 'maxit':
+            self.maxit = 50 if value == None else value
+        elif name == 'acc':
+            self.acc = 1e6 if value == None else value
+        else:
+            self._log('w', 'Unknown parameter '+name+', nothing will be set')
+        return
+
     def _gen_knots(self, t_init, t_final):
         """ Generate b-spline knots given initial and final times
         """
-        gk = lambda x:t_init + (x-(self.d-1.0))*(t_final-t_init)/self.n_knot
+        gk = lambda x:t_init + (x-(self.d-1.0))*(t_final-t_init)/self.n_knots
         knots = [t_init for _ in range(self.d)]
-        knots.extend([gk(i) for i in range(self.d,self.d+self.n_knot-1)])
+        knots.extend([gk(i) for i in range(self.d,self.d+self.n_knots-1)])
         knots.extend([t_final for _ in range(self.d)])
         return np.asarray(knots)
 
@@ -209,25 +236,50 @@ class Robot(object):
                     axis=1)
         return z
 
+    def _log(self, logid, strg):
+        if logid == 'd':
+            log_call = logging.debug
+        elif logid == 'i':
+            log_call = logging.info
+        elif logid == 'w':
+            log_call = logging.warning
+        elif logid == 'e':
+            log_call = logging.error
+        elif logid == 'c':
+            log_call = logging.critical
+        elif logid == 'c':
+            log_call = logging.critical
+        else:
+            log_call = logging.debug
+
+        if self.log_lock != None:
+            self.log_lock.acquire()
+        log_call(strg)
+        if self.log_lock != None:
+            self.log_lock.release()
+        return
+
     def _linspace_ctrl_pts(self, final_ctrl_pt):
-        self.C = np.array(np.linspace(self.last_z[0,0
         self.C[:,0] = np.array(np.linspace(self.last_z[0,0],\
                 final_ctrl_pt[0,0], self.n_ctrlpts)).T
-        self.C[:,1] = np.array(np.linspace(last_z[1,0],\
+        self.C[:,1] = np.array(np.linspace(self.last_z[1,0],\
                 final_ctrl_pt[1,0], self.n_ctrlpts)).T
 
     def _detected_obst_idx(self):
         idx_list = []
-        for idx in range(self.obst_map.shape[0]):
-            dist = LA.norm(self.obst[idx].cp - self.last_z)
+        for idx in range(len(self.obst)):
+            dist = LA.norm(self.obst[idx].cp - self.last_z.T)
             if dist < self.d_rho:
                 idx_list += [idx]
-        return idx_list
+        self.detected_obst_idx = idx_list
 
     def _ls_sa_criterion(self, x):
         return (x[0]+self.mtime[0])**2
 
     def _ls_sa_feqcons(self, x):
+        dt_final = x[0]
+        t_final = self.mtime[0]+dt_final
+        C = x[1:].reshape(self.n_ctrlpts, self.k_mod.u_dim)
         return
 
     def _ls_sa_fieqcons(self, x):
@@ -260,66 +312,74 @@ class Robot(object):
     def _co_fieqcons(self, x):
         return
 
-    def _scipy_callback(self): #TODO
+    def _scipy_callback(self):
         return
 
     def _solve_opt_pbl(self):
-
         if self.interac_plot:
             f_callback = self._scipy_callback
         else:
             f_callback = None
 
         if not self.final_step:
-
             if self.std_alone:
-                f_fieqcons = self._fieqcons
+                p_criterion = self._sa_criterion
+                p_eqcons = self._sa_feqcons
+                p_ieqcons = self._sa_fieqcons
             else:
-                f_fieqcons = self._c_fieqcons
+                p_criterion = self._co_criterion
+                p_eqcons = self._co_feqcons
+                p_ieqcons = self._co_fieqcons
 
-            output = fmin_slsqp(self._criterion,
-                    self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim),
-                    eqcons=(),
-                    f_eqcons=self._feqcons,
-                    ieqcons=(),
-                    f_ieqcons=self._fieqcons,
-                    iprint=1,
-                    iter=self.it,
-                    acc=self.acc,
-                    full_output=True,
-                    callback=f_callback)
+            init_guess = self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim)
 
-            #imode = output[3]
-            # TODO handle optimization exit mode
-            self.C = output[0].reshape(self.n_ctrlpts, self.k_mod.u_dim)
-            
         else:
-            output = fmin_slsqp(self._lcriterion,
-                    self.C.reshape(self.n_ctrlpts*self.mrob.u_dim),
-                    eqcons=(),
-                    f_eqcons=self._lfeqcons,
-                    ieqcons=(),
-                    f_ieqcons=self._lfieqcons,
-                    iprint=1,
-                    iter=self.it,
-                    acc=self.acc,
-                    full_output=True,
-                    callback=f_callback)
+            if self.std_alone:
+                p_criterion = self._ls_sa_criterion
+                p_eqcons = self._ls_sa_feqcons
+                p_ieqcons = self._ls_sa_fieqcons
+            else:
+                p_criterion = self._ls_co_criterion
+                p_eqcons = self._ls_co_feqcons
+                p_ieqcons = self._ls_co_fieqcons
+
+            init_guess = np.append(np.asarray([self.est_dtime]),
+                    self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim))
+
+        print(init_guess)
+
+        output = fmin_slsqp(
+                p_criterion,
+                init_guess,
+                eqcons=(),
+                f_eqcons=p_eqcons,
+                ieqcons=(),
+                f_ieqcons=p_ieqcons,
+                iprint=1,
+                iter=self.maxit,
+                acc=self.acc,
+                full_output=True,
+                callback=f_callback)
 
             #imode = output[3]
             # TODO handle optimization exit mode
+        if self.final_step:
             self.C = output[0][1:].reshape(self.n_ctrlpts, self.k_mod.u_dim)
             self.dt_final = output[0][0]
-            #sefl.t_final = self.mtime[0] + dt_final
+            sefl.t_final = self.mtime[0] + dt_final
+        else:
+            self.C = output[0].reshape(self.n_ctrlpts, self.k_mod.u_dim)
+#            #imode = output[3]
+#            # TODO handle optimization exit mode
             
         return
 
     def _plan_section(self):
 
         # update obstacles zone
-        self._detect_obst_idx()
+        self._detected_obst_idx()
 
-        # first guess for ctrl pts
+#        # first guess for ctrl pts
         if not self.final_step:
             direc = self.final_z - self.last_z
             direc = direc/LA.norm(direc)
@@ -327,7 +387,7 @@ class Robot(object):
         else:
             last_ctrl_pt = self.final_z
 
-        self._linspace_ctrl_pts_(last_ctrl_pt)
+        self._linspace_ctrl_pts(last_ctrl_pt)
 
         self.std_alone = True
 
@@ -335,48 +395,100 @@ class Robot(object):
         self._solve_opt_pbl()
         toc = time.time()
 
-        if self.log_lock != None:
-            self.log_lock.acquire()
-        logging.info(
-                'R{rid},{tk}: Time to solve stand alone optimisation problem: \
-                {t}'.format(rid=self.eyed, t=toc-tic, tk=self.tk))
-        if self.log_lock != None:
-            self.log_lock.release()
+        self._log('i','R{rid}@tkref={tk}: Time to solve stand alone optimisation '
+                'problem: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
 
-        self._compute_conflicts()
+        time_idx = None if self.final_step else self.Tcd_idx
 
-        if self.conflicts != []:
+        dz = self._comb_bsp(self.mtime[0:time_idx], self.C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp(
+                    self.mtime[0:time_idx], self.C, dev).T,axis=0)
+
+#        TODO Write on shared memory my intention. Process sync
+
+#        self._compute_conflicts()
+#
+#        if self.conflicts != []:
+        if False:
 
             self.std_alone = False
 
-            self._read_com_link()
+#            self._read_com_link()
 
             tic = time.time()
             self._solve_opt_pbl()
             toc = time.time()
 
-            if self.log_lock != None:
-                self.log_lock.acquire()
-            logging.info(
-                    'R{rid},{tk}: Time to solve optimisation problem: {t}'.\
-                    format(rid=self.eyed, t=toc-tic, tk=self.tk))
-            if self.log_lock != None:
-                self.log_lock.release()
+            self._log('i','R{rid}@tkref={tk}: Time to solve optimisation probl'
+                    'em: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
+
+            time_idx = None if self.final_step else self.Tcp_idx
+                
+            dz = self._comb_bsp(self.mtime[0:time_idx], self.C, 0).T
+            for dev in range(1,self.k_mod.l+1):
+                dz = np.append(dz,self._comb_bsp(
+                        self.mtime[0:time_idx], self.C, dev).T,axis=0)
+#        else:
+#            TODO Consider planning during Td the final plan
+            
+        # Storing
+#        self._update()
+        self.all_C.extend([self.C])
+        
+        self.all_dz.extend([dz])
+        # TODO rejected path
+
+        # Updating
+        if self.final_step:
+            self.knots = self.knots + self.Tc
+            self.mtime = [tk+self.Tc for tk in self.mtime]
+            self.last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1]
 
         return
 
+    def _init_planning(self):
+
+        self.detected_obst_idx = range(len(self.obst))
+
+        self.last_z = self.k_mod.z_init
+        self.final_z = self.k_mod.z_final
+
+        self.D = self.Tp * self.k_mod.u_max[0,0]
+
+        self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
+        self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
+
+        self.C = np.zeros((self.n_ctrlpts,self.k_mod.u_dim))
+
+        self.all_C = []
+        self.all_dz = []
+
     def _plan(self):
+
+        self._log('i', 'R{rid}: Init motion planning'.format(rid=self.eyed))
 
         self._init_planning()
 
         self.final_step = False
+
+        self.knots = self._gen_knots(self.t_init, self.Td)
+        self.mtime = np.linspace(self.t_init, self.Td, self.N_s)
 
         # while the remaining dist is greater than the max dist during Tp
         while LA.norm(self.last_z - self.final_z) > self.D:
             self._plan_section()
 
         self.final_step = True
+
+        self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
+
+        self.knots = self._gen_knots(self.t_init, self.est_dtime)
+        self.mtime = np.linspace(self.t_init, self.est_dtime, self.N_s)
+
         self._plan_section()
+
+        self._log('i','R{}: Finishing motion planning'.format(self.eyed))
 
         return
 
@@ -392,14 +504,12 @@ class WorldSim(object):
         self.obsts = obstacles
         self.ph_bound = phy_boundary
 
-
-        
-
     def run(self, interac_plot=False, speed_plot=False):
 
         # Interactive plot
         if interac_plot == True:
             plt.ion()
+            [r.set_option('iplot', True) for r in self.robs]
 #            self.mrobot.setOption('IPLOT', True)
             # TODO: in the future we may set IPLOT True for obstacles as well
 
@@ -423,18 +533,14 @@ class WorldSim(object):
 
         # Creating robot path (and updating plot if IPLOT is true)
 
-        
+        [r.planning_process.start() for r in self.robs]
+        [r.planning_process.join() for r in self.robs]
 
-        
+        logging.info('All robots have finished')
 
-        ret = self.mrobot.gen_trajectory()
+#        plt.show(block=True)
 
-        logging.info('Fineshed planning')
-
-        plt.show(block=True)
-
-        return ret
-
+        return
 
 ###############################################################################
 # Script
@@ -453,8 +559,8 @@ def rand_round_obst(no, boundary):
     min_radius = 0.15
     max_radius = 0.6
     radius_range = np.linspace(min_radius,max_radius,N)
-    x_range = np.linspace(boundary.x_min+max_radius,boundary.x_max-max_radius,N)
-    y_range = np.linspace(boundary.y_min+max_radius,boundary.y_max-max_radius,N)
+    x_range =np.linspace(boundary.x_min+max_radius,boundary.x_max-max_radius,N)
+    y_range =np.linspace(boundary.y_min+max_radius,boundary.y_max-max_radius,N)
     
     obsts = []
     i=0
@@ -470,23 +576,22 @@ def rand_round_obst(no, boundary):
 def parse_cmdline():
     # parsing command line eventual optmization method options
     scriptname = sys.argv[0]
-    lib = None
     method = None
     if len(sys.argv) > 1:
-        lib = str(sys.argv[1])
-        if len(sys.argv) > 2:
-            method = str(sys.argv[2])
-        else:
-            method = None
+        method = str(sys.argv[1])
     else:
-        lib = 'scipy'
+        method = 'slsqp'
 
-    return scriptname, lib, method
+    return scriptname, method
 
 
 # MAIN ########################################################################
 
 if __name__ == '__main__':
+
+    n_obsts = 7
+    n_robots = 1
+    N_s = 20
 
     scriptname, method = parse_cmdline()
 
@@ -495,56 +600,44 @@ if __name__ == '__main__':
     else:
         fname = scriptname[0:-3]+'.log'
 
-    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
-            filemode='w',level=logging.DEBUG)
-#    logging.basicConfig(level=logging.DEBUG)
+#    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
+#            filemode='w',level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)
 
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
-    n_obsts = 7
     obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
+
     kine_models = [UnicycleKineModel(
-            [ 0.0,  0.0, np.pi/2], # q_initial
-            [ 2.0,  5.0, np.pi/2], # q_final
+            [ float(i),  0.0, np.pi/2], # q_initial
+            [ n_robots-i+1.0,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]]          # u_max
-#            [ 1.6,  3.0])]          # du_max
-
-    kine_models += [UnicycleKineModel(
-            [ 1.0,  0.0, np.pi/2], # q_initial
-            [ 1.0,  5.0, np.pi/2], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]]          # u_max
-#            [ 1.6,  3.0])]          # du_max
-
-    kine_models += [UnicycleKineModel(
-            [-1.0,  0.0, np.pi/2], # q_initial
-            [ 3.0,  5.0, np.pi/2], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]]          # u_max
-#            [ 1.6,  3.0])]          # du_max
+            [ 1.0,  5.0])          # u_max
+            for i in [j-n_robots/2 for j in range(n_robots)]]
 
     log_lock = mpc.Lock()
     pcc_lock = mpc.Lock()
     com_lock = mpc.Lock()
 
-    process_counter = Value('I',0,pcc_lock) # unsigned int
-    com_link = Array('d',max(self.robots,key=lambda rob:rob.N_s).N_s,com_lock)
+    process_counter = mpc.Value('I', 0, lock=pcc_lock) # unsigned int
+    com_link = mpc.Array('d', N_s, lock=com_lock)
+#    com_link = mpc.Array('d', max(robots, key=\
+#            lambda rob:rob.N_s).N_s, lock=com_lock)
 
     robots = [Robot(
+            i,
             kine_models[i],
             obstacles,
             boundary,
             com_link,
-            pcc
-            T
-            ) for 
-    
+            process_counter,
+            N_s=20) for i in range(n_robots)]
 
+    world_sim = WorldSim(robots,obstacles,boundary)
+
+    summary_info = world_sim.run(interac_plot=False, speed_plot=True)
 
