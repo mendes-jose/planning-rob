@@ -616,6 +616,7 @@ class Robot(object):
 
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
 
+        # TODO verify change if this is ok
         self.knots = self._gen_knots(self.t_init, self.est_dtime)
         self.mtime = np.linspace(self.t_init, self.est_dtime, self.N_s)
 

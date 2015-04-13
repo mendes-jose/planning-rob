@@ -332,7 +332,7 @@ class Trajectory_Generation(object):
     tic = time.time()
 
     while True:
-        if usepyopt:
+        if False:
             # Define the optimization problem
             self.opt_prob = pyOpt.Optimization(
                     'Faster path with obstacles', # name of the problem

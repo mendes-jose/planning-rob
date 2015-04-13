@@ -525,7 +525,7 @@ class Robot(object):
                     for k in range(no_ctrl_to_be_moved):
                         idx = distcp.index(sorteddistcp[k])+1
                         self.ctrl_pts[idx] += (x2to_be_avoided+\
-                                radius_ortho/2.0)*(-((1.0*k)/no_ctrl_to_be_moved)**2+1)
+                                radius_ortho/1.0)*(-((1.0*k)/no_ctrl_to_be_moved)**2+1)
                         pltmoved += [self.ctrl_pts[idx,0], self.ctrl_pts[idx,1], 'o']
 
                     # interpolate control points using combination of b-splines

@@ -23,27 +23,152 @@
  rmfixv   =                    T
  slacks   =                    F
  scale    =                    T
- epsfeas  =           1.0000D-08
- epsopt   =           1.0000D-08
+ epsfeas  =           1.0000D-01
+ epsopt   =           9.0000D-01
  efacc    =           1.0000D-04
  eoacc    =           1.0000D-04
  iprint   =                   10
  ncomp    =                    6
 
- Number of variables               :      37
- Number of equality constraints    :      10
- Number of inequality constraints  :     900
- Number of bound constraints       :      74
+ Number of variables               :      14
+ Number of equality constraints    :       5
+ Number of inequality constraints  :      75
+ Number of bound constraints       :      28
 
  Number of removed fixed variables :       0
 
- Objective function scale factor   : 4.6D-02
- Smallest constraints scale factor : 9.7D-02
+ Objective function scale factor   : 4.7D-01
+ Smallest constraints scale factor : 2.3D-02
 
  Entry to ALGENCAN.
- Number of variables  :      37
- Number of constraints:     910
+ Number of variables  :      14
+ Number of constraints:      80
 
 out penalt  objective infeas  scaled    scaled infeas norm   |Grad| inner Newton
 ite         function  ibilty  obj-funct infeas +compl graLag infeas totit forKKT
-  0         1.160D+02 1.D+00  5.385D+00 3.D-01 3.D-01 0.D+00 1.D+00    0   0   0
+  0         7.898D-02 1.D+00  3.699D-02 9.D-02 9.D-02 1.D+00 3.D-01    0   0   0
+  1 1.D+01  5.704D-02 3.D-01  2.672D-02 5.D-02 5.D-02 4.D-01 6.D-02    3C  0   0
+  2 1.D+01  6.105D-02 4.D-01  2.859D-02 1.D-02 1.D-02 4.D-01 4.D-02    6C  0   0
+  3 1.D+01  6.105D-02 4.D-01  2.859D-02 1.D-02 1.D-02 6.D-01 4.D-02    6C  0   0
+  4 1.D+02  4.168D-02 6.D-02  1.952D-02 5.D-03 5.D-03 9.D-01 8.D-03   13C  0   0
+
+ Flag of ALGENCAN: Solution was found.
+
+FINAL POINT:
+
+  INDEX                X(INDEX)
+      1  1.7429277827201564D+00
+      2  3.7306901113085815D+00
+      3  1.7651510592767332D+00
+      4  3.8198881417507944D+00
+      5  1.8100121008975165D+00
+      6  3.9972532835656973D+00
+      7  1.8792199976151345D+00
+      8  4.2660768977144610D+00
+      9  1.8460746816781990D+00
+     10  4.5422135354907729D+00
+     11  1.9539162083418389D+00
+     12  4.7045779706829149D+00
+     13  1.9532951241100072D+00
+     14  4.8013539617785446D+00
+
+FINAL ESTIMATION OF THE LAGRANGE MULTIPLIERS: 
+
+  INDEX           LAMBDA(INDEX)
+      1  3.7432953167018596D-01
+      2  2.0461746654125990D+00
+      3  3.4420363862045271D-02
+      4  4.1663630820946769D-02
+      5  4.7222564595077489D-03
+      6  0.0000000000000000D+00
+      7  0.0000000000000000D+00
+      8  0.0000000000000000D+00
+      9  0.0000000000000000D+00
+     10  0.0000000000000000D+00
+     11  0.0000000000000000D+00
+     12  0.0000000000000000D+00
+     13  0.0000000000000000D+00
+     14  0.0000000000000000D+00
+     15  0.0000000000000000D+00
+     16  0.0000000000000000D+00
+     17  0.0000000000000000D+00
+     18  0.0000000000000000D+00
+     19  0.0000000000000000D+00
+     20  0.0000000000000000D+00
+     21  0.0000000000000000D+00
+     22  0.0000000000000000D+00
+     23  0.0000000000000000D+00
+     24  0.0000000000000000D+00
+     25  0.0000000000000000D+00
+     26  0.0000000000000000D+00
+     27  0.0000000000000000D+00
+     28  0.0000000000000000D+00
+     29  0.0000000000000000D+00
+     30  0.0000000000000000D+00
+     31  0.0000000000000000D+00
+     32  0.0000000000000000D+00
+     33  0.0000000000000000D+00
+     34  0.0000000000000000D+00
+     35  0.0000000000000000D+00
+     36  0.0000000000000000D+00
+     37  0.0000000000000000D+00
+     38  0.0000000000000000D+00
+     39  0.0000000000000000D+00
+     40  0.0000000000000000D+00
+     41  0.0000000000000000D+00
+     42  0.0000000000000000D+00
+     43  0.0000000000000000D+00
+     44  0.0000000000000000D+00
+     45  0.0000000000000000D+00
+     46  0.0000000000000000D+00
+     47  0.0000000000000000D+00
+     48  0.0000000000000000D+00
+     49  0.0000000000000000D+00
+     50  0.0000000000000000D+00
+     51  5.7557606893423388D-02
+     52  0.0000000000000000D+00
+     53  1.1942711135808180D-01
+     54  0.0000000000000000D+00
+     55  1.3012922277828287D-01
+     56  0.0000000000000000D+00
+     57  5.1149614897664848D-02
+     58  0.0000000000000000D+00
+     59  2.0253055501193024D-01
+     60  0.0000000000000000D+00
+     61  7.7647467377498045D-02
+     62  0.0000000000000000D+00
+     63  0.0000000000000000D+00
+     64  0.0000000000000000D+00
+     65  0.0000000000000000D+00
+     66  0.0000000000000000D+00
+     67  0.0000000000000000D+00
+     68  0.0000000000000000D+00
+     69  0.0000000000000000D+00
+     70  0.0000000000000000D+00
+     71  0.0000000000000000D+00
+     72  0.0000000000000000D+00
+     73  0.0000000000000000D+00
+     74  0.0000000000000000D+00
+     75  2.0334990663433988D-01
+     76  0.0000000000000000D+00
+     77  1.1224853332875738D-01
+     78  0.0000000000000000D+00
+     79  1.1514653596496352D-01
+     80  0.0000000000000000D+00
+
+ Total CPU time in seconds:    38.82
+
+ User-provided subroutines calls counters: 
+
+ Subroutine evalf     (coded=F):      0
+ Subroutine evalg     (coded=F):      0
+ Subroutine evalh     (coded=F):      0
+ Subroutine evalc     (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evaljac   (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evalhc    (coded=F):      0 (     0 calls per constraint in average)
+ Subroutine evalfc    (coded=T):     61
+ Subroutine evalgjac  (coded=T):     28
+ Subroutine evalgjacp (coded=F):      0
+ Subroutine evalhl    (coded=F):      0
+ Subroutine evalhlp   (coded=T):      0
+
