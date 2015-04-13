@@ -9,6 +9,7 @@ class Robot(object):
 
     def _print(self):
         print 'hello', self.name
+        return 5
 
 if __name__ == '__main__':
     r1 = Robot()
@@ -17,4 +18,4 @@ if __name__ == '__main__':
     r1.process.start()
     r2.process.start()
     r1.process.join()
-    r2.process.join()
+    print(r2.process.join())

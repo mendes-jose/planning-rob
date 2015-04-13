@@ -2,6 +2,7 @@
 
 import numpy as np
 import numpy.linalg as LA
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import scipy.interpolate as si
 import time
@@ -11,7 +12,50 @@ import multiprocessing as mpc
 import sys
 import logging
 from scipy.optimize import fmin_slsqp
+from matplotlib.collections import LineCollection
+from matplotlib.colors import ListedColormap, BoundaryNorm
 
+# Data manipulation:
+
+def make_segments(x, y):
+    '''
+    Create list of line segments from x and y coordinates, in the correct format for LineCollection:
+    an array of the form   numlines x (points per line) x 2 (x and y) array
+    '''
+
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    
+    return segments
+
+
+# Interface to LineCollection:
+
+def colorline(x, y, z=None, cmap=plt.get_cmap('copper'), norm=plt.Normalize(0.0, 1.0), linewidth=3, alpha=1.0):
+    '''
+    Plot a colored line with coordinates x and y
+    Optionally specify colors in the array z
+    Optionally specify a colormap, a norm function and a line width
+    '''
+    
+    # Default colors equally spaced on [0,1]:
+    if z is None:
+        z = np.linspace(0.0, 1.0, len(x))
+           
+    # Special case if a single number:
+    if not hasattr(z, "__iter__"):  # to check for numerical input -- this is a hack
+        z = np.array([z])
+        
+    z = np.asarray(z)
+    
+    segments = make_segments(x, y)
+    lc = LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
+    
+    ax = plt.gca()
+    ax.add_collection(lc)
+    
+    return lc
+        
 ###############################################################################
 # Obstacle
 ###############################################################################
@@ -155,13 +199,14 @@ class Robot(object):
             phy_boundary,
             com_link,
             process_counter,
+            sol,
             N_s=20,
             n_knots=6,
             t_init=0.0,
             t_sup=1e10,
             Tc=1.0,
             Tp=2.0,
-            Td=2.5,
+            Td=2.0,
             rho=0.2,
             detec_rho=2.0,
             log_lock=None):
@@ -187,23 +232,19 @@ class Robot(object):
         self.Tcd_idx = int(round(self.Tc/td_step))
         self.Tcp_idx = int(round(self.Tc/tp_step))
 
-        self.set_option('iplot')
         self.set_option('maxit')
         self.set_option('acc')
-        self.set_option('fig')
+
+        self.sol = sol
 
         # Declaring the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self,))
 
     def set_option(self, name, value=None):
-        if name == 'iplot':
-            self.interac_plot = False if value == None else value
-        elif name == 'maxit':
+        if name == 'maxit':
             self.maxit = 50 if value == None else value
         elif name == 'acc':
             self.acc = 1e-6 if value == None else value
-        elif name == 'fig':
-            self.fig = value
         else:
             self._log('w', 'Unknown parameter '+name+', nothing will be set')
         return
@@ -263,8 +304,6 @@ class Robot(object):
         return
 
     def _linspace_ctrl_pts(self, final_ctrl_pt):
-        print(self.C)
-        print(final_ctrl_pt)
         self.C[:,0] = np.array(np.linspace(self.last_z[0,0],\
                 final_ctrl_pt[0,0], self.n_ctrlpts)).T
         self.C[:,1] = np.array(np.linspace(self.last_z[1,0],\
@@ -279,7 +318,7 @@ class Robot(object):
         self.detected_obst_idxs = idx_list
 
     def _ls_sa_criterion(self, x):
-        return (x[0]+self.mtime[0])**2
+        return (x[0])**2
 
     def _ls_sa_feqcons(self, x):
         dt_final = x[0]
@@ -413,6 +452,7 @@ class Robot(object):
         return (x[0]+self.mtime[0])**2
 
     def _ls_co_feqcons(self, x):
+        
         return
 
     def _ls_co_fieqcons(self, x):
@@ -431,10 +471,6 @@ class Robot(object):
         return
 
     def _solve_opt_pbl(self):
-        if self.interac_plot:
-            f_callback = self._scipy_callback
-        else:
-            f_callback = None
 
         if not self.final_step:
             if self.std_alone:
@@ -461,8 +497,6 @@ class Robot(object):
             init_guess = np.append(np.asarray([self.est_dtime]),
                     self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim))
 
-        print(init_guess)
-
         output = fmin_slsqp(
                 p_criterion,
                 init_guess,
@@ -473,11 +507,7 @@ class Robot(object):
                 iprint=0,
                 iter=self.maxit,
                 acc=self.acc,
-                full_output=True,
-                callback=f_callback)
-
-        print(len(self.unsatisf_eq_values))
-        print(len(self.unsatisf_ieq_values))
+                full_output=True)
 
             #imode = output[3]
             # TODO handle optimization exit mode
@@ -492,9 +522,6 @@ class Robot(object):
 
         self.n_it = output[2]
         self.exit_mode = output[4]
-        print(self.exit_mode)
-        print('N it: {}'.format(self.n_it))
-        print(self.C)
         return
 
     def _plan_section(self):
@@ -506,13 +533,9 @@ class Robot(object):
         if not self.final_step:
             direc = self.final_z - self.last_z
             direc = direc/LA.norm(direc)
-            print('last_z shape {}'.format(self.last_z.shape))
-            print('final_z shape {}'.format(self.final_z.shape))
-            print('direc shape {}'.format(direc.shape))
             last_ctrl_pt = self.last_z+self.D*direc
         else:
             last_ctrl_pt = self.final_z
-        print(last_ctrl_pt)
 
         self._linspace_ctrl_pts(last_ctrl_pt)
 
@@ -524,6 +547,16 @@ class Robot(object):
 
         self._log('i','R{rid}@tkref={tk}: Time to solve stand alone optimisation '
                 'problem: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
+        self._log('i','R{rid}@tkref={tk}: N of unsatisfied eq: {ne}'\
+                .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],ne=len(self.unsatisf_eq_values)))
+        self._log('i','R{rid}@tkref={tk}: N of unsatisfied ieq: {ne}'\
+                .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],ne=len(self.unsatisf_ieq_values)))
+        self._log('i','R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
+                .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],summ=self.exit_mode,it=self.n_it))
+
+        if self.final_step:
+            self.knots = self._gen_knots(self.mtime[0], self.t_final)
+            self.mtime = np.linspace(self.mtime[0], self.t_final, self.N_s)
 
         time_idx = None if self.final_step else self.Tcd_idx
 
@@ -549,6 +582,16 @@ class Robot(object):
 
             self._log('i','R{rid}@tkref={tk}: Time to solve optimisation probl'
                     'em: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
+            self._log('i','R{rid}@tkref={tk}: N of unsatisfied eq: {ne}'\
+                    .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],ne=len(self.unsatisf_eq_values)))
+            self._log('i','R{rid}@tkref={tk}: N of unsatisfied ieq: {ne}'\
+                    .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],ne=len(self.unsatisf_ieq_values)))
+            self._log('i','R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
+                    .format(rid=self.eyed,t=toc-tic,tk=self.mtime[0],summ=self.exit_mode,it=self.n_it))
+
+            if self.final_step:
+                self.knots = self._gen_knots(self.mtime[0], self.t_final)
+                self.mtime = np.linspace(self.mtime[0], self.t_final, self.N_s)
 
             time_idx = None if self.final_step else self.Tcp_idx
                 
@@ -617,27 +660,30 @@ class Robot(object):
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
 
         # TODO verify change if this is ok
-        self.knots = self._gen_knots(self.t_init, self.est_dtime)
-        self.mtime = np.linspace(self.t_init, self.est_dtime, self.N_s)
+        self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)
+        self.mtime = np.linspace(self.mtime[0], self.mtime[0]+self.est_dtime, self.N_s)
 
         self._plan_section()
 
-        fig = plt.figure(self.eyed)
-        ax = fig.gca()
-        ax.set_xlabel('x(m)')
-        ax.set_ylabel('y(m)')
-        ax.set_title('Generated trajectory')
-        ax.axis('equal')
+        self.sol[self.eyed] = self.all_dz
 
-        # Creating obstacles in the plot
-        [obst.plot(fig, offset=self.rho) for obst in self.obst]
+        self._log('i','R{}: Finished motion planning'.format(self.eyed))
 
-        path = self.all_dz[0][0:2,:]
-        for p in self.all_dz[1:]:
-            path = np.append(path, p[0:2,:], axis=1)
-        ax.plot(path[0,:], path[1,:])
-        plt.show()
-        self._log('i','R{}: Finishing motion planning'.format(self.eyed))
+#        fig = plt.figure(self.eyed)
+#        ax = fig.gca()
+#        ax.set_xlabel('x(m)')
+#        ax.set_ylabel('y(m)')
+#        ax.set_title('Generated trajectory')
+#        ax.axis('equal')
+#
+#        # Creating obstacles in the plot
+#        [obst.plot(fig, offset=self.rho) for obst in self.obst]
+#
+#        path = self.all_dz[0][0:2,:]
+#        for p in self.all_dz[1:]:
+#            path = np.append(path, p[0:2,:], axis=1)
+#        ax.plot(path[0,:], path[1,:])
+#        plt.show()
         
         return
 
@@ -655,37 +701,55 @@ class WorldSim(object):
 
     def run(self, interac_plot=False, speed_plot=False):
 
-        # Interactive plot
-        if interac_plot == True:
-            plt.ion()
-            [r.set_option('iplot', True) for r in self.robs]
-#            self.mrobot.setOption('IPLOT', True)
-            # TODO: in the future we may set IPLOT True for obstacles as well
-
-        # Initiating plot
-#        fig = plt.figure()
-#        ax = fig.gca()
-#        ax.set_xlabel('x(m)')
-#        ax.set_ylabel('y(m)')
-#        ax.set_title('Generated trajectory')
-#        ax.axis('equal')
-#
-#        # Creating obstacles in the plot
-#        [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
-
-        # Initiate robot path in plot
-#        self.mrobot.plot(self.fig)
-
-        # Initiate robot speed plot
-#        if speedPlot == True:
-#            self.mrobot.plotSpeeds(plt.subplots(2))
-
-        # Creating robot path (and updating plot if IPLOT is true)
-
-#        [r.set_option('fig', fig) for r in self.robs]
         [r.planning_process.start() for r in self.robs]
         [r.planning_process.join() for r in self.robs]
 
+        # PLOT
+
+        # Interactive plot
+        plt.ion()
+
+        fig = plt.figure()
+        ax = fig.gca()
+        ax.set_xlabel('x(m)')
+        ax.set_ylabel('y(m)')
+        ax.set_title('Generated trajectory')
+        ax.axis('equal')
+
+        # Creating obstacles in the plot
+        [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
+
+        colors = [[1-i, i, 0.0] for i in np.linspace(0.0, 1.0,len(self.robs))]
+
+        path = range(len(self.robs))
+        plt_rob = range(len(self.robs))
+        for i in range(len(self.robs)):
+            path[i] = self.robs[0].sol[i][0][0:2,:]
+            for p in self.robs[0].sol[i][1:]:
+                path[i] = np.append(path[i], p[0:2,:], axis=1)
+
+            plt_rob[i], = ax.plot(path[i][0,0], path[i][1,0], color=colors[i])
+
+        counter = 1
+        while True:
+            end = 0
+            for i in range(len(self.robs)):
+#                print(path[i].shape)
+                if counter < path[i].shape[1]:
+                    plt_rob[i].set_xdata(path[i][0,0:counter+1])
+                    plt_rob[i].set_ydata(path[i][1,0:counter+1])
+                else:
+                    end += 1
+            if end == len(self.robs):
+                break
+            time.sleep(0.1)
+            ax.relim()
+            ax.autoscale_view(True,True,True)
+            fig.canvas.draw()
+            counter += 1
+            
+        plt.show(block=True)
+        
         logging.info('All robots have finished')
 
         return
@@ -750,7 +814,7 @@ if __name__ == '__main__':
 
 #    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
 #            filemode='w',level=logging.DEBUG)
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(levelname)s:%(message)s',level=logging.DEBUG)
 
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
@@ -779,6 +843,8 @@ if __name__ == '__main__':
 
     process_counter = mpc.Value('I', 0, lock=pcc_lock) # unsigned int
     com_link = mpc.Array('d', N_s, lock=com_lock)
+    manager = mpc.Manager()
+    sol = manager.list(range(n_robots))
 #    com_link = mpc.Array('d', max(robots, key=\
 #            lambda rob:rob.N_s).N_s, lock=com_lock)
 
@@ -789,10 +855,11 @@ if __name__ == '__main__':
             boundary,
             com_link,
             process_counter,
+            sol,
             N_s=N_s,
             n_knots=6) for i in range(n_robots)]
 
-    [r.set_option('acc', 1e-3) for r in robots]
+    [r.set_option('acc', 1e-6) for r in robots]
     [r.set_option('maxit', 50) for r in robots]
 
     world_sim = WorldSim(robots,obstacles,boundary)
