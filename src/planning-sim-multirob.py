@@ -38,8 +38,8 @@ class RoundObstacle(Obstacle):
 
     def plot(self, fig, offset=0.0):
         ax = fig.gca()
-        ax.add_artist(self.plt_circle())
-        ax.add_artist(self.plt_circle(linestyle='dashed', offset=offset))
+        ax.add_artist(self._plt_circle())
+        ax.add_artist(self._plt_circle(linestyle='dashed', offset=offset))
 
 ###############################################################################
 # Boundary
@@ -91,7 +91,7 @@ class UnicycleKineModel(object):
         self.z_final = self.phi0(self.q_final)
         self.l = 2 # number of need derivations
 
-    def phi0(sefl, q):
+    def phi0(self, q):
         """ Returns z given q
         """
         return q[0:2,0]
@@ -100,9 +100,9 @@ class UnicycleKineModel(object):
         """ Returns [x, y, theta]^T given [z dz ddz] (only z and dz are used)
         """
         if z.shape >= (self.u_dim, self.l+1):
-            return np.append(z[:,0], \
-                    np.matrix(
-                    np.arctan2(z[1,1], z[0,1])), axis = 0)
+            return np.matrix(np.append(z[:,0], \
+                    np.asarray(
+                    np.arctan2(z[1,1], z[0,1])))).T
         else:
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0; 0.0')
@@ -160,8 +160,8 @@ class Robot(object):
             t_init=0.0,
             t_sup=1e10,
             Tc=1.0,
-            Tp=12.0,
-            Td=12.5,
+            Tp=2.0,
+            Td=2.5,
             rho=0.2,
             detec_rho=2.0,
             log_lock=None):
@@ -190,6 +190,7 @@ class Robot(object):
         self.set_option('iplot')
         self.set_option('maxit')
         self.set_option('acc')
+        self.set_option('fig')
 
         # Declaring the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self,))
@@ -200,7 +201,9 @@ class Robot(object):
         elif name == 'maxit':
             self.maxit = 50 if value == None else value
         elif name == 'acc':
-            self.acc = 1e6 if value == None else value
+            self.acc = 1e-6 if value == None else value
+        elif name == 'fig':
+            self.fig = value
         else:
             self._log('w', 'Unknown parameter '+name+', nothing will be set')
         return
@@ -260,18 +263,20 @@ class Robot(object):
         return
 
     def _linspace_ctrl_pts(self, final_ctrl_pt):
+        print(self.C)
+        print(final_ctrl_pt)
         self.C[:,0] = np.array(np.linspace(self.last_z[0,0],\
                 final_ctrl_pt[0,0], self.n_ctrlpts)).T
         self.C[:,1] = np.array(np.linspace(self.last_z[1,0],\
                 final_ctrl_pt[1,0], self.n_ctrlpts)).T
 
-    def _detected_obst_idx(self):
+    def _detected_obst_idxs(self):
         idx_list = []
         for idx in range(len(self.obst)):
             dist = LA.norm(self.obst[idx].cp - self.last_z.T)
             if dist < self.d_rho:
                 idx_list += [idx]
-        self.detected_obst_idx = idx_list
+        self.detected_obst_idxs = idx_list
 
     def _ls_sa_criterion(self, x):
         return (x[0]+self.mtime[0])**2
@@ -280,19 +285,129 @@ class Robot(object):
         dt_final = x[0]
         t_final = self.mtime[0]+dt_final
         C = x[1:].reshape(self.n_ctrlpts, self.k_mod.u_dim)
-        return
+
+        self.knots = self._gen_knots(self.mtime[0], t_final)
+        dztinit = self._comb_bsp([self.mtime[0]], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dztinit = np.append(dztinit,self._comb_bsp([self.mtime[0]], C, dev).T,axis=1)
+
+        # get matrix [z dz ddz](t_final)
+        dztfinal = self._comb_bsp([t_final], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dztfinal=np.append(dztfinal,self._comb_bsp([t_final], C, dev).T,axis=1)
+    
+        eq_cons = list(np.squeeze(np.array(self.k_mod.phi1(dztinit)-self.last_q)))+\
+                list(np.squeeze(np.array(self.k_mod.phi1(dztfinal)-self.k_mod.q_final)))+\
+                list(np.squeeze(np.array(self.k_mod.phi2(dztinit)-self.last_u)))+\
+                list(np.squeeze(np.array(self.k_mod.phi2(dztfinal)-self.k_mod.u_final)))
+        self.unsatisf_eq_values = [ec for ec in eq_cons if ec != 0]
+        return np.asarray(eq_cons)
 
     def _ls_sa_fieqcons(self, x):
-        return
-
+        dt_final = x[0]
+        t_final = self.mtime[0]+dt_final
+        C = x[1:].reshape(self.n_ctrlpts, self.k_mod.u_dim)
+        
+        self.knots = self._gen_knots(self.mtime[0], t_final)
+    
+        mtime = np.linspace(self.mtime[0], t_final, self.N_s)
+    
+        # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
+        dz = self._comb_bsp(mtime[1:-1], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp(mtime[1:-1], C, dev).T,axis=0)
+    
+        dztTp = map(lambda dzt:dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T, dz.T)
+    
+        # get a list over time of command values u(t)
+        utTp = map(self.k_mod.phi2, dztTp)
+    
+        # get a list over time of values q(t)
+        qtTp = map(self.k_mod.phi1, dztTp)
+        
+        ## Obstacles constraints
+        # N_s*nb_obst_detected
+        obst_cons = []
+        for m in self.detected_obst_idxs:
+            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
+              - (self.rho + self.obst[m].radius) for qt in qtTp]
+    
+        ## Max speed constraints
+        # N_s*u_dim inequations
+        max_speed_cons = list(itertools.chain.from_iterable(
+            map(lambda ut:[self.k_mod.u_max[i,0]-abs(ut[i,0])\
+            for i in range(self.k_mod.u_dim)],utTp)))
+    
+        # Create final array
+        ieq_cons = obst_cons + max_speed_cons
+        # Count how many inequations are not respected
+        self.unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
+        return np.asarray(ieq_cons)
+        
     def _sa_criterion(self, x):
-        return
+        C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
+        
+        dz = self._comb_bsp([self.mtime[-1]], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp([self.mtime[-1]], C, dev).T,axis=1)
+        qTp = self.k_mod.phi1(dz)
+        return LA.norm(qTp - self.k_mod.q_final)**2
 
     def _sa_feqcons(self, x):
-        return
+        C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
+
+        dztinit = self._comb_bsp([self.mtime[0]], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dztinit = np.append(dztinit,self._comb_bsp([self.mtime[0]], C, dev).T,axis=1)
+    
+        # dimension: q_dim + u_dim (=5 equations)
+        eq_cons = list(np.squeeze(np.array(self.k_mod.phi1(dztinit)-self.last_q)))+\
+               list(np.squeeze(np.array(self.k_mod.phi2(dztinit)-self.last_u)))
+    
+        # Count how many equations are not respected
+        unsatisf_list = [eq for eq in eq_cons if eq != 0]
+        self.unsatisf_eq_values = unsatisf_list
+    
+        return np.asarray(eq_cons)
 
     def _sa_fieqcons(self, x):
-        return
+        C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
+    
+        # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
+        dz = self._comb_bsp(self.mtime[1:], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp(self.mtime[1:], C, dev).T,axis=0)
+    
+        dztTp = map(lambda dzt:dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T, dz.T)
+    
+        # get a list over time of command values u(t)
+        utTp = map(self.k_mod.phi2, dztTp)
+    
+        # get a list over time of values q(t)
+        qtTp = map(self.k_mod.phi1, dztTp)
+    
+        ## Obstacles constraints
+        # N_s*nb_obst_detected
+        obst_cons = []
+        for m in self.detected_obst_idxs:
+            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
+              - (self.rho + self.obst[m].radius) for qt in qtTp]
+    
+        ## Max speed constraints
+        # N_s*u_dim inequations
+        max_speed_cons = list(itertools.chain.from_iterable(
+            map(lambda ut:[self.k_mod.u_max[i,0]-abs(ut[i,0])\
+            for i in range(self.k_mod.u_dim)],utTp)))
+    
+        # Create final array
+        ieq_cons = obst_cons + max_speed_cons
+    
+        # Count how many inequations are not respected
+        unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
+        self.unsatisf_ieq_values = unsatisf_list
+
+        # return arrray where each element is an inequation constraint
+        return np.asarray(ieq_cons)
 
     def _ls_co_criterion(self, x):
         return (x[0]+self.mtime[0])**2
@@ -355,37 +470,49 @@ class Robot(object):
                 f_eqcons=p_eqcons,
                 ieqcons=(),
                 f_ieqcons=p_ieqcons,
-                iprint=1,
+                iprint=0,
                 iter=self.maxit,
                 acc=self.acc,
                 full_output=True,
                 callback=f_callback)
+
+        print(len(self.unsatisf_eq_values))
+        print(len(self.unsatisf_ieq_values))
 
             #imode = output[3]
             # TODO handle optimization exit mode
         if self.final_step:
             self.C = output[0][1:].reshape(self.n_ctrlpts, self.k_mod.u_dim)
             self.dt_final = output[0][0]
-            sefl.t_final = self.mtime[0] + dt_final
+            self.t_final = self.mtime[0] + self.dt_final
         else:
             self.C = output[0].reshape(self.n_ctrlpts, self.k_mod.u_dim)
 #            #imode = output[3]
 #            # TODO handle optimization exit mode
-            
+
+        self.n_it = output[2]
+        self.exit_mode = output[4]
+        print(self.exit_mode)
+        print('N it: {}'.format(self.n_it))
+        print(self.C)
         return
 
     def _plan_section(self):
 
         # update obstacles zone
-        self._detected_obst_idx()
+        self._detected_obst_idxs()
 
 #        # first guess for ctrl pts
         if not self.final_step:
             direc = self.final_z - self.last_z
             direc = direc/LA.norm(direc)
+            print('last_z shape {}'.format(self.last_z.shape))
+            print('final_z shape {}'.format(self.final_z.shape))
+            print('direc shape {}'.format(direc.shape))
             last_ctrl_pt = self.last_z+self.D*direc
         else:
             last_ctrl_pt = self.final_z
+        print(last_ctrl_pt)
 
         self._linspace_ctrl_pts(last_ctrl_pt)
 
@@ -411,7 +538,7 @@ class Robot(object):
 #
 #        if self.conflicts != []:
         if False:
-
+            # TODO save path for Td 
             self.std_alone = False
 
 #            self._read_com_link()
@@ -434,23 +561,29 @@ class Robot(object):
             
         # Storing
 #        self._update()
-        self.all_C.extend([self.C])
+        self.all_C += [self.C]
         
-        self.all_dz.extend([dz])
+        self.all_dz += [dz]
         # TODO rejected path
 
         # Updating
-        if self.final_step:
+        if not self.final_step:
             self.knots = self.knots + self.Tc
             self.mtime = [tk+self.Tc for tk in self.mtime]
-            self.last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1]
-
+            self.last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1].reshape(
+                    self.k_mod.u_dim,1)
+            self.last_q = self.k_mod.phi1(self.all_dz[-1][:,-1].reshape(
+                    self.k_mod.l+1, self.k_mod.u_dim).T)
+            self.last_u = self.k_mod.phi2(self.all_dz[-1][:,-1].reshape(
+                    self.k_mod.l+1, self.k_mod.u_dim).T)
         return
 
     def _init_planning(self):
 
-        self.detected_obst_idx = range(len(self.obst))
+        self.detected_obst_idxs = range(len(self.obst))
 
+        self.last_q = self.k_mod.q_init
+        self.last_u = self.k_mod.u_init
         self.last_z = self.k_mod.z_init
         self.final_z = self.k_mod.z_final
 
@@ -488,8 +621,23 @@ class Robot(object):
 
         self._plan_section()
 
-        self._log('i','R{}: Finishing motion planning'.format(self.eyed))
+        fig = plt.figure(self.eyed)
+        ax = fig.gca()
+        ax.set_xlabel('x(m)')
+        ax.set_ylabel('y(m)')
+        ax.set_title('Generated trajectory')
+        ax.axis('equal')
 
+        # Creating obstacles in the plot
+        [obst.plot(fig, offset=self.rho) for obst in self.obst]
+
+        path = self.all_dz[0][0:2,:]
+        for p in self.all_dz[1:]:
+            path = np.append(path, p[0:2,:], axis=1)
+        ax.plot(path[0,:], path[1,:])
+        plt.show()
+        self._log('i','R{}: Finishing motion planning'.format(self.eyed))
+        
         return
 
 ###############################################################################
@@ -514,15 +662,15 @@ class WorldSim(object):
             # TODO: in the future we may set IPLOT True for obstacles as well
 
         # Initiating plot
-#        self.fig = plt.figure()
-#        ax = self.fig.gca()
+#        fig = plt.figure()
+#        ax = fig.gca()
 #        ax.set_xlabel('x(m)')
 #        ax.set_ylabel('y(m)')
 #        ax.set_title('Generated trajectory')
 #        ax.axis('equal')
-
-        # Creating obstacles in the plot
- #       [obst.plot(self.fig, offset=self.mrobot.rho) for obst in self.obst]
+#
+#        # Creating obstacles in the plot
+#        [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
 
         # Initiate robot path in plot
 #        self.mrobot.plot(self.fig)
@@ -533,12 +681,11 @@ class WorldSim(object):
 
         # Creating robot path (and updating plot if IPLOT is true)
 
+#        [r.set_option('fig', fig) for r in self.robs]
         [r.planning_process.start() for r in self.robs]
         [r.planning_process.join() for r in self.robs]
 
         logging.info('All robots have finished')
-
-#        plt.show(block=True)
 
         return
 
@@ -589,8 +736,8 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_obsts = 7
-    n_robots = 1
+    n_obsts = 5
+    n_robots = 3
     N_s = 20
 
     scriptname, method = parse_cmdline()
@@ -606,7 +753,13 @@ if __name__ == '__main__':
 
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
-    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
+#    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
+
+    # these obst info
+    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),
+            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
+            ([-0.50,  1.50], 0.30)]
+
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
@@ -635,7 +788,11 @@ if __name__ == '__main__':
             boundary,
             com_link,
             process_counter,
-            N_s=20) for i in range(n_robots)]
+            N_s=N_s,
+            n_knots=6) for i in range(n_robots)]
+
+    [r.set_option('acc', 1e-3) for r in robots]
+    [r.set_option('maxit', 50) for r in robots]
 
     world_sim = WorldSim(robots,obstacles,boundary)
 
