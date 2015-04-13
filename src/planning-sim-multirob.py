@@ -701,10 +701,36 @@ class WorldSim(object):
 
     def run(self, interac_plot=False, speed_plot=False):
 
+        # Make all robots plan their trajectories
         [r.planning_process.start() for r in self.robs]
         [r.planning_process.join() for r in self.robs]
 
-        # PLOT
+        # Reshaping the solution
+        path = range(len(self.robs))
+        for i in range(len(self.robs)):
+            path[i] = self.robs[0].sol[i][0]
+            for p in self.robs[0].sol[i][1:]:
+                path[i] = np.append(path[i], p, axis=1)
+
+        # From [z dz ddz](t) get q(t) and u(t)
+        zdzddz = range(len(self.robs))
+        for i in range(len(self.robs)):
+            zdzddz[i] = map(lambda z:z.reshape(self.robs[i].k_mod.l+1, \
+                    self.robs[i].k_mod.u_dim).T, path[i].T)
+
+        # get a list over time of command values u(t)
+        ut = range(len(self.robs))
+        for i in range(len(self.robs)):
+            ut[i] = map(self.robs[i].k_mod.phi2, zdzddz[i])
+
+        # get a list over time of values q(t)
+        qt = range(len(self.robs))
+        for i in range(len(self.robs)):
+            qt[i] = map(self.robs[i].k_mod.phi1, zdzddz[i])
+
+        # PLOT ###############################################################
+
+        raw_input('Press enter to start plot')
 
         # Interactive plot
         plt.ion()
@@ -721,23 +747,49 @@ class WorldSim(object):
 
         colors = [[1-i, i, 0.0] for i in np.linspace(0.0, 1.0,len(self.robs))]
 
-        path = range(len(self.robs))
-        plt_rob = range(len(self.robs))
+        plt_paths = range(len(self.robs))
+        plt_robots_c = range(len(self.robs))
+        plt_robots_t = range(len(self.robs))
         for i in range(len(self.robs)):
-            path[i] = self.robs[0].sol[i][0][0:2,:]
-            for p in self.robs[0].sol[i][1:]:
-                path[i] = np.append(path[i], p[0:2,:], axis=1)
+            plt_paths[i], = ax.plot(path[i][0,0],path[i][1,0],color=colors[i])
+            plt_robots_c[i] = plt.Circle(
+                    (path[i][0,0], path[i][1,0]), # position
+                    self.robs[i].rho, # radius
+                    color='m',
+                    ls = 'solid',
+                    fill=False)
+            rho = self.robs[i].rho
+            xy = np.array(
+                    [[rho*np.cos(qt[i][0][-1,0])+path[i][0,0],\
+                    rho*np.sin(qt[i][0][-1,0])+path[i][1,0]],
+                    [rho*np.cos(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][0,0],\
+                    rho*np.sin(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][1,0]],
+                    [rho*np.cos(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][0,0],\
+                    rho*np.sin(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][1,0]]])
+            plt_robots_t[i] = plt.Polygon(xy, color='m',fill=True,alpha=0.2)
+        
+        [ax.add_artist(r) for r in plt_robots_c]
+        [ax.add_artist(r) for r in plt_robots_t]
 
-            plt_rob[i], = ax.plot(path[i][0,0], path[i][1,0], color=colors[i])
-
-        counter = 1
+        ctr = 1
         while True:
             end = 0
             for i in range(len(self.robs)):
 #                print(path[i].shape)
-                if counter < path[i].shape[1]:
-                    plt_rob[i].set_xdata(path[i][0,0:counter+1])
-                    plt_rob[i].set_ydata(path[i][1,0:counter+1])
+                if ctr < path[i].shape[1]:
+                    plt_paths[i].set_xdata(path[i][0,0:ctr+1])
+                    plt_paths[i].set_ydata(path[i][1,0:ctr+1])
+                    plt_robots_c[i].center = path[i][0,ctr],\
+                            path[i][1,ctr]
+                    rho = self.robs[i].rho
+                    xy = np.array(
+                            [[rho*np.cos(qt[i][ctr][-1,0])+path[i][0,ctr],
+                            rho*np.sin(qt[i][ctr][-1,0])+path[i][1,ctr]],
+                            [rho*np.cos(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][0,ctr],
+                            rho*np.sin(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][1,ctr]],
+                            [rho*np.cos(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][0,ctr],
+                            rho*np.sin(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][1,ctr]]])
+                    plt_robots_t[i].set_xy(xy)
                 else:
                     end += 1
             if end == len(self.robs):
@@ -746,7 +798,21 @@ class WorldSim(object):
             ax.relim()
             ax.autoscale_view(True,True,True)
             fig.canvas.draw()
-            counter += 1
+            ctr += 1
+
+        fig_s, axarray = plt.subplots(2)
+        axarray[0].set_ylabel('v(m/s)')
+        axarray[0].set_title('Linear speed')
+        axarray[1].set_xlabel('time(s)')
+        axarray[1].set_ylabel('w(rad/s)')
+        axarray[1].set_title('Angular speed')
+        axarray[0].grid()
+        axarray[1].grid()
+        for i in range(len(self.robs)):
+            linspeed = map(lambda x:x[0,0], ut[i])
+            angspeed = map(lambda x:x[1,0], ut[i])
+            axarray[0].plot(range(len(linspeed)), linspeed, color=colors[i])
+            axarray[1].plot(range(len(angspeed)), angspeed, color=colors[i])
             
         plt.show(block=True)
         
