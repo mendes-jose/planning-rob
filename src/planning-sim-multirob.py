@@ -628,8 +628,8 @@ class Robot(object):
         # while the remaining dist is greater than the max dist during Tp
         while LA.norm(self.last_z - self.final_z) > self.D:
             self._plan_section()
-            pcc_lock.acquire()
-            if process_counter
+#            pcc_lock.acquire()
+#            if process_counter
 
         self.final_step = True
 
@@ -745,7 +745,8 @@ class WorldSim(object):
             
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-            fig.savefig('../traces/pngs/multirobot-path-1.png', bbox_inches='tight')
+            for i in range(1,10):
+                fig.savefig('../traces/pngs/multirobot-path-'+str(i)+'.png', bbox_inches='tight')
     
             ctr = 1
             while True:
@@ -778,7 +779,9 @@ class WorldSim(object):
                 ax.autoscale_view(True,True,True)
                 fig.canvas.draw()
                 ctr += 1
-                fig.savefig('../traces/pngs/multirobot-path-'+str(ctr)+'.png', bbox_inches='tight')
+                fig.savefig('../traces/pngs/multirobot-path-'+str(ctr+8)+'.png', bbox_inches='tight')
+            for i in range(1,10):
+                fig.savefig('../traces/pngs/multirobot-path-'+str(ctr+8+i)+'.png', bbox_inches='tight')
     
             for i in range(len(self.robs)):
                 linspeed = map(lambda x:x[0,0], ut[i])
