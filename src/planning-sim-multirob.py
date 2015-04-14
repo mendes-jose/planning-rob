@@ -659,7 +659,6 @@ class Robot(object):
 
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
 
-        # TODO verify change if this is ok
         self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)
         self.mtime = np.linspace(self.mtime[0], self.mtime[0]+self.est_dtime, self.N_s)
 
@@ -669,22 +668,6 @@ class Robot(object):
 
         self._log('i','R{}: Finished motion planning'.format(self.eyed))
 
-#        fig = plt.figure(self.eyed)
-#        ax = fig.gca()
-#        ax.set_xlabel('x(m)')
-#        ax.set_ylabel('y(m)')
-#        ax.set_title('Generated trajectory')
-#        ax.axis('equal')
-#
-#        # Creating obstacles in the plot
-#        [obst.plot(fig, offset=self.rho) for obst in self.obst]
-#
-#        path = self.all_dz[0][0:2,:]
-#        for p in self.all_dz[1:]:
-#            path = np.append(path, p[0:2,:], axis=1)
-#        ax.plot(path[0,:], path[1,:])
-#        plt.show()
-        
         return
 
 ###############################################################################
@@ -745,7 +728,7 @@ class WorldSim(object):
         # Creating obstacles in the plot
         [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
 
-        colors = [[1-i, i, 0.0] for i in np.linspace(0.0, 1.0,len(self.robs))]
+        colors = [[i, 0.0, 1.0-i] for i in np.linspace(0.0, 1.0,len(self.robs))]
 
         plt_paths = range(len(self.robs))
         plt_robots_c = range(len(self.robs))
@@ -868,7 +851,7 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 5
-    n_robots = 3
+    n_robots = 4
     N_s = 20
 
     scriptname, method = parse_cmdline()
@@ -896,8 +879,8 @@ if __name__ == '__main__':
 
 
     kine_models = [UnicycleKineModel(
-            [ float(i),  0.0, np.pi/2], # q_initial
-            [ n_robots-i+1.0,  5.0, np.pi/2], # q_final
+            [ float(i)/2.0,  0.0, np.pi/2], # q_initial
+            [ (n_robots-i+1.0)/2.0,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0])          # u_max
@@ -925,7 +908,7 @@ if __name__ == '__main__':
             N_s=N_s,
             n_knots=6) for i in range(n_robots)]
 
-    [r.set_option('acc', 1e-6) for r in robots]
+    [r.set_option('acc', 1e-3) for r in robots]
     [r.set_option('maxit', 50) for r in robots]
 
     world_sim = WorldSim(robots,obstacles,boundary)
