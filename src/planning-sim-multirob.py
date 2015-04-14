@@ -15,47 +15,6 @@ from scipy.optimize import fmin_slsqp
 from matplotlib.collections import LineCollection
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
-# Data manipulation:
-
-def make_segments(x, y):
-    '''
-    Create list of line segments from x and y coordinates, in the correct format for LineCollection:
-    an array of the form   numlines x (points per line) x 2 (x and y) array
-    '''
-
-    points = np.array([x, y]).T.reshape(-1, 1, 2)
-    segments = np.concatenate([points[:-1], points[1:]], axis=1)
-    
-    return segments
-
-
-# Interface to LineCollection:
-
-def colorline(x, y, z=None, cmap=plt.get_cmap('copper'), norm=plt.Normalize(0.0, 1.0), linewidth=3, alpha=1.0):
-    '''
-    Plot a colored line with coordinates x and y
-    Optionally specify colors in the array z
-    Optionally specify a colormap, a norm function and a line width
-    '''
-    
-    # Default colors equally spaced on [0,1]:
-    if z is None:
-        z = np.linspace(0.0, 1.0, len(x))
-           
-    # Special case if a single number:
-    if not hasattr(z, "__iter__"):  # to check for numerical input -- this is a hack
-        z = np.array([z])
-        
-    z = np.asarray(z)
-    
-    segments = make_segments(x, y)
-    lc = LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
-    
-    ax = plt.gca()
-    ax.add_collection(lc)
-    
-    return lc
-        
 ###############################################################################
 # Obstacle
 ###############################################################################
@@ -197,18 +156,18 @@ class Robot(object):
             kine_model,
             obstacles,
             phy_boundary,
-            com_link,
             process_counter,
+            com_link,
             sol,
-            N_s=20,
-            n_knots=6,
+            N_s=30,
+            n_knots=7,
             t_init=0.0,
             t_sup=1e10,
             Tc=1.0,
-            Tp=2.0,
-            Td=2.0,
+            Tp=3.0,
+            Td=3.0,
             rho=0.2,
-            detec_rho=2.0,
+            detec_rho=3.0,
             log_lock=None):
 
         self.eyed = eyed
@@ -236,6 +195,7 @@ class Robot(object):
         self.set_option('acc')
 
         self.sol = sol
+        self.com_link = com_link
 
         # Declaring the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self,))
@@ -318,7 +278,11 @@ class Robot(object):
         self.detected_obst_idxs = idx_list
 
     def _ls_sa_criterion(self, x):
-        return (x[0])**2
+        # Minimize the total time:
+        # * since there is no constraints about the time it self this would be
+        # the same as minimizing only x[0]. However, for numeric reasons we
+        # keep the cost far from values too small (~0) and too big (>1e6)
+        return 0.1*(x[0]+self.mtime[0])**2
 
     def _ls_sa_feqcons(self, x):
         dt_final = x[0]
@@ -384,13 +348,21 @@ class Robot(object):
         return np.asarray(ieq_cons)
         
     def _sa_criterion(self, x):
+        # Minimize the remaining distance to reach the final state:
+        # * since there is no constraints about the time it self this would be
+        # the same as minimizing only x[0]. However, for numeric reasons we
+        # keep the cost far from values too small (~0) and too big (>1e6)
         C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
         
         dz = self._comb_bsp([self.mtime[-1]], C, 0).T
         for dev in range(1,self.k_mod.l+1):
             dz = np.append(dz,self._comb_bsp([self.mtime[-1]], C, dev).T,axis=1)
         qTp = self.k_mod.phi1(dz)
-        return LA.norm(qTp - self.k_mod.q_final)**2
+        cost = LA.norm(qTp[0:-1,:] - self.k_mod.q_final[0:-1,:])**2
+#        cost = LA.norm(qTp - self.k_mod.q_final)
+        if cost > 1e3:
+            print('Big problem {}'.format(cost))
+        return 0.1*cost
 
     def _sa_feqcons(self, x):
         C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
@@ -449,7 +421,7 @@ class Robot(object):
         return np.asarray(ieq_cons)
 
     def _ls_co_criterion(self, x):
-        return (x[0]+self.mtime[0])**2
+        return (x[0])**2
 
     def _ls_co_feqcons(self, x):
         
@@ -483,6 +455,7 @@ class Robot(object):
                 p_ieqcons = self._co_fieqcons
 
             init_guess = self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim)
+            acc = self.acc
 
         else:
             if self.std_alone:
@@ -496,6 +469,7 @@ class Robot(object):
 
             init_guess = np.append(np.asarray([self.est_dtime]),
                     self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim))
+            acc = 1e-1
 
         output = fmin_slsqp(
                 p_criterion,
@@ -506,7 +480,7 @@ class Robot(object):
                 f_ieqcons=p_ieqcons,
                 iprint=0,
                 iter=self.maxit,
-                acc=self.acc,
+                acc=acc,
                 full_output=True)
 
             #imode = output[3]
@@ -654,6 +628,8 @@ class Robot(object):
         # while the remaining dist is greater than the max dist during Tp
         while LA.norm(self.last_z - self.final_z) > self.D:
             self._plan_section()
+            pcc_lock.acquire()
+            if process_counter
 
         self.final_step = True
 
@@ -690,9 +666,13 @@ class WorldSim(object):
 
         # Reshaping the solution
         path = range(len(self.robs))
+        seg_pts_idx = [[] for _ in range(len(self.robs))]
         for i in range(len(self.robs)):
             path[i] = self.robs[0].sol[i][0]
+            seg_pts_idx[i] += [0]
             for p in self.robs[0].sol[i][1:]:
+                c = path[i].shape[1]
+                seg_pts_idx[i] += [c]
                 path[i] = np.append(path[i], p, axis=1)
 
         # From [z dz ddz](t) get q(t) and u(t)
@@ -725,79 +705,96 @@ class WorldSim(object):
         ax.set_title('Generated trajectory')
         ax.axis('equal')
 
-        # Creating obstacles in the plot
-        [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
-
-        colors = [[i, 0.0, 1.0-i] for i in np.linspace(0.0, 1.0,len(self.robs))]
-
-        plt_paths = range(len(self.robs))
-        plt_robots_c = range(len(self.robs))
-        plt_robots_t = range(len(self.robs))
-        for i in range(len(self.robs)):
-            plt_paths[i], = ax.plot(path[i][0,0],path[i][1,0],color=colors[i])
-            plt_robots_c[i] = plt.Circle(
-                    (path[i][0,0], path[i][1,0]), # position
-                    self.robs[i].rho, # radius
-                    color='m',
-                    ls = 'solid',
-                    fill=False)
-            rho = self.robs[i].rho
-            xy = np.array(
-                    [[rho*np.cos(qt[i][0][-1,0])+path[i][0,0],\
-                    rho*np.sin(qt[i][0][-1,0])+path[i][1,0]],
-                    [rho*np.cos(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][0,0],\
-                    rho*np.sin(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][1,0]],
-                    [rho*np.cos(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][0,0],\
-                    rho*np.sin(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][1,0]]])
-            plt_robots_t[i] = plt.Polygon(xy, color='m',fill=True,alpha=0.2)
-        
-        [ax.add_artist(r) for r in plt_robots_c]
-        [ax.add_artist(r) for r in plt_robots_t]
-
-        ctr = 1
-        while True:
-            end = 0
-            for i in range(len(self.robs)):
-#                print(path[i].shape)
-                if ctr < path[i].shape[1]:
-                    plt_paths[i].set_xdata(path[i][0,0:ctr+1])
-                    plt_paths[i].set_ydata(path[i][1,0:ctr+1])
-                    plt_robots_c[i].center = path[i][0,ctr],\
-                            path[i][1,ctr]
-                    rho = self.robs[i].rho
-                    xy = np.array(
-                            [[rho*np.cos(qt[i][ctr][-1,0])+path[i][0,ctr],
-                            rho*np.sin(qt[i][ctr][-1,0])+path[i][1,ctr]],
-                            [rho*np.cos(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][0,ctr],
-                            rho*np.sin(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][1,ctr]],
-                            [rho*np.cos(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][0,ctr],
-                            rho*np.sin(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][1,ctr]]])
-                    plt_robots_t[i].set_xy(xy)
-                else:
-                    end += 1
-            if end == len(self.robs):
-                break
-            time.sleep(0.1)
-            ax.relim()
-            ax.autoscale_view(True,True,True)
-            fig.canvas.draw()
-            ctr += 1
-
         fig_s, axarray = plt.subplots(2)
         axarray[0].set_ylabel('v(m/s)')
         axarray[0].set_title('Linear speed')
         axarray[1].set_xlabel('time(s)')
         axarray[1].set_ylabel('w(rad/s)')
         axarray[1].set_title('Angular speed')
-        axarray[0].grid()
-        axarray[1].grid()
-        for i in range(len(self.robs)):
-            linspeed = map(lambda x:x[0,0], ut[i])
-            angspeed = map(lambda x:x[1,0], ut[i])
-            axarray[0].plot(range(len(linspeed)), linspeed, color=colors[i])
-            axarray[1].plot(range(len(angspeed)), angspeed, color=colors[i])
+
+        aux = np.linspace(0.0, 1.0, 1e2)
+        colors = [[i, 1.0-i, np.random.choice(aux)] for i in np.linspace(0.0, 1.0,len(self.robs))]
+
+        while True:
+            # Creating obstacles in the plot
+            [obst.plot(fig, offset=self.robs[0].rho) for obst in self.obsts]
+
+            plt_paths = range(len(self.robs))
+            plt_seg_pts = range(len(self.robs))
+            plt_robots_c = range(len(self.robs))
+            plt_robots_t = range(len(self.robs))
+            for i in range(len(self.robs)):
+                plt_paths[i], = ax.plot(path[i][0,0],path[i][1,0],color=colors[i])
+                plt_seg_pts[i], = ax.plot(path[i][0,seg_pts_idx[i][0]],\
+                        path[i][1,seg_pts_idx[i][0]],color=colors[i],ls='None',marker='o',markersize=5)
+                plt_robots_c[i] = plt.Circle(
+                        (path[i][0,0], path[i][1,0]), # position
+                        self.robs[i].rho, # radius
+                        color='m',
+                        ls = 'solid',
+                        fill=False)
+                rho = self.robs[i].rho
+                xy = np.array(
+                        [[rho*np.cos(qt[i][0][-1,0])+path[i][0,0],\
+                        rho*np.sin(qt[i][0][-1,0])+path[i][1,0]],
+                        [rho*np.cos(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][0,0],\
+                        rho*np.sin(qt[i][0][-1,0]-2.5*np.pi/3.0)+path[i][1,0]],
+                        [rho*np.cos(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][0,0],\
+                        rho*np.sin(qt[i][0][-1,0]+2.5*np.pi/3.0)+path[i][1,0]]])
+                plt_robots_t[i] = plt.Polygon(xy, color='m',fill=True,alpha=0.2)
             
-        plt.show(block=True)
+            [ax.add_artist(r) for r in plt_robots_c]
+            [ax.add_artist(r) for r in plt_robots_t]
+            fig.savefig('../traces/pngs/multirobot-path-1.png', bbox_inches='tight')
+    
+            ctr = 1
+            while True:
+                end = 0
+                for i in range(len(self.robs)):
+    #                print(path[i].shape)
+                    if ctr < path[i].shape[1]:
+                        plt_paths[i].set_xdata(path[i][0,0:ctr+1])
+                        plt_paths[i].set_ydata(path[i][1,0:ctr+1])
+                        aux = [s for s in seg_pts_idx[i] if  ctr > s ]
+                        plt_seg_pts[i].set_xdata(path[i][0,aux])
+                        plt_seg_pts[i].set_ydata(path[i][1,aux])
+                        plt_robots_c[i].center = path[i][0,ctr],\
+                                path[i][1,ctr]
+                        rho = self.robs[i].rho
+                        xy = np.array(
+                                [[rho*np.cos(qt[i][ctr][-1,0])+path[i][0,ctr],
+                                rho*np.sin(qt[i][ctr][-1,0])+path[i][1,ctr]],
+                                [rho*np.cos(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][0,ctr],
+                                rho*np.sin(qt[i][ctr][-1,0]-2.5*np.pi/3.0)+path[i][1,ctr]],
+                                [rho*np.cos(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][0,ctr],
+                                rho*np.sin(qt[i][ctr][-1,0]+2.5*np.pi/3.0)+path[i][1,ctr]]])
+                        plt_robots_t[i].set_xy(xy)
+                    else:
+                        end += 1
+                if end == len(self.robs):
+                    break
+                time.sleep(0.01)
+                ax.relim()
+                ax.autoscale_view(True,True,True)
+                fig.canvas.draw()
+                ctr += 1
+                fig.savefig('../traces/pngs/multirobot-path-'+str(ctr)+'.png', bbox_inches='tight')
+    
+            for i in range(len(self.robs)):
+                linspeed = map(lambda x:x[0,0], ut[i])
+                angspeed = map(lambda x:x[1,0], ut[i])
+                axarray[0].plot(range(len(linspeed)), linspeed, color=colors[i])
+                axarray[1].plot(range(len(angspeed)), angspeed, color=colors[i])
+            axarray[0].grid()
+            axarray[1].grid()
+            fig_s.savefig('../traces/pngs/multirobot-vw.png', bbox_inches='tight')
+                
+            plt.show()
+    
+            raw_input('Press enter to see the animation again or Ctrl-c + enter to kill the simulation')
+            axarray[0].cla()
+            axarray[1].cla()
+            fig.gca().cla()
         
         logging.info('All robots have finished')
 
@@ -850,9 +847,8 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_obsts = 5
-    n_robots = 4
-    N_s = 20
+    n_obsts = 8
+    n_robots = 3
 
     scriptname, method = parse_cmdline()
 
@@ -867,10 +863,14 @@ if __name__ == '__main__':
 
     boundary = Boundary([-5.0,5.0], [-1.0,6.0])
 
-#    obst_info = rand_round_obst(n_obsts, Boundary([-1.0,4.0],[0.7,4.0]))
+#    obst_info = rand_round_obst(n_obsts, Boundary([-2.0,6.0],[0.7,4.0]))
 
     # these obst info
-    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),
+#    obst_info = [([0.25, 2.5], 0.20),([ 3.0,  2.40], 0.50),
+#            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
+#            ([-0.50,  1.50], 0.30)]
+
+    obst_info = [([0.25, 2.5], 0.20),([ 2.50,  2.50], 0.50),
             ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
             ([-0.50,  1.50], 0.30)]
 
@@ -879,8 +879,12 @@ if __name__ == '__main__':
 
 
     kine_models = [UnicycleKineModel(
-            [ float(i)/2.0,  0.0, np.pi/2], # q_initial
-            [ (n_robots-i+1.0)/2.0,  5.0, np.pi/2], # q_final
+            [ float(i),  0.0, np.pi/2], # q_initial
+#            [ float(i),  0.0, np.pi/2], # q_initial
+#            [ 0.0,  0.0, np.pi/2], # q_initial
+            [(n_robots-i+1.0),  5.0, np.pi/2], # q_final
+#            [ (n_robots-i+1.0),  5.0, np.pi/2], # q_final
+#            [ 3.5,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0])          # u_max
@@ -888,27 +892,28 @@ if __name__ == '__main__':
 
     log_lock = mpc.Lock()
     pcc_lock = mpc.Lock()
-    com_lock = mpc.Lock()
 
     process_counter = mpc.Value('I', 0, lock=pcc_lock) # unsigned int
-    com_link = mpc.Array('d', N_s, lock=com_lock)
     manager = mpc.Manager()
-    sol = manager.list(range(n_robots))
-#    com_link = mpc.Array('d', max(robots, key=\
-#            lambda rob:rob.N_s).N_s, lock=com_lock)
+    solutions = manager.list(range(n_robots))
+    robots_time = manager.list(range(n_robots))
+    com_link = manager.list(range(n_robots))
 
     robots = [Robot(
             i,
             kine_models[i],
             obstacles,
             boundary,
-            com_link,
             process_counter,
-            sol,
-            N_s=N_s,
-            n_knots=6) for i in range(n_robots)]
+            com_link,
+            solutions,
+            N_s=20,
+            n_knots=6,
+            Tc=1.0,
+            Tp=2.0,
+            Td=2.0) for i in range(n_robots)]
 
-    [r.set_option('acc', 1e-3) for r in robots]
+    [r.set_option('acc', 1e-4) for r in robots]
     [r.set_option('maxit', 50) for r in robots]
 
     world_sim = WorldSim(robots,obstacles,boundary)

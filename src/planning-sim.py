@@ -337,7 +337,7 @@ class Robot(object):
     def _improve_init_guess(self):
 
         mag = LA.norm(self.ctrl_pts[0]-self.ctrl_pts[1])
-        self.ctrl_pts[1]+np.matrix([1,2])
+#        self.ctrl_pts[1]+np.matrix([1,2])
         dx = mag*np.cos(self.k_mod.q_init[-1,0])
         dy = mag*np.sin(self.k_mod.q_init[-1,0])
         self.ctrl_pts[1] = self.ctrl_pts[0] + np.matrix([dx, dy])
