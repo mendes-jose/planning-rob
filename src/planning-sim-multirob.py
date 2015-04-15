@@ -146,6 +146,12 @@ class UnicycleKineModel(object):
 #    def _unsigned_angle(self, angle):
 #        return np.pi+angle if angle < 0.0 else angle
 
+class RobotMsg(object):
+    def __init__(self):
+        self.done_planning = False
+        self.intended_path = None
+        return
+
 ###############################################################################
 # Robot
 ###############################################################################
@@ -202,7 +208,7 @@ class Robot(object):
 
     def set_option(self, name, value=None):
         if name == 'maxit':
-            self.maxit = 50 if value == None else value
+            self.maxit = 100 if value == None else value
         elif name == 'acc':
             self.acc = 1e-6 if value == None else value
         else:
@@ -360,9 +366,10 @@ class Robot(object):
         qTp = self.k_mod.phi1(dz)
         cost = LA.norm(qTp[0:-1,:] - self.k_mod.q_final[0:-1,:])**2
 #        cost = LA.norm(qTp - self.k_mod.q_final)
+        # TODO
         if cost > 1e3:
             print('Big problem {}'.format(cost))
-        return 0.1*cost
+        return cost
 
     def _sa_feqcons(self, x):
         C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
@@ -431,9 +438,25 @@ class Robot(object):
         return
 
     def _co_criterion(self, x):
-        return
+        # Minimize the remaining distance to reach the final state:
+        # * since there is no constraints about the time it self this would be
+        # the same as minimizing only x[0]. However, for numeric reasons we
+        # keep the cost far from values too small (~0) and too big (>1e6)
+        C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
+        
+        dz = self._comb_bsp([self.mtime[-1]], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp([self.mtime[-1]], C, dev).T,axis=1)
+        qTp = self.k_mod.phi1(dz)
+        cost = LA.norm(qTp[0:-1,:] - self.k_mod.q_final[0:-1,:])**2
+#        cost = LA.norm(qTp - self.k_mod.q_final)
+        # TODO
+        if cost > 1e3:
+            print('Big problem {}'.format(cost))
+        return cost
 
     def _co_feqcons(self, x):
+        
         return
 
     def _co_fieqcons(self, x):
@@ -519,6 +542,8 @@ class Robot(object):
         self._solve_opt_pbl()
         toc = time.time()
 
+        # No need to sync process here, the intended path does impact the conflicts computation
+
         self._log('i','R{rid}@tkref={tk}: Time to solve stand alone optimisation '
                 'problem: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
         self._log('i','R{rid}@tkref={tk}: N of unsatisfied eq: {ne}'\
@@ -541,7 +566,7 @@ class Robot(object):
 
 #        TODO Write on shared memory my intention. Process sync
 
-#        self._compute_conflicts()
+        self._compute_conflicts()
 #
 #        if self.conflicts != []:
         if False:
@@ -627,9 +652,19 @@ class Robot(object):
 
         # while the remaining dist is greater than the max dist during Tp
         while LA.norm(self.last_z - self.final_z) > self.D:
+
             self._plan_section()
-#            pcc_lock.acquire()
-#            if process_counter
+
+            # SYNC process
+            self.pcc_lock.acquire()
+            self.process_counter += 1
+            if self.process_counter != self.n_robots:
+                self.pcc_lock.wait()
+            else:
+                self.pcc_lock.notifyAll()
+                self.process_counter = 0
+                
+            self.pcc_lock.release()
 
         self.final_step = True
 
@@ -882,11 +917,11 @@ if __name__ == '__main__':
 
 
     kine_models = [UnicycleKineModel(
+#            [ float(i)/2.0,  0.0, np.pi/2], # q_initial
             [ float(i),  0.0, np.pi/2], # q_initial
-#            [ float(i),  0.0, np.pi/2], # q_initial
 #            [ 0.0,  0.0, np.pi/2], # q_initial
-            [(n_robots-i+1.0),  5.0, np.pi/2], # q_final
-#            [ (n_robots-i+1.0),  5.0, np.pi/2], # q_final
+#            [(n_robots-i+1.0)/2.0,  5.0, np.pi/2], # q_final
+            [ (n_robots-i+1.0),  5.0, np.pi/2], # q_final
 #            [ 3.5,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
@@ -902,19 +937,29 @@ if __name__ == '__main__':
     robots_time = manager.list(range(n_robots))
     com_link = manager.list(range(n_robots))
 
-    robots = [Robot(
-            i,
-            kine_models[i],
-            obstacles,
-            boundary,
-            process_counter,
-            com_link,
-            solutions,
-            N_s=20,
-            n_knots=6,
-            Tc=1.0,
-            Tp=2.0,
-            Td=2.0) for i in range(n_robots)]
+    robots = []
+    for i in range(n_robots):
+        if i-1 >= 0 and i+1 < n_robots:
+            neigh = [i-1 i+1]
+        elif i-1 >= 0:
+            neigh = [i-1]
+        else:
+            neigh = [i+1]
+        robots += Robot(
+                i,                  # Robot ID
+                kine_models[i],     # kinetic model
+                obstacles,          # all obstacles
+                boundary,           # planning plane boundary
+                process_counter,    # process counter for sync
+                com_link,           # communication link
+                solutions,          # where to store the solutions
+                neigh,              # neighbors to whom it shall talk
+                n_robots,           # numbers of robots
+                N_s=20,             # numbers samplings for each planning interval
+                n_knots=6,          # number of knots for b-spline interpolation
+                Tc=1.0,             # computation time
+                Tp=2.0,             # planning time
+                Td=2.0)             # planning time (for stand alone plan)
 
     [r.set_option('acc', 1e-4) for r in robots]
     [r.set_option('maxit', 50) for r in robots]
