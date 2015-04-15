@@ -146,10 +146,14 @@ class UnicycleKineModel(object):
 #    def _unsigned_angle(self, angle):
 #        return np.pi+angle if angle < 0.0 else angle
 
+###############################################################################
+# Communication msg between robots
+###############################################################################
 class RobotMsg(object):
-    def __init__(self):
-        self.done_planning = False
+    def __init__(self, last_z, done_planning=False):
+        self.done_planning = done_planning
         self.intended_path = None
+        self.last_z = last_z
         return
 
 ###############################################################################
@@ -162,11 +166,16 @@ class Robot(object):
             kine_model,
             obstacles,
             phy_boundary,
-            process_counter,
+            tc_syncer,
+            tc_syncer_cond,
+            conflict_syncer,        # array used for sync between robots having conflicts
+            conflict_syncer_conds,  # array used for sync between robots having conflicts
             com_link,
             sol,
-            N_s=30,
-            n_knots=7,
+            robots_time,
+            neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
+            N_s=20,
+            n_knots=6,
             t_init=0.0,
             t_sup=1e10,
             Tc=1.0,
@@ -174,12 +183,19 @@ class Robot(object):
             Td=3.0,
             rho=0.2,
             detec_rho=3.0,
+            com_range=15.0,
             log_lock=None):
 
         self.eyed = eyed
         self.k_mod = kine_model
         self.obst = obstacles
         self.p_bound = phy_boundary
+        self.tc_syncer = tc_syncer
+        self.tc_syncer_cond = tc_syncer_cond
+        self.conflict_syncer = conflict_syncer
+        self.conflict_syncer_conds = conflict_syncer_conds
+        self.com_link = com_link
+        self.sol = sol
         self.N_s = N_s # no of samples for discretization of time
         self.n_knots = n_knots
         self.t_init = t_init
@@ -189,19 +205,21 @@ class Robot(object):
         self.Td = Td
         self.rho = rho
         self.d_rho = detec_rho
-
+        self.com_range = com_range
         self.log_lock = log_lock
 
+        # get number of robots      
+        self.n_robots = len(conflict_syncer)
+
+        # index for sliding windows
         td_step = (self.Td-self.t_init)/(self.N_s-1)
         tp_step = (self.Tp-self.t_init)/(self.N_s-1)
         self.Tcd_idx = int(round(self.Tc/td_step))
         self.Tcp_idx = int(round(self.Tc/tp_step))
 
+        # optimization parameters
         self.set_option('maxit')
         self.set_option('acc')
-
-        self.sol = sol
-        self.com_link = com_link
 
         # Declaring the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self,))
@@ -460,9 +478,73 @@ class Robot(object):
         return
 
     def _co_fieqcons(self, x):
+        C = x.reshape(self.n_ctrlpts, self.k_mod.u_dim)
+    
+        # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
+        dz = self._comb_bsp(self.mtime[1:], C, 0).T
+        for dev in range(1,self.k_mod.l+1):
+            dz = np.append(dz,self._comb_bsp(self.mtime[1:], C, dev).T,axis=0)
+    
+        dztTp = map(lambda dzt:dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T, dz.T)
+    
+        # get a list over time of command values u(t)
+        utTp = map(self.k_mod.phi2, dztTp)
+    
+        # get a list over time of values q(t)
+        qtTp = map(self.k_mod.phi1, dztTp)
+    
+        ## Obstacles constraints
+        # N_s*nb_obst_detected
+        obst_cons = []
+        for m in self.detected_obst_idxs:
+            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
+              - (self.rho + self.obst[m].radius) for qt in qtTp]
+    
+        ## Max speed constraints
+        # N_s*u_dim inequations
+        max_speed_cons = list(itertools.chain.from_iterable(
+            map(lambda ut:[self.k_mod.u_max[i,0]-abs(ut[i,0])\
+            for i in range(self.k_mod.u_dim)],utTp)))
+    
+        # Create final array
+        ieq_cons = obst_cons + max_speed_cons
+    
+        # Count how many inequations are not respected
+        unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
+        self.unsatisf_ieq_values = unsatisf_list
+
+        # return arrray where each element is an inequation constraint
+        return np.asarray(ieq_cons)
         return
 
     def _scipy_callback(self):
+        return
+
+    def _compute_conflicts(self):
+
+        self.collision_robots_idx = []
+        self.com_robots_idx = []
+
+        for i in [j for j in range(n_robots) if j != self.eyed]:
+            if self.com_link[i].done_planning == True:
+                d_secu = self.rho
+                linspeed_max = self.k_mod.u_max[0,0]
+            else:   # TODO each robot must know the radius of the other robot
+                d_secu = 2*self.rho 
+                linspeed_max = 2*self.k_mod.u_max[0,0]
+
+            d_ip = LA.norm(self.last_z - self.com_link[i].last_z)
+
+            # TODO shouldn't it be Tc instead of Tp
+            if d_ip <= d_secu + linspeed_max*self.Tp:
+                self.collision_robots_idx.append(i)
+
+            if i in neigh: # if the ith robot is a communication neighbor
+                # TODO right side of condition should be min(self.com_range,self.com_link[i].com_range)
+                if d_ip + linspeed_max*self.Tp >= self.com_range:
+                    self.com_robots_idx.append(i)
+
+        self.conflict_robots_idx = self.collision_robots_idx + self.com_robots_idx 
         return
 
     def _solve_opt_pbl(self):
@@ -564,16 +646,34 @@ class Robot(object):
             dz = np.append(dz,self._comb_bsp(
                     self.mtime[0:time_idx], self.C, dev).T,axis=0)
 
-#        TODO Write on shared memory my intention. Process sync
+#        TODO verify process safety
+        self.com_link[self.eyed].intended_path = dz
 
         self._compute_conflicts()
-#
-#        if self.conflicts != []:
-        if False:
-            # TODO save path for Td 
+#        conflict_robots_idx = []
+
+        # Sync with every robot on the conflict list
+        #  1. notify every robot waiting on this robot that it has its intended path
+        with self.conflict_syncer_conds[self.eyed]:
+            self.conflict_syncer[self.eyed].value = 1
+            self.conflict_syncer_conds[self.eyed].notify_all()
+        #  2. check if the robots on this robot conflict list are ready
+        for i in self.conflict_robots_idx:
+            with self.conflict_syncer_conds[i]:
+                if self.conflict_syncer[i].value == 0:
+                    self.conflict_syncer_conds[i].wait()
+        # Now is safe to read the all robots' in the conflict list intended paths
+
+        if self.conflict_robots_idx != []:
+            self._log('d', 'R{i}: CONFLICT LIST: {cl}\n'
+                    'DZ: {dz}'.format(i=self.eyed,cl=self.conflict_robots_idx,dz=dz))
+
             self.std_alone = False
 
+#            self.conflict_dz = [self._read_com_link()]
 #            self._read_com_link()
+
+            self.sa_dz = dz
 
             tic = time.time()
             self._solve_opt_pbl()
@@ -598,26 +698,28 @@ class Robot(object):
             for dev in range(1,self.k_mod.l+1):
                 dz = np.append(dz,self._comb_bsp(
                         self.mtime[0:time_idx], self.C, dev).T,axis=0)
-#        else:
-#            TODO Consider planning during Td the final plan
             
         # Storing
-#        self._update()
-        self.all_C += [self.C]
-        
+#        self.all_C += [self.C]
         self.all_dz += [dz]
         # TODO rejected path
 
         # Updating
+        
+        last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1].reshape(
+                self.k_mod.u_dim,1)
+
+        self.com_link[self.eyed].last_z = last_z
+
         if not self.final_step:
             self.knots = self.knots + self.Tc
             self.mtime = [tk+self.Tc for tk in self.mtime]
-            self.last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1].reshape(
-                    self.k_mod.u_dim,1)
+            self.last_z = last_z
             self.last_q = self.k_mod.phi1(self.all_dz[-1][:,-1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
             self.last_u = self.k_mod.phi2(self.all_dz[-1][:,-1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
+
         return
 
     def _init_planning(self):
@@ -636,7 +738,6 @@ class Robot(object):
 
         self.C = np.zeros((self.n_ctrlpts,self.k_mod.u_dim))
 
-        self.all_C = []
         self.all_dz = []
 
     def _plan(self):
@@ -654,17 +755,20 @@ class Robot(object):
         while LA.norm(self.last_z - self.final_z) > self.D:
 
             self._plan_section()
+            self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
             # SYNC process
-            self.pcc_lock.acquire()
-            self.process_counter += 1
-            if self.process_counter != self.n_robots:
-                self.pcc_lock.wait()
-            else:
-                self.pcc_lock.notifyAll()
-                self.process_counter = 0
-                
-            self.pcc_lock.release()
+            with self.tc_syncer_cond:
+                self.tc_syncer.value += 1
+                if self.tc_syncer.value != self.n_robots:  # if not all robots are read
+                    self._log('d', 'R{}: I\'m going to wait!'.format(self.eyed))
+                    self.tc_syncer_cond.wait()
+                else:                                # otherwise wake up everybody
+                    self.tc_syncer_cond.notify_all()
+                self.tc_syncer.value -= 1            # decrement syncer (idem)
+
+            with self.conflict_syncer_conds[self.eyed]:
+                self.conflict_syncer[self.eyed].value = 0
 
         self.final_step = True
 
@@ -674,10 +778,17 @@ class Robot(object):
         self.mtime = np.linspace(self.mtime[0], self.mtime[0]+self.est_dtime, self.N_s)
 
         self._plan_section()
+        self._log('i','R{}: Finished motion planning'.format(self.eyed))
+        self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
         self.sol[self.eyed] = self.all_dz
+        self.com_link[self.eyed].done_planning = True
 
-        self._log('i','R{}: Finished motion planning'.format(self.eyed))
+        # Make sure any robot waiting on this robot awake before returning
+        with self.tc_syncer_cond:
+            self.tc_syncer.value += 1               # increment synker
+            if self.tc_syncer.value == self.n_robots:  # if all robots are read
+                self.tc_syncer_cond.notify_all()
 
         return
 
@@ -908,7 +1019,7 @@ if __name__ == '__main__':
 #            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
 #            ([-0.50,  1.50], 0.30)]
 
-    obst_info = [([0.25, 2.5], 0.20),([ 2.50,  2.50], 0.50),
+    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),
             ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
             ([-0.50,  1.50], 0.30)]
 
@@ -928,43 +1039,58 @@ if __name__ == '__main__':
             [ 1.0,  5.0])          # u_max
             for i in [j-n_robots/2 for j in range(n_robots)]]
 
-    log_lock = mpc.Lock()
-    pcc_lock = mpc.Lock()
 
-    process_counter = mpc.Value('I', 0, lock=pcc_lock) # unsigned int
+    # Multiprocessing stuff ############################################
+    # locks
+    log_lock = mpc.Lock()
+
+    # conditions
+    tc_syncer_cond = mpc.Condition()
+    conflict_syncer_conds = [mpc.Condition() for i in range(n_robots)]
+
+    # shared memory (for simple data)
+    tc_syncer = mpc.Value('I', 0) # unsigned int
+    conflict_syncer = [mpc.Value('I', 0) for i in range(n_robots)]
+
+    # shared memory by a server process manager (because they can support arbitrary object types)
     manager = mpc.Manager()
     solutions = manager.list(range(n_robots))
     robots_time = manager.list(range(n_robots))
-    com_link = manager.list(range(n_robots))
+    com_link = manager.list([RobotMsg(kine_models[i].q_init[0:-1,0]) for i in range(n_robots)])
+    ####################################################################
 
     robots = []
     for i in range(n_robots):
         if i-1 >= 0 and i+1 < n_robots:
-            neigh = [i-1 i+1]
+            neigh = [i-1, i+1]
         elif i-1 >= 0:
             neigh = [i-1]
         else:
             neigh = [i+1]
-        robots += Robot(
-                i,                  # Robot ID
-                kine_models[i],     # kinetic model
-                obstacles,          # all obstacles
-                boundary,           # planning plane boundary
-                process_counter,    # process counter for sync
-                com_link,           # communication link
-                solutions,          # where to store the solutions
-                neigh,              # neighbors to whom it shall talk
-                n_robots,           # numbers of robots
-                N_s=20,             # numbers samplings for each planning interval
-                n_knots=6,          # number of knots for b-spline interpolation
-                Tc=1.0,             # computation time
-                Tp=2.0,             # planning time
-                Td=2.0)             # planning time (for stand alone plan)
+        robots += [Robot(
+                i,                      # Robot ID
+                kine_models[i],         # kinetic model
+                obstacles,              # all obstacles
+                boundary,               # planning plane boundary
+                tc_syncer,              # process counter for sync
+                tc_syncer_cond,
+                conflict_syncer,        # array used for sync between robots having conflicts
+                conflict_syncer_conds,
+                com_link,               # communication link
+                solutions,              # where to store the solutions
+                robots_time,
+                neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
+                N_s=20,                 # numbers samplings for each planning interval
+                n_knots=6,              # number of knots for b-spline interpolation
+                Tc=1.0,                 # computation time
+                Tp=2.0,                 # planning horizon
+                Td=2.0,
+                log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-4) for r in robots]
-    [r.set_option('maxit', 50) for r in robots]
+    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('maxit', 50) for r in robots] # max number of iterations for the opt solver
 
-    world_sim = WorldSim(robots,obstacles,boundary)
+    world_sim = WorldSim(robots,obstacles,boundary) # create the world
 
-    summary_info = world_sim.run(interac_plot=False, speed_plot=True)
+    summary_info = world_sim.run(interac_plot=False, speed_plot=True) # run simulation (TODO take parameters out)
 
