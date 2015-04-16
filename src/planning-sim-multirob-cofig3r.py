@@ -1101,7 +1101,7 @@ def rand_round_obst(no, boundary):
 
     N = 1/0.0001
     min_radius = 0.15
-    max_radius = 0.6
+    max_radius = 0.4
     radius_range = np.linspace(min_radius,max_radius,N)
     x_range =np.linspace(boundary.x_min+max_radius,boundary.x_max-max_radius,N)
     y_range =np.linspace(boundary.y_min+max_radius,boundary.y_max-max_radius,N)
@@ -1134,7 +1134,7 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 3
-    n_robots = 2
+    n_robots = 3
     N_s = 20
 
     scriptname, method = parse_cmdline()
@@ -1150,7 +1150,8 @@ if __name__ == '__main__':
 
     boundary = Boundary([-6.0,6.0], [-6.0,6.0])
 
-#    obst_info = rand_round_obst(n_obsts, Boundary([-2.0,6.0],[0.7,4.0]))
+    obst_info = rand_round_obst(n_obsts, Boundary([-1.2,1.2], [-2.0,2.0]))
+    print(obst_info)
 
     # these obst info
 #    obst_info = [([0.25, 2.5], 0.20),([ 3.0,  2.40], 0.50),
@@ -1161,20 +1162,30 @@ if __name__ == '__main__':
 #            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
 #            ([-0.50,  1.50], 0.30)]
 #    obst_info = [([-0.5, 2.5], 0.30),([0.7,  2.50], 0.30), ([0.0, 1.1], 0.3)]
-    obst_info = [([-0.52, -0.552], 0.31),([-0.58,  0.541], 0.298),([1.41, -0.1], 0.35)]
+#    obst_info = [([-0.52, -0.552], 0.31),([-0.58,  0.541], 0.298),([1.41, -0.1], 0.35)]
+    obst_info = [([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), \
+            ([0.7218821882188216, -0.93849384938494], 0.28383838383838383), \
+            ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
+#[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     kine_models = [UnicycleKineModel(
             [-2.56, -0.59, 0.0], # q_initial
-            [ 2.5,  0.5, 0.0], # q_final
+            [ 2.56,  0.51, 0.0], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0]),          # u_max
             UnicycleKineModel(
-            [-2.5,  0.5, 0.0], # q_initial
+            [-2.5,  1.2, 0.0], # q_initial
             [ 2.5, -0.5, 0.0], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 1.0,  5.0]),          # u_max
+            UnicycleKineModel(
+            [-2.4,  0.1, 0.0], # q_initial
+            [ 2.6, -1.5, 0.0], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0])]          # u_max
@@ -1251,11 +1262,11 @@ if __name__ == '__main__':
                 Tc=1.0,                 # computation time
                 Tp=2.0,                 # planning horizon
                 Td=2.0,
-                def_epsilon=10.5,       # in meters
+                def_epsilon=10.0,       # in meters
                 safe_epsilon=0.1,      # in meters
                 log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-6) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
     [r.set_option('maxit', 50) for r in robots] # max number of iterations for the opt solver
 
     world_sim = WorldSim(robots,obstacles,boundary) # create the world
