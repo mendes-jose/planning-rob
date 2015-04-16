@@ -12,8 +12,6 @@ import multiprocessing as mpc
 import sys
 import logging
 from scipy.optimize import fmin_slsqp
-from matplotlib.collections import LineCollection
-from matplotlib.colors import ListedColormap, BoundaryNorm
 
 ###############################################################################
 # Obstacle
