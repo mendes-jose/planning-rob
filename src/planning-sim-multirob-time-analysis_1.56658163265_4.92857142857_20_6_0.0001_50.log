@@ -1,0 +1,36 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.53052711487
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 10
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.56658163265: Time to solve stand alone optimisation problem: 1.09192585945
+INFO:R0@tkref=1.56658163265: N of unsatisfied eq: 3
+INFO:R0@tkref=1.56658163265: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.56658163265: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.1331632653: Time to solve stand alone optimisation problem: 0.904606103897
+INFO:R0@tkref=3.1331632653: N of unsatisfied eq: 1
+INFO:R0@tkref=3.1331632653: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.1331632653: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.69974489795: Time to solve stand alone optimisation problem: 0.726975917816
+INFO:R0@tkref=4.69974489795: N of unsatisfied eq: 3
+INFO:R0@tkref=4.69974489795: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.69974489795: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.2663265306: Time to solve stand alone optimisation problem: 0.6313560009
+INFO:R0@tkref=6.2663265306: N of unsatisfied eq: 3
+INFO:R0@tkref=6.2663265306: N of unsatisfied ieq: 9
+INFO:R0@tkref=6.2663265306: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.83290816325: Time to solve stand alone optimisation problem: 4.82523798943
+INFO:R0@tkref=7.83290816325: N of unsatisfied eq: 10
+INFO:R0@tkref=7.83290816325: N of unsatisfied ieq: 4
+INFO:R0@tkref=7.83290816325: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:MAX: 4.82523798943
+INFO:MIN: 0.6313560009
+INFO:AVG: 1.95177149773
+INFO:TOT: 12.8910827182

@@ -1,0 +1,36 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.72520303726
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 1
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.08928571429: Time to solve stand alone optimisation problem: 1.06069898605
+INFO:R0@tkref=2.08928571429: N of unsatisfied eq: 3
+INFO:R0@tkref=2.08928571429: N of unsatisfied ieq: 10
+INFO:R0@tkref=2.08928571429: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.17857142858: Time to solve stand alone optimisation problem: 1.0410490036
+INFO:R0@tkref=4.17857142858: N of unsatisfied eq: 3
+INFO:R0@tkref=4.17857142858: N of unsatisfied ieq: 11
+INFO:R0@tkref=4.17857142858: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.26785714287: Time to solve stand alone optimisation problem: 0.841537952423
+INFO:R0@tkref=6.26785714287: N of unsatisfied eq: 2
+INFO:R0@tkref=6.26785714287: N of unsatisfied ieq: 9
+INFO:R0@tkref=6.26785714287: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.35714285716: Time to solve stand alone optimisation problem: 0.374456167221
+INFO:R0@tkref=8.35714285716: N of unsatisfied eq: 3
+INFO:R0@tkref=8.35714285716: N of unsatisfied ieq: 14
+INFO:R0@tkref=8.35714285716: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.4464285714: Time to solve stand alone optimisation problem: 3.73743009567
+INFO:R0@tkref=10.4464285714: N of unsatisfied eq: 10
+INFO:R0@tkref=10.4464285714: N of unsatisfied ieq: 2
+INFO:R0@tkref=10.4464285714: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:MAX: 3.73743009567
+INFO:MIN: 0.374456167221
+INFO:AVG: 1.79672920704
+INFO:TOT: 12.2869872007

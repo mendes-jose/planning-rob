@@ -1,0 +1,36 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.56907391548
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 5
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.35025510204: Time to solve stand alone optimisation problem: 0.905715942383
+INFO:R0@tkref=1.35025510204: N of unsatisfied eq: 3
+INFO:R0@tkref=1.35025510204: N of unsatisfied ieq: 8
+INFO:R0@tkref=1.35025510204: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.70051020408: Time to solve stand alone optimisation problem: 0.90610909462
+INFO:R0@tkref=2.70051020408: N of unsatisfied eq: 3
+INFO:R0@tkref=2.70051020408: N of unsatisfied ieq: 10
+INFO:R0@tkref=2.70051020408: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.05076530612: Time to solve stand alone optimisation problem: 0.81942987442
+INFO:R0@tkref=4.05076530612: N of unsatisfied eq: 2
+INFO:R0@tkref=4.05076530612: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.05076530612: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.40102040816: Time to solve stand alone optimisation problem: 0.45511007309
+INFO:R0@tkref=5.40102040816: N of unsatisfied eq: 1
+INFO:R0@tkref=5.40102040816: N of unsatisfied ieq: 9
+INFO:R0@tkref=5.40102040816: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.7512755102: Time to solve stand alone optimisation problem: 4.82727599144
+INFO:R0@tkref=6.7512755102: N of unsatisfied eq: 10
+INFO:R0@tkref=6.7512755102: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.7512755102: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:MAX: 4.82727599144
+INFO:MIN: 0.45511007309
+INFO:AVG: 1.91378581524
+INFO:TOT: 12.4279445745

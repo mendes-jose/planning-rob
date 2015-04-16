@@ -1,0 +1,41 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.61117696762
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 3
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.2: Time to solve stand alone optimisation problem: 0.725821018219
+INFO:R0@tkref=1.2: N of unsatisfied eq: 2
+INFO:R0@tkref=1.2: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.2: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.4: Time to solve stand alone optimisation problem: 1.40711784363
+INFO:R0@tkref=2.4: N of unsatisfied eq: 2
+INFO:R0@tkref=2.4: N of unsatisfied ieq: 10
+INFO:R0@tkref=2.4: Summary: Optimization terminated successfully. after 15 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.6: Time to solve stand alone optimisation problem: 0.829198122025
+INFO:R0@tkref=3.6: N of unsatisfied eq: 3
+INFO:R0@tkref=3.6: N of unsatisfied ieq: 11
+INFO:R0@tkref=3.6: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.8: Time to solve stand alone optimisation problem: 0.648105859756
+INFO:R0@tkref=4.8: N of unsatisfied eq: 2
+INFO:R0@tkref=4.8: N of unsatisfied ieq: 10
+INFO:R0@tkref=4.8: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.0: Time to solve stand alone optimisation problem: 0.648401975632
+INFO:R0@tkref=6.0: N of unsatisfied eq: 3
+INFO:R0@tkref=6.0: N of unsatisfied ieq: 9
+INFO:R0@tkref=6.0: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.2: Time to solve stand alone optimisation problem: 4.98950791359
+INFO:R0@tkref=7.2: N of unsatisfied eq: 10
+INFO:R0@tkref=7.2: N of unsatisfied ieq: 5
+INFO:R0@tkref=7.2: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:MAX: 4.98950791359
+INFO:MIN: 0.648105859756
+INFO:AVG: 1.83704710007
+INFO:TOT: 13.1474593052

@@ -787,8 +787,8 @@ class Robot(object):
                     self.conflict_syncer_conds[i].wait()
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
-#        if self.conflict_robots_idx != [] and False:
-        if self.conflict_robots_idx != []:
+        if self.conflict_robots_idx != [] and False:
+#        if self.conflict_robots_idx != []:
             self._log('d', 'R{i}: $$$$$$$$$$ CONFLICT LIST $$$$$$$$$$: {cl}'
                     .format(i=self.eyed,cl=self.conflict_robots_idx))
 
@@ -1133,8 +1133,8 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_obsts = 3
-    n_robots = 2
+    n_obsts = 5
+    n_robots = 1
     N_s = 20
 
     scriptname, method = parse_cmdline()
@@ -1152,32 +1152,26 @@ if __name__ == '__main__':
 
 #    obst_info = rand_round_obst(n_obsts, Boundary([-2.0,6.0],[0.7,4.0]))
 
-    # these obst info
 #    obst_info = [([0.25, 2.5], 0.20),([ 3.0,  2.40], 0.50),
 #            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
 #            ([-0.50,  1.50], 0.30)]
 
-#    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),
-#            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
-#            ([-0.50,  1.50], 0.30)]
+    # these obst info
+    obst_info = [([0.25, 2.5], 0.20),([ 2.30,  2.50], 0.50),
+            ([ 1.25,  3.00], 0.10),([ 0.30,  1.00], 0.10),
+            ([-0.50,  1.50], 0.30)]
 #    obst_info = [([-0.5, 2.5], 0.30),([0.7,  2.50], 0.30), ([0.0, 1.1], 0.3)]
-    obst_info = [([-0.52, -0.552], 0.31),([-0.58,  0.541], 0.298),([1.41, -0.1], 0.35)]
 
+#    obst_info = [([-0.52, -0.552], 0.31),([-0.58,  0.541], 0.298),([1.41, -0.1], 0.35)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     kine_models = [UnicycleKineModel(
-            [-2.56, -0.59, 0.0], # q_initial
-            [ 2.5,  0.5, 0.0], # q_final
+            [ 0.0,  0.0, np.pi/2], # q_initial
+            [ 2.0,  5.0, np.pi/2], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [-2.5,  0.5, 0.0], # q_initial
-            [ 2.5, -0.5, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0])]          # u_max
+            [ 0.5,  5.0])]          # u_max
             
 #    kine_models = [UnicycleKineModel(
 #            [ float(i),  0.0, np.pi/2], # q_initial

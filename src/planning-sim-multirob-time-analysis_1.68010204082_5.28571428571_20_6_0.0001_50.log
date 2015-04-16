@@ -1,0 +1,36 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.54078698158
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 7
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.68010204082: Time to solve stand alone optimisation problem: 0.901566982269
+INFO:R0@tkref=1.68010204082: N of unsatisfied eq: 2
+INFO:R0@tkref=1.68010204082: N of unsatisfied ieq: 10
+INFO:R0@tkref=1.68010204082: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.36020408164: Time to solve stand alone optimisation problem: 0.812881946564
+INFO:R0@tkref=3.36020408164: N of unsatisfied eq: 2
+INFO:R0@tkref=3.36020408164: N of unsatisfied ieq: 9
+INFO:R0@tkref=3.36020408164: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.04030612246: Time to solve stand alone optimisation problem: 0.728535175323
+INFO:R0@tkref=5.04030612246: N of unsatisfied eq: 3
+INFO:R0@tkref=5.04030612246: N of unsatisfied ieq: 10
+INFO:R0@tkref=5.04030612246: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.72040816328: Time to solve stand alone optimisation problem: 0.633904933929
+INFO:R0@tkref=6.72040816328: N of unsatisfied eq: 3
+INFO:R0@tkref=6.72040816328: N of unsatisfied ieq: 8
+INFO:R0@tkref=6.72040816328: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.4005102041: Time to solve stand alone optimisation problem: 4.83274507523
+INFO:R0@tkref=8.4005102041: N of unsatisfied eq: 10
+INFO:R0@tkref=8.4005102041: N of unsatisfied ieq: 5
+INFO:R0@tkref=8.4005102041: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:MAX: 4.83274507523
+INFO:MIN: 0.633904933929
+INFO:AVG: 1.90840351582
+INFO:TOT: 13.0672455116
