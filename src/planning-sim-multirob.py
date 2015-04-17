@@ -172,6 +172,7 @@ class Robot(object):
             com_link,
             sol,
             robots_time,
+            robots_comp_time,
             neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
             N_s=20,
             n_knots=6,
@@ -198,6 +199,7 @@ class Robot(object):
         self.com_link = com_link
         self.sol = sol
         self.rtime = robots_time
+        self.ctime = robots_comp_time
         self.N_s = N_s # no of samples for discretization of time
         self.n_knots = n_knots
         self.t_init = t_init
@@ -743,6 +745,7 @@ class Robot(object):
         tic = time.time()
         self._solve_opt_pbl()
         toc = time.time()
+        self.all_comp_times.append(toc-tic)
 
         # No need to sync process here, the intended path does impact the conflicts computation
 
@@ -800,6 +803,8 @@ class Robot(object):
             tic = time.time()
             self._solve_opt_pbl()
             toc = time.time()
+            # Add this time to the computation time
+            self.all_comp_times[-1] += toc-tic
 
             self._log('i','R{rid}@tkref={tk}: Time to solve optimisation probl'
                     'em: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
@@ -863,6 +868,7 @@ class Robot(object):
 
         self.all_dz = []
         self.all_times = []
+        self.all_comp_times = []
 
     def _plan(self):
 
@@ -907,6 +913,7 @@ class Robot(object):
 
         self.sol[self.eyed] = self.all_dz
         self.rtime[self.eyed] = self.all_times
+        self.ctime[self.eyed] = self.all_comp_times
         self.com_link.done_planning[self.eyed] = 1
 
         #  Notify every robot waiting on this robot that it is ready for the conflict solving
@@ -971,6 +978,20 @@ class WorldSim(object):
         rtime = range(len(self.robs))
         for i in range(len(self.robs)):
             rtime[i] = self.robs[0].rtime[i]
+
+        # get computation time
+        ctime = range(len(self.robs))
+        for i in range(len(self.robs)):
+            ctime[i] = self.robs[0].ctime[i]
+
+        for i in range(len(self.robs)):
+            logging.info('R{rid}: NSE: {}'.format(rid=i,len(ctime[i])))
+            logging.info('R{rid}: FIR: {}'.format(rid=i,ctime[i][0]))
+            logging.info('R{rid}: LAS: {}'.format(rid=i,ctime[i][-1]))
+            logging.info('R{rid}: MAX: {}'.format(rid=i,max(ctime[i][1:-1])))
+            logging.info('R{rid}: MIN: {}'.format(rid=i,min(ctime[i][1:-1])))
+            logging.info('R{rid}: AVG: {}'.format(rid=i,np.mean(ctime[i][1:-1])))
+            logging.info('R{rid}: TOT: {}'.format(rid=i,rtime[i][-1]))
 
         # PLOT ###############################################################
 
@@ -1215,6 +1236,7 @@ if __name__ == '__main__':
     manager = mpc.Manager()
     solutions = manager.list(range(n_robots))
     robots_time = manager.list(range(n_robots))
+    robots_comp_time = manager.list(range(n_robots))
     ####################################################################
 
     robots = []
@@ -1237,6 +1259,7 @@ if __name__ == '__main__':
                 com_link,               # communication link
                 solutions,              # where to store the solutions
                 robots_time,
+                robots_comp_time,
                 neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
                 N_s=N_s,                 # numbers samplings for each planning interval
                 n_knots=6,              # number of knots for b-spline interpolation
