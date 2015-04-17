@@ -1,0 +1,69 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 7.43940496445
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=0.979947916667: Time to solve stand alone optimisation problem: 1.08380293846
+INFO:R0@tkref=0.979947916667: N of unsatisfied eq: 3
+INFO:R0@tkref=0.979947916667: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.979947916667: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.95989583333: Time to solve stand alone optimisation problem: 1.22086310387
+INFO:R0@tkref=1.95989583333: N of unsatisfied eq: 3
+INFO:R0@tkref=1.95989583333: N of unsatisfied ieq: 10
+INFO:R0@tkref=1.95989583333: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.93984375: Time to solve stand alone optimisation problem: 0.733910083771
+INFO:R0@tkref=2.93984375: N of unsatisfied eq: 3
+INFO:R0@tkref=2.93984375: N of unsatisfied ieq: 16
+INFO:R0@tkref=2.93984375: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.91979166667: Time to solve stand alone optimisation problem: 0.863456010818
+INFO:R0@tkref=3.91979166667: N of unsatisfied eq: 3
+INFO:R0@tkref=3.91979166667: N of unsatisfied ieq: 16
+INFO:R0@tkref=3.91979166667: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.89973958334: Time to solve stand alone optimisation problem: 0.740581989288
+INFO:R0@tkref=4.89973958334: N of unsatisfied eq: 3
+INFO:R0@tkref=4.89973958334: N of unsatisfied ieq: 14
+INFO:R0@tkref=4.89973958334: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.8796875: Time to solve stand alone optimisation problem: 0.94976401329
+INFO:R0@tkref=5.8796875: N of unsatisfied eq: 3
+INFO:R0@tkref=5.8796875: N of unsatisfied ieq: 8
+INFO:R0@tkref=5.8796875: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.85963541667: Time to solve stand alone optimisation problem: 2.06910204887
+INFO:R0@tkref=6.85963541667: N of unsatisfied eq: 3
+INFO:R0@tkref=6.85963541667: N of unsatisfied ieq: 10
+INFO:R0@tkref=6.85963541667: Summary: Optimization terminated successfully. after 23 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.83958333334: Time to solve stand alone optimisation problem: 0.184648036957
+INFO:R0@tkref=7.83958333334: N of unsatisfied eq: 3
+INFO:R0@tkref=7.83958333334: N of unsatisfied ieq: 17
+INFO:R0@tkref=7.83958333334: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.81953125: Time to solve stand alone optimisation problem: 0.13915681839
+INFO:R0@tkref=8.81953125: N of unsatisfied eq: 3
+INFO:R0@tkref=8.81953125: N of unsatisfied ieq: 16
+INFO:R0@tkref=8.81953125: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.79947916667: Time to solve stand alone optimisation problem: 0.138269901276
+INFO:R0@tkref=9.79947916667: N of unsatisfied eq: 3
+INFO:R0@tkref=9.79947916667: N of unsatisfied ieq: 16
+INFO:R0@tkref=9.79947916667: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.7794270833: Time to solve stand alone optimisation problem: 8.97597408295
+INFO:R0@tkref=10.7794270833: N of unsatisfied eq: 10
+INFO:R0@tkref=10.7794270833: N of unsatisfied ieq: 3
+INFO:R0@tkref=10.7794270833: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: NSE: 12
+INFO:R0: FIR: 7.43940496445
+INFO:R0: LAS: 8.97597408295
+INFO:R0: MAX: 2.06910204887
+INFO:R0: MIN: 0.138269901276
+INFO:R0: AVG: 0.812355494499
+INFO:R0: TOT: 11.7017088927

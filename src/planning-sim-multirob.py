@@ -985,13 +985,13 @@ class WorldSim(object):
             ctime[i] = self.robs[0].ctime[i]
 
         for i in range(len(self.robs)):
-            logging.info('R{rid}: NSE: {}'.format(rid=i,len(ctime[i])))
-            logging.info('R{rid}: FIR: {}'.format(rid=i,ctime[i][0]))
-            logging.info('R{rid}: LAS: {}'.format(rid=i,ctime[i][-1]))
-            logging.info('R{rid}: MAX: {}'.format(rid=i,max(ctime[i][1:-1])))
-            logging.info('R{rid}: MIN: {}'.format(rid=i,min(ctime[i][1:-1])))
-            logging.info('R{rid}: AVG: {}'.format(rid=i,np.mean(ctime[i][1:-1])))
-            logging.info('R{rid}: TOT: {}'.format(rid=i,rtime[i][-1]))
+            logging.info('R{rid}: NSE: {l}'.format(rid=i,l=len(ctime[i])))
+            logging.info('R{rid}: FIR: {l}'.format(rid=i,l=ctime[i][0]))
+            logging.info('R{rid}: LAS: {l}'.format(rid=i,l=ctime[i][-1]))
+            logging.info('R{rid}: MAX: {l}'.format(rid=i,l=max(ctime[i][1:-1])))
+            logging.info('R{rid}: MIN: {l}'.format(rid=i,l=min(ctime[i][1:-1])))
+            logging.info('R{rid}: AVG: {l}'.format(rid=i,l=np.mean(ctime[i][1:-1])))
+            logging.info('R{rid}: TOT: {l}'.format(rid=i,l=rtime[i][-1]))
 
         # PLOT ###############################################################
 

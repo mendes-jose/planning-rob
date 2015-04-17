@@ -1,0 +1,69 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 7.95726704597
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 2
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.00364583333: Time to solve stand alone optimisation problem: 3.55983614922
+INFO:R0@tkref=1.00364583333: N of unsatisfied eq: 2
+INFO:R0@tkref=1.00364583333: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.00364583333: Summary: Optimization terminated successfully. after 42 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.00729166666: Time to solve stand alone optimisation problem: 1.37383103371
+INFO:R0@tkref=2.00729166666: N of unsatisfied eq: 2
+INFO:R0@tkref=2.00729166666: N of unsatisfied ieq: 11
+INFO:R0@tkref=2.00729166666: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.01093749999: Time to solve stand alone optimisation problem: 0.618093013763
+INFO:R0@tkref=3.01093749999: N of unsatisfied eq: 3
+INFO:R0@tkref=3.01093749999: N of unsatisfied ieq: 13
+INFO:R0@tkref=3.01093749999: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.01458333332: Time to solve stand alone optimisation problem: 0.628888845444
+INFO:R0@tkref=4.01458333332: N of unsatisfied eq: 3
+INFO:R0@tkref=4.01458333332: N of unsatisfied ieq: 10
+INFO:R0@tkref=4.01458333332: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.01822916665: Time to solve stand alone optimisation problem: 1.19272184372
+INFO:R0@tkref=5.01822916665: N of unsatisfied eq: 3
+INFO:R0@tkref=5.01822916665: N of unsatisfied ieq: 10
+INFO:R0@tkref=5.01822916665: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.02187499998: Time to solve stand alone optimisation problem: 1.30598402023
+INFO:R0@tkref=6.02187499998: N of unsatisfied eq: 3
+INFO:R0@tkref=6.02187499998: N of unsatisfied ieq: 11
+INFO:R0@tkref=6.02187499998: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.02552083331: Time to solve stand alone optimisation problem: 1.10023283958
+INFO:R0@tkref=7.02552083331: N of unsatisfied eq: 3
+INFO:R0@tkref=7.02552083331: N of unsatisfied ieq: 12
+INFO:R0@tkref=7.02552083331: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.02916666664: Time to solve stand alone optimisation problem: 0.503986120224
+INFO:R0@tkref=8.02916666664: N of unsatisfied eq: 3
+INFO:R0@tkref=8.02916666664: N of unsatisfied ieq: 12
+INFO:R0@tkref=8.02916666664: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.03281249997: Time to solve stand alone optimisation problem: 0.203441858292
+INFO:R0@tkref=9.03281249997: N of unsatisfied eq: 3
+INFO:R0@tkref=9.03281249997: N of unsatisfied ieq: 16
+INFO:R0@tkref=9.03281249997: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.0364583333: Time to solve stand alone optimisation problem: 0.157764911652
+INFO:R0@tkref=10.0364583333: N of unsatisfied eq: 3
+INFO:R0@tkref=10.0364583333: N of unsatisfied ieq: 18
+INFO:R0@tkref=10.0364583333: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=11.0401041666: Time to solve stand alone optimisation problem: 7.56334900856
+INFO:R0@tkref=11.0401041666: N of unsatisfied eq: 10
+INFO:R0@tkref=11.0401041666: N of unsatisfied ieq: 3
+INFO:R0@tkref=11.0401041666: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: NSE: 12
+INFO:R0: FIR: 7.95726704597
+INFO:R0: LAS: 7.56334900856
+INFO:R0: MAX: 3.55983614922
+INFO:R0: MIN: 0.157764911652
+INFO:R0: AVG: 1.06447806358
+INFO:R0: TOT: 12.2598827655

@@ -1,0 +1,1272 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 7.45950484276
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 7
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=0.425: Time to solve stand alone optimisation problem: 0.812210083008
+INFO:R0@tkref=0.425: N of unsatisfied eq: 3
+INFO:R0@tkref=0.425: N of unsatisfied ieq: 17
+INFO:R0@tkref=0.425: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=0.85: Time to solve stand alone optimisation problem: 0.857716083527
+INFO:R0@tkref=0.85: N of unsatisfied eq: 3
+INFO:R0@tkref=0.85: N of unsatisfied ieq: 15
+INFO:R0@tkref=0.85: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.275: Time to solve stand alone optimisation problem: 1.44635105133
+INFO:R0@tkref=1.275: N of unsatisfied eq: 3
+INFO:R0@tkref=1.275: N of unsatisfied ieq: 11
+INFO:R0@tkref=1.275: Summary: Optimization terminated successfully. after 15 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.7: Time to solve stand alone optimisation problem: 0.675778865814
+INFO:R0@tkref=1.7: N of unsatisfied eq: 3
+INFO:R0@tkref=1.7: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.7: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.125: Time to solve stand alone optimisation problem: 3.27765202522
+INFO:R0@tkref=2.125: N of unsatisfied eq: 3
+INFO:R0@tkref=2.125: N of unsatisfied ieq: 23
+INFO:R0@tkref=2.125: Summary: Positive directional derivative for linesearch after 37 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.55: Time to solve stand alone optimisation problem: 1.30678415298
+INFO:R0@tkref=2.55: N of unsatisfied eq: 3
+INFO:R0@tkref=2.55: N of unsatisfied ieq: 22
+INFO:R0@tkref=2.55: Summary: Optimization terminated successfully. after 17 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.975: Time to solve stand alone optimisation problem: 1.46056389809
+INFO:R0@tkref=2.975: N of unsatisfied eq: 3
+INFO:R0@tkref=2.975: N of unsatisfied ieq: 29
+INFO:R0@tkref=2.975: Summary: Optimization terminated successfully. after 18 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.4: Time to solve stand alone optimisation problem: 0.758479118347
+INFO:R0@tkref=3.4: N of unsatisfied eq: 3
+INFO:R0@tkref=3.4: N of unsatisfied ieq: 33
+INFO:R0@tkref=3.4: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+DEBUG:R0: Big problem 4889289.1942
+INFO:R0@tkref=3.825: Time to solve stand alone optimisation problem: 0.451519012451
+INFO:R0@tkref=3.825: N of unsatisfied eq: 3
+INFO:R0@tkref=3.825: N of unsatisfied ieq: 28
+INFO:R0@tkref=3.825: Summary: Positive directional derivative for linesearch after 16 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.25: Time to solve stand alone optimisation problem: 0.180734157562
+INFO:R0@tkref=4.25: N of unsatisfied eq: 3
+INFO:R0@tkref=4.25: N of unsatisfied ieq: 27
+INFO:R0@tkref=4.25: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+DEBUG:R0: Big problem 3.31333350847e+12
+DEBUG:R0: Big problem 33130706473.7
+DEBUG:R0: Big problem 331044269.877
+DEBUG:R0: Big problem 3284229.45286
+DEBUG:R0: Big problem 1.26515628851e+20
+DEBUG:R0: Big problem 1.26515626694e+18
+DEBUG:R0: Big problem 1.26515605126e+16
+DEBUG:R0: Big problem 1.26515389443e+14
+DEBUG:R0: Big problem 1.26513232624e+12
+DEBUG:R0: Big problem 12649166545.3
+DEBUG:R0: Big problem 126276095.664
+DEBUG:R0: Big problem 1241305.89521
+DEBUG:R0: Big problem 2.27651826108e+19
+DEBUG:R0: Big problem 2.27651817925e+17
+DEBUG:R0: Big problem 2.27651736094e+15
+DEBUG:R0: Big problem 2.27650917783e+13
+DEBUG:R0: Big problem 2.27642734753e+11
+DEBUG:R0: Big problem 2275609126.2
+DEBUG:R0: Big problem 22674350.8214
+DEBUG:R0: Big problem 218651.156291
+DEBUG:R0: Big problem 3.58705562905e+18
+DEBUG:R0: Big problem 3.58705544207e+16
+DEBUG:R0: Big problem 3.58705357217e+14
+DEBUG:R0: Big problem 3.58703487326e+12
+DEBUG:R0: Big problem 35868478870.4
+DEBUG:R0: Big problem 358497831.73
+DEBUG:R0: Big problem 3566311.86512
+DEBUG:R0: Big problem 1475228392.81
+DEBUG:R0: Big problem 14716643.3103
+DEBUG:R0: Big problem 143629.837973
+DEBUG:R0: Big problem 895517919.294
+DEBUG:R0: Big problem 8925172.43489
+DEBUG:R0: Big problem 8.37331369289e+13
+DEBUG:R0: Big problem 8.37319540043e+11
+DEBUG:R0: Big problem 8372012523.34
+DEBUG:R0: Big problem 83601885.1034
+DEBUG:R0: Big problem 824242.416062
+DEBUG:R0: Big problem 4.67281127967e+16
+DEBUG:R0: Big problem 4.67280806943e+14
+DEBUG:R0: Big problem 4.67277596707e+12
+DEBUG:R0: Big problem 46724549496.1
+DEBUG:R0: Big problem 466924538.201
+DEBUG:R0: Big problem 4637210.40692
+DEBUG:R0: Big problem 1.6038472534e+18
+DEBUG:R0: Big problem 1.60384706582e+16
+DEBUG:R0: Big problem 1.60384519e+14
+DEBUG:R0: Big problem 1.60382643184e+12
+DEBUG:R0: Big problem 16036388562.7
+DEBUG:R0: Big problem 160176370.449
+DEBUG:R0: Big problem 1583072.57014
+DEBUG:R0: Big problem 1914840415.88
+DEBUG:R0: Big problem 19105112.3433
+DEBUG:R0: Big problem 186789.573665
+INFO:R0@tkref=4.675: Time to solve stand alone optimisation problem: 1.88170313835
+INFO:R0@tkref=4.675: N of unsatisfied eq: 3
+INFO:R0@tkref=4.675: N of unsatisfied ieq: 25
+INFO:R0@tkref=4.675: Summary: Positive directional derivative for linesearch after 49 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.1: Time to solve stand alone optimisation problem: 0.149780988693
+INFO:R0@tkref=5.1: N of unsatisfied eq: 3
+INFO:R0@tkref=5.1: N of unsatisfied ieq: 33
+INFO:R0@tkref=5.1: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+DEBUG:R0: Big problem 1.70470880506e+15
+DEBUG:R0: Big problem 1.70470482694e+13
+DEBUG:R0: Big problem 1.70466504658e+11
+DEBUG:R0: Big problem 1704267328.59
+DEBUG:R0: Big problem 17002987.0584
+DEBUG:R0: Big problem 166146.819218
+DEBUG:R0: Big problem 657033050.65
+DEBUG:R0: Big problem 6525238.60622
+DEBUG:R0: Big problem 6.36098795687e+12
+DEBUG:R0: Big problem 63606638485.8
+DEBUG:R0: Big problem 635742322.956
+DEBUG:R0: Big problem 6325063.42429
+DEBUG:R0: Big problem 1.20916926215e+17
+DEBUG:R0: Big problem 1.2091689659e+15
+DEBUG:R0: Big problem 1.20916600341e+13
+DEBUG:R0: Big problem 1.20913637873e+11
+DEBUG:R0: Big problem 1208840151.9
+DEBUG:R0: Big problem 12058798.7957
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675579
+DEBUG:R0: Big problem 117647.675582
+DEBUG:R0: Big problem 117647.675569
+DEBUG:R0: Big problem 7.57469127094e+26
+DEBUG:R0: Big problem 7.57469126924e+24
+DEBUG:R0: Big problem 7.57469125225e+22
+DEBUG:R0: Big problem 7.57469108233e+20
+DEBUG:R0: Big problem 7.57468938312e+18
+DEBUG:R0: Big problem 7.57467239105e+16
+DEBUG:R0: Big problem 7.57450247137e+14
+DEBUG:R0: Big problem 7.57280337943e+12
+DEBUG:R0: Big problem 75558229424.5
+DEBUG:R0: Big problem 738706681.343
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60216
+DEBUG:R0: Big problem 5804329.60214
+DEBUG:R0: Big problem 5804329.60223
+DEBUG:R0: Big problem 630481270.022
+DEBUG:R0: Big problem 117404.062134
+DEBUG:R0: Big problem 4554090.85234
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24131
+DEBUG:R0: Big problem 5620408.24129
+DEBUG:R0: Big problem 5620408.24137
+DEBUG:R0: Big problem 2.33330173703e+16
+DEBUG:R0: Big problem 2.33264994124e+14
+DEBUG:R0: Big problem 2.32613699106e+12
+DEBUG:R0: Big problem 22615082676.5
+DEBUG:R0: Big problem 166529887.096
+DEBUG:R0: Big problem 710988.647122
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60709
+DEBUG:R0: Big problem 4919462.60707
+DEBUG:R0: Big problem 4919462.60715
+DEBUG:R0: Big problem 4919080.85638
+DEBUG:R0: Big problem 3148486.60975
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62913
+DEBUG:R0: Big problem 4724655.62912
+DEBUG:R0: Big problem 4724655.6292
+DEBUG:R0: Big problem 876388.2259
+DEBUG:R0: Big problem 3469461.62262
+DEBUG:R0: Big problem 4590432.55582
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28508
+DEBUG:R0: Big problem 4711146.28506
+DEBUG:R0: Big problem 4711146.28514
+DEBUG:R0: Big problem 1.69363037239e+11
+DEBUG:R0: Big problem 1536661574.85
+DEBUG:R0: Big problem 3867367.33365
+DEBUG:R0: Big problem 3086380.17186
+DEBUG:R0: Big problem 4533265.79157
+DEBUG:R0: Big problem 4693204.1969
+DEBUG:R0: Big problem 4709350.53587
+DEBUG:R0: Big problem 4710966.69475
+DEBUG:R0: Big problem 4711128.32589
+DEBUG:R0: Big problem 4711144.48916
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10548
+DEBUG:R0: Big problem 4711146.10547
+DEBUG:R0: Big problem 4711146.10555
+DEBUG:R0: Big problem 4711025.54065
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15615
+DEBUG:R0: Big problem 3015143.15614
+DEBUG:R0: Big problem 3015143.1562
+DEBUG:R0: Big problem 78434319.5561
+DEBUG:R0: Big problem 458526.252733
+DEBUG:R0: Big problem 2658496.12037
+DEBUG:R0: Big problem 2978468.59912
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.60191
+DEBUG:R0: Big problem 3011465.6019
+DEBUG:R0: Big problem 3011465.60196
+DEBUG:R0: Big problem 18789493902.2
+DEBUG:R0: Big problem 147516998.208
+DEBUG:R0: Big problem 120591.752032
+DEBUG:R0: Big problem 2548963.94582
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29359
+DEBUG:R0: Big problem 2963481.29358
+DEBUG:R0: Big problem 2963481.29364
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48739
+DEBUG:R0: Big problem 1688227.48738
+DEBUG:R0: Big problem 1688227.48743
+DEBUG:R0: Big problem 794440134.315
+DEBUG:R0: Big problem 2720692.96163
+DEBUG:R0: Big problem 515891.669292
+DEBUG:R0: Big problem 1231221.74333
+DEBUG:R0: Big problem 1547594.67498
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60108
+DEBUG:R0: Big problem 1661865.60107
+DEBUG:R0: Big problem 1661865.60112
+DEBUG:R0: Big problem 3595070.30199
+DEBUG:R0: Big problem 942178.394262
+DEBUG:R0: Big problem 1577919.28411
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21223
+DEBUG:R0: Big problem 1652142.21222
+DEBUG:R0: Big problem 1652142.21227
+DEBUG:R0: Big problem 1652069.69905
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81698
+DEBUG:R0: Big problem 1057376.81697
+DEBUG:R0: Big problem 1057376.81701
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.008456
+DEBUG:R0: Big problem 749077.00845
+DEBUG:R0: Big problem 749077.008481
+DEBUG:R0: Big problem 314143.887258
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407941
+DEBUG:R0: Big problem 575098.407935
+DEBUG:R0: Big problem 575098.407962
+DEBUG:R0: Big problem 355896.27063
+DEBUG:R0: Big problem 519470.505343
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861069
+DEBUG:R0: Big problem 562533.861063
+DEBUG:R0: Big problem 562533.861091
+DEBUG:R0: Big problem 24065878591.3
+DEBUG:R0: Big problem 220171013.661
+DEBUG:R0: Big problem 654150.581587
+DEBUG:R0: Big problem 353003.220526
+DEBUG:R0: Big problem 539393.873889
+DEBUG:R0: Big problem 560197.99312
+DEBUG:R0: Big problem 562300.055582
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478333
+DEBUG:R0: Big problem 562510.478328
+DEBUG:R0: Big problem 562510.478355
+DEBUG:R0: Big problem 137379132.03
+DEBUG:R0: Big problem 247091.731413
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.79462
+DEBUG:R0: Big problem 390997.794615
+DEBUG:R0: Big problem 390997.794638
+DEBUG:R0: Big problem 8.03114257607e+20
+DEBUG:R0: Big problem 8.03113938638e+18
+DEBUG:R0: Big problem 8.03110748956e+16
+DEBUG:R0: Big problem 8.03078852479e+14
+DEBUG:R0: Big problem 8.02759922553e+12
+DEBUG:R0: Big problem 79957410708.0
+DEBUG:R0: Big problem 768064331.382
+DEBUG:R0: Big problem 4878044.779
+DEBUG:R0: Big problem 116899.629315
+DEBUG:R0: Big problem 356359.949452
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729817
+DEBUG:R0: Big problem 387461.729812
+DEBUG:R0: Big problem 387461.729835
+DEBUG:R0: Big problem 1.07952021794e+20
+DEBUG:R0: Big problem 1.07951905381e+18
+DEBUG:R0: Big problem 1.07950741253e+16
+DEBUG:R0: Big problem 1.07939100324e+14
+DEBUG:R0: Big problem 1.07822725553e+12
+DEBUG:R0: Big problem 10666243013.0
+DEBUG:R0: Big problem 95404704.3027
+DEBUG:R0: Big problem 173502.861539
+DEBUG:R0: Big problem 268909.011734
+DEBUG:R0: Big problem 374634.889696
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330122
+DEBUG:R0: Big problem 386169.330117
+DEBUG:R0: Big problem 386169.33014
+DEBUG:R0: Big problem 1.01067389451e+21
+DEBUG:R0: Big problem 1.0106735389e+19
+DEBUG:R0: Big problem 1.01066998287e+17
+DEBUG:R0: Big problem 1.01063442286e+15
+DEBUG:R0: Big problem 1.01027885715e+13
+DEBUG:R0: Big problem 1.00672664084e+11
+DEBUG:R0: Big problem 971548554.653
+DEBUG:R0: Big problem 6541753.80072
+DEBUG:R0: Big problem 347668.45536
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281992
+DEBUG:R0: Big problem 382228.281987
+DEBUG:R0: Big problem 382228.282009
+DEBUG:R0: Big problem 8.44802545065e+25
+DEBUG:R0: Big problem 8.44802544042e+23
+DEBUG:R0: Big problem 8.44802533814e+21
+DEBUG:R0: Big problem 8.44802431529e+19
+DEBUG:R0: Big problem 8.44801408681e+17
+DEBUG:R0: Big problem 8.44791180238e+15
+DEBUG:R0: Big problem 8.4468889921e+13
+DEBUG:R0: Big problem 8.43666429493e+11
+DEBUG:R0: Big problem 8334757888.67
+DEBUG:R0: Big problem 73497503.6597
+DEBUG:R0: Big problem 48741109976.2
+DEBUG:R0: Big problem 499441422.324
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30506
+DEBUG:R0: Big problem 6278111.30508
+DEBUG:R0: Big problem 6278111.30499
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68724
+DEBUG:R0: Big problem 8175154.68721
+DEBUG:R0: Big problem 8175154.68732
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598098
+DEBUG:R0: Big problem 381947.598089
+DEBUG:R0: Big problem 381947.598083
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331616
+DEBUG:R0: Big problem 219767.331626
+DEBUG:R0: Big problem 219767.331606
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.07558
+DEBUG:R0: Big problem 122604.075583
+DEBUG:R0: Big problem 122604.07557
+INFO:R0@tkref=5.525: Time to solve stand alone optimisation problem: 3.00513505936
+INFO:R0@tkref=5.525: N of unsatisfied eq: 3
+INFO:R0@tkref=5.525: N of unsatisfied ieq: 22
+INFO:R0@tkref=5.525: Summary: Optimization terminated successfully. after 80 it.
+INFO:R0: --------------------------
+DEBUG:R0: Big problem 7376234710.48
+DEBUG:R0: Big problem 73605312.0147
+DEBUG:R0: Big problem 720636.370653
+DEBUG:R0: Big problem 2.66923333528e+11
+DEBUG:R0: Big problem 2668289085.22
+DEBUG:R0: Big problem 26588752.6063
+DEBUG:R0: Big problem 256760.460836
+DEBUG:R0: Big problem 3.4062542506e+11
+DEBUG:R0: Big problem 3405297705.26
+DEBUG:R0: Big problem 33957609.8502
+DEBUG:R0: Big problem 330326.710421
+INFO:R0@tkref=5.95: Time to solve stand alone optimisation problem: 0.469651937485
+INFO:R0@tkref=5.95: N of unsatisfied eq: 3
+INFO:R0@tkref=5.95: N of unsatisfied ieq: 27
+INFO:R0@tkref=5.95: Summary: Positive directional derivative for linesearch after 15 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.375: Time to solve stand alone optimisation problem: 2.26472997665
+INFO:R0@tkref=6.375: N of unsatisfied eq: 3
+INFO:R0@tkref=6.375: N of unsatisfied ieq: 10
+INFO:R0@tkref=6.375: Summary: Optimization terminated successfully. after 64 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.8: Time to solve stand alone optimisation problem: 0.293596029282
+INFO:R0@tkref=6.8: N of unsatisfied eq: 3
+INFO:R0@tkref=6.8: N of unsatisfied ieq: 14
+INFO:R0@tkref=6.8: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.225: Time to solve stand alone optimisation problem: 0.186685800552
+INFO:R0@tkref=7.225: N of unsatisfied eq: 3
+INFO:R0@tkref=7.225: N of unsatisfied ieq: 17
+INFO:R0@tkref=7.225: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.65: Time to solve stand alone optimisation problem: 0.186342000961
+INFO:R0@tkref=7.65: N of unsatisfied eq: 3
+INFO:R0@tkref=7.65: N of unsatisfied ieq: 16
+INFO:R0@tkref=7.65: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.075: Time to solve stand alone optimisation problem: 0.188603162766
+INFO:R0@tkref=8.075: N of unsatisfied eq: 3
+INFO:R0@tkref=8.075: N of unsatisfied ieq: 17
+INFO:R0@tkref=8.075: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.5: Time to solve stand alone optimisation problem: 0.223257064819
+INFO:R0@tkref=8.5: N of unsatisfied eq: 3
+INFO:R0@tkref=8.5: N of unsatisfied ieq: 18
+INFO:R0@tkref=8.5: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.925: Time to solve stand alone optimisation problem: 0.228521108627
+INFO:R0@tkref=8.925: N of unsatisfied eq: 3
+INFO:R0@tkref=8.925: N of unsatisfied ieq: 13
+INFO:R0@tkref=8.925: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.35: Time to solve stand alone optimisation problem: 0.232892036438
+INFO:R0@tkref=9.35: N of unsatisfied eq: 3
+INFO:R0@tkref=9.35: N of unsatisfied ieq: 19
+INFO:R0@tkref=9.35: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.775: Time to solve stand alone optimisation problem: 0.0376110076904
+INFO:R0@tkref=9.775: N of unsatisfied eq: 3
+INFO:R0@tkref=9.775: N of unsatisfied ieq: 10
+INFO:R0@tkref=9.775: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.2: Time to solve stand alone optimisation problem: 0.22606086731
+INFO:R0@tkref=10.2: N of unsatisfied eq: 3
+INFO:R0@tkref=10.2: N of unsatisfied ieq: 9
+INFO:R0@tkref=10.2: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.625: Time to solve stand alone optimisation problem: 0.0374319553375
+INFO:R0@tkref=10.625: N of unsatisfied eq: 3
+INFO:R0@tkref=10.625: N of unsatisfied ieq: 9
+INFO:R0@tkref=10.625: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=11.05: Time to solve stand alone optimisation problem: 0.188122034073
+INFO:R0@tkref=11.05: N of unsatisfied eq: 3
+INFO:R0@tkref=11.05: N of unsatisfied ieq: 16
+INFO:R0@tkref=11.05: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=11.475: Time to solve stand alone optimisation problem: 0.241490840912
+INFO:R0@tkref=11.475: N of unsatisfied eq: 3
+INFO:R0@tkref=11.475: N of unsatisfied ieq: 13
+INFO:R0@tkref=11.475: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=11.9: Time to solve stand alone optimisation problem: 0.226192951202
+INFO:R0@tkref=11.9: N of unsatisfied eq: 3
+INFO:R0@tkref=11.9: N of unsatisfied ieq: 17
+INFO:R0@tkref=11.9: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=12.325: Time to solve stand alone optimisation problem: 0.195025920868
+INFO:R0@tkref=12.325: N of unsatisfied eq: 3
+INFO:R0@tkref=12.325: N of unsatisfied ieq: 18
+INFO:R0@tkref=12.325: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=12.75: Time to solve stand alone optimisation problem: 0.239749908447
+INFO:R0@tkref=12.75: N of unsatisfied eq: 3
+INFO:R0@tkref=12.75: N of unsatisfied ieq: 15
+INFO:R0@tkref=12.75: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=13.175: Time to solve stand alone optimisation problem: 0.190300941467
+INFO:R0@tkref=13.175: N of unsatisfied eq: 3
+INFO:R0@tkref=13.175: N of unsatisfied ieq: 16
+INFO:R0@tkref=13.175: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=13.6: Time to solve stand alone optimisation problem: 0.226670026779
+INFO:R0@tkref=13.6: N of unsatisfied eq: 3
+INFO:R0@tkref=13.6: N of unsatisfied ieq: 18
+INFO:R0@tkref=13.6: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=14.025: Time to solve stand alone optimisation problem: 0.227019071579
+INFO:R0@tkref=14.025: N of unsatisfied eq: 3
+INFO:R0@tkref=14.025: N of unsatisfied ieq: 18
+INFO:R0@tkref=14.025: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=14.45: Time to solve stand alone optimisation problem: 0.0379939079285
+INFO:R0@tkref=14.45: N of unsatisfied eq: 3
+INFO:R0@tkref=14.45: N of unsatisfied ieq: 10
+INFO:R0@tkref=14.45: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=14.875: Time to solve stand alone optimisation problem: 0.225970983505
+INFO:R0@tkref=14.875: N of unsatisfied eq: 3
+INFO:R0@tkref=14.875: N of unsatisfied ieq: 15
+INFO:R0@tkref=14.875: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=15.3: Time to solve stand alone optimisation problem: 0.0371930599213
+INFO:R0@tkref=15.3: N of unsatisfied eq: 3
+INFO:R0@tkref=15.3: N of unsatisfied ieq: 10
+INFO:R0@tkref=15.3: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=15.725: Time to solve stand alone optimisation problem: 0.261120080948
+INFO:R0@tkref=15.725: N of unsatisfied eq: 3
+INFO:R0@tkref=15.725: N of unsatisfied ieq: 14
+INFO:R0@tkref=15.725: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=16.15: Time to solve stand alone optimisation problem: 0.18487405777
+INFO:R0@tkref=16.15: N of unsatisfied eq: 3
+INFO:R0@tkref=16.15: N of unsatisfied ieq: 15
+INFO:R0@tkref=16.15: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=16.575: Time to solve stand alone optimisation problem: 0.224864959717
+INFO:R0@tkref=16.575: N of unsatisfied eq: 3
+INFO:R0@tkref=16.575: N of unsatisfied ieq: 13
+INFO:R0@tkref=16.575: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=17.0: Time to solve stand alone optimisation problem: 0.22437787056
+INFO:R0@tkref=17.0: N of unsatisfied eq: 3
+INFO:R0@tkref=17.0: N of unsatisfied ieq: 12
+INFO:R0@tkref=17.0: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=17.425: Time to solve stand alone optimisation problem: 0.230021953583
+INFO:R0@tkref=17.425: N of unsatisfied eq: 3
+INFO:R0@tkref=17.425: N of unsatisfied ieq: 16
+INFO:R0@tkref=17.425: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=17.85: Time to solve stand alone optimisation problem: 0.189155817032
+INFO:R0@tkref=17.85: N of unsatisfied eq: 3
+INFO:R0@tkref=17.85: N of unsatisfied ieq: 17
+INFO:R0@tkref=17.85: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=18.275: Time to solve stand alone optimisation problem: 0.242399930954
+INFO:R0@tkref=18.275: N of unsatisfied eq: 3
+INFO:R0@tkref=18.275: N of unsatisfied ieq: 15
+INFO:R0@tkref=18.275: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=18.7: Time to solve stand alone optimisation problem: 0.227938175201
+INFO:R0@tkref=18.7: N of unsatisfied eq: 3
+INFO:R0@tkref=18.7: N of unsatisfied ieq: 18
+INFO:R0@tkref=18.7: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=19.125: Time to solve stand alone optimisation problem: 0.199029922485
+INFO:R0@tkref=19.125: N of unsatisfied eq: 3
+INFO:R0@tkref=19.125: N of unsatisfied ieq: 13
+INFO:R0@tkref=19.125: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=19.55: Time to solve stand alone optimisation problem: 0.225071907043
+INFO:R0@tkref=19.55: N of unsatisfied eq: 3
+INFO:R0@tkref=19.55: N of unsatisfied ieq: 17
+INFO:R0@tkref=19.55: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=19.975: Time to solve stand alone optimisation problem: 0.187003135681
+INFO:R0@tkref=19.975: N of unsatisfied eq: 3
+INFO:R0@tkref=19.975: N of unsatisfied ieq: 15
+INFO:R0@tkref=19.975: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=20.4: Time to solve stand alone optimisation problem: 0.0407018661499
+INFO:R0@tkref=20.4: N of unsatisfied eq: 3
+INFO:R0@tkref=20.4: N of unsatisfied ieq: 10
+INFO:R0@tkref=20.4: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=20.825: Time to solve stand alone optimisation problem: 0.224315881729
+INFO:R0@tkref=20.825: N of unsatisfied eq: 3
+INFO:R0@tkref=20.825: N of unsatisfied ieq: 12
+INFO:R0@tkref=20.825: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=21.25: Time to solve stand alone optimisation problem: 0.188249111176
+INFO:R0@tkref=21.25: N of unsatisfied eq: 3
+INFO:R0@tkref=21.25: N of unsatisfied ieq: 15
+INFO:R0@tkref=21.25: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=21.675: Time to solve stand alone optimisation problem: 0.225656032562
+INFO:R0@tkref=21.675: N of unsatisfied eq: 3
+INFO:R0@tkref=21.675: N of unsatisfied ieq: 15
+INFO:R0@tkref=21.675: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=22.1: Time to solve stand alone optimisation problem: 0.20460319519
+INFO:R0@tkref=22.1: N of unsatisfied eq: 3
+INFO:R0@tkref=22.1: N of unsatisfied ieq: 15
+INFO:R0@tkref=22.1: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=22.525: Time to solve stand alone optimisation problem: 0.264679193497
+INFO:R0@tkref=22.525: N of unsatisfied eq: 3
+INFO:R0@tkref=22.525: N of unsatisfied ieq: 12
+INFO:R0@tkref=22.525: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=22.95: Time to solve stand alone optimisation problem: 0.199684143066
+INFO:R0@tkref=22.95: N of unsatisfied eq: 3
+INFO:R0@tkref=22.95: N of unsatisfied ieq: 13
+INFO:R0@tkref=22.95: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=23.375: Time to solve stand alone optimisation problem: 0.241669178009
+INFO:R0@tkref=23.375: N of unsatisfied eq: 3
+INFO:R0@tkref=23.375: N of unsatisfied ieq: 16
+INFO:R0@tkref=23.375: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=23.8: Time to solve stand alone optimisation problem: 0.247027158737
+INFO:R0@tkref=23.8: N of unsatisfied eq: 3
+INFO:R0@tkref=23.8: N of unsatisfied ieq: 18
+INFO:R0@tkref=23.8: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=24.225: Time to solve stand alone optimisation problem: 0.156961917877
+INFO:R0@tkref=24.225: N of unsatisfied eq: 3
+INFO:R0@tkref=24.225: N of unsatisfied ieq: 15
+INFO:R0@tkref=24.225: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=24.65: Time to solve stand alone optimisation problem: 0.193807840347
+INFO:R0@tkref=24.65: N of unsatisfied eq: 3
+INFO:R0@tkref=24.65: N of unsatisfied ieq: 16
+INFO:R0@tkref=24.65: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=25.075: Time to solve stand alone optimisation problem: 0.184617996216
+INFO:R0@tkref=25.075: N of unsatisfied eq: 3
+INFO:R0@tkref=25.075: N of unsatisfied ieq: 17
+INFO:R0@tkref=25.075: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=25.5: Time to solve stand alone optimisation problem: 0.260380983353
+INFO:R0@tkref=25.5: N of unsatisfied eq: 3
+INFO:R0@tkref=25.5: N of unsatisfied ieq: 19
+INFO:R0@tkref=25.5: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=25.925: Time to solve stand alone optimisation problem: 0.222345113754
+INFO:R0@tkref=25.925: N of unsatisfied eq: 3
+INFO:R0@tkref=25.925: N of unsatisfied ieq: 16
+INFO:R0@tkref=25.925: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=26.35: Time to solve stand alone optimisation problem: 0.149264812469
+INFO:R0@tkref=26.35: N of unsatisfied eq: 3
+INFO:R0@tkref=26.35: N of unsatisfied ieq: 18
+INFO:R0@tkref=26.35: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=26.775: Time to solve stand alone optimisation problem: 0.194367170334
+INFO:R0@tkref=26.775: N of unsatisfied eq: 3
+INFO:R0@tkref=26.775: N of unsatisfied ieq: 16
+INFO:R0@tkref=26.775: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=27.2: Time to solve stand alone optimisation problem: 0.150943040848
+INFO:R0@tkref=27.2: N of unsatisfied eq: 3
+INFO:R0@tkref=27.2: N of unsatisfied ieq: 17
+INFO:R0@tkref=27.2: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=27.625: Time to solve stand alone optimisation problem: 0.189774036407
+INFO:R0@tkref=27.625: N of unsatisfied eq: 3
+INFO:R0@tkref=27.625: N of unsatisfied ieq: 15
+INFO:R0@tkref=27.625: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=28.05: Time to solve stand alone optimisation problem: 0.151891946793
+INFO:R0@tkref=28.05: N of unsatisfied eq: 3
+INFO:R0@tkref=28.05: N of unsatisfied ieq: 16
+INFO:R0@tkref=28.05: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=28.475: Time to solve stand alone optimisation problem: 0.231703042984
+INFO:R0@tkref=28.475: N of unsatisfied eq: 3
+INFO:R0@tkref=28.475: N of unsatisfied ieq: 12
+INFO:R0@tkref=28.475: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=28.9: Time to solve stand alone optimisation problem: 0.153557062149
+INFO:R0@tkref=28.9: N of unsatisfied eq: 3
+INFO:R0@tkref=28.9: N of unsatisfied ieq: 18
+INFO:R0@tkref=28.9: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=29.325: Time to solve stand alone optimisation problem: 0.29722905159
+INFO:R0@tkref=29.325: N of unsatisfied eq: 3
+INFO:R0@tkref=29.325: N of unsatisfied ieq: 12
+INFO:R0@tkref=29.325: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=29.75: Time to solve stand alone optimisation problem: 0.194488048553
+INFO:R0@tkref=29.75: N of unsatisfied eq: 3
+INFO:R0@tkref=29.75: N of unsatisfied ieq: 15
+INFO:R0@tkref=29.75: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=30.175: Time to solve stand alone optimisation problem: 0.185513019562
+INFO:R0@tkref=30.175: N of unsatisfied eq: 3
+INFO:R0@tkref=30.175: N of unsatisfied ieq: 16
+INFO:R0@tkref=30.175: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=30.6: Time to solve stand alone optimisation problem: 0.0387499332428
+INFO:R0@tkref=30.6: N of unsatisfied eq: 3
+INFO:R0@tkref=30.6: N of unsatisfied ieq: 10
+INFO:R0@tkref=30.6: Summary: Optimization terminated successfully. after 1 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=31.025: Time to solve stand alone optimisation problem: 0.307060956955
+INFO:R0@tkref=31.025: N of unsatisfied eq: 3
+INFO:R0@tkref=31.025: N of unsatisfied ieq: 14
+INFO:R0@tkref=31.025: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=31.45: Time to solve stand alone optimisation problem: 0.149610042572
+INFO:R0@tkref=31.45: N of unsatisfied eq: 3
+INFO:R0@tkref=31.45: N of unsatisfied ieq: 14
+INFO:R0@tkref=31.45: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=31.875: Time to solve stand alone optimisation problem: 0.149881124496
+INFO:R0@tkref=31.875: N of unsatisfied eq: 3
+INFO:R0@tkref=31.875: N of unsatisfied ieq: 19
+INFO:R0@tkref=31.875: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=32.3: Time to solve stand alone optimisation problem: 0.151077032089
+INFO:R0@tkref=32.3: N of unsatisfied eq: 3
+INFO:R0@tkref=32.3: N of unsatisfied ieq: 15
+INFO:R0@tkref=32.3: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=32.725: Time to solve stand alone optimisation problem: 0.227491855621
+INFO:R0@tkref=32.725: N of unsatisfied eq: 3
+INFO:R0@tkref=32.725: N of unsatisfied ieq: 14
+INFO:R0@tkref=32.725: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=33.15: Time to solve stand alone optimisation problem: 0.150929927826
+INFO:R0@tkref=33.15: N of unsatisfied eq: 3
+INFO:R0@tkref=33.15: N of unsatisfied ieq: 15
+INFO:R0@tkref=33.15: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=33.575: Time to solve stand alone optimisation problem: 0.190448999405
+INFO:R0@tkref=33.575: N of unsatisfied eq: 3
+INFO:R0@tkref=33.575: N of unsatisfied ieq: 15
+INFO:R0@tkref=33.575: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=34.0: Time to solve stand alone optimisation problem: 0.149287939072
+INFO:R0@tkref=34.0: N of unsatisfied eq: 3
+INFO:R0@tkref=34.0: N of unsatisfied ieq: 16
+INFO:R0@tkref=34.0: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=34.425: Time to solve stand alone optimisation problem: 0.184104919434
+INFO:R0@tkref=34.425: N of unsatisfied eq: 3
+INFO:R0@tkref=34.425: N of unsatisfied ieq: 15
+INFO:R0@tkref=34.425: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=34.85: Time to solve stand alone optimisation problem: 0.266185998917
+INFO:R0@tkref=34.85: N of unsatisfied eq: 3
+INFO:R0@tkref=34.85: N of unsatisfied ieq: 12
+INFO:R0@tkref=34.85: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=35.275: Time to solve stand alone optimisation problem: 0.147858142853
+INFO:R0@tkref=35.275: N of unsatisfied eq: 3
+INFO:R0@tkref=35.275: N of unsatisfied ieq: 17
+INFO:R0@tkref=35.275: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=35.7: Time to solve stand alone optimisation problem: 0.108780145645
+INFO:R0@tkref=35.7: N of unsatisfied eq: 3
+INFO:R0@tkref=35.7: N of unsatisfied ieq: 16
+INFO:R0@tkref=35.7: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=36.125: Time to solve stand alone optimisation problem: 0.157312870026
+INFO:R0@tkref=36.125: N of unsatisfied eq: 3
+INFO:R0@tkref=36.125: N of unsatisfied ieq: 15
+INFO:R0@tkref=36.125: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=36.55: Time to solve stand alone optimisation problem: 0.146548986435
+INFO:R0@tkref=36.55: N of unsatisfied eq: 3
+INFO:R0@tkref=36.55: N of unsatisfied ieq: 14
+INFO:R0@tkref=36.55: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=36.975: Time to solve stand alone optimisation problem: 0.113127946854
+INFO:R0@tkref=36.975: N of unsatisfied eq: 3
+INFO:R0@tkref=36.975: N of unsatisfied ieq: 18
+INFO:R0@tkref=36.975: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=37.4: Time to solve stand alone optimisation problem: 0.148593902588
+INFO:R0@tkref=37.4: N of unsatisfied eq: 3
+INFO:R0@tkref=37.4: N of unsatisfied ieq: 16
+INFO:R0@tkref=37.4: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=37.825: Time to solve stand alone optimisation problem: 0.183222055435
+INFO:R0@tkref=37.825: N of unsatisfied eq: 3
+INFO:R0@tkref=37.825: N of unsatisfied ieq: 15
+INFO:R0@tkref=37.825: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=38.25: Time to solve stand alone optimisation problem: 0.109327077866
+INFO:R0@tkref=38.25: N of unsatisfied eq: 3
+INFO:R0@tkref=38.25: N of unsatisfied ieq: 18
+INFO:R0@tkref=38.25: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=38.675: Time to solve stand alone optimisation problem: 0.109866142273
+INFO:R0@tkref=38.675: N of unsatisfied eq: 3
+INFO:R0@tkref=38.675: N of unsatisfied ieq: 15
+INFO:R0@tkref=38.675: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=39.1: Time to solve stand alone optimisation problem: 0.112305879593
+INFO:R0@tkref=39.1: N of unsatisfied eq: 3
+INFO:R0@tkref=39.1: N of unsatisfied ieq: 16
+INFO:R0@tkref=39.1: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=39.525: Time to solve stand alone optimisation problem: 0.186594963074
+INFO:R0@tkref=39.525: N of unsatisfied eq: 3
+INFO:R0@tkref=39.525: N of unsatisfied ieq: 13
+INFO:R0@tkref=39.525: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=39.95: Time to solve stand alone optimisation problem: 0.11149597168
+INFO:R0@tkref=39.95: N of unsatisfied eq: 3
+INFO:R0@tkref=39.95: N of unsatisfied ieq: 18
+INFO:R0@tkref=39.95: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=40.375: Time to solve stand alone optimisation problem: 0.258547782898
+INFO:R0@tkref=40.375: N of unsatisfied eq: 3
+INFO:R0@tkref=40.375: N of unsatisfied ieq: 14
+INFO:R0@tkref=40.375: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=40.8: Time to solve stand alone optimisation problem: 0.145676851273
+INFO:R0@tkref=40.8: N of unsatisfied eq: 3
+INFO:R0@tkref=40.8: N of unsatisfied ieq: 13
+INFO:R0@tkref=40.8: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=41.225: Time to solve stand alone optimisation problem: 0.182533025742
+INFO:R0@tkref=41.225: N of unsatisfied eq: 3
+INFO:R0@tkref=41.225: N of unsatisfied ieq: 17
+INFO:R0@tkref=41.225: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=41.65: Time to solve stand alone optimisation problem: 0.119786977768
+INFO:R0@tkref=41.65: N of unsatisfied eq: 3
+INFO:R0@tkref=41.65: N of unsatisfied ieq: 16
+INFO:R0@tkref=41.65: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=42.075: Time to solve stand alone optimisation problem: 0.195102930069
+INFO:R0@tkref=42.075: N of unsatisfied eq: 3
+INFO:R0@tkref=42.075: N of unsatisfied ieq: 14
+INFO:R0@tkref=42.075: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=42.5: Time to solve stand alone optimisation problem: 0.243396043777
+INFO:R0@tkref=42.5: N of unsatisfied eq: 3
+INFO:R0@tkref=42.5: N of unsatisfied ieq: 16
+INFO:R0@tkref=42.5: Summary: Optimization terminated successfully. after 5 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=42.925: Time to solve stand alone optimisation problem: 0.0966629981995
+INFO:R0@tkref=42.925: N of unsatisfied eq: 3
+INFO:R0@tkref=42.925: N of unsatisfied ieq: 15
+INFO:R0@tkref=42.925: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=43.35: Time to solve stand alone optimisation problem: 0.096568107605
+INFO:R0@tkref=43.35: N of unsatisfied eq: 3
+INFO:R0@tkref=43.35: N of unsatisfied ieq: 14
+INFO:R0@tkref=43.35: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=43.775: Time to solve stand alone optimisation problem: 0.0993778705597
+INFO:R0@tkref=43.775: N of unsatisfied eq: 3
+INFO:R0@tkref=43.775: N of unsatisfied ieq: 16
+INFO:R0@tkref=43.775: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=44.2: Time to solve stand alone optimisation problem: 0.121796131134
+INFO:R0@tkref=44.2: N of unsatisfied eq: 3
+INFO:R0@tkref=44.2: N of unsatisfied ieq: 13
+INFO:R0@tkref=44.2: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=44.625: Time to solve stand alone optimisation problem: 0.122730016708
+INFO:R0@tkref=44.625: N of unsatisfied eq: 3
+INFO:R0@tkref=44.625: N of unsatisfied ieq: 12
+INFO:R0@tkref=44.625: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=45.05: Time to solve stand alone optimisation problem: 6.37433409691
+INFO:R0@tkref=45.05: N of unsatisfied eq: 10
+INFO:R0@tkref=45.05: N of unsatisfied ieq: 3
+INFO:R0@tkref=45.05: Summary: Iteration limit exceeded after 101 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: NSE: 107
+INFO:R0: FIR: 7.45950484276
+INFO:R0: LAS: 6.37433409691
+INFO:R0: MAX: 3.27765202522
+INFO:R0: MIN: 0.0371930599213
+INFO:R0: AVG: 0.336255718413
+INFO:R0: TOT: 45.3306634824
