@@ -10,6 +10,7 @@ import itertools
 import pyOpt
 import multiprocessing as mpc
 import sys
+import os
 import logging
 from scipy.optimize import fmin_slsqp
 
@@ -1000,6 +1001,9 @@ class WorldSim(object):
 #        # Interactive plot
 #        plt.ion()
 #
+
+        os.system("mkdir ~/Dropbox/traces/pngs/p"+self.sn)
+
         fig = plt.figure()
         ax = fig.gca()
         ax.set_xlabel('x(m)')
@@ -1048,7 +1052,7 @@ class WorldSim(object):
         [ax.add_artist(r) for r in plt_robots_c]
         [ax.add_artist(r) for r in plt_robots_t]
         for i in range(1,10):
-            fig.savefig('../../../Dropbox/traces/pngs/multirobot-path'+self.sn+'-'+str(i)+'.png', bbox_inches='tight')
+            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(i)+'.png', bbox_inches='tight')
     
         ctr = 1
         while True:
@@ -1081,9 +1085,9 @@ class WorldSim(object):
             ax.autoscale_view(True,True,True)
             fig.canvas.draw()
             ctr += 1
-            fig.savefig('../../../Dropbox/traces/pngs/multirobot-path'+self.sn+'-'+str(ctr+8)+'.png', bbox_inches='tight')
+            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(ctr+8)+'.png', bbox_inches='tight')
         for i in range(1,10):
-            fig.savefig('../../../Dropbox/traces/pngs/multirobot-path'+self.sn+'-'+str(ctr+8+i)+'.png', bbox_inches='tight')
+            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(ctr+8+i)+'.png', bbox_inches='tight')
     
         for i in range(len(self.robs)):
             linspeed = map(lambda x:x[0,0], ut[i])
@@ -1092,9 +1096,9 @@ class WorldSim(object):
             axarray[1].plot(rtime[i], angspeed, color=colors[i])
         axarray[0].grid()
         axarray[1].grid()
-        axarray[0].set_ylim([0.0,1.0])
-        axarray[1].set_ylim([-8.0,8.0])
-        fig_s.savefig('../../../Dropbox/traces/pngs/multirobot-vw.png', bbox_inches='tight')
+        axarray[0].set_ylim([0.0,0.8])
+        axarray[1].set_ylim([-6.0,6.0])
+        fig_s.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-vw'+self.sn+'.png', bbox_inches='tight')
 #                
 #            plt.show()
 #    
