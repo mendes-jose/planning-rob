@@ -2,27 +2,25 @@ import numpy as np
 import os
 import csv
 
-# csv file
-csv_file = open('../../../Dropbox/traces/table.csv', 'w+')
-table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-
 # output from simulation delimiter
 delim = " "
 
 # field's names
 input_names = ["Tc","Tp","Ns","Nkn","Acc","MaxIt"]
-key_words = ["NSE:","FIR:","LAS:","MAX:","MIN:","AVG:","TOT:"]
+key_words = ["NSE:","FIR:","LAS:","MAX:","MIN:","AVG:","RAT:","TOT:"]
 
-# write first line with the fields names
-table_writer.writerow(input_names+[kw[0:-1] for kw in key_words])
+# write first line with the fields names 
+with open('../traces/tableData2/table.csv', 'w') as csv_file:
+    table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    table_writer.writerow(input_names+[kw[0:-1] for kw in key_words])
 
 # parameters definition
-nTp = 25
-nTc = 25
-N_s = 20; n_knots = 6; acc = 1e-4; maxit = 100;
+stepTp = 0.1
+stepTc = 0.1
+N_s = 20; n_knots = 6; acc = 1e-4; maxit = 50;
 
-for tp in np.linspace(0.5, 15.0, nTp):
-    for tc in np.linspace(tp/10.0, tp, nTc):
+for tp in np.linspace(1.0, 11.0, 100, endpoint=False):
+    for tc in np.linspace(tp/10.0, 9.0*tp/10.0, int(round(8.0*tp/10.0/0.1)), endpoint=False):
         cmmd = "python planning-sim-multirob-time-analysis.py"+\
                 " "+str(tc)+\
                 " "+str(tp)+\
@@ -34,7 +32,7 @@ for tp in np.linspace(0.5, 15.0, nTp):
         os.system(cmmd)
 
         # open log file
-        with open("planning-sim-multirob-time-analysis"+
+        with open("../traces/tableData2/planning-sim-multirob-time-analysis"+
                 "_"+str(tc)+\
                 "_"+str(tp)+\
                 "_"+str(N_s)+\
@@ -52,4 +50,8 @@ for tp in np.linspace(0.5, 15.0, nTp):
             oi = values
             ii = [tc, tp, N_s, n_knots, acc, maxit]
 
-            table_writer.writerow(ii+oi)
+            # csv file
+            with open('../traces/tableData2/table.csv', 'a') as csv_file:
+                table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                table_writer.writerow(ii+oi)
+            print(tc, tp)

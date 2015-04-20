@@ -697,7 +697,7 @@ class Robot(object):
 
             init_guess = np.append(np.asarray([self.est_dtime]),
                     self.C.reshape(self.n_ctrlpts*self.k_mod.u_dim))
-            acc = 1e-2
+            acc = self.acc
 
         output = fmin_slsqp(
                 p_criterion,
@@ -728,6 +728,8 @@ class Robot(object):
 
     def _plan_section(self):
 
+        btic = time.time()
+
         # update obstacles zone
         self._detected_obst_idxs()
 
@@ -746,7 +748,6 @@ class Robot(object):
         tic = time.time()
         self._solve_opt_pbl()
         toc = time.time()
-        self.all_comp_times.append(toc-tic)
 
         # No need to sync process here, the intended path does impact the conflicts computation
 
@@ -805,7 +806,7 @@ class Robot(object):
             self._solve_opt_pbl()
             toc = time.time()
             # Add this time to the computation time
-            self.all_comp_times[-1] += toc-tic
+#            self.all_comp_times[-1] += toc-tic
 
             self._log('i','R{rid}@tkref={tk}: Time to solve optimisation probl'
                     'em: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
@@ -848,6 +849,9 @@ class Robot(object):
                     self.k_mod.l+1, self.k_mod.u_dim).T)
             self.last_u = self.k_mod.phi2(self.all_dz[-1][:,-1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
+
+        btoc = time.time()
+        self.all_comp_times.append(btoc-btic)
 
         return
 
@@ -937,11 +941,12 @@ class WorldSim(object):
     """ Where to instatiate obstacles, robots, bonderies
         initial and final conditions etc
     """
-    def __init__(self, name_id, robots, obstacles, phy_boundary):
+    def __init__(self, name_id, Tc, robots, obstacles, phy_boundary):
         self.robs = robots
         self.obsts = obstacles
         self.ph_bound = phy_boundary
         self.sn = name_id
+        self.Tc = Tc
 
     def run(self, interac_plot=False, speed_plot=False):
 
@@ -959,6 +964,11 @@ class WorldSim(object):
                 c = path[i].shape[1]
                 seg_pts_idx[i] += [c]
                 path[i] = np.append(path[i], p, axis=1)
+
+        # BUG FIX. Sometimes the first value (initial position) is a really small number
+        # (~1e-17) and the plot function blocks. Rounding to 9 decimal figures solves it
+        path[0][0,0] = round(path[0][0,0], 9)
+        path[0][1,0] = round(path[0][1,0], 9)
 
         # From [z dz ddz](t) get q(t) and u(t)
         zdzddz = range(len(self.robs))
@@ -986,13 +996,20 @@ class WorldSim(object):
             ctime[i] = self.robs[0].ctime[i]
 
         for i in range(len(self.robs)):
+            logging.info('R{rid}: TOT: {d}'.format(rid=i,d=rtime[i][-1]))
             logging.info('R{rid}: NSE: {d}'.format(rid=i,d=len(ctime[i])))
             logging.info('R{rid}: FIR: {d}'.format(rid=i,d=ctime[i][0]))
             logging.info('R{rid}: LAS: {d}'.format(rid=i,d=ctime[i][-1]))
-            logging.info('R{rid}: MAX: {d}'.format(rid=i,d=max(ctime[i][1:-1])))
-            logging.info('R{rid}: MIN: {d}'.format(rid=i,d=min(ctime[i][1:-1])))
-            logging.info('R{rid}: AVG: {d}'.format(rid=i,d=np.mean(ctime[i][1:-1])))
-            logging.info('R{rid}: TOT: {d}'.format(rid=i,d=rtime[i][-1]))
+            if len(ctime[i]) > 2:
+                logging.info('R{rid}: MAX: {d}'.format(rid=i,d=max(ctime[i][1:-1])))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i,d=min(ctime[i][1:-1])))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i,d=np.mean(ctime[i][1:-1])))
+                logging.info('R{rid}: RAT: {d}'.format(rid=i,d=max(ctime[i][1:-1])/self.Tc))
+            else:
+                logging.info('R{rid}: MAX: {d}'.format(rid=i,d=max(ctime[i])))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i,d=min(ctime[i])))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i,d=np.mean(ctime[i])))
+                logging.info('R{rid}: RAT: {d}'.format(rid=i,d=max(ctime[i])/self.Tc))
 
         # PLOT ###############################################################
 
@@ -1001,8 +1018,9 @@ class WorldSim(object):
 #        # Interactive plot
 #        plt.ion()
 #
-
-        os.system("mkdir ~/Dropbox/traces/pngs/p"+self.sn)
+        direc = "../traces/tableData2/"
+#        direc = "./"
+        os.system("mkdir "+direc+"pngs/p"+self.sn)
 
         fig = plt.figure()
         ax = fig.gca()
@@ -1051,9 +1069,9 @@ class WorldSim(object):
         
         [ax.add_artist(r) for r in plt_robots_c]
         [ax.add_artist(r) for r in plt_robots_t]
+#        plt.show()
         for i in range(1,10):
-            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(i)+'.png', bbox_inches='tight')
-    
+            fig.savefig(direc+'pngs/p'+self.sn+'/multirobot-path-'+str(i)+'.png', bbox_inches='tight')
         ctr = 1
         while True:
             end = 0
@@ -1085,9 +1103,9 @@ class WorldSim(object):
             ax.autoscale_view(True,True,True)
             fig.canvas.draw()
             ctr += 1
-            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(ctr+8)+'.png', bbox_inches='tight')
+            fig.savefig(direc+'pngs/p'+self.sn+'/multirobot-path-'+str(ctr+8)+'.png', bbox_inches='tight')
         for i in range(1,10):
-            fig.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-path'+self.sn+'-'+str(ctr+8+i)+'.png', bbox_inches='tight')
+            fig.savefig(direc+'pngs/p'+self.sn+'/multirobot-path-'+str(ctr+8+i)+'.png', bbox_inches='tight')
     
         for i in range(len(self.robs)):
             linspeed = map(lambda x:x[0,0], ut[i])
@@ -1096,9 +1114,9 @@ class WorldSim(object):
             axarray[1].plot(rtime[i], angspeed, color=colors[i])
         axarray[0].grid()
         axarray[1].grid()
-        axarray[0].set_ylim([0.0,0.8])
-        axarray[1].set_ylim([-6.0,6.0])
-        fig_s.savefig('../../../Dropbox/traces/pngs/p'+self.sn+'/multirobot-vw'+self.sn+'.png', bbox_inches='tight')
+        axarray[0].set_ylim([0.0,0.7])
+        axarray[1].set_ylim([-7.0,7.0])
+        fig_s.savefig(direc+'pngs/p'+self.sn+'/multirobot-vw.png', bbox_inches='tight')
 #                
 #            plt.show()
 #    
@@ -1106,7 +1124,6 @@ class WorldSim(object):
 #            axarray[0].cla()
 #            axarray[1].cla()
 #            fig.gca().cla()
-        
 
         return
 
@@ -1171,7 +1188,7 @@ if __name__ == '__main__':
             '_'+str(acc)+\
             '_'+str(maxit)
 
-    fname = scriptname[0:-3]+name_id+'.log'
+    fname = '../traces/tableData2/'+scriptname[0:-3]+name_id+'.log'
 
     logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
             filemode='w',level=logging.DEBUG)
@@ -1283,7 +1300,7 @@ if __name__ == '__main__':
     [r.set_option('acc', acc) for r in robots] # accuracy (hard to understand the physical meaning of this)
     [r.set_option('maxit', maxit) for r in robots] # max number of iterations for the opt solver
 
-    world_sim = WorldSim(name_id,robots,obstacles,boundary) # create the world
+    world_sim = WorldSim(name_id,Tc,robots,obstacles,boundary) # create the world
 
     summary_info = world_sim.run(interac_plot=False, speed_plot=True) # run simulation (TODO take parameters out)
 
