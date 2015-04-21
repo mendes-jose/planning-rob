@@ -10,10 +10,12 @@ input_names = ["Tc","Tp","Ns","Nkn","Acc","MaxIt"]
 key_words = ["NSE:","FIR:","LAS:","MAX:","MIN:","AVG:","RAT:","TOT:"]
 
 # write first line with the fields names 
-with open('../traces/tableData2/table.csv', 'w') as csv_file:
-    table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+#with open('../traces/tableData2/table.csv', 'w') as csv_file:
+with open('./fistline.csv', 'w') as csv_file:
+    table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_NONNUMERIC)
     table_writer.writerow(input_names+[kw[0:-1] for kw in key_words])
 
+raw_input()
 # parameters definition
 stepTp = 0.1
 stepTc = 0.1
@@ -52,6 +54,6 @@ for tp in np.linspace(1.0, 11.0, 100, endpoint=False):
 
             # csv file
             with open('../traces/tableData2/table.csv', 'a') as csv_file:
-                table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_NONNUMERIC)
                 table_writer.writerow(ii+oi)
             print(tc, tp)
