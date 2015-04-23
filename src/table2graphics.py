@@ -48,7 +48,7 @@ for v, idx in zip(tpv, range(len(tpv))):
             table[idxs,tpi]), table[idxs,rati],
             label='Tp = {}'.format(v),linewidth=2,color=colors[idx])
     for i in idxs[::4]:
-        ax2d.text(table[i,tci]/table[i,tpi], table[i,rati], '{}'.format(round(table[i,toti],1)))
+        ax2d.text(table[i,tci]/table[i,tpi], table[i,rati], '{0:.1f}'.format(table[i,toti],1))
 ax2d.plot([0.1, 0.9], [1.0]*2, label='real_Tc == Tc',ls='--',color='k')
 ax2d.plot([0.5]*2, [0.0,10], label='Tc/Tp == 0.5',ls='--',color='k')
 xy = np.array([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])

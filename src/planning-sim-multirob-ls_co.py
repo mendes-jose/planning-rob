@@ -686,7 +686,7 @@ class Robot(object):
         self.collision_robots_idx = []
         self.com_robots_idx = []
 
-        self._log('i', 'R{rid}: r0{v}'.format(rid=self.eyed,v=self.com_link.last_z[0]))
+#        self._log('i', 'R{rid}: r0{v}'.format(rid=self.eyed,v=self.com_link.last_z[0]))
 
         for i in [j for j in range(n_robots) if j != self.eyed]:
             if self.com_link.done_planning[i] == 1:
@@ -728,6 +728,7 @@ class Robot(object):
 
             init_guess = self.C[0:self.n_ctrlpts,:].reshape(self.n_ctrlpts*self.k_mod.u_dim)
             acc = self.acc
+            maxit = self.maxit
 
         else:
             if self.std_alone:
@@ -743,7 +744,9 @@ class Robot(object):
 
             init_guess = np.append(np.asarray([self.est_dtime]),
                     self.C[0:self.n_ctrlpts,:].reshape(self.n_ctrlpts*self.k_mod.u_dim))
+#            acc = min(self.acc*10, 1e-2)
             acc = self.acc
+            maxit = max(self.maxit/2, 35)
 
         output = fmin_slsqp(
                 p_criterion,
@@ -753,7 +756,7 @@ class Robot(object):
                 ieqcons=(),
                 f_ieqcons=p_ieqcons,
                 iprint=0,
-                iter=self.maxit,
+                iter=maxit,
                 acc=acc,
                 full_output=True)
 
@@ -785,10 +788,19 @@ class Robot(object):
             direc = self.final_z - self.last_z
             direc = direc/LA.norm(direc)
             last_ctrl_pt = self.last_z+self.D*direc
+            self._linspace_ctrl_pts(last_ctrl_pt)
         else:
-            last_ctrl_pt = self.final_z
-
-        self._linspace_ctrl_pts(last_ctrl_pt)
+            eps = 0.001
+            final_ctrl_pt = self.final_z
+#            last_ctrl_pt = self.final_z
+#            self._linspace_ctrl_pts(last_ctrl_pt)
+            self.C[self.n_ctrlpts-1,:] = final_ctrl_pt.T
+            self.C[self.n_ctrlpts-2,:] = final_ctrl_pt.T - eps*np.array(\
+                    [np.cos(self.k_mod.q_final[-1,0]), np.sin(self.k_mod.q_final[-1,0])])
+            self.C[0:self.n_ctrlpts-2,0] = np.array(np.linspace(self.last_z[0,0],\
+                    self.C[self.n_ctrlpts-2,0], self.n_ctrlpts-2, endpoint=False)).T
+            self.C[0:self.n_ctrlpts-2,1] = np.array(np.linspace(self.last_z[1,0],\
+                    self.C[self.n_ctrlpts-2,1], self.n_ctrlpts-2, endpoint=False)).T
 
         self.std_alone = True
 
@@ -811,7 +823,7 @@ class Robot(object):
             self.knots = self._gen_knots(self.mtime[0], self.t_final)
             self.mtime = np.linspace(self.mtime[0], self.t_final, self.N_s)
 
-        time_idx = None if self.final_step else self.Tcd_idx
+        time_idx = None if self.final_step else self.Tcd_idx+1
 
         dz = self._comb_bsp(self.mtime, self.C, 0).T
         for dev in range(1,self.k_mod.l+1):
@@ -868,7 +880,7 @@ class Robot(object):
                 self.knots = self._gen_knots(self.mtime[0], self.t_final)
                 self.mtime = np.linspace(self.mtime[0], self.t_final, self.N_s)
 
-            time_idx = None if self.final_step else self.Tcp_idx
+            time_idx = None if self.final_step else self.Tcp_idx+1
                 
             dz = self._comb_bsp(self.mtime[0:time_idx], self.C, 0).T
             for dev in range(1,self.k_mod.l+1):
@@ -877,6 +889,7 @@ class Robot(object):
             
         # Storing
 #        self.all_C += [self.C]
+#        print('Time idx {}'.format(time_idx))
         self.all_dz.append(dz[:,0:time_idx])
         self.all_times.extend(self.mtime[0:time_idx])
         # TODO rejected path
@@ -891,8 +904,10 @@ class Robot(object):
         #self.com_link.last_z[self.eyed] = last_z
 
         if not self.final_step:
-            self.knots = self.knots + self.Tc
-            self.mtime = [tk+self.Tc for tk in self.mtime]
+#            self.knots = self.knots + self.Tc
+            self.knots = self._gen_knots(self.mtime[time_idx-1], self.mtime[time_idx-1]+self.Td)
+#            self.mtime = [tk+self.Tc for tk in self.mtime]
+            self.mtime = np.linspace(self.mtime[time_idx-1], self.mtime[time_idx-1]+self.Td, self.N_s)
             self.last_z = last_z
             self.last_q = self.k_mod.phi1(self.all_dz[-1][:,-1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
@@ -907,7 +922,7 @@ class Robot(object):
     def _plan(self):
 
         self._log('i', 'R{rid}: Init motion planning'.format(rid=self.eyed))
-        self._log('i', 'R{rid}: {v}'.format(rid=self.eyed,v=self.com_link.last_z[0]))
+#        self._log('i', 'R{rid}: {v}'.format(rid=self.eyed,v=self.com_link.last_z[0]))
 
         self.final_step = False
 
@@ -916,38 +931,49 @@ class Robot(object):
 
         # while the remaining dist is greater than the max dist during Tp
 #        while LA.norm(self.last_z - self.final_z) > self.D:
+#        magic_ls_cte = 1.0/3.0 # TODO rethink it according to time real_Tc/Tc behavior
+        # minimum time interval for the last step. Last step plan will take always more then this time value
+#        inf_limit_ls_time = 0.3 # TODO make speed dependent, acceleration?
+        ls_time = 0.8 # *self.k_mod.u_max[0,0]
+        ls_cte = ls_time/self.Td
+#        bk_nk = self.n_knots
+#        bk_ns = self.N_s
         while True:
             remaining_dist = LA.norm(self.last_z - self.final_z)
-            if remaining_dist < 1.0*self.k_mod.u_max[0]:
-                self.n_knots = 3
-                self.N_s = 8
+            print('Remaining dist: {}'.format(remaining_dist))
+            print('last step time: {}'.format(ls_time))
+            print('self Tc: {}'.format(self.Tc))
+            print('self D: {}'.format(self.D))
+            if remaining_dist < (ls_time + self.Tc)*self.k_mod.u_max[0,0]:
+#            if remaining_dist < self.D: # TODO cte_time * umax
+                scale_factor = remaining_dist/self.k_mod.u_max[0,0]/self.Td*0.8
+                self.n_knots = max(int(round(self.n_knots*scale_factor)),1)
+                self.N_s = max(int(round(self.N_s*scale_factor)),8)
                 self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
-                self.Td = self.Td*ch_factor
-                self.Tp = self.Tp*ch_factor
-                self.Tc = self.Tc*ch_factor
-                # index for sliding windows
-                td_step = (self.Td-self.t_init)/(self.N_s-1)
-                tp_step = (self.Tp-self.t_init)/(self.N_s-1)
-                self.Tcd_idx = int(round(self.Tc/td_step))
-                self.Tcp_idx = int(round(self.Tc/tp_step))
+                self._log('i', 'R{0}: scale {1} Ns {2:d} Nk {3:d}'.format(self.eyed,
+                        ls_cte, self.N_s, self.n_knots))
                 break
             elif remaining_dist < self.D:
-                nTd = remaining_dist/self.k_mod.u_max[0,0]
-                ch_factor = nTd/self.Td
-                self.n_knots = int(round(ch_factor*self.n_knots))
+                new_Td = remaining_dist/self.k_mod.u_max[0,0]
+                scale_factor = new_Td/self.Td
+                self.Td = max(new_Td,self.Tc)
+                self.n_knots = int(round(scale_factor*self.n_knots))
                 self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
-                self.Td = self.Td*ch_factor
-                self.Tp = self.Tp*ch_factor
-                self.Tc = self.Tc*ch_factor
-                self.N_s = int(round(self.N_s*ch_factor))
-                # index for sliding windows
+                self.Tp =  max(self.Tp*scale_factor,self.Tc)
+#                self.Tc = self.Tc*scale_factor
+                self.N_s = int(round(self.N_s*scale_factor))
+#                # index for sliding windows
                 td_step = (self.Td-self.t_init)/(self.N_s-1)
                 tp_step = (self.Tp-self.t_init)/(self.N_s-1)
                 self.Tcd_idx = int(round(self.Tc/td_step))
                 self.Tcp_idx = int(round(self.Tc/tp_step))
                 self.knots = self._gen_knots(self.knots[0], self.knots[-1])
                 self.mtime = np.linspace(self.mtime[0], self.mtime[-1], self.N_s)
+                self._log('i', 'R{0}: scale {1} Tc {2:.2f} Td {3:.2f} Ns {4:d} Nk {5:d}'.format(self.eyed,
+                        scale_factor, self.Tc, self.Td, self.N_s, self.n_knots))
 
+            print(self.Tc, self.Tp, self.Td)
+            print(self.mtime)
             self._plan_section()
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
@@ -966,10 +992,12 @@ class Robot(object):
 
         self.final_step = True
 
-        self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
+        self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]*1.2
+        print self.est_dtime
 
         self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)
         self.mtime = np.linspace(self.mtime[0], self.mtime[0]+self.est_dtime, self.N_s)
+        print self.mtime
 
         self._plan_section()
         self._log('i','R{}: Finished motion planning'.format(self.eyed))
@@ -1024,7 +1052,7 @@ class WorldSim(object):
                 seg_pts_idx[i] += [c]
                 path[i] = np.append(path[i], p, axis=1)
 
-        # BUG FIX. Sometimes the first value (initial position) is a really small number
+        # TODO BUG FIX. Sometimes the first value (initial position) is a really small number
         # (~1e-17) and the plot function blocks. Rounding to 9 decimal figures solves it
         path[0][0,0] = round(path[0][0,0], 9)
         path[0][1,0] = round(path[0][1,0], 9)
@@ -1078,6 +1106,7 @@ class WorldSim(object):
 #        plt.ion()
 #
         direc = "../traces/ls_co_test/"
+        os.system("rm -rf "+direc+"pngs/p"+self.sn)
         os.system("mkdir "+direc+"pngs/p"+self.sn)
 
         fig = plt.figure()
@@ -1248,8 +1277,8 @@ if __name__ == '__main__':
 
     fname = '../traces/ls_co_test/'+scriptname[0:-3]+name_id+'.log'
 
-    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
-            filemode='w',level=logging.DEBUG)
+#    logging.basicConfig(filename=fname,format='%(levelname)s:%(message)s',\
+#            filemode='w',level=logging.DEBUG)
     logging.basicConfig(format='%(levelname)s:%(message)s',level=logging.DEBUG)
 
     boundary = Boundary([-6.0,6.0], [-6.0,6.0])

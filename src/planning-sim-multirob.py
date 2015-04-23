@@ -1270,8 +1270,8 @@ if __name__ == '__main__':
                 safe_epsilon=0.1,      # in meters
                 log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-6) for r in robots] # accuracy (hard to understand the physical meaning of this)
-    [r.set_option('maxit', 50) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('maxit', 40) for r in robots] # max number of iterations for the opt solver
 
     world_sim = WorldSim(robots,obstacles,boundary) # create the world
 
