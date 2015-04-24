@@ -779,7 +779,6 @@ class Robot(object):
 
         btic = time.time()
 
-
         # update obstacles zone
         self._detected_obst_idxs()
 
@@ -792,8 +791,6 @@ class Robot(object):
         else:
             eps = 0.001
             final_ctrl_pt = self.final_z
-#            last_ctrl_pt = self.final_z
-#            self._linspace_ctrl_pts(last_ctrl_pt)
             self.C[self.n_ctrlpts-1,:] = final_ctrl_pt.T
             self.C[self.n_ctrlpts-2,:] = final_ctrl_pt.T - eps*np.array(\
                     [np.cos(self.k_mod.q_final[-1,0]), np.sin(self.k_mod.q_final[-1,0])])
@@ -856,16 +853,9 @@ class Robot(object):
 
             self.std_alone = False
 
-#            self.conflict_dz = [self._read_com_link()]
-#            self._read_com_link()
-
             self.sa_dz = dz
 
-            tic = time.time()
             self._solve_opt_pbl()
-            toc = time.time()
-            # Add this time to the computation time
-#            self.all_comp_times[-1] += toc-tic
 
             self._log('i','R{rid}@tkref={tk}: Time to solve optimisation probl'
                     'em: {t}'.format(rid=self.eyed,t=toc-tic,tk=self.mtime[0]))
@@ -888,20 +878,16 @@ class Robot(object):
                         self.mtime[0:time_idx], self.C, dev).T,axis=0)
             
         # Storing
-#        self.all_C += [self.C]
-#        print('Time idx {}'.format(time_idx))
         self.all_dz.append(dz[:,0:time_idx])
         self.all_times.extend(self.mtime[0:time_idx])
         # TODO rejected path
 
         # Updating
-        
         last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1].reshape(
                 self.k_mod.u_dim,1)
 
         for i in range(self.k_mod.u_dim):
             self.com_link.last_z[self.eyed][i] = last_z[i,0]
-        #self.com_link.last_z[self.eyed] = last_z
 
         if not self.final_step:
 #            self.knots = self.knots + self.Tc
@@ -925,7 +911,6 @@ class Robot(object):
 #        self._log('i', 'R{rid}: {v}'.format(rid=self.eyed,v=self.com_link.last_z[0]))
 
         self.final_step = False
-
         self.knots = self._gen_knots(self.t_init, self.Td)
         self.mtime = np.linspace(self.t_init, self.Td, self.N_s)
 
@@ -972,8 +957,6 @@ class Robot(object):
                 self._log('i', 'R{0}: scale {1} Tc {2:.2f} Td {3:.2f} Ns {4:d} Nk {5:d}'.format(self.eyed,
                         scale_factor, self.Tc, self.Td, self.N_s, self.n_knots))
 
-            print(self.Tc, self.Tp, self.Td)
-            print(self.mtime)
             self._plan_section()
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
@@ -993,11 +976,9 @@ class Robot(object):
         self.final_step = True
 
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]*1.2
-        print self.est_dtime
 
         self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)
         self.mtime = np.linspace(self.mtime[0], self.mtime[0]+self.est_dtime, self.N_s)
-        print self.mtime
 
         self._plan_section()
         self._log('i','R{}: Finished motion planning'.format(self.eyed))

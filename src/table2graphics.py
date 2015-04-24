@@ -49,7 +49,7 @@ for v, idx in zip(tpv, range(len(tpv))):
             label='Tp = {}'.format(v),linewidth=2,color=colors[idx])
     for i in idxs[::4]:
         ax2d.text(table[i,tci]/table[i,tpi], table[i,rati], '{0:.1f}'.format(table[i,toti],1))
-ax2d.plot([0.1, 0.9], [1.0]*2, label='real_Tc == Tc',ls='--',color='k')
+ax2d.plot([0.1, 0.9], [1.0]*2, label='real_max_Tc == Tc',ls='--',color='k')
 ax2d.plot([0.5]*2, [0.0,10], label='Tc/Tp == 0.5',ls='--',color='k')
 xy = np.array([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])
 good_zone = plt.Polygon(xy, color='b',fill=True,alpha=0.2)
@@ -57,8 +57,8 @@ ax2d.add_artist(good_zone)
 ax2d.set_ylim(0.0,5.0)
 ax2d.set_xlim(0.1,0.9)
 ax2d.set_xlabel('Tc/Tp')
-ax2d.set_ylabel('real_Tc/Tc')
-ax2d.set_title('Tc/Tp and real_Tc relation')
+ax2d.set_ylabel('real_max_Tc/Tc')
+ax2d.set_title('Tc/Tp and real_max_Tc relation')
 handles, labels = ax2d.get_legend_handles_labels()
 plt.legend(handles, labels)
 
@@ -107,7 +107,7 @@ ax3d.plot_surface(X, Y, Z,
 ax3d.plot_surface([[0.1,0.5],[0.1,0.5]], [[1.0, 1.0],[6.0,6.0]],[[1.0,1.0],[1.0,1.0]],color='b',alpha=0.0)
 ax3d.set_xlabel('Tc/Tp')
 ax3d.set_ylabel('Tp')
-ax3d.set_zlabel('real_Tc/Tc')
+ax3d.set_zlabel('real_max_Tc/Tc')
 plt.show()
 
 #x, y = np.meshgrid(table[:,tpi], np.divide(table[:,tci],table[:,tpi]))
