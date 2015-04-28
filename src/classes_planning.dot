@@ -1,0 +1,12 @@
+digraph "classes_planning" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{Boundary|x_min\ly_max\ly_min\lx_max\l|}", shape="record"];
+"1" [label="{Obstacle|dim\lpos\l|}", shape="record"];
+"2" [label="{Robot|knots\lcom_link\lcom_range : float\lobst\lsol\lTp : float\lctime\lall_comp_times : list\ld_rho : float\lmaxit\lmtime\llog_lock : NoneType\lunsatisf_ieq_values\lTd : float\lN_s : int\lTc : float\ln_robots\lest_dtime\lrtime\lt_sup : float\lstd_alone : bool\lcom_robots_idx : list\lTcp_idx : int\lfinal_step : bool\ldetected_obst_idxs : list\ln_it\lt_final\lsa_dz\lk_mod\llast_z\lC\lD\lp_bound\ln_knots : int\llast_q\llast_u\ldef_epsilon : float\ln_ctrlpts\lsafe_epsilon : float\lTcd_idx : int\lrho : float\lexit_mode\lfinal_z\ltc_syncer\lcollision_robots_idx : list\lplanning_process : Process\ldt_final\lacc\lconflict_syncer\lt_init : float\ld\lunsatisf_eq_values\lconflict_robots_idx\lall_dz : list\lall_times : list\ltc_syncer_cond\lconflict_syncer_conds\leyed\l|set_option()\l}", shape="record"];
+"3" [label="{RobotMsg|done_planning\lintended_path_x\lintended_path_y\llast_z\l|}", shape="record"];
+"4" [label="{RoundObstacle|y\lx\lcp\lradius\l|plot()\l}", shape="record"];
+"5" [label="{UnicycleKineModel|q_init\lu_dim : int\lz_init\ll : int\lu_max\lu_init\lq_final\lq_dim : int\lz_final\lacc_max\lu_final\l|phi2()\lphi3()\lphi1()\lphi0()\l}", shape="record"];
+"6" [label="{WorldSim|robs\lobsts\lph_bound\l|run()\l}", shape="record"];
+"4" -> "1" [arrowhead="empty", arrowtail="none"];
+}

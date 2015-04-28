@@ -595,15 +595,15 @@ class Robot(object):
         dztinit = self._comb_bsp([self.mtime[0]], C, 0).T
         for dev in range(1,self.k_mod.l+1):
             dztinit = np.append(dztinit,self._comb_bsp([self.mtime[0]], C, dev).T,axis=1)
-    
+
         # dimension: q_dim + u_dim (=5 equations)
         eq_cons = list(np.squeeze(np.array(self.k_mod.phi1(dztinit)-self.last_q)))+\
                list(np.squeeze(np.array(self.k_mod.phi2(dztinit)-self.last_u)))
-    
+
         # Count how many equations are not respected
         unsatisf_list = [eq for eq in eq_cons if eq != 0]
         self.unsatisf_eq_values = unsatisf_list
-    
+
         return np.asarray(eq_cons)
 
     def _co_fieqcons(self, x):
@@ -974,7 +974,6 @@ class Robot(object):
                 self.conflict_syncer[self.eyed].value = 0
 
         self.final_step = True
-
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]*1.2
 
         self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)

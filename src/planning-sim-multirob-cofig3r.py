@@ -30,19 +30,89 @@ class RoundObstacle(Obstacle):
         self.y = self.pos[1]
         self.radius = self.dim
 
-    def _plt_circle(self, color='k',linestyle='solid',isFill=False,offset=0.0):
+    def _plt_circle(self, color='k',linestyle='solid',isFill=False,alpha=1.0,offset=0.0):
         return plt.Circle(
                 (self.x, self.y), # position
                 self.radius+offset, # radius
                 color=color,
                 ls = linestyle,
-                fill=isFill)
+                fill=isFill,
+                alpha=alpha)
 
     def plot(self, fig, offset=0.0):
         ax = fig.gca()
-        ax.add_artist(self._plt_circle())
+        ax.add_artist(self._plt_circle(isFill=True,alpha=0.8))
         ax.add_artist(self._plt_circle(linestyle='dashed', offset=offset))
 
+class PolygonObstacle(Obstacle):
+    def __init__(self, vertices):
+        
+        # compute card(vertices)! dists
+        dists = []
+        print vertices
+        for i in range(vertices.shape[0]):
+            for j in range(i+1,vertices.shape[0]):
+                dists += [(LA.norm(vertices[i,]-vertices[j,]),i,j)]
+        print dists
+        # find max
+        max_d, iv1, iv2 = max(dists, key=lambda x:x[0])
+        print max_d, iv1, iv2
+        # use max/2 as dimension
+        dimension = max_d/2.0
+        # use (v_a + v_b) / 2 as position
+        position = (vertices[iv1,] + vertices[iv2,])*0.5
+        print '%%%%%%%%%%%%%%%%%%%%% ', position
+
+        Obstacle.__init__(self, position, dimension)
+
+        self.cp = np.asarray(self.pos)
+        self.x = self.pos[0]
+        self.y = self.pos[1]
+        self.radius = self.dim
+        self._orig_vertices = vertices
+        # init self.vertices
+        self.vertices = np.zeros((vertices.shape[0]*2,vertices.shape[1]))
+        return
+
+    def _create_aug_vertices(self, offset):
+        new_vertices_list = []
+        for i,v,vb,va in zip(range(self._orig_vertices.shape[0]),
+                self._orig_vertices,
+                np.roll(self._orig_vertices,1,axis=0),
+                np.roll(self._orig_vertices,-1,axis=0)):
+            vec_b = np.array([+v[1]-vb[1], -v[0]+vb[0]])
+            unit_vec_b = vec_b/LA.norm(vec_b)
+            vec_a = np.array([-v[1]+va[1], v[0]-va[0]])
+            unit_vec_a = vec_a/LA.norm(vec_a)
+            print unit_vec_b
+            print unit_vec_a
+            
+#            if(i == 0):
+#                unit_vec_a *= -1
+#                unit_vec_b *= -1
+#            if(i == 0)
+#                unit_vec_a *= -1
+#                unit_vec_b *= -1
+            new_vertices_list += [offset*unit_vec_b+v, offset*unit_vec_a+v]
+        self.vertices = np.array(new_vertices_list)
+        print self.vertices
+        return
+
+    def plot(self, fig, offset=0.0):
+        self._create_aug_vertices(offset)
+        ax = fig.gca()
+        [ax.add_artist(plt.Circle(
+                (v[0],v[1]),
+                offset,
+                color='k',
+                ls='dashed',
+                fill=False)) for v in self._orig_vertices]
+        
+        ax.add_artist(plt.Polygon(self._orig_vertices, color='k',ls='solid',fill=True,alpha=0.8))
+        ax.add_artist(plt.Polygon(self.vertices, color='k',ls='dashed',fill=False))
+        ax.plot(self.x, self.y,'k')
+        return
+            
 ###############################################################################
 # Boundary
 ###############################################################################
@@ -334,7 +404,7 @@ class Robot(object):
         # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
-        return 0.1*(x[0]+self.mtime[0])**2
+        return (x[0]+self.mtime[0])**2
 
     def _ls_sa_feqcons(self, x):
         dt_final = x[0]
@@ -567,15 +637,15 @@ class Robot(object):
         dztinit = self._comb_bsp([self.mtime[0]], C, 0).T
         for dev in range(1,self.k_mod.l+1):
             dztinit = np.append(dztinit,self._comb_bsp([self.mtime[0]], C, dev).T,axis=1)
-    
+
         # dimension: q_dim + u_dim (=5 equations)
         eq_cons = list(np.squeeze(np.array(self.k_mod.phi1(dztinit)-self.last_q)))+\
                list(np.squeeze(np.array(self.k_mod.phi2(dztinit)-self.last_u)))
-    
+
         # Count how many equations are not respected
         unsatisf_list = [eq for eq in eq_cons if eq != 0]
         self.unsatisf_eq_values = unsatisf_list
-    
+
         return np.asarray(eq_cons)
 
     def _co_fieqcons(self, x):
@@ -738,6 +808,8 @@ class Robot(object):
 
     def _plan_section(self):
 
+        btic = time.time()
+
         # update obstacles zone
         self._detected_obst_idxs()
 
@@ -746,10 +818,18 @@ class Robot(object):
             direc = self.final_z - self.last_z
             direc = direc/LA.norm(direc)
             last_ctrl_pt = self.last_z+self.D*direc
+            self._linspace_ctrl_pts(last_ctrl_pt)
         else:
-            last_ctrl_pt = self.final_z
-
-        self._linspace_ctrl_pts(last_ctrl_pt)
+            # TODO eps constant
+            eps = 0.0001
+            final_ctrl_pt = self.final_z
+            self.C[self.n_ctrlpts-1,:] = final_ctrl_pt.T
+            aux = final_ctrl_pt.T - eps*np.array(\
+                    [np.cos(self.k_mod.q_final[-1,0]), np.sin(self.k_mod.q_final[-1,0])])
+            self.C[0:self.n_ctrlpts-1,0] = np.array(np.linspace(self.last_z[0,0],\
+                    aux[0,0], self.n_ctrlpts-1, endpoint=False)).T
+            self.C[0:self.n_ctrlpts-1,1] = np.array(np.linspace(self.last_z[1,0],\
+                    aux[0,1], self.n_ctrlpts-1, endpoint=False)).T
 
         self.std_alone = True
 
@@ -785,6 +865,8 @@ class Robot(object):
             self.com_link.intended_path_y[self.eyed][i] = dz[1,i]
 
         self._compute_conflicts()
+        self._log('d', 'R{0}@tkref{1}: $$$$$$$$ CONFLICT LIST $$$$$$$$: {2}'
+                .format(self.eyed,self.mtime[0],self.conflict_robots_idx))
 
         # Sync with every robot on the conflict list
         #  1. notify every robot waiting on this robot that it ready for conflict solving
@@ -800,8 +882,6 @@ class Robot(object):
 
 #        if self.conflict_robots_idx != [] and False:
         if self.conflict_robots_idx != []:
-            self._log('d', 'R{i}: $$$$$$$$$$ CONFLICT LIST $$$$$$$$$$: {cl}'
-                    .format(i=self.eyed,cl=self.conflict_robots_idx))
 
             self.std_alone = False
 
@@ -845,9 +925,22 @@ class Robot(object):
         last_z = self.all_dz[-1][0:self.k_mod.u_dim,-1].reshape(
                 self.k_mod.u_dim,1)
 
-#        self.com_link.last_z[self.eyed] = last_z
-        for i in range(self.k_mod.u_dim):
-            self.com_link.last_z[self.eyed][i] = last_z[i,0]
+        # Sync robots here so no robot computing conflict get the wrong last_z of some robot
+        with self.tc_syncer_cond:
+            self.tc_syncer.value += 1
+            if self.tc_syncer.value != self.n_robots:  # if not all robots are read
+                self._log('d', 'R{}: I\'m going to sleep!'.format(self.eyed))
+                self.tc_syncer_cond.wait()
+            else:                                # otherwise wake up everybody
+                self.tc_syncer_cond.notify_all()
+            self.tc_syncer.value -= 1            # decrement syncer (idem)
+#            self.com_link.last_z[self.eyed] = last_z
+            for i in range(self.k_mod.u_dim):
+                self.com_link.last_z[self.eyed][i] = last_z[i,0]
+
+        with self.conflict_syncer_conds[self.eyed]:
+            self.conflict_syncer[self.eyed].value = 0
+
 
         if not self.final_step:
             if self.std_alone == False:
@@ -862,32 +955,14 @@ class Robot(object):
             self.last_u = self.k_mod.phi2(self.all_dz[-1][:,-1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
 
+        btoc = time.time()
+        self.all_comp_times.append(btoc-btic)
+
         return
-
-    def _init_planning(self):
-
-        self.detected_obst_idxs = range(len(self.obst))
-
-        self.last_q = self.k_mod.q_init
-        self.last_u = self.k_mod.u_init
-        self.last_z = self.k_mod.z_init
-        self.final_z = self.k_mod.z_final
-
-        self.D = self.Tp * self.k_mod.u_max[0,0]
-
-        self.d = self.k_mod.l+2 # B-spline order (integer | d > l+1)
-        self.n_ctrlpts = self.n_knots + self.d - 1 # nb of ctrl points
-
-        self.C = np.zeros((self.n_ctrlpts,self.k_mod.u_dim))
-
-        self.all_dz = []
-        self.all_times = []
 
     def _plan(self):
 
         self._log('i', 'R{rid}: Init motion planning'.format(rid=self.eyed))
-
-        self._init_planning()
 
         self.final_step = False
 
@@ -901,20 +976,19 @@ class Robot(object):
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
             # SYNC process
-            with self.tc_syncer_cond:
-                self.tc_syncer.value += 1
-                if self.tc_syncer.value != self.n_robots:  # if not all robots are read
-                    self._log('d', 'R{}: I\'m going to wait!'.format(self.eyed))
-                    self.tc_syncer_cond.wait()
-                else:                                # otherwise wake up everybody
-                    self.tc_syncer_cond.notify_all()
-                self.tc_syncer.value -= 1            # decrement syncer (idem)
-
-            with self.conflict_syncer_conds[self.eyed]:
-                self.conflict_syncer[self.eyed].value = 0
+#            with self.tc_syncer_cond:
+#                self.tc_syncer.value += 1
+#                if self.tc_syncer.value != self.n_robots:  # if not all robots are read
+#                    self._log('d', 'R{}: I\'m going to sleep!'.format(self.eyed))
+#                    self.tc_syncer_cond.wait()
+#                else:                                # otherwise wake up everybody
+#                    self.tc_syncer_cond.notify_all()
+#                self.tc_syncer.value -= 1            # decrement syncer (idem)
+#
+#            with self.conflict_syncer_conds[self.eyed]:
+#                self.conflict_syncer[self.eyed].value = 0
 
         self.final_step = True
-
         self.est_dtime = LA.norm(self.last_z - self.final_z)/self.k_mod.u_max[0,0]
 
         self.knots = self._gen_knots(self.mtime[0], self.mtime[0]+self.est_dtime)
@@ -926,12 +1000,13 @@ class Robot(object):
 
         self.sol[self.eyed] = self.all_dz
         self.rtime[self.eyed] = self.all_times
+        self.ctime[self.eyed] = self.all_comp_times
         self.com_link.done_planning[self.eyed] = 1
 
         #  Notify every robot waiting on this robot that it is ready for the conflict solving
-#        with self.conflict_syncer_conds[self.eyed]:
-#            self.conflict_syncer[self.eyed].value = 1
-#            self.conflict_syncer_conds[self.eyed].notify_all()
+        with self.conflict_syncer_conds[self.eyed]:
+            self.conflict_syncer[self.eyed].value = 1
+            self.conflict_syncer_conds[self.eyed].notify_all()
 
         # Make sure any robot waiting on this robot awake before returning
         with self.tc_syncer_cond:
@@ -948,9 +1023,10 @@ class WorldSim(object):
     """ Where to instatiate obstacles, robots, bonderies
         initial and final conditions etc
     """
-    def __init__(self, robots, obstacles, phy_boundary):
+    def __init__(self, Tc, robots, obstacles, phy_boundary):
         self.robs = robots
         self.obsts = obstacles
+        self.Tc = Tc
         self.ph_bound = phy_boundary
 
     def run(self, interac_plot=False, speed_plot=False):
@@ -990,6 +1066,26 @@ class WorldSim(object):
         rtime = range(len(self.robs))
         for i in range(len(self.robs)):
             rtime[i] = self.robs[0].rtime[i]
+
+        ctime = range(len(self.robs))
+        for i in range(len(self.robs)):
+            ctime[i] = self.robs[0].ctime[i]
+
+        for i in range(len(self.robs)):
+            logging.info('R{rid}: TOT: {d}'.format(rid=i,d=rtime[i][-1]))
+            logging.info('R{rid}: NSE: {d}'.format(rid=i,d=len(ctime[i])))
+            logging.info('R{rid}: FIR: {d}'.format(rid=i,d=ctime[i][0]))
+            logging.info('R{rid}: LAS: {d}'.format(rid=i,d=ctime[i][-1]))
+            if len(ctime[i]) > 2:
+                logging.info('R{rid}: MAX: {d}'.format(rid=i,d=max(ctime[i][1:-1])))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i,d=min(ctime[i][1:-1])))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i,d=np.mean(ctime[i][1:-1])))
+                logging.info('R{rid}: RAT: {d}'.format(rid=i,d=max(ctime[i][1:-1])/self.Tc))
+            else:
+                logging.info('R{rid}: MAX: {d}'.format(rid=i,d=max(ctime[i])))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i,d=min(ctime[i])))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i,d=np.mean(ctime[i])))
+                logging.info('R{rid}: RAT: {d}'.format(rid=i,d=max(ctime[i])/self.Tc))
 
         # PLOT ###############################################################
 
@@ -1152,9 +1248,10 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_obsts = 3
+    n_obsts = 1
     n_robots = 3
     N_s = 20
+    Tc = 1.0
 
     scriptname, method = parse_cmdline()
 
@@ -1188,10 +1285,12 @@ if __name__ == '__main__':
 
 #[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
-    obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
+#    obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
+    obstacles = [PolygonObstacle(np.array(
+            [[-1.0, -0.0],[-1.0,-0.5],[1.5,-0.5],[1.5,-0.0]]))]
 
     kine_models = [UnicycleKineModel(
-            [-2.56, -0.59, 0.0], # q_initial
+            [-2.56, -1.29, 0.0], # q_initial
             [ 2.56,  0.51, 0.0], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
@@ -1280,7 +1379,7 @@ if __name__ == '__main__':
                 neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
                 N_s=N_s,                 # numbers samplings for each planning interval
                 n_knots=6,              # number of knots for b-spline interpolation
-                Tc=1.0,                 # computation time
+                Tc=Tc,                 # computation time
                 Tp=2.0,                 # planning horizon
                 Td=2.0,
                 def_epsilon=0.1,       # in meters
@@ -1290,7 +1389,7 @@ if __name__ == '__main__':
     [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
     [r.set_option('maxit', 50) for r in robots] # max number of iterations for the opt solver
 
-    world_sim = WorldSim(robots,obstacles,boundary) # create the world
+    world_sim = WorldSim(Tc,robots,obstacles,boundary) # create the world
 
     summary_info = world_sim.run(interac_plot=False, speed_plot=True) # run simulation (TODO take parameters out)
 
