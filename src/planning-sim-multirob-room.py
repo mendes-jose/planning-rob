@@ -309,6 +309,11 @@ class UnicycleKineModel(object):
         |v    |   |sqrt(z1'^2 + z2'^2)                |
         |w    |   |(z1'z2'' - z2'z1'')/(z1'^2 + z2'^2)|
     """
+
+    @staticmethod
+    def _unsigned_angle(angle):
+        return 2.*np.pi+angle if angle < 0.0 else angle
+
     def __init__(
             self,
             q_init,
@@ -381,9 +386,6 @@ class UnicycleKineModel(object):
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0')
 
-#    def _unsigned_angle(self, angle):
-#        return np.pi+angle if angle < 0.0 else angle
-
 ###############################################################################
 # Communication Msg
 ###############################################################################
@@ -422,7 +424,7 @@ class Robot(object):
             Tp=3.0,
             Td=3.0,
             rho=0.2,
-            detec_rho=13.0,
+            detec_rho=3.0,
             com_range=15.0,
             def_epsilon=0.5,
             safe_epsilon=0.1,
@@ -573,7 +575,7 @@ class Robot(object):
         # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
-        return (x[0]+self.mtime[0])**2
+        return 10*(x[0]+self.mtime[0])**2
 
     def _ls_sa_feqcons(self, x):
         dt_final = x[0]
@@ -649,10 +651,11 @@ class Robot(object):
             dz = np.append(dz,self._comb_bsp([self.mtime[-1]], C, dev).T,axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = 1e-2 # m
+        eps = 1e2 # m
         goal_pt = self.k_mod.q_final[0:-1,:] - self.last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self.D+eps)
         cost = LA.norm(qTp[0:-1,:] - goal_pt)**2
+#        cost = LA.norm(qTp[0:-1,:] - self.k_mod.q_final[0:-1,:])**2
 #        cost = LA.norm(qTp - self.k_mod.q_final)
         # TODO
         if cost > 1e5:
@@ -795,7 +798,7 @@ class Robot(object):
             dz = np.append(dz,self._comb_bsp([self.mtime[-1]], C, dev).T,axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = 1e-2 # m
+        eps = 1e2 # m
         goal_pt = self.k_mod.q_final[0:-1,:] - self.last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self.D+eps)
         cost = LA.norm(qTp[0:-1,:] - goal_pt)**2
@@ -1422,9 +1425,9 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_obsts = 1
+    n_obsts = 3
     n_robots = 2
-    N_s = 20
+    N_s = 16
     Tc = 1.0
 
     scriptname, method = parse_cmdline()
@@ -1459,27 +1462,47 @@ if __name__ == '__main__':
 #[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-#    obstacles += [PolygonObstacle(np.array(
+    obstacles += [PolygonObstacle(np.array(
+            [[0.8, 1.84],[1.0,-0.2],[2.75,-0.2],[2.75,1.84],[1.5,2.]]))]
+#    obstacles = [PolygonObstacle(np.array([
+#            [0.,5.],
+#            [0.,0.],
+#            [8.,0.],
+#            [8.,5.],
+#            [7.,5.],
+#            [7.,1.],
+#            [1.,1.],
+#            [1.,5.]]))]
+#    obstacles = [PolygonObstacle(np.array([
+#            [0.,8.],
+#            [8.,7.],
+#            [0.,9.]]))]           
 #            [[1.0, 1.84],[1.0,-0.2],[1.75,0.1],[1.6,1.4]]))]
 
     kine_models = [UnicycleKineModel(
-#            [-2.56, -0.59, 0.0], # q_initial
-#            [ 2.56,  0.51, 0.0], # q_final
+            [ 0.81, -2.5, np.pi/2.], # q_initial
+            [-1.0,  3.5, np.pi/2.], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 0.6,  5.0]),          # u_max
+           UnicycleKineModel(
+            [-1.2,  1.2, 0.0], # q_initial
+            [ 4.5,  0.0, 0.], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+#            [ 1.0,  5.0]),          # u_max
+#            UnicycleKineModel(
+#            [-2.4,  0.1, 0.0], # q_initial
+#            [ 2.6,  0.49, 0.0], # q_final
 #            [ 0.0,  0.0],          # u_initial
 #            [ 0.0,  0.0],          # u_final
-#            [ 1.0,  5.0]),          # u_max
- #           UnicycleKineModel(
-            [-2.5,  1.2, 0.0], # q_initial
-            [ 2.5,  1.0, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [-2.4,  0.1, 0.0], # q_initial
-            [ 2.6,  0.49, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0])]          # u_max
+            [ 0.6,  5.0])]          # u_max
+#            UnicycleKineModel(
+#            [ 0. ,  4., 0.0], # q_initial
+#            [ 8. ,  5. , 0.0], # q_final
+#            [ 0.0,  0.0],          # u_initial
+#            [ 0.0,  0.0],          # u_final
+#            [ 1.0,  5.0])]          # u_max
             
 #    kine_models = [UnicycleKineModel(
 #            [ float(i),  0.0, np.pi/2], # q_initial
@@ -1551,12 +1574,13 @@ if __name__ == '__main__':
                 robots_comp_time,
                 neigh,                  # neighbors to whom this robot shall talk (used for conflict only, not communic)
                 N_s=N_s,                 # numbers samplings for each planning interval
-                n_knots=6,              # number of knots for b-spline interpolation
+                n_knots=5,              # number of knots for b-spline interpolation
                 Tc=Tc,                 # computation time
                 Tp=2.0,                 # planning horizon
                 Td=2.0,
                 def_epsilon=10.1,       # in meters
                 safe_epsilon=0.1,      # in meters
+                detec_rho=4.0,
                 log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
     [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
