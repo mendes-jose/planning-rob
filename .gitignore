@@ -2,4 +2,10 @@
 *.swp
 pyopt
 workingsession.vim
-traces
+traces/*
+!traces/tableData2/
+!traces/tableData2/*
+!traces/tableData2/*/
+!traces/tableData2/pngs/*
+!traces/tableData2/pngs/*/
+#!traces/ta

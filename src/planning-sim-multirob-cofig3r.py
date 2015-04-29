@@ -22,6 +22,15 @@ class Obstacle(object):
         self.pos = position
         self.dim = dimension
 
+    def dist(self, pos, offset=0.0):
+        return LA.norm(np.array([pos[0],pos[1]])-np.array([self.pos[0],self.pos[1]]))-offset
+
+    def detection_dist(self, pos):
+        return LA.norm(np.array([self.pos[0], self.pos[1]])-pos)
+
+###############################################################################
+# RoundObstacle
+###############################################################################
 class RoundObstacle(Obstacle):
     def __init__(self, position, dimension):
         Obstacle.__init__(self, position, dimension)
@@ -41,27 +50,29 @@ class RoundObstacle(Obstacle):
 
     def plot(self, fig, offset=0.0):
         ax = fig.gca()
-        ax.add_artist(self._plt_circle(isFill=True,alpha=0.8))
+        ax.add_artist(self._plt_circle(isFill=True,alpha=0.3))
         ax.add_artist(self._plt_circle(linestyle='dashed', offset=offset))
 
+    def dist(self, pos, offset=0.0):
+        return Obstacle.dist(self, pos, offset+self.radius)
+
+###############################################################################
+# PolygonObstacle
+###############################################################################
 class PolygonObstacle(Obstacle):
     def __init__(self, vertices):
         
-        # compute card(vertices)! dists
+        # compute fat(card(vertices)) dists
         dists = []
-        print vertices
         for i in range(vertices.shape[0]):
             for j in range(i+1,vertices.shape[0]):
                 dists += [(LA.norm(vertices[i,]-vertices[j,]),i,j)]
-        print dists
         # find max
         max_d, iv1, iv2 = max(dists, key=lambda x:x[0])
-        print max_d, iv1, iv2
         # use max/2 as dimension
         dimension = max_d/2.0
         # use (v_a + v_b) / 2 as position
         position = (vertices[iv1,] + vertices[iv2,])*0.5
-        print '%%%%%%%%%%%%%%%%%%%%% ', position
 
         Obstacle.__init__(self, position, dimension)
 
@@ -72,11 +83,22 @@ class PolygonObstacle(Obstacle):
         self._orig_vertices = vertices
         # init self.vertices
         self.vertices = np.zeros((vertices.shape[0]*2,vertices.shape[1]))
+        # create linear equations for each vertices
+        self.lines_list = []
+        for v,vb,va in zip(
+                self._orig_vertices,
+                np.roll(self._orig_vertices,1,axis=0),
+                np.roll(self._orig_vertices,-1,axis=0)):
+            vec_b = np.array([+v[1]-vb[1], -v[0]+vb[0]])
+            vec_a = np.array([-v[1]+va[1], v[0]-va[0]])
+            self.lines_list += [[(vec_b[1],-vec_b[0],vec_b[0]*v[1]-v[0]*vec_b[1]),
+                    (vec_a[1],-vec_a[0],vec_a[0]*v[1]-v[0]*vec_a[1]),
+                    (va[1]-v[1],v[0]-va[0],va[0]*v[1]-v[0]*va[1])]]
         return
 
     def _create_aug_vertices(self, offset):
         new_vertices_list = []
-        for i,v,vb,va in zip(range(self._orig_vertices.shape[0]),
+        for v,vb,va in zip(
                 self._orig_vertices,
                 np.roll(self._orig_vertices,1,axis=0),
                 np.roll(self._orig_vertices,-1,axis=0)):
@@ -84,18 +106,9 @@ class PolygonObstacle(Obstacle):
             unit_vec_b = vec_b/LA.norm(vec_b)
             vec_a = np.array([-v[1]+va[1], v[0]-va[0]])
             unit_vec_a = vec_a/LA.norm(vec_a)
-            print unit_vec_b
-            print unit_vec_a
             
-#            if(i == 0):
-#                unit_vec_a *= -1
-#                unit_vec_b *= -1
-#            if(i == 0)
-#                unit_vec_a *= -1
-#                unit_vec_b *= -1
             new_vertices_list += [offset*unit_vec_b+v, offset*unit_vec_a+v]
         self.vertices = np.array(new_vertices_list)
-        print self.vertices
         return
 
     def plot(self, fig, offset=0.0):
@@ -108,11 +121,57 @@ class PolygonObstacle(Obstacle):
                 ls='dashed',
                 fill=False)) for v in self._orig_vertices]
         
-        ax.add_artist(plt.Polygon(self._orig_vertices, color='k',ls='solid',fill=True,alpha=0.8))
+        ax.add_artist(plt.Polygon(self._orig_vertices, color='k',ls='solid',fill=True,alpha=0.3))
         ax.add_artist(plt.Polygon(self.vertices, color='k',ls='dashed',fill=False))
-        ax.plot(self.x, self.y,'k')
+        ax.plot(self.x, self.y,'k*')
         return
-            
+
+    def dist(self, pos, offset=0.0):
+        self._create_aug_vertices(offset)
+        signed_dists = []
+        for ls in self.lines_list:
+            s_dist = []
+            for l in ls:
+                s_dist += [(l[0]*pos[0] + l[1]*pos[1] + l[2])/np.sqrt(l[0]**2+l[1]**2)]
+            signed_dists += [[s_dist[0], s_dist[1], s_dist[2]]]
+#        print signed_dists
+#        dist = -1000000.0
+        for idx in range(self._orig_vertices.shape[0]):
+#            print signed_dists[idx][0]
+#            print 'sd 0', signed_dists[idx][0]
+#            print 'sd 1',signed_dists[idx][1]
+            if (signed_dists[idx][0]<=0.0 and \
+                    signed_dists[idx][1]>0.0) \
+                    == True:
+#                print 'vertex', idx
+                return LA.norm(pos-self._orig_vertices[idx,])-offset
+                
+            elif (signed_dists[idx][2]>0.0 and \
+                    signed_dists[idx][1]<=0.0 and \
+                    signed_dists[(idx+1)%self._orig_vertices.shape[0]][0]>0.0) \
+                    == True:
+#                print 'edge', idx, (idx+1)%self._orig_vertices.shape[0]
+                return abs(signed_dists[idx][2])-offset
+        # if it gets here is probably because the pos is inside the obstacle
+        is_inside = True
+        for idx in range(self._orig_vertices.shape[0]):
+            is_inside = is_inside and signed_dists[idx][2]<=0.0
+        if is_inside == True:
+#            print 'INSIDE THE OBSTACLE!!!'
+#            return -100.0
+#            return LA.norm(self.cp - self.)
+#            print pos
+#            time.sleep(6)
+            return -min([abs(signed_dists[idx][2]) for idx in range(self._orig_vertices.shape[0])])-offset
+        else:
+            print 'I\'m out of ideas about what happend. WhereTF is the path going?'    
+            raw_input()
+#        print pos, signed_dists, idx
+        return
+#
+#    def detection_dist(self, pos):
+#        return LA.norm(self.cp-pos)
+           
 ###############################################################################
 # Boundary
 ###############################################################################
@@ -253,7 +312,7 @@ class Robot(object):
             Tp=3.0,
             Td=3.0,
             rho=0.2,
-            detec_rho=3.0,
+            detec_rho=13.0,
             com_range=15.0,
             def_epsilon=0.5,
             safe_epsilon=0.1,
@@ -394,7 +453,7 @@ class Robot(object):
     def _detected_obst_idxs(self):
         idx_list = []
         for idx in range(len(self.obst)):
-            dist = LA.norm(self.obst[idx].cp - self.last_z.T)
+            dist = self.obst[idx].detection_dist(np.squeeze(np.asarray(self.last_z.T)))
             if dist < self.d_rho:
                 idx_list += [idx]
         self.detected_obst_idxs = idx_list
@@ -454,8 +513,7 @@ class Robot(object):
         # N_s*nb_obst_detected
         obst_cons = []
         for m in self.detected_obst_idxs:
-            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
-              - (self.rho + self.obst[m].radius) for qt in qtTp]
+            obst_cons += [self.obst[m].dist(np.squeeze(np.asarray(qt[0:2,0].T)), self.rho) for qt in qtTp]
     
         ## Max speed constraints
         # N_s*u_dim inequations
@@ -524,8 +582,7 @@ class Robot(object):
         # N_s*nb_obst_detected
         obst_cons = []
         for m in self.detected_obst_idxs:
-            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
-              - (self.rho + self.obst[m].radius) for qt in qtTp]
+            obst_cons += [self.obst[m].dist(np.squeeze(np.asarray(qt[0:2,0].T)), self.rho) for qt in qtTp]
     
         ## Max speed constraints
         # N_s*u_dim inequations
@@ -598,8 +655,7 @@ class Robot(object):
         # N_s*nb_obst_detected
         obst_cons = []
         for m in self.detected_obst_idxs:
-            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
-              - (self.rho + self.obst[m].radius) for qt in qtTp]
+            obst_cons += [self.obst[m].dist(np.squeeze(np.asarray(qt[0:2,0].T)), self.rho) for qt in qtTp]
     
         ## Max speed constraints
         # N_s*u_dim inequations
@@ -668,8 +724,7 @@ class Robot(object):
         # N_s*nb_obst_detected
         obst_cons = []
         for m in self.detected_obst_idxs:
-            obst_cons += [LA.norm(self.obst[m].cp-qt[0:2,0].T) \
-              - (self.rho + self.obst[m].radius) for qt in qtTp]
+            obst_cons += [self.obst[m].dist(np.squeeze(np.asarray(qt[0:2,0].T)), self.rho) for qt in qtTp]
 
         ## Max speed constraints
         # N_s*u_dim inequations
@@ -1249,7 +1304,7 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 1
-    n_robots = 3
+    n_robots = 2
     N_s = 20
     Tc = 1.0
 
@@ -1267,7 +1322,6 @@ if __name__ == '__main__':
     boundary = Boundary([-6.0,6.0], [-6.0,6.0])
 
     obst_info = rand_round_obst(n_obsts, Boundary([-1.2,1.2], [-2.0,2.0]))
-    print(obst_info)
 
     # these obst info
 #    obst_info = [([0.25, 2.5], 0.20),([ 3.0,  2.40], 0.50),
@@ -1285,25 +1339,25 @@ if __name__ == '__main__':
 
 #[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
-#    obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-    obstacles = [PolygonObstacle(np.array(
-            [[-1.0, -0.0],[-1.0,-0.5],[1.5,-0.5],[1.5,-0.0]]))]
+    obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
+    obstacles += [PolygonObstacle(np.array(
+            [[1.0, 1.64],[0.8,-0.1],[1.75,0.1],[1.6,1.4]]))]
 
     kine_models = [UnicycleKineModel(
-            [-2.56, -1.29, 0.0], # q_initial
-            [ 2.56,  0.51, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]),          # u_max
-            UnicycleKineModel(
+#            [-2.56, -0.59, 0.0], # q_initial
+#            [ 2.56,  0.51, 0.0], # q_final
+#            [ 0.0,  0.0],          # u_initial
+#            [ 0.0,  0.0],          # u_final
+#            [ 1.0,  5.0]),          # u_max
+ #           UnicycleKineModel(
             [-2.5,  1.2, 0.0], # q_initial
-            [ 2.5, -0.5, 0.0], # q_final
+            [ 2.5,  1.0, 0.0], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0]),          # u_max
             UnicycleKineModel(
             [-2.4,  0.1, 0.0], # q_initial
-            [ 2.6, -1.5, 0.0], # q_final
+            [ 2.6,  0.49, 0.0], # q_final
             [ 0.0,  0.0],          # u_initial
             [ 0.0,  0.0],          # u_final
             [ 1.0,  5.0])]          # u_max
@@ -1382,7 +1436,7 @@ if __name__ == '__main__':
                 Tc=Tc,                 # computation time
                 Tp=2.0,                 # planning horizon
                 Td=2.0,
-                def_epsilon=0.1,       # in meters
+                def_epsilon=10.1,       # in meters
                 safe_epsilon=0.1,      # in meters
                 log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
