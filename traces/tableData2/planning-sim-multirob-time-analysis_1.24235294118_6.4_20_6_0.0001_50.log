@@ -1,0 +1,40 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.65561413765
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 3
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.24235294118: Time to solve stand alone optimisation problem: 1.05360102654
+INFO:R0@tkref=1.24235294118: N of unsatisfied eq: 2
+INFO:R0@tkref=1.24235294118: N of unsatisfied ieq: 8
+INFO:R0@tkref=1.24235294118: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.48470588236: Time to solve stand alone optimisation problem: 1.22689390182
+INFO:R0@tkref=2.48470588236: N of unsatisfied eq: 2
+INFO:R0@tkref=2.48470588236: N of unsatisfied ieq: 9
+INFO:R0@tkref=2.48470588236: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.72705882354: Time to solve stand alone optimisation problem: 0.75038599968
+INFO:R0@tkref=3.72705882354: N of unsatisfied eq: 3
+INFO:R0@tkref=3.72705882354: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.72705882354: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.96941176472: Time to solve stand alone optimisation problem: 0.567062854767
+INFO:R0@tkref=4.96941176472: N of unsatisfied eq: 1
+INFO:R0@tkref=4.96941176472: N of unsatisfied ieq: 10
+INFO:R0@tkref=4.96941176472: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.2117647059: Time to solve stand alone optimisation problem: 4.98590803146
+INFO:R0@tkref=6.2117647059: N of unsatisfied eq: 10
+INFO:R0@tkref=6.2117647059: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.2117647059: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 12.8456452735
+INFO:R0: NSE: 6
+INFO:R0: FIR: 3.6565117836
+INFO:R0: LAS: 4.9864859581
+INFO:R0: MAX: 1.2275660038
+INFO:R0: MIN: 0.567706823349
+INFO:R0: AVG: 0.900148034096
+INFO:R0: RAT: 0.988097635631

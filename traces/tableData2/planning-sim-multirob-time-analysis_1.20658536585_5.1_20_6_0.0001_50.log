@@ -1,0 +1,55 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.63154196739
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.20658536585: Time to solve stand alone optimisation problem: 0.820364952087
+INFO:R0@tkref=1.20658536585: N of unsatisfied eq: 1
+INFO:R0@tkref=1.20658536585: N of unsatisfied ieq: 10
+INFO:R0@tkref=1.20658536585: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.4131707317: Time to solve stand alone optimisation problem: 1.01434707642
+INFO:R0@tkref=2.4131707317: N of unsatisfied eq: 2
+INFO:R0@tkref=2.4131707317: N of unsatisfied ieq: 7
+INFO:R0@tkref=2.4131707317: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.61975609755: Time to solve stand alone optimisation problem: 1.02891492844
+INFO:R0@tkref=3.61975609755: N of unsatisfied eq: 3
+INFO:R0@tkref=3.61975609755: N of unsatisfied ieq: 10
+INFO:R0@tkref=3.61975609755: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.8263414634: Time to solve stand alone optimisation problem: 1.01793408394
+INFO:R0@tkref=4.8263414634: N of unsatisfied eq: 2
+INFO:R0@tkref=4.8263414634: N of unsatisfied ieq: 8
+INFO:R0@tkref=4.8263414634: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.03292682925: Time to solve stand alone optimisation problem: 0.835154056549
+INFO:R0@tkref=6.03292682925: N of unsatisfied eq: 2
+INFO:R0@tkref=6.03292682925: N of unsatisfied ieq: 8
+INFO:R0@tkref=6.03292682925: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.2395121951: Time to solve stand alone optimisation problem: 0.648332118988
+INFO:R0@tkref=7.2395121951: N of unsatisfied eq: 3
+INFO:R0@tkref=7.2395121951: N of unsatisfied ieq: 9
+INFO:R0@tkref=7.2395121951: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.44609756095: Time to solve stand alone optimisation problem: 0.55714392662
+INFO:R0@tkref=8.44609756095: N of unsatisfied eq: 3
+INFO:R0@tkref=8.44609756095: N of unsatisfied ieq: 9
+INFO:R0@tkref=8.44609756095: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.6526829268: Time to solve stand alone optimisation problem: 4.9462749958
+INFO:R0@tkref=9.6526829268: N of unsatisfied eq: 10
+INFO:R0@tkref=9.6526829268: N of unsatisfied ieq: 3
+INFO:R0@tkref=9.6526829268: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 14.6845724003
+INFO:R0: NSE: 9
+INFO:R0: FIR: 3.63268280029
+INFO:R0: LAS: 4.94696998596
+INFO:R0: MAX: 1.02957105637
+INFO:R0: MIN: 0.557794094086
+INFO:R0: AVG: 0.846678291048
+INFO:R0: RAT: 0.853293173866

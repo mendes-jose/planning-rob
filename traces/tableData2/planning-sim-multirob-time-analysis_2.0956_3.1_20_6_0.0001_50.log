@@ -1,0 +1,40 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.69125699997
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 4
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.0956: Time to solve stand alone optimisation problem: 1.24151110649
+INFO:R0@tkref=2.0956: N of unsatisfied eq: 3
+INFO:R0@tkref=2.0956: N of unsatisfied ieq: 10
+INFO:R0@tkref=2.0956: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.1912: Time to solve stand alone optimisation problem: 0.952579021454
+INFO:R0@tkref=4.1912: N of unsatisfied eq: 2
+INFO:R0@tkref=4.1912: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.1912: Summary: Optimization terminated successfully. after 10 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.2868: Time to solve stand alone optimisation problem: 0.668175935745
+INFO:R0@tkref=6.2868: N of unsatisfied eq: 3
+INFO:R0@tkref=6.2868: N of unsatisfied ieq: 10
+INFO:R0@tkref=6.2868: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.3824: Time to solve stand alone optimisation problem: 0.287747144699
+INFO:R0@tkref=8.3824: N of unsatisfied eq: 3
+INFO:R0@tkref=8.3824: N of unsatisfied ieq: 9
+INFO:R0@tkref=8.3824: Summary: Optimization terminated successfully. after 3 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.478: Time to solve stand alone optimisation problem: 3.7770819664
+INFO:R0@tkref=10.478: N of unsatisfied eq: 10
+INFO:R0@tkref=10.478: N of unsatisfied ieq: 2
+INFO:R0@tkref=10.478: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 11.8611308004
+INFO:R0: NSE: 6
+INFO:R0: FIR: 3.69280099869
+INFO:R0: LAS: 3.7776517868
+INFO:R0: MAX: 1.2421901226
+INFO:R0: MIN: 0.288395166397
+INFO:R0: AVG: 0.78816485405
+INFO:R0: RAT: 0.592761081602

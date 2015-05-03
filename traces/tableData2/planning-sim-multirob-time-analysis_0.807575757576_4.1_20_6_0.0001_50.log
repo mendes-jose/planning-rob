@@ -1,0 +1,70 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.63574004173
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 6
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=0.807575757576: Time to solve stand alone optimisation problem: 0.774179935455
+INFO:R0@tkref=0.807575757576: N of unsatisfied eq: 3
+INFO:R0@tkref=0.807575757576: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.807575757576: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.61515151515: Time to solve stand alone optimisation problem: 0.83594918251
+INFO:R0@tkref=1.61515151515: N of unsatisfied eq: 2
+INFO:R0@tkref=1.61515151515: N of unsatisfied ieq: 10
+INFO:R0@tkref=1.61515151515: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.42272727273: Time to solve stand alone optimisation problem: 0.85183596611
+INFO:R0@tkref=2.42272727273: N of unsatisfied eq: 3
+INFO:R0@tkref=2.42272727273: N of unsatisfied ieq: 11
+INFO:R0@tkref=2.42272727273: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.2303030303: Time to solve stand alone optimisation problem: 1.02150082588
+INFO:R0@tkref=3.2303030303: N of unsatisfied eq: 3
+INFO:R0@tkref=3.2303030303: N of unsatisfied ieq: 13
+INFO:R0@tkref=3.2303030303: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.03787878788: Time to solve stand alone optimisation problem: 1.10441088676
+INFO:R0@tkref=4.03787878788: N of unsatisfied eq: 2
+INFO:R0@tkref=4.03787878788: N of unsatisfied ieq: 12
+INFO:R0@tkref=4.03787878788: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.84545454546: Time to solve stand alone optimisation problem: 1.02490711212
+INFO:R0@tkref=4.84545454546: N of unsatisfied eq: 3
+INFO:R0@tkref=4.84545454546: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.84545454546: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.65303030303: Time to solve stand alone optimisation problem: 0.841844797134
+INFO:R0@tkref=5.65303030303: N of unsatisfied eq: 2
+INFO:R0@tkref=5.65303030303: N of unsatisfied ieq: 9
+INFO:R0@tkref=5.65303030303: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.46060606061: Time to solve stand alone optimisation problem: 0.561892986298
+INFO:R0@tkref=6.46060606061: N of unsatisfied eq: 2
+INFO:R0@tkref=6.46060606061: N of unsatisfied ieq: 9
+INFO:R0@tkref=6.46060606061: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.26818181818: Time to solve stand alone optimisation problem: 0.656118869781
+INFO:R0@tkref=7.26818181818: N of unsatisfied eq: 3
+INFO:R0@tkref=7.26818181818: N of unsatisfied ieq: 10
+INFO:R0@tkref=7.26818181818: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.07575757576: Time to solve stand alone optimisation problem: 0.737231016159
+INFO:R0@tkref=8.07575757576: N of unsatisfied eq: 3
+INFO:R0@tkref=8.07575757576: N of unsatisfied ieq: 11
+INFO:R0@tkref=8.07575757576: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.88333333334: Time to solve stand alone optimisation problem: 4.95210886002
+INFO:R0@tkref=8.88333333334: N of unsatisfied eq: 10
+INFO:R0@tkref=8.88333333334: N of unsatisfied ieq: 2
+INFO:R0@tkref=8.88333333334: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 13.1370002581
+INFO:R0: NSE: 12
+INFO:R0: FIR: 3.63682198524
+INFO:R0: LAS: 4.95268297195
+INFO:R0: MAX: 1.10509300232
+INFO:R0: MIN: 0.562572956085
+INFO:R0: AVG: 0.841669106483
+INFO:R0: RAT: 1.36840784527

@@ -1,0 +1,70 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.75675201416
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 7
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=0.945555555556: Time to solve stand alone optimisation problem: 1.16312789917
+INFO:R0@tkref=0.945555555556: N of unsatisfied eq: 2
+INFO:R0@tkref=0.945555555556: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.945555555556: Summary: Optimization terminated successfully. after 14 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.89111111111: Time to solve stand alone optimisation problem: 1.06591701508
+INFO:R0@tkref=1.89111111111: N of unsatisfied eq: 2
+INFO:R0@tkref=1.89111111111: N of unsatisfied ieq: 10
+INFO:R0@tkref=1.89111111111: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.83666666667: Time to solve stand alone optimisation problem: 0.790001869202
+INFO:R0@tkref=2.83666666667: N of unsatisfied eq: 3
+INFO:R0@tkref=2.83666666667: N of unsatisfied ieq: 13
+INFO:R0@tkref=2.83666666667: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.78222222222: Time to solve stand alone optimisation problem: 0.684302091599
+INFO:R0@tkref=3.78222222222: N of unsatisfied eq: 3
+INFO:R0@tkref=3.78222222222: N of unsatisfied ieq: 13
+INFO:R0@tkref=3.78222222222: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.72777777778: Time to solve stand alone optimisation problem: 1.15022706985
+INFO:R0@tkref=4.72777777778: N of unsatisfied eq: 3
+INFO:R0@tkref=4.72777777778: N of unsatisfied ieq: 10
+INFO:R0@tkref=4.72777777778: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.67333333334: Time to solve stand alone optimisation problem: 1.36034011841
+INFO:R0@tkref=5.67333333334: N of unsatisfied eq: 3
+INFO:R0@tkref=5.67333333334: N of unsatisfied ieq: 10
+INFO:R0@tkref=5.67333333334: Summary: Optimization terminated successfully. after 14 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.61888888889: Time to solve stand alone optimisation problem: 0.874558925629
+INFO:R0@tkref=6.61888888889: N of unsatisfied eq: 3
+INFO:R0@tkref=6.61888888889: N of unsatisfied ieq: 10
+INFO:R0@tkref=6.61888888889: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.56444444445: Time to solve stand alone optimisation problem: 0.770626068115
+INFO:R0@tkref=7.56444444445: N of unsatisfied eq: 2
+INFO:R0@tkref=7.56444444445: N of unsatisfied ieq: 15
+INFO:R0@tkref=7.56444444445: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=8.51: Time to solve stand alone optimisation problem: 0.198729991913
+INFO:R0@tkref=8.51: N of unsatisfied eq: 3
+INFO:R0@tkref=8.51: N of unsatisfied ieq: 17
+INFO:R0@tkref=8.51: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.45555555556: Time to solve stand alone optimisation problem: 0.147367954254
+INFO:R0@tkref=9.45555555556: N of unsatisfied eq: 3
+INFO:R0@tkref=9.45555555556: N of unsatisfied ieq: 12
+INFO:R0@tkref=9.45555555556: Summary: Optimization terminated successfully. after 2 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=10.4011111111: Time to solve stand alone optimisation problem: 3.84039998055
+INFO:R0@tkref=10.4011111111: N of unsatisfied eq: 10
+INFO:R0@tkref=10.4011111111: N of unsatisfied ieq: 2
+INFO:R0@tkref=10.4011111111: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 12.2385920172
+INFO:R0: NSE: 12
+INFO:R0: FIR: 3.75782108307
+INFO:R0: LAS: 3.84099507332
+INFO:R0: MAX: 1.36100912094
+INFO:R0: MIN: 0.147999048233
+INFO:R0: AVG: 0.821182870865
+INFO:R0: RAT: 1.43937509853

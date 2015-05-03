@@ -1,0 +1,40 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.6482000351
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 4
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.9964: Time to solve stand alone optimisation problem: 1.21745419502
+INFO:R0@tkref=1.9964: N of unsatisfied eq: 3
+INFO:R0@tkref=1.9964: N of unsatisfied ieq: 11
+INFO:R0@tkref=1.9964: Summary: Optimization terminated successfully. after 13 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.9928: Time to solve stand alone optimisation problem: 1.29431700706
+INFO:R0@tkref=3.9928: N of unsatisfied eq: 3
+INFO:R0@tkref=3.9928: N of unsatisfied ieq: 12
+INFO:R0@tkref=3.9928: Summary: Optimization terminated successfully. after 14 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=5.9892: Time to solve stand alone optimisation problem: 0.845094919205
+INFO:R0@tkref=5.9892: N of unsatisfied eq: 3
+INFO:R0@tkref=5.9892: N of unsatisfied ieq: 8
+INFO:R0@tkref=5.9892: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.9856: Time to solve stand alone optimisation problem: 0.36959695816
+INFO:R0@tkref=7.9856: N of unsatisfied eq: 3
+INFO:R0@tkref=7.9856: N of unsatisfied ieq: 15
+INFO:R0@tkref=7.9856: Summary: Optimization terminated successfully. after 4 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=9.982: Time to solve stand alone optimisation problem: 3.7267510891
+INFO:R0@tkref=9.982: N of unsatisfied eq: 10
+INFO:R0@tkref=9.982: N of unsatisfied ieq: 2
+INFO:R0@tkref=9.982: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 12.2255759954
+INFO:R0: NSE: 6
+INFO:R0: FIR: 3.64911603928
+INFO:R0: LAS: 3.72735500336
+INFO:R0: MAX: 1.29500102997
+INFO:R0: MIN: 0.3702480793
+INFO:R0: AVG: 0.932426989079
+INFO:R0: RAT: 0.648668117596

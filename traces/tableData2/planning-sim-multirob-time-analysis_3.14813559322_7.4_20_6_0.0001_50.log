@@ -1,0 +1,25 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.6267850399
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 4
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.14813559322: Time to solve stand alone optimisation problem: 0.645114898682
+INFO:R0@tkref=3.14813559322: N of unsatisfied eq: 2
+INFO:R0@tkref=3.14813559322: N of unsatisfied ieq: 10
+INFO:R0@tkref=3.14813559322: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.29627118644: Time to solve stand alone optimisation problem: 4.93878889084
+INFO:R0@tkref=6.29627118644: N of unsatisfied eq: 10
+INFO:R0@tkref=6.29627118644: N of unsatisfied ieq: 7
+INFO:R0@tkref=6.29627118644: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 12.6062052721
+INFO:R0: NSE: 3
+INFO:R0: FIR: 3.62772107124
+INFO:R0: LAS: 4.93964600563
+INFO:R0: MAX: 0.64577293396
+INFO:R0: MIN: 0.64577293396
+INFO:R0: AVG: 0.64577293396
+INFO:R0: RAT: 0.205128691201

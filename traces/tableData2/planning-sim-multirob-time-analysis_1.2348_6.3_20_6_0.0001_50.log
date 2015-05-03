@@ -1,0 +1,45 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.69823384285
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 3
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.2348: Time to solve stand alone optimisation problem: 0.896394968033
+INFO:R0@tkref=1.2348: N of unsatisfied eq: 3
+INFO:R0@tkref=1.2348: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.2348: Summary: Optimization terminated successfully. after 11 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.4696: Time to solve stand alone optimisation problem: 1.13889598846
+INFO:R0@tkref=2.4696: N of unsatisfied eq: 2
+INFO:R0@tkref=2.4696: N of unsatisfied ieq: 9
+INFO:R0@tkref=2.4696: Summary: Optimization terminated successfully. after 12 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.7044: Time to solve stand alone optimisation problem: 0.757581949234
+INFO:R0@tkref=3.7044: N of unsatisfied eq: 3
+INFO:R0@tkref=3.7044: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.7044: Summary: Optimization terminated successfully. after 8 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.9392: Time to solve stand alone optimisation problem: 0.664994001389
+INFO:R0@tkref=4.9392: N of unsatisfied eq: 1
+INFO:R0@tkref=4.9392: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.9392: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.174: Time to solve stand alone optimisation problem: 0.566418886185
+INFO:R0@tkref=6.174: N of unsatisfied eq: 2
+INFO:R0@tkref=6.174: N of unsatisfied ieq: 8
+INFO:R0@tkref=6.174: Summary: Optimization terminated successfully. after 6 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.4088: Time to solve stand alone optimisation problem: 5.026293993
+INFO:R0@tkref=7.4088: N of unsatisfied eq: 10
+INFO:R0@tkref=7.4088: N of unsatisfied ieq: 5
+INFO:R0@tkref=7.4088: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 13.0670383275
+INFO:R0: NSE: 7
+INFO:R0: FIR: 3.69913601875
+INFO:R0: LAS: 5.02689194679
+INFO:R0: MAX: 1.13959217072
+INFO:R0: MIN: 0.567091226578
+INFO:R0: AVG: 0.805533742905
+INFO:R0: RAT: 0.922896153803

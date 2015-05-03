@@ -1,0 +1,45 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0: Time to solve stand alone optimisation problem: 3.66196012497
+INFO:R0@tkref=0.0: N of unsatisfied eq: 3
+INFO:R0@tkref=0.0: N of unsatisfied ieq: 3
+INFO:R0@tkref=0.0: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=1.2: Time to solve stand alone optimisation problem: 0.736041069031
+INFO:R0@tkref=1.2: N of unsatisfied eq: 2
+INFO:R0@tkref=1.2: N of unsatisfied ieq: 9
+INFO:R0@tkref=1.2: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=2.4: Time to solve stand alone optimisation problem: 1.42791199684
+INFO:R0@tkref=2.4: N of unsatisfied eq: 2
+INFO:R0@tkref=2.4: N of unsatisfied ieq: 10
+INFO:R0@tkref=2.4: Summary: Optimization terminated successfully. after 15 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=3.6: Time to solve stand alone optimisation problem: 0.84197306633
+INFO:R0@tkref=3.6: N of unsatisfied eq: 3
+INFO:R0@tkref=3.6: N of unsatisfied ieq: 11
+INFO:R0@tkref=3.6: Summary: Optimization terminated successfully. after 9 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=4.8: Time to solve stand alone optimisation problem: 0.657718896866
+INFO:R0@tkref=4.8: N of unsatisfied eq: 2
+INFO:R0@tkref=4.8: N of unsatisfied ieq: 10
+INFO:R0@tkref=4.8: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=6.0: Time to solve stand alone optimisation problem: 0.658035039902
+INFO:R0@tkref=6.0: N of unsatisfied eq: 3
+INFO:R0@tkref=6.0: N of unsatisfied ieq: 9
+INFO:R0@tkref=6.0: Summary: Optimization terminated successfully. after 7 it.
+INFO:R0: --------------------------
+INFO:R0@tkref=7.2: Time to solve stand alone optimisation problem: 4.9896709919
+INFO:R0@tkref=7.2: N of unsatisfied eq: 10
+INFO:R0@tkref=7.2: N of unsatisfied ieq: 5
+INFO:R0@tkref=7.2: Summary: Iteration limit exceeded after 51 it.
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 13.1474593052
+INFO:R0: NSE: 7
+INFO:R0: FIR: 3.66335010529
+INFO:R0: LAS: 4.99024319649
+INFO:R0: MAX: 1.42857885361
+INFO:R0: MIN: 0.658360958099
+INFO:R0: AVG: 0.864986562729
+INFO:R0: RAT: 1.19048237801
