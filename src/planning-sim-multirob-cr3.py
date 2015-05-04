@@ -355,13 +355,10 @@ class UnicycleKineModel(object):
         """ Returns [v, w]^T given [z dz ddz] (only dz and ddz are used)
         """
         if z.shape >= (self.u_dim, self.l+1):
-            if (z[0, 1]**2 + z[1, 1]**2 != 0):
-                return np.matrix([[LA.norm(z[:, 1])], \
-                        [(z[0, 1]*z[1, 2]-z[1, 1]*z[0, 2] \
-                        )/(z[0, 1]**2 + z[1, 1]**2)]])
-            else:
-                logging.warning('x\' and y\' are zero! Using angspeed=0')
-                return np.matrix([[LA.norm(z[:, 1])], [0.0]])
+            den = z[0, 1]**2 + z[1, 1]**2 
+            return np.matrix([[LA.norm(z[:, 1])], \
+                    [(z[0, 1]*z[1, 2]-z[1, 1]*z[0, 2] \
+                    )/(den+np.finfo(float).eps)]])
         else:
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0')
@@ -1214,6 +1211,9 @@ class WorldSim(object):
         ut = range(len(self._robs))
         for i in range(len(self._robs)):
             ut[i] = map(self._robs[i].k_mod.phi2, zdzddz[i])
+            # Fixing division by near-zero value when calculating angspeed
+            ut[i][0][1,0] = self._robs[i].k_mod.u_init[1,0]
+            ut[i][-1][1,0] = self._robs[i].k_mod.u_final[1,0]
 
         # get a list over time of values q(t)
         qt = range(len(self._robs))
@@ -1408,7 +1408,7 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 3
-    n_robots = 2
+    n_robots = 3
     N_s = 16
     Tc = 1.0
 
@@ -1444,68 +1444,25 @@ if __name__ == '__main__':
 #[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-    obstacles += [PolygonObstacle(np.array(
-            [[0.8, 1.84], [1.0, -0.2], [2.75, -0.2], [2.75, 1.84], [1.5, 2.]]))]
-#    obstacles = [PolygonObstacle(np.array([
-#            [0., 5.],
-#            [0., 0.],
-#            [8., 0.],
-#            [8., 5.],
-#            [7., 5.],
-#            [7., 1.],
-#            [1., 1.],
-#            [1., 5.]]))]
-#    obstacles = [PolygonObstacle(np.array([
-#            [0., 8.],
-#            [8., 7.],
-#            [0., 9.]]))]           
-#            [[1.0, 1.84], [1.0, -0.2], [1.75, 0.1], [1.6, 1.4]]))]
 
     kine_models = [UnicycleKineModel(
-            [0.81, -2.5, np.pi/2.], # q_initial
-            [-1.0,  3.5, np.pi/2.], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
-            [0.6,  5.0]),          # u_max
+            [-2.56, -0.59, 0.0], # q_initial
+            [ 2.56,  0.51, 0.0], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 1.0,  5.0]),          # u_max
             UnicycleKineModel(
-            [-1.2,  1.2, 0.0], # q_initial
-            [4.5,  0.0, 0.], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
-#            [1.0,  5.0]),          # u_max
-#            UnicycleKineModel(
-#            [-2.4,  0.1, 0.0], # q_initial
-#            [2.6,  0.49, 0.0], # q_final
-#            [0.0,  0.0],          # u_initial
-#            [0.0,  0.0],          # u_final
-            [0.6,  5.0])]          # u_max
-#            UnicycleKineModel(
-#            [0. ,  4., 0.0], # q_initial
-#            [8. ,  5. , 0.0], # q_final
-#            [0.0,  0.0],          # u_initial
-#            [0.0,  0.0],          # u_final
-#            [1.0,  5.0])]          # u_max
-            
-#    kine_models = [UnicycleKineModel(
-#            [float(i),  0.0, np.pi/2], # q_initial
-#            [float(-i),  5.0, np.pi/2], # q_final
-#            [0.0,  0.0],          # u_initial
-#            [0.0,  0.0],          # u_final
-#            [1.0,  5.0])          # u_max
-#            for i in [j-n_robots/2+0.5 for j in range(n_robots)]]
-
-#    kine_models = [UnicycleKineModel(
-#            [float(i)/2.0,  0.0, np.pi/2], # q_initial
-#            [float(i),  0.0, np.pi/2], # q_initial
-#            [0.0,  0.0, np.pi/2], # q_initial
-#            [(n_robots-i+1.0)/2.0,  5.0, np.pi/2], # q_final
-#            [(n_robots-i+1.0),  5.0, np.pi/2], # q_final
-#            [3.5,  5.0, np.pi/2], # q_final
-#            [0.0,  0.0],          # u_initial
-#            [0.0,  0.0],          # u_final
-#            [1.0,  5.0])          # u_max
-#            for i in [j-n_robots for j in range(n_robots)]]
-
+            [-2.5,  1.2, 0.0], # q_initial
+            [ 2.5, -0.5, 0.0], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 1.0,  5.0]),          # u_max
+            UnicycleKineModel(
+            [-2.4,  0.1, 0.0], # q_initial
+            [ 2.6, -1.5, 0.0], # q_final
+            [ 0.0,  0.0],          # u_initial
+            [ 0.0,  0.0],          # u_final
+            [ 1.0,  5.0])]          # u_max
 
     # Multiprocessing stuff ############################################
     # Locks
@@ -1560,7 +1517,7 @@ if __name__ == '__main__':
             Tc=Tc,                 # computation time
             Tp=2.0,                 # planning horizon
             Td=2.0,
-            def_epsilon=10.1,       # in meters
+            def_epsilon=1.1,       # in meters
             safe_epsilon=0.1,      # in meters
             detec_rho=4.0,
             log_lock=log_lock)]                 # planning horizon (for stand alone plan)
