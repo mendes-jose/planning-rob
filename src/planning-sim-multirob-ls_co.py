@@ -914,8 +914,6 @@ class Robot(object):
         self.knots = self._gen_knots(self.t_init, self.Td)
         self.mtime = np.linspace(self.t_init, self.Td, self.N_s)
 
-        # while the remaining dist is greater than the max dist during Tp
-#        while LA.norm(self.last_z - self.final_z) > self.D:
 #        magic_ls_cte = 1.0/3.0 # TODO rethink it according to time real_Tc/Tc behavior
         # minimum time interval for the last step. Last step plan will take always more then this time value
 #        inf_limit_ls_time = 0.3 # TODO make speed dependent, acceleration?

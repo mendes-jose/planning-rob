@@ -355,10 +355,11 @@ class UnicycleKineModel(object):
         """ Returns [v, w]^T given [z dz ddz] (only dz and ddz are used)
         """
         if z.shape >= (self.u_dim, self.l+1):
-            den = z[0, 1]**2 + z[1, 1]**2 
+            # Prevent division by zero
+            den = z[0, 1]**2 + z[1, 1]**2 + np.finfo(float).eps
             return np.matrix([[LA.norm(z[:, 1])], \
                     [(z[0, 1]*z[1, 2]-z[1, 1]*z[0, 2] \
-                    )/(den+np.finfo(float).eps)]])
+                    )/den]])
         else:
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0')
@@ -367,16 +368,14 @@ class UnicycleKineModel(object):
         """
         """
         if z.shape >= (self.u_dim, self.l+1):
+            # Prevent division by zero
             dz_norm = LA.norm(z[:, 1])
-            if (dz_norm != 0):
-                dz_norm = LA.norm(z[:, 1])
-                dv = (z[0, 1]*z[0, 2]+z[1, 1]*z[1, 2])/dz_norm
-                dw = ((z[0, 2]*z[1, 2]+z[1, 3]*z[0, 1]- \
-                        (z[1, 2]*z[0, 2]+z[0, 3]*z[1, 1]))*(dz_norm**2) - \
-                        (z[0, 1]*z[1, 2]-z[1, 1]*z[0, 2])*2*dz_norm*dv)/dz_norm**4
-                return np.matrix([[dv], [dw]])
-            else:
-                return np.matrix('0.0; 0.0')
+            den = dz_norm + np.finfo(float).eps
+            dv = (z[0, 1]*z[0, 2]+z[1, 1]*z[1, 2])/den
+            dw = ((z[0, 2]*z[1, 2]+z[1, 3]*z[0, 1]- \
+                    (z[1, 2]*z[0, 2]+z[0, 3]*z[1, 1]))*(dz_norm**2) - \
+                    (z[0, 1]*z[1, 2]-z[1, 1]*z[0, 2])*2*dz_norm*dv)/den**4
+            return np.matrix([[dv], [dw]])
         else:
             logging.warning('Bad z input. Returning zeros')
             return np.matrix('0.0; 0.0')
@@ -463,8 +462,9 @@ class Robot(object):
         self._Tcp = self._Tcp_idx*tp_step
 
         # optimization parameters
-        self.set_option('maxit')
-        self.set_option('acc')
+        self._maxit = 100
+        self._ls_maxit = 100
+        self._acc = 1e-6
 
         # init planning
         self._detected_obst_idxs = range(len(self._obst))
@@ -489,12 +489,15 @@ class Robot(object):
         self.planning_process = mpc.Process(target=Robot._plan, args=(self, ))
 
     def set_option(self, name, value=None):
-        if name == 'maxit':
-            self._maxit = 100 if value == None else value
-        elif name == 'acc':
-            self._acc = 1e-6 if value == None else value
-        else:
-            self._log('w', 'Unknown parameter '+name+', nothing will be set')
+        if value != None:
+            if name == 'maxit':
+                self._maxit = value 
+            elif name == 'ls_maxit':
+                self._ls_maxit = value
+            elif name == 'acc':
+                self._acc = value
+            else:
+                self._log('w', 'Unknown parameter '+name+', nothing will be set')
         return
 
     def _gen_knots(self, t_init, t_final):
@@ -645,9 +648,10 @@ class Robot(object):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = 1e2 # m
+        eps = 0 # m
         goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
+        goal_pt = self.k_mod.q_final[0:-1, :]
         cost = LA.norm(qTp[0:-1, :] - goal_pt)**2
 #        cost = LA.norm(qTp[0:-1, :] - self.k_mod.q_final[0:-1, :])**2
 #        cost = LA.norm(qTp - self.k_mod.q_final)
@@ -790,7 +794,7 @@ class Robot(object):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = 1e2 # m
+        eps = 5e1 # m
         goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
         cost = LA.norm(qTp[0:-1, :] - goal_pt)**2
@@ -930,8 +934,9 @@ class Robot(object):
                 p_eqcons = self._co_feqcons
                 p_ieqcons = self._co_fieqcons
 
-            init_guess = self._C.reshape(self._n_ctrlpts*self.k_mod.u_dim)
+            init_guess = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
             acc = self._acc
+            maxit = self._maxit
 
         else:
             if self._std_alone:
@@ -944,8 +949,11 @@ class Robot(object):
                 p_ieqcons = self._ls_co_fieqcons
 
             init_guess = np.append(np.asarray([self._est_dtime]),
-                    self._C.reshape(self._n_ctrlpts*self.k_mod.u_dim))
+                    self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
             acc = 1e-2
+            maxit = self._ls_maxit
+            print init_guess
+            print self._C[0:self._n_ctrlpts, :]
 
         output = fmin_slsqp(
             p_criterion,
@@ -955,18 +963,20 @@ class Robot(object):
             ieqcons=(),
             f_ieqcons=p_ieqcons,
             iprint=0,
-            iter=self._maxit,
+            iter=maxit,
             acc=acc,
             full_output=True)
 
             #imode = output[3]
             # TODO handle optimization exit mode
         if self._final_step:
-            self._C = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+            self._C[0:self._n_ctrlpts,:] = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+            print 'solved C ', self._C
             self._dt_final = output[0][0]
             self._t_final = self._mtime[0] + self._dt_final
         else:
-            self._C = output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+            self._C[0:self._n_ctrlpts,:] = output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+            print 'solved C ', self._C
 #            #imode = output[3]
 #            # TODO handle optimization exit mode
 
@@ -981,23 +991,59 @@ class Robot(object):
         # update obstacles zone
         self._detect_obst()
 
-#        # first guess for ctrl pts
+        # first guess for ctrl pts
         if not self._final_step:
+            # get the direction to target state unit vector
             direc = self._final_z - self._last_z
             direc = direc/LA.norm(direc)
+
+            # estimate position of the last ctrl point
             last_ctrl_pt = self._last_z+self._D*direc
-            self._linspace_ctrl_pts(last_ctrl_pt)
+
+            # create positions thru time assuming that the speed is constate (thus the linspace)
+            aux_x = np.linspace(self._last_z[0,0], last_ctrl_pt[0,0], self._n_ctrlpts)
+            aux_y = np.linspace(self._last_z[1,0], last_ctrl_pt[1,0], self._n_ctrlpts)
+            aux_t = np.linspace(self._knots[0], self._knots[-1], self._n_ctrlpts)
+
+            # create b-spline representation of that curve
+            tckx = si.splrep(aux_t, aux_x, task=-1, t=self._knots[self._d:-self._d], k=self._d-1)
+            tcky = si.splrep(aux_t, aux_y, task=-1, t=self._knots[self._d:-self._d], k=self._d-1)
+
+            # get the ctrl points
+            cx = tckx[1][0:-self._d,]
+            cy = tcky[1][0:-self._d,]
+
+            # initiate C
+            self._C[0:self._n_ctrlpts, 0] = cx
+            self._C[0:self._n_ctrlpts, 1] = cy
+
         else:
             # TODO eps constant
-            eps = 0.0001
+#            eps = np.finfo(float).eps
+            eps = self.k_mod.u_final[0,0]*self._est_dtime/(self._n_ctrlpts-1) + 1e-6
             final_ctrl_pt = self._final_z
-            self._C[self._n_ctrlpts-1, :] = final_ctrl_pt.T
-            aux = final_ctrl_pt.T - eps*np.array(\
+            last_ctrl_pt = final_ctrl_pt
+
+            # create positions thru time assuming that the speed is constate (thus the linspace)
+            aux_x = np.linspace(self._last_z[0,0], last_ctrl_pt[0,0], self._n_ctrlpts)
+            aux_y = np.linspace(self._last_z[1,0], last_ctrl_pt[1,0], self._n_ctrlpts)
+            aux_t = np.linspace(self._knots[0], self._knots[-1], self._n_ctrlpts)
+
+            # create b-spline representation of that curve
+            tckx = si.splrep(aux_t, aux_x, task=-1, t=self._knots[self._d:-self._d], k=self._d-1)
+            tcky = si.splrep(aux_t, aux_y, task=-1, t=self._knots[self._d:-self._d], k=self._d-1)
+
+            # get the ctrl points
+            cx = tckx[1][0:-self._d,]
+            cy = tcky[1][0:-self._d,]
+
+            # initiate C
+            self._C[0:self._n_ctrlpts, 0] = cx
+            self._C[0:self._n_ctrlpts, 1] = cy
+            # correcting the [-2]th ctrl pt so it take in account the final state orientation and speed
+            minus2_C = final_ctrl_pt.T - eps*np.array(\
                     [np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])
-            self._C[0:self._n_ctrlpts-1, 0] = np.array(np.linspace(self._last_z[0, 0], \
-                    aux[0, 0], self._n_ctrlpts-1, endpoint=False)).T
-            self._C[0:self._n_ctrlpts-1, 1] = np.array(np.linspace(self._last_z[1, 0], \
-                    aux[0, 1], self._n_ctrlpts-1, endpoint=False)).T
+            self._C[self._n_ctrlpts-2,] = minus2_C
 
         self._std_alone = True
 
@@ -1022,10 +1068,10 @@ class Robot(object):
 
         time_idx = None if self._final_step else self._Tcd_idx+1
 
-        dz = self._comb_bsp(self._mtime, self._C, 0).T
+        dz = self._comb_bsp(self._mtime, self._C[0:self._n_ctrlpts,:], 0).T
         for dev in range(1, self.k_mod.l+1):
             dz = np.append(dz, self._comb_bsp(
-                    self._mtime, self._C, dev).T, axis=0)
+                    self._mtime, self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
 
 #        TODO verify process safety
         for i in range(dz.shape[1]):
@@ -1049,7 +1095,7 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if self._conflict_robots_idx != []:
+        if self._conflict_robots_idx != [] and self._final_step == False:
 
             self._std_alone = False
 
@@ -1077,13 +1123,13 @@ class Robot(object):
 
             time_idx = None if self._final_step else self._Tcp_idx+1
                 
-            dz = self._comb_bsp(self._mtime[0:time_idx], self._C, 0).T
+            dz = self._comb_bsp(self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], 0).T
             for dev in range(1, self.k_mod.l+1):
                 dz = np.append(dz, self._comb_bsp(
-                        self._mtime[0:time_idx], self._C, dev).T, axis=0)
+                        self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
             
         # Storing
-#        self._all_C += [self._C]
+#        self._all_C[0:self._n_ctrlpts,:] += [self._C[0:self._n_ctrlpts,:]]
         self._all_dz.append(dz[:, 0:time_idx])
         self._all_times.extend(self._mtime[0:time_idx])
         # TODO rejected path
@@ -1138,7 +1184,28 @@ class Robot(object):
         self._mtime = np.linspace(self._t_init, self._Td, self._N_s)
 
         # while the remaining dist is greater than the max dist during Tp
-        while LA.norm(self._last_z - self._final_z) > self._D:
+#        while LA.norm(self._last_z - self._final_z) > self._D:
+
+        ls_min_dist = 0.5
+        while True:
+            remaining_dist = LA.norm(self._last_z - self._final_z)
+#            if remaining_dist < self._D:
+#                break
+#            elif remaining_dist < ls_min_dist + self._Tc*self.k_mod.u_max[0,0] and False:
+            if remaining_dist < ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
+                print('Remaining dist: {}'.format(remaining_dist))
+                print('last step min dist: {}'.format(ls_min_dist))
+                print('self Tc: {}'.format(self._Tc))
+                print('self D: {}'.format(self._D))
+                scale_factor = remaining_dist/self.k_mod.u_max[0,0]/self._Td
+                self._n_knots = max(int(round(self._n_knots*scale_factor)),3)
+#                self._n_knots = 3
+                self._n_ctrlpts = self._n_knots + self._d - 1 # nb of ctrl points
+                self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts)
+#                self._N_s = 10
+                self._log('i', 'R{0}: scale {1} Ns {2:d} Nk {3:d}'.format(self.eyed,
+                        scale_factor, self._N_s, self._n_knots))
+                break
 
             self._plan_section()
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
@@ -1408,9 +1475,9 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 3
-    n_robots = 3
-    N_s = 20
-    Tc = 1.0
+    n_robots = 1
+    N_s = 15
+    Tc = 0.8
 
     scriptname, method = parse_cmdline()
 
@@ -1427,42 +1494,30 @@ if __name__ == '__main__':
 
     obst_info = rand_round_obst(n_obsts, Boundary([-1.2, 1.2], [-2.0, 2.0]))
 
-    # these obst info
-#    obst_info = [([0.25, 2.5], 0.20), ([3.0,  2.40], 0.50),
-#            ([1.25,  3.00], 0.10), ([0.30,  1.00], 0.10),
-#            ([-0.50,  1.50], 0.30)]
-
-#    obst_info = [([0.25, 2.5], 0.20), ([2.30,  2.50], 0.50),
-#            ([1.25,  3.00], 0.10), ([0.30,  1.00], 0.10),
-#            ([-0.50,  1.50], 0.30)]
-#    obst_info = [([-0.5, 2.5], 0.30), ([0.7,  2.50], 0.30), ([0.0, 1.1], 0.3)]
-#    obst_info = [([-0.52, -0.552], 0.31), ([-0.58,  0.541], 0.298), ([1.41, -0.1], 0.35)]
     obst_info = [([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), \
             ([0.7218821882188216, -0.93849384938494], 0.28383838383838383), \
             ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
-
-#[([-0.26506650665066511, 0.40226022602260203], 0.39504950495049507), ([0.39979997999799977, 2.5724372437243725], 0.30019001900190018), ([0.28218821882188216, -1.493849384938494], 0.28383838383838383), ([-0.58077807780778068, 2.4762276227622757], 0.37094709470947096)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     kine_models = [UnicycleKineModel(
             [-2.56, -0.59, 0.0], # q_initial
-            [ 2.56,  0.51, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [-2.5,  1.2, 0.0], # q_initial
-            [ 2.5, -0.5, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [-2.4,  0.1, 0.0], # q_initial
-            [ 2.6, -1.5, 0.0], # q_final
-            [ 0.0,  0.0],          # u_initial
-            [ 0.0,  0.0],          # u_final
-            [ 1.0,  5.0])]          # u_max
+            [2.7,  0.59, 0.0], # q_final
+            [0.0,  0.0],          # u_initial
+            [0.0,  0.0],          # u_final
+            [1.0,  5.0])]          # u_max
+#            UnicycleKineModel(
+#            [-2.5,  1.2, 0.0], # q_initial
+#            [2.5, -0.5, 0.0], # q_final
+#            [0.0,  0.0],          # u_initial
+#            [0.0,  0.0],          # u_final
+#            [1.0,  5.0]),          # u_max
+#            UnicycleKineModel(
+#            [-2.4,  0.1, 0.0], # q_initial
+#            [2.6, -1.5, 0.0], # q_final
+#            [0.0,  0.0],          # u_initial
+#            [0.0,  0.0],          # u_final
+#            [1.0,  5.0])]          # u_max
 
     # Multiprocessing stuff ############################################
     # Locks
@@ -1517,13 +1572,14 @@ if __name__ == '__main__':
             Tc=Tc,                 # computation time
             Tp=2.0,                 # planning horizon
             Td=2.0,
-            def_epsilon=5.1,       # in meters
+            def_epsilon=5.0,       # in meters
             safe_epsilon=0.1,      # in meters
             detec_rho=4.0,
             log_lock=log_lock)]                 # planning horizon (for stand alone plan)
 
     [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
-    [r.set_option('maxit', 50) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('maxit', 25) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('ls_maxit', 20) for r in robots] # max number of iterations for the opt solver
 
     world_sim = WorldSim(Tc, robots, obstacles, boundary) # create the world
 
