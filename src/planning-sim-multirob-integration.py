@@ -422,7 +422,9 @@ class Robot(object):
             com_range=15.0,
             def_epsilon=0.5,
             safe_epsilon=0.1,
-            log_lock=None):
+            log_lock=None,
+            ls_time_opt_scale = 1.,
+            dist_opt_offset = 1e2):
 
         self.eyed = eyed
         self.k_mod = kine_model
@@ -436,7 +438,7 @@ class Robot(object):
         self.sol = sol
         self.rtime = robots_time
         self.ctime = robots_comp_time
-	self._neigh = neigh
+        self._neigh = neigh
         self._N_s = N_s # no of samples for discretization of time
         self._n_knots = n_knots
         self._t_init = t_init
@@ -450,6 +452,8 @@ class Robot(object):
         self._def_epsilon = def_epsilon
         self._safe_epsilon = safe_epsilon
         self._log_lock = log_lock
+        self._ls_time_opt_scale = ls_time_opt_scale
+        self._dist_opt_offset = dist_opt_offset
 
         # get number of robots      
         self._n_robots = len(conflict_syncer)
@@ -574,7 +578,7 @@ class Robot(object):
         # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
-        return 10*(x[0]+self._mtime[0])**2
+        return self._ls_time_opt_scale*(x[0]+self._mtime[0])**2
 
     def _ls_sa_feqcons(self, x):
         dt_final = x[0]
@@ -649,7 +653,7 @@ class Robot(object):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = 5e1 # m
+        eps = self._dist_opt_offset # m
         goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
 #        goal_pt = self.k_mod.q_final[0:-1, :]
@@ -720,7 +724,7 @@ class Robot(object):
         # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
-        return 0.1*(x[0]+self._mtime[0])**2
+        return self.ls_time_opt_scale*(x[0]+self._mtime[0])**2
 
     def _ls_co_feqcons(self, x):
         dt_final = x[0]
@@ -795,10 +799,10 @@ class Robot(object):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi1(dz)
 
-#        eps = 5e1 # m
-#        goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
-#        goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
-        goal_pt = self.k_mod.q_final[0:-1, :]
+        eps = self._dist_opt_offset # m
+        goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
+        goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
+#        goal_pt = self.k_mod.q_final[0:-1, :]
         cost = LA.norm(qTp[0:-1, :] - goal_pt)**2
 #        cost = LA.norm(qTp[0:-1, :] - self.k_mod.q_final[0:-1, :])**2
 #        cost = LA.norm(qTp - self.k_mod.q_final)
@@ -1297,20 +1301,28 @@ class WorldSim(object):
             ctime[i] = self._robs[0].ctime[i]
 
         for i in range(len(self._robs)):
+            ctime_len = len(ctime[i])
+            g_max_idx = np.argmax(ctime[i])
             logging.info('R{rid}: TOT: {d}'.format(rid=i, d=rtime[i][-1]))
-            logging.info('R{rid}: NSE: {d}'.format(rid=i, d=len(ctime[i])))
+            logging.info('R{rid}: NSE: {d}'.format(rid=i, d=ctime_len))
             logging.info('R{rid}: FIR: {d}'.format(rid=i, d=ctime[i][0]))
             logging.info('R{rid}: LAS: {d}'.format(rid=i, d=ctime[i][-1]))
-            if len(ctime[i]) > 2:
+            if g_max_idx == ctime_len-1:
+                logging.info('R{rid}: LMA: {d}'.format(rid=i, d=1))
+            else:
+                logging.info('R{rid}: LMA: {d}'.format(rid=i, d=0))
+            if ctime_len > 2:
                 logging.info('R{rid}: MAX: {d}'.format(rid=i, d=max(ctime[i][1:-1])))
                 logging.info('R{rid}: MIN: {d}'.format(rid=i, d=min(ctime[i][1:-1])))
                 logging.info('R{rid}: AVG: {d}'.format(rid=i, d=np.mean(ctime[i][1:-1])))
-                logging.info('R{rid}: RAT: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tc))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tc))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][1:])/self._Tc))
             else:
-                logging.info('R{rid}: MAX: {d}'.format(rid=i, d=max(ctime[i])))
-                logging.info('R{rid}: MIN: {d}'.format(rid=i, d=min(ctime[i])))
-                logging.info('R{rid}: AVG: {d}'.format(rid=i, d=np.mean(ctime[i])))
-                logging.info('R{rid}: RAT: {d}'.format(rid=i, d=max(ctime[i])/self._Tc))
+                logging.info('R{rid}: MAX: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=ctime[i][-1]/self._Tc))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][-1])/self._Tc))
 
         # PLOT ###############################################################
 
@@ -1318,6 +1330,13 @@ class WorldSim(object):
 
         # Interactive plot
         plt.ion()
+
+        fig_s, axarray = plt.subplots(2)
+        axarray[0].set_ylabel('v(m/s)')
+        axarray[0].set_title('Linear speed')
+        axarray[1].set_xlabel('time(s)')
+        axarray[1].set_ylabel('w(rad/s)')
+        axarray[1].set_title('Angular speed')
 
         fig = plt.figure()
         ax = fig.gca()
@@ -1359,6 +1378,7 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
+            # BUG TODO
             # Crashes for initial robot position = (0,0)
 #            for i in range(1, 10):
 #                fig.savefig('../traces/pngs/multirobot-path-'+str(i)+'.png')
@@ -1398,13 +1418,6 @@ class WorldSim(object):
             for i in range(1, 10):
                 fig.savefig('../traces/pngs/multirobot-path-'+str(ctr+8+i)+'.png', bbox_inches='tight')
     
-            fig_s, axarray = plt.subplots(2)
-            axarray[0].set_ylabel('v(m/s)')
-            axarray[0].set_title('Linear speed')
-            axarray[1].set_xlabel('time(s)')
-            axarray[1].set_ylabel('w(rad/s)')
-            axarray[1].set_title('Angular speed')
-
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]
                 angspeed = [x[1, 0] for x in ut[i]]
@@ -1475,7 +1488,7 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 3
-    n_robots = 2
+    n_robots = 1
     N_s = 13
     Tc = 0.9
     Td = 2.2
@@ -1489,9 +1502,9 @@ if __name__ == '__main__':
     else:
         fname = scriptname[0:-3]+'.log'
 
-#    logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
-#            filemode='w', level=logging.DEBUG)
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
+            filemode='w', level=logging.DEBUG)
+#    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
@@ -1499,9 +1512,9 @@ if __name__ == '__main__':
     print 'OBSTS\n', obst_info
 
 # 6 obst
-#    obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704), ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583), ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166), ([0.098239823982398278, 3.975877587758776], 0.31376637663766377), ([0.62277227722772288, 1.247884788478848], 0.1802030203020302), ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
+    obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704), ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583), ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166), ([0.098239823982398278, 3.975877587758776], 0.31376637663766377), ([0.62277227722772288, 1.247884788478848], 0.1802030203020302), ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
 # 3 obst
-    obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358), ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469), ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
+#    obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358), ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469), ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     kine_models = [UnicycleKineModel(
@@ -1509,13 +1522,13 @@ if __name__ == '__main__':
             [0.,  7., np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-            [1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [1.5,  0.0, np.pi/2.], # q_initial
-            [-1.5, 7.0, np.pi/2.], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max
+#            UnicycleKineModel(
+#            [1.5,  0.0, np.pi/2.], # q_initial
+#            [-1.5, 7.0, np.pi/2.], # q_final
+#            [0.0,  0.0],          # u_initial
+#            [0.0,  0.0],          # u_final
+#            [1.0,  5.0])]          # u_max
 #            UnicycleKineModel(
 #            [-2.4,  0.1, 0.0], # q_initial
 #            [2.6, -1.5, 0.0], # q_final
@@ -1579,7 +1592,9 @@ if __name__ == '__main__':
             def_epsilon=5.0,       # in meters
             safe_epsilon=0.1,      # in meters
             detec_rho=4.0,
-            log_lock=log_lock)]                 # planning horizon (for stand alone plan)
+            log_lock=log_lock,
+            ls_time_opt_scale=1.,
+            dist_opt_offset = 5e1)]                 # planning horizon (for stand alone plan)
 
     [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
     [r.set_option('maxit', 15) for r in robots] # max number of iterations for the opt solver

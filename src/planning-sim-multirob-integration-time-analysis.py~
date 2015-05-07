@@ -469,6 +469,7 @@ class Robot(object):
         # optimization parameters
         self._maxit = 100
         self._ls_maxit = 100
+        self._fs_maxit = 100
         self._acc = 1e-6
 
         # init planning
@@ -490,6 +491,8 @@ class Robot(object):
         self._all_times = []
         self._all_comp_times = []
 
+        self._plan_state = 'fs'
+
         # Instantiating the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self, ))
 
@@ -499,6 +502,8 @@ class Robot(object):
                 self._maxit = value 
             elif name == 'ls_maxit':
                 self._ls_maxit = value
+            elif name == 'fs_maxit':
+                self._fs_maxit = value
             elif name == 'acc':
                 self._acc = value
             else:
@@ -930,7 +935,7 @@ class Robot(object):
 
     def _solve_opt_pbl(self):
 
-        if not self._final_step:
+        if self._plan_state != 'ls':
             if self._std_alone:
                 p_criterion = self._sa_criterion
                 p_eqcons = self._sa_feqcons
@@ -942,7 +947,7 @@ class Robot(object):
 
             init_guess = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
             acc = self._acc
-            maxit = self._maxit
+            maxit = self._fs_maxit if self._plan_state == 'fs' else self._maxit 
 
         else:
             if self._std_alone:
@@ -973,7 +978,7 @@ class Robot(object):
 
             #imode = output[3]
             # TODO handle optimization exit mode
-        if self._final_step:
+        if self._plan_state == 'ls':
             self._C[0:self._n_ctrlpts,:] = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
             self._dt_final = output[0][0]
             self._t_final = self._mtime[0] + self._dt_final
@@ -994,7 +999,7 @@ class Robot(object):
         self._detect_obst()
 
         # first guess for ctrl pts
-        if not self._final_step:
+        if self._plan_state != 'ls':
             # get the direction to target state unit vector
             direc = self._final_z - self._last_z
             direc = direc/LA.norm(direc)
@@ -1047,6 +1052,8 @@ class Robot(object):
                     [np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])
             self._C[self._n_ctrlpts-2,] = minus2_C
 
+            self._plan_state = 'ms'
+
         self._std_alone = True
 
         tic = time.time()
@@ -1064,11 +1071,11 @@ class Robot(object):
         self._log('i', 'R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
                 .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], summ=self._exit_mode, it=self._n_it))
 
-        if self._final_step:
+        if self._plan_state == 'ls':
             self._knots = self._gen_knots(self._mtime[0], self._t_final)
             self._mtime = np.linspace(self._mtime[0], self._t_final, self._N_s)
 
-        time_idx = None if self._final_step else self._Tcd_idx+1
+        time_idx = None if self._plan_state == 'ls' else self._Tcd_idx+1
 
         dz = self._comb_bsp(self._mtime, self._C[0:self._n_ctrlpts,:], 0).T
         for dev in range(1, self.k_mod.l+1):
@@ -1097,7 +1104,7 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if self._conflict_robots_idx != [] and self._final_step == False:
+        if self._conflict_robots_idx != [] and self._ == False:
 
             self._std_alone = False
 
@@ -1119,11 +1126,11 @@ class Robot(object):
             self._log('i', 'R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
                     .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], summ=self._exit_mode, it=self._n_it))
 
-            if self._final_step:
+            if self._plan_state == 'ls':
                 self._knots = self._gen_knots(self._mtime[0], self._t_final)
                 self._mtime = np.linspace(self._mtime[0], self._t_final, self._N_s)
 
-            time_idx = None if self._final_step else self._Tcp_idx+1
+            time_idx = None if self._plan_state == 'ls' else self._Tcp_idx+1
                 
             dz = self._comb_bsp(self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], 0).T
             for dev in range(1, self.k_mod.l+1):
@@ -1158,7 +1165,7 @@ class Robot(object):
             self._conflict_syncer[self.eyed].value = 0
 
 
-        if not self._final_step:
+        if self._plan_state != 'ls':
             if self._std_alone == False:
                 self._knots = self._knots + self._Tcp
                 self._mtime = [tk+self._Tcp for tk in self._mtime]
@@ -1180,7 +1187,7 @@ class Robot(object):
 
         self._log('i', 'R{rid}: Init motion planning'.format(rid=self.eyed))
 
-        self._final_step = False
+        self._plan_state = 'fs'
 
         self._knots = self._gen_knots(self._t_init, self._Td)
         self._mtime = np.linspace(self._t_init, self._Td, self._N_s)
@@ -1213,7 +1220,7 @@ class Robot(object):
             self._plan_section()
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
-        self._final_step = True
+        self._plan_state = 'ls'
         self._est_dtime = LA.norm(self._last_z - self._final_z)/self.k_mod.u_max[0, 0]
 
         self._knots = self._gen_knots(self._mtime[0], self._mtime[0]+self._est_dtime)
@@ -1474,13 +1481,22 @@ def rand_round_obst(no, boundary):
 def parse_cmdline():
     # parsing command line eventual optmization method options
     scriptname = sys.argv[0]
-    method = None
-    if len(sys.argv) > 1:
-        method = str(sys.argv[1])
-    else:
-        method = 'slsqp'
+    Tc = float(sys.argv[1])
+    Tp = float(sys.argv[2])
+    N_s = int(sys.argv[3])
+    n_knots = int(sys.argv[4])
+    acc = float(sys.argv[5])
+    maxit = int(sys.argv[6])
+    fs_maxit = int(sys.argv[7])
+    ls_maxit = int(sys.argv[8])
+    deps = float(sys.argv[9])
+    seps = float(sys.argv[10])
+    drho = float(sys.argv[11])
+    ls_min_dist = float(sys.argv[12])
+    ls_time_opt_scale = float(sys.argv[13])
+    dist_opt_offset = float(sys.argv[14])
 
-    return scriptname, method
+    return scriptname, Tc, Tp, N_s, n_knots, acc, maxit, fs_maxit, ls_maxit, deps, seps, drho, ls_min_dist, ls_time_opt_scale, dist_opt_offset
 
 
 # MAIN ########################################################################
@@ -1488,19 +1504,26 @@ def parse_cmdline():
 if __name__ == '__main__':
 
     n_obsts = 3
-    n_robots = 2
-    N_s = 13
-    Tc = 0.9
-    Td = 2.2
-    Tp = 2.2
-    n_knots = 4
+    n_robots = 1
 
-    scriptname, method = parse_cmdline()
+    scriptname, Tc, Tp, N_s, n_knots, acc, maxit, fs_maxit, ls_maxit, deps, seps, drho, ls_min_dist, ls_time_opt_scale, dist_opt_offset = parse_cmdline()
 
-    if method != None:
-        fname = scriptname[0:-3]+'_'+method+'.log'
-    else:
-        fname = scriptname[0:-3]+'.log'
+    name_id = '_'+str(Tc)+\
+            '_'+str(Tp)+\
+            '_'+str(N_s)+\
+            '_'+str(n_knots)+\
+            '_'+str(acc)+\
+            '_'+str(maxit)+\
+            '_'+str(fs_maxit)+\
+            '_'+str(ls_maxit)+\
+            '_'+str(deps)+\
+            '_'+str(seps)+\
+            '_'+str(drho)+\
+            '_'+str(ls_min_dist)+\
+            '_'+str(ls_time_opt_scale)+\
+            '_'+str(dist_opt_offset)
+
+    fname = '../traces/tableData3/'+scriptname[0:-3]+name_id+'.log'
 
     logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
             filemode='w', level=logging.DEBUG)
@@ -1522,13 +1545,13 @@ if __name__ == '__main__':
             [0.,  7., np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-            [1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [1.5,  0.0, np.pi/2.], # q_initial
-            [-1.5, 7.0, np.pi/2.], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max
+#            UnicycleKineModel(
+#            [1.5,  0.0, np.pi/2.], # q_initial
+#            [-1.5, 7.0, np.pi/2.], # q_final
+#            [0.0,  0.0],          # u_initial
+#            [0.0,  0.0],          # u_final
+#            [1.0,  5.0])]          # u_max
 #            UnicycleKineModel(
 #            [-2.4,  0.1, 0.0], # q_initial
 #            [2.6, -1.5, 0.0], # q_final
@@ -1587,18 +1610,19 @@ if __name__ == '__main__':
             N_s=N_s,                 # numbers samplings for each planning interval
             n_knots=n_knots,              # number of knots for b-spline interpolation
             Tc=Tc,                 # computation time
-            Tp=2.0,                 # planning horizon
-            Td=2.0,
-            def_epsilon=5.0,       # in meters
-            safe_epsilon=0.1,      # in meters
-            detec_rho=4.0,
+            Tp=Tp,                 # planning horizon
+            Td=Tp,
+            def_epsilon=deps,       # in meters
+            safe_epsilon=seps,      # in meters
+            detec_rho=drho,
             log_lock=log_lock,
-            ls_time_opt_scale=1.,
-            dist_opt_offset = 5e1)]                 # planning horizon (for stand alone plan)
+            ls_time_opt_scale = ls_time_opt_scale,
+            dist_opt_offset = dist_opt_offset)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
-    [r.set_option('maxit', 15) for r in robots] # max number of iterations for the opt solver
-    [r.set_option('ls_maxit', 20) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('acc', acc) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('maxit', maxit) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('ls_maxit', ls_maxit) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('fs_maxit', fs_maxit) for r in robots] # max number of iterations for the opt solver
 
     world_sim = WorldSim(Tc, robots, obstacles, boundary) # create the world
 

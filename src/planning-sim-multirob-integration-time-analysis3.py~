@@ -1474,13 +1474,19 @@ def rand_round_obst(no, boundary):
 def parse_cmdline():
     # parsing command line eventual optmization method options
     scriptname = sys.argv[0]
-    method = None
-    if len(sys.argv) > 1:
-        method = str(sys.argv[1])
-    else:
-        method = 'slsqp'
+    Tc = float(sys.argv[1])
+    Tp = float(sys.argv[2])
+    N_s = int(sys.argv[3])
+    n_knots = int(sys.argv[4])
+    acc = float(sys.argv[5])
+    maxit = int(sys.argv[6])
+    ls_maxit = int(sys.argv[7])
+    deps = float(sys.argv[8])
+    seps = float(sys.argv[9])
+    drho = float(sys.argv[9])
+    ls_min_dist = float(sys.argv[9])
 
-    return scriptname, method
+    return scriptname, Tc, Tp, N_s, n_knots, acc, maxit, ls_maxit, deps, seps, drho, ls_min_dist
 
 
 # MAIN ########################################################################
@@ -1489,18 +1495,22 @@ if __name__ == '__main__':
 
     n_obsts = 3
     n_robots = 2
-    N_s = 13
-    Tc = 0.9
-    Td = 2.2
-    Tp = 2.2
-    n_knots = 4
 
-    scriptname, method = parse_cmdline()
+    scriptname, Tc, Tp, N_s, n_knots, acc, maxit, ls_maxit, deps, seps, drho, ls_min_dist = parse_cmdline()
 
-    if method != None:
-        fname = scriptname[0:-3]+'_'+method+'.log'
-    else:
-        fname = scriptname[0:-3]+'.log'
+    name_id = '_'+str(Tc)+\
+            '_'+str(Tp)+\
+            '_'+str(N_s)+\
+            '_'+str(n_knots)+\
+            '_'+str(acc)+\
+            '_'+str(maxit)+\
+            '_'+str(ls_maxit)+\
+            '_'+str(deps)+\
+            '_'+str(seps)+\
+            '_'+str(drho)+\
+            '_'+str(ls_min_dist)
+
+    fname = '../traces/tableData3/'+scriptname[0:-3]+name_id+'.log'
 
     logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
             filemode='w', level=logging.DEBUG)
@@ -1587,18 +1597,18 @@ if __name__ == '__main__':
             N_s=N_s,                 # numbers samplings for each planning interval
             n_knots=n_knots,              # number of knots for b-spline interpolation
             Tc=Tc,                 # computation time
-            Tp=2.0,                 # planning horizon
-            Td=2.0,
-            def_epsilon=5.0,       # in meters
-            safe_epsilon=0.1,      # in meters
-            detec_rho=4.0,
+            Tp=Tp,                 # planning horizon
+            Td=Tp,
+            def_epsilon=deps,       # in meters
+            safe_epsilon=seps,      # in meters
+            detec_rho=drho,
             log_lock=log_lock,
-            ls_time_opt_scale=1.,
-            dist_opt_offset = 5e1)]                 # planning horizon (for stand alone plan)
+            ls_time_opt_scale = ls_time_opt_scale,
+            dist_opt_offset = dist_opt_offset)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
-    [r.set_option('maxit', 15) for r in robots] # max number of iterations for the opt solver
-    [r.set_option('ls_maxit', 20) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('acc', acc) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('maxit', maxit) for r in robots] # max number of iterations for the opt solver
+    [r.set_option('ls_maxit', ls_maxit) for r in robots] # max number of iterations for the opt solver
 
     world_sim = WorldSim(Tc, robots, obstacles, boundary) # create the world
 

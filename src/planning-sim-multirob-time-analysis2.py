@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as si
 import time
 import itertools
-import pyOpt
+#import pyOpt
 import multiprocessing as mpc
 import sys
 import os
@@ -18,44 +18,14 @@ from scipy.optimize import fmin_slsqp
 # Obstacle
 ###############################################################################
 class Obstacle(object):
-    """Class representing an abstract obstacle
-    """
     def __init__(self, position):
-        """Init
-
-        Parameters:
-            position: array-like
-                Obstacle's position
-        """
-        self.centroid = np.array(position)
+        self.centroid = position
 
     def pt2obst(self, pos, offset=0.0):
-        """Calculate point to obstacle distance subtracted by offset's value.
-
-        Parameters:
-            pos: array-like
-                Point coordinates
-            offset: float
-                Value to be subtracted from the point to obstacle distance
-
-        Returns:
-            d: float
-                Point to obstacle distance
-        """
         return LA.norm(np.array(pos)-np.array(self.centroid))-offset
 
     def detection_dist(self, pos):
-        """Calculate the distance of the obstacle as seen by the robot vision
-
-        Parameters:
-            pos: array-like
-                Robot position coordinates
-
-        Returns:
-            d: float
-                Obstacle-robot distance as seen by the robot
-        """
-        return LA.norm(np.array(pos)-np.array(self.centroid))
+        return LA.norm(np.array(self.centroid)-pos)
 
 ###############################################################################
 # RoundObstacle
@@ -245,7 +215,7 @@ class PolygonObstacle(Obstacle):
         
         ax.add_artist(plt.Polygon(self._orig_vertices, color='k', ls='solid', fill=True, alpha=0.3))
         ax.add_artist(plt.Polygon(self._aug_vertices, color='k', ls='dashed', fill=False))
-#        ax.plot(self.x, self.y, 'ko') # plot centroid
+#        ax.plot(self.x, self.y, 'ko')
         return
 
     def pt2obst(self, pos, offset=0.0):
@@ -454,7 +424,7 @@ class Robot(object):
             safe_epsilon=0.1,
             log_lock=None,
             ls_time_opt_scale = 1.,
-            dist_opt_offset = 0.):
+            dist_opt_offset = 1e2):
 
         self.eyed = eyed
         self.k_mod = kine_model
@@ -468,6 +438,7 @@ class Robot(object):
         self.sol = sol
         self.rtime = robots_time
         self.ctime = robots_comp_time
+        self._neigh = neigh
         self._N_s = N_s # no of samples for discretization of time
         self._n_knots = n_knots
         self._t_init = t_init
@@ -604,7 +575,7 @@ class Robot(object):
 
     def _ls_sa_criterion(self, x):
         # Minimize the total time:
-        # * since there is no constraints about the time itself this would be
+        # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
         return self._ls_time_opt_scale*(x[0]+self._mtime[0])**2
@@ -691,7 +662,7 @@ class Robot(object):
 #        cost = LA.norm(qTp - self.k_mod.q_final)
         # TODO
         if cost > 1e5:
-            self._log('d', 'R{}: Big cost value {}'.format(self.eyed, cost))
+            self._log('d', 'R{}: Big problem {}'.format(self.eyed, cost))
         return cost
 
     def _sa_feqcons(self, x):
@@ -753,7 +724,7 @@ class Robot(object):
         # * since there is no constraints about the time it self this would be
         # the same as minimizing only x[0]. However, for numeric reasons we
         # keep the cost far from values too small (~0) and too big (>1e6)
-        return self._ls_time_opt_scale*(x[0]+self._mtime[0])**2
+        return self.ls_time_opt_scale*(x[0]+self._mtime[0])**2
 
     def _ls_co_feqcons(self, x):
         dt_final = x[0]
@@ -828,7 +799,7 @@ class Robot(object):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi1(dz)
 
-        eps = sefl._dist_opt_offset # m
+        eps = self._dist_opt_offset # m
         goal_pt = self.k_mod.q_final[0:-1, :] - self._last_z
         goal_pt = goal_pt/LA.norm(goal_pt) * (self._D+eps)
 #        goal_pt = self.k_mod.q_final[0:-1, :]
@@ -837,7 +808,7 @@ class Robot(object):
 #        cost = LA.norm(qTp - self.k_mod.q_final)
         # TODO
         if cost > 1e5:
-            self._log('d', 'R{}: Big cost value {}'.format(self.eyed, cost))
+            self._log('d', 'R{}: Big problem {}'.format(self.eyed, cost))
         return cost
 
     def _co_feqcons(self, x):
@@ -935,7 +906,7 @@ class Robot(object):
         self._collision_robots_idx = []
         self._com_robots_idx = []
 
-        for i in [j for j in range(n_robots) if j != self.eyed]:
+        for i in [j for j in range(self._n_robots) if j != self.eyed]:
             if self._com_link.done_planning[i] == 1:
                 d_secu = self.rho
                 linspeed_max = self.k_mod.u_max[0, 0]
@@ -949,7 +920,7 @@ class Robot(object):
             if d_ip <= d_secu + linspeed_max*self._Tp:
                 self._collision_robots_idx.append(i)
 
-            if i in neigh: # if the ith robot is a communication neighbor
+            if i in self._neigh: # if the ith robot is a communication neighbor
                 # TODO right side of condition should be min(self._com_range, self._com_link.com_range[i])
                 if d_ip + linspeed_max*self._Tp >= self._com_range:
                     self._com_robots_idx.append(i)
@@ -985,7 +956,7 @@ class Robot(object):
 
             init_guess = np.append(np.asarray([self._est_dtime]),
                     self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
-            acc = sefl._acc
+            acc = 1e-2
             maxit = self._ls_maxit
 
         output = fmin_slsqp(
@@ -1330,20 +1301,28 @@ class WorldSim(object):
             ctime[i] = self._robs[0].ctime[i]
 
         for i in range(len(self._robs)):
+            ctime_len = len(ctime[i])
+            g_max_idx = np.argmax(ctime[i])
             logging.info('R{rid}: TOT: {d}'.format(rid=i, d=rtime[i][-1]))
-            logging.info('R{rid}: NSE: {d}'.format(rid=i, d=len(ctime[i])))
+            logging.info('R{rid}: NSE: {d}'.format(rid=i, d=ctime_len))
             logging.info('R{rid}: FIR: {d}'.format(rid=i, d=ctime[i][0]))
             logging.info('R{rid}: LAS: {d}'.format(rid=i, d=ctime[i][-1]))
-            if len(ctime[i]) > 2:
+            if g_max_idx == ctime_len-1:
+                logging.info('R{rid}: LMA: {d}'.format(rid=i, d=1))
+            else:
+                logging.info('R{rid}: LMA: {d}'.format(rid=i, d=0))
+            if ctime_len > 2:
                 logging.info('R{rid}: MAX: {d}'.format(rid=i, d=max(ctime[i][1:-1])))
                 logging.info('R{rid}: MIN: {d}'.format(rid=i, d=min(ctime[i][1:-1])))
                 logging.info('R{rid}: AVG: {d}'.format(rid=i, d=np.mean(ctime[i][1:-1])))
-                logging.info('R{rid}: RAT: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tc))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tc))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][1:])/self._Tc))
             else:
-                logging.info('R{rid}: MAX: {d}'.format(rid=i, d=max(ctime[i])))
-                logging.info('R{rid}: MIN: {d}'.format(rid=i, d=min(ctime[i])))
-                logging.info('R{rid}: AVG: {d}'.format(rid=i, d=np.mean(ctime[i])))
-                logging.info('R{rid}: RAT: {d}'.format(rid=i, d=max(ctime[i])/self._Tc))
+                logging.info('R{rid}: MAX: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: MIN: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: AVG: {d}'.format(rid=i, d=ctime[i][-1]))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=ctime[i][-1]/self._Tc))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][-1])/self._Tc))
 
         # PLOT ###############################################################
 
@@ -1352,19 +1331,19 @@ class WorldSim(object):
         # Interactive plot
         plt.ion()
 
-        fig = plt.figure()
-        ax = fig.gca()
-        ax.set_xlabel('x(m)')
-        ax.set_ylabel('y(m)')
-        ax.set_title('Generated trajectory')
-        ax.axis('equal')
-
         fig_s, axarray = plt.subplots(2)
         axarray[0].set_ylabel('v(m/s)')
         axarray[0].set_title('Linear speed')
         axarray[1].set_xlabel('time(s)')
         axarray[1].set_ylabel('w(rad/s)')
         axarray[1].set_title('Angular speed')
+
+        fig = plt.figure()
+        ax = fig.gca()
+        ax.set_xlabel('x(m)')
+        ax.set_ylabel('y(m)')
+        ax.set_title('Generated trajectory')
+        ax.axis('equal')
 
         aux = np.linspace(0.0, 1.0, 1e2)
         colors = [[i, 1.0-i, np.random.choice(aux)] for i in np.linspace(0.0, 1.0, len(self._robs))]
@@ -1399,6 +1378,7 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
+            # BUG TODO
             # Crashes for initial robot position = (0,0)
 #            for i in range(1, 10):
 #                fig.savefig('../traces/pngs/multirobot-path-'+str(i)+'.png')
@@ -1460,6 +1440,7 @@ class WorldSim(object):
 
         return
 
+###############################################################################
 ###############################################################################
 # Script
 ###############################################################################
