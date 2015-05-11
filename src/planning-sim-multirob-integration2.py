@@ -1574,8 +1574,8 @@ def parse_cmdline():
 
 if __name__ == '__main__':
 
-    n_robots = 1
-    n_obsts = 3
+    n_robots = 2
+    n_obsts = 2
     Tc = 0.5
     Tp = 2.0
     Td = 2.0
@@ -1632,7 +1632,8 @@ if __name__ == '__main__':
 #        obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),
 #                ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),
 #                ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
-        obst_info = [([0.6, 3.0], 0.35), ([6, 1.0], 0.4)]
+        obst_info = [([0.0, 1.6], 0.3), 
+                ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
     # 6 obsts
     elif n_obsts == 6:
         obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
@@ -1649,19 +1650,19 @@ if __name__ == '__main__':
                 ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
 
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
+#    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
     kine_models = [UnicycleKineModel(
             [-0.4, 0., np.pi/2.], # q_initial
-            [-1.4,  5.0, np.pi/2.], # q_final
+            [0.4,  5.0, np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-#            [1.0,  5.0]),          # u_max
-#            UnicycleKineModel(
-#            [0.4,  0., np.pi/2.], # q_initial
-#            [-0.4, 5.0, np.pi/2.], # q_final
-#            [0.0,  0.0],          # u_initial
-#            [0.0,  0.0],          # u_final
+            [1.0,  5.0]),          # u_max
+            UnicycleKineModel(
+            [0.4,  0., np.pi/2.], # q_initial
+            [-0.4, 5.0, np.pi/2.], # q_final
+            [0.0,  0.0],          # u_initial
+            [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max
 #            UnicycleKineModel(
 #            [-2.4,  0.1, 0.0], # q_initial

@@ -10,18 +10,115 @@ direc = "./"
 
 table = []
 header = []
-with open('table.csv', 'rb') as csvfile:
+with open('../traces/temp/table.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]
     table = np.array(tlist[1:])
 
-tci = header.index('Tc')
+nkni = header.index('Nkn')
+nobsti = header.index('Nobsts')
+nsi = header.index('Ns')
 tpi = header.index('Tp')
-rati = header.index('RAT')
+tci = header.index('Tc')
+lmai = header.index('LMA')
+rmgi = header.index('RMG')
 toti = header.index('TOT')
+lmai = header.index('LMA')
 
 #table = table[np.where(table[:,rati] < 6.0)]
+
+fig = []
+plt.hold(True)
+
+# Get how many different scenarios there are and how many obstacles each one has
+n_scenarios = 1
+all_nobsts = [table[0, nobsti]]
+for v in table[1:, nobsti]:
+    if v not in all_nobsts:
+        all_nobsts += [v]
+        n_scenarios += 1
+
+# split table on n_scenarios tables
+print table.shape
+#print all_nobsts
+scenarios_tables = []
+for nobst in all_nobsts:
+    scenarios_tables += [np.squeeze(table[np.where(table[:,nobsti] == nobst),:])]
+
+for scnt in scenarios_tables:
+    # Get how many different n_knots there are and their values
+    all_nknots = [scnt[0, nkni]]
+    for v in scnt[1:, nkni]:
+        if v not in all_nknots:
+            all_nknots += [v]
+            v_aux = v
+    n_knots = len(all_nknots)
+
+    # split table on n_knots tables
+    knots_tables = []
+    for nkn in all_nknots:
+        knots_tables += [np.squeeze(scnt[np.where(scnt[:,nkni] == nkn),:])]
+
+    print len(knots_tables)
+    print knots_tables[0].shape
+
+    for knt in knots_tables:
+        # Get how many different Ns there are and their values
+        all_Ns = [knt[0, nsi]]
+        for v in knt[1:, nsi]:
+            if v not in all_Ns:
+                all_Ns += [v]
+        n_Ns = len(all_Ns)
+
+        # split table on Ns tables
+        ns_tables = []
+        for ns in all_Ns:
+            ns_tables += [np.squeeze(knt[np.where(knt[:,nsi] == ns),:])]
+#        print 'all NS ', all_Ns
+#        print 'nstables len ', len(ns_tables)
+#        print 'nstables 0 shape ', ns_tables[0].shape
+
+        fig += [plt.figure()]
+        fidx = len(fig) - 1
+        ax = fig[fidx].gca()
+
+        for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
+            colors = plt.get_cmap('jet')([int(round(v)) for v in np.linspace(0, 255, len(ns_tables))])
+
+            print 'nst shape ', nst.shape
+
+            all_tp = [nst[0, tpi]]
+            for v in nst[1:, tpi]:
+                if v not in all_tp:
+                    all_tp += [v]
+            n_Tp = len(all_tp)
+#            print all_tp
+            
+            n_Tc = list(nst[:,tpi]).count(nst[-1,tpi]) #final tp is the one that has more tcs
+
+            rmg = np.zeros(n_Tc)
+            aux_tp = nst[0,tpi]
+            idxs = list(np.where(nst[:,tpi] == aux_tp)[0])
+            new_tctp_interv = np.linspace(nst[0,tci]/nst[0,tpi], nst[idxs[-1],tci]/nst[idxs[-1],tpi], n_Tc)
+
+#            print new_tctp_interv
+
+            for v, idx in zip(all_tp, range(len(all_tp))):
+#                print 'v ', v
+#                print 'nst : tpi ', nst[:,tpi]
+                idxs = list(np.where(nst[:,tpi] == v)[0])
+#                print 'dims ', nst[idxs,tci].shape, n_Tc
+                f = interp1d(np.divide(nst[idxs,tci],nst[idxs,tpi]), nst[idxs,rmgi], kind='cubic')
+                new_rmg = f(new_tctp_interv)
+                rmg += new_rmg
+
+            rmg /= len(all_tp)
+            
+            ax.plot(new_tctp_interv, rmg, color=colors[nsidx])
+plt.show()
+
+raw_input()
 
 nTp = 1
 v_aux = table[0,1]
@@ -51,7 +148,8 @@ for v, idx in zip(tpv, range(len(tpv))):
         ax2d.text(table[i,tci]/table[i,tpi], table[i,rati], '{0:.1f}'.format(table[i,toti],1))
 ax2d.plot([0.1, 0.9], [1.0]*2, label='real_max_Tc == Tc',ls='--',color='k')
 ax2d.plot([0.5]*2, [0.0,10], label='Tc/Tp == 0.5',ls='--',color='k')
-xy = np.array([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])
+
+xy = np.ar1ray([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])
 good_zone = plt.Polygon(xy, color='b',fill=True,alpha=0.2)
 ax2d.add_artist(good_zone)
 ax2d.set_ylim(0.0,5.0)
@@ -61,6 +159,8 @@ ax2d.set_ylabel('real_max_Tc/Tc')
 ax2d.set_title('Tc/Tp and real_max_Tc relation')
 handles, labels = ax2d.get_legend_handles_labels()
 plt.legend(handles, labels)
+
+# PLOT 3D
 
 table = table[np.where(table[:,rati] < 28.0)]
 table = table[np.where(table[:,tpi] < 6.0)]
