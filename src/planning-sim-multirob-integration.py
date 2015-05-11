@@ -424,7 +424,8 @@ class Robot(object):
             safe_epsilon=0.1,
             log_lock=None,
             ls_time_opt_scale = 1.,
-            dist_opt_offset = 1e2):
+            dist_opt_offset = 1e2,
+            ls_min_dist = 0.5):
 
         self.eyed = eyed
         self.k_mod = kine_model
@@ -454,6 +455,7 @@ class Robot(object):
         self._log_lock = log_lock
         self._ls_time_opt_scale = ls_time_opt_scale
         self._dist_opt_offset = dist_opt_offset
+        self._ls_min_dist = ls_min_dist
 
         # get number of robots      
         self._n_robots = len(conflict_syncer)
@@ -1055,13 +1057,13 @@ class Robot(object):
 
         # No need to sync process here, the intended path does impact the conflicts computation
 
-        self._log('i', 'R{rid}@tkref={tk}: Time to solve stand alone optimisation '
+        self._log('i', 'R{rid}@tkref={tk:.4f}: Time to solve stand alone optimisation '
                 'problem: {t}'.format(rid=self.eyed, t=toc-tic, tk=self._mtime[0]))
-        self._log('i', 'R{rid}@tkref={tk}: N of unsatisfied eq: {ne}'\
+        self._log('i', 'R{rid}@tkref={tk:.4f}: N of unsatisfied eq: {ne}'\
                 .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], ne=len(self._unsatisf_eq_values)))
-        self._log('i', 'R{rid}@tkref={tk}: N of unsatisfied ieq: {ne}'\
+        self._log('i', 'R{rid}@tkref={tk:.4f}: N of unsatisfied ieq: {ne}'\
                 .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], ne=len(self._unsatisf_ieq_values)))
-        self._log('i', 'R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
+        self._log('i', 'R{rid}@tkref={tk:.4f}: Summary: {summ} after {it} it.'\
                 .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], summ=self._exit_mode, it=self._n_it))
 
         if self._final_step:
@@ -1081,7 +1083,7 @@ class Robot(object):
             self._com_link.intended_path_y[self.eyed][i] = dz[1, i]
 
         self._compute_conflicts()
-        self._log('d', 'R{0}@tkref={1}: $$$$$$$$ CONFLICT LIST $$$$$$$$: {2}'
+        self._log('d', 'R{0}@tkref={1:.4f}: $$$$$$$$ CONFLICT LIST $$$$$$$$: {2}'
                 .format(self.eyed, self._mtime[0], self._conflict_robots_idx))
 
         # Sync with every robot on the conflict list
@@ -1110,13 +1112,13 @@ class Robot(object):
             self._solve_opt_pbl()
             toc = time.time()
 
-            self._log('i', 'R{rid}@tkref={tk}: Time to solve optimisation probl'
+            self._log('i', 'R{rid}@tkref={tk:.4f}: Time to solve optimisation probl'
                     'em: {t}'.format(rid=self.eyed, t=toc-tic, tk=self._mtime[0]))
-            self._log('i', 'R{rid}@tkref={tk}: N of unsatisfied eq: {ne}'\
+            self._log('i', 'R{rid}@tkref={tk:.4f}: N of unsatisfied eq: {ne}'\
                     .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], ne=len(self._unsatisf_eq_values)))
-            self._log('i', 'R{rid}@tkref={tk}: N of unsatisfied ieq: {ne}'\
+            self._log('i', 'R{rid}@tkref={tk:.4f}: N of unsatisfied ieq: {ne}'\
                     .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], ne=len(self._unsatisf_ieq_values)))
-            self._log('i', 'R{rid}@tkref={tk}: Summary: {summ} after {it} it.'\
+            self._log('i', 'R{rid}@tkref={tk:.4f}: Summary: {summ} after {it} it.'\
                     .format(rid=self.eyed, t=toc-tic, tk=self._mtime[0], summ=self._exit_mode, it=self._n_it))
 
             if self._final_step:
@@ -1188,23 +1190,22 @@ class Robot(object):
         # while the remaining dist is greater than the max dist during Tp
 #        while LA.norm(self._last_z - self._final_z) > self._D:
 
-        ls_min_dist = 0.5
         while True:
             remaining_dist = LA.norm(self._last_z - self._final_z)
 #            if remaining_dist < self._D:
 #                break
-#            elif remaining_dist < ls_min_dist + self._Tc*self.k_mod.u_max[0,0] and False:
-            if remaining_dist < ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
+#            elif remaining_dist < self._ls_min_dist + self._Tc*self.k_mod.u_max[0,0] and False:
+            if remaining_dist < self._ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
                 self._log('d', 'LAST STEP')
                 self._log('d', 'Remaining dist: {}'.format(remaining_dist))
-                self._log('d', 'last step min dist: {}'.format(ls_min_dist))
+                self._log('d', 'last step min dist: {}'.format(self._ls_min_dist))
                 self._log('d', 'self Tc: {}'.format(self._Tc))
                 self._log('d', 'self D: {}'.format(self._D))
                 scale_factor = remaining_dist/self.k_mod.u_max[0,0]/self._Td
                 self._n_knots = max(int(round(self._n_knots*scale_factor)),3)
 #                self._n_knots = 3
                 self._n_ctrlpts = self._n_knots + self._d - 1 # nb of ctrl points
-                self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts)
+                self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts+1)
 #                self._N_s = 10
                 self._log('i', 'R{0}: scale {1} Ns {2:d} Nk {3:d}'.format(self.eyed,
                         scale_factor, self._N_s, self._n_knots))
@@ -1248,10 +1249,10 @@ class WorldSim(object):
     """ Where to instatiate obstacles, robots, bonderies
         initial and final conditions etc
     """
-    def __init__(self, Tc, robots, obstacles, phy_boundary):
+    def __init__(self, robots, obstacles, phy_boundary):
         self._robs = robots
         self._obsts = obstacles
-        self._Tc = Tc
+        self._Tc = robots[0]._Tc
         self._ph_bound = phy_boundary
 
     def run(self, interac_plot=False, speed_plot=False):
@@ -1489,10 +1490,10 @@ if __name__ == '__main__':
 
     n_obsts = 3
     n_robots = 1
-    N_s = 13
-    Tc = 0.9
-    Td = 2.2
-    Tp = 2.2
+    N_s = 14
+    Tc = 0.2
+    Td = 2.0
+    Tp = 2.0
     n_knots = 4
 
     scriptname, method = parse_cmdline()
@@ -1502,9 +1503,9 @@ if __name__ == '__main__':
     else:
         fname = scriptname[0:-3]+'.log'
 
-    logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
-            filemode='w', level=logging.DEBUG)
-#    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+#    logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
+#            filemode='w', level=logging.DEBUG)
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
     boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
@@ -1512,9 +1513,9 @@ if __name__ == '__main__':
     print 'OBSTS\n', obst_info
 
 # 6 obst
-    obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704), ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583), ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166), ([0.098239823982398278, 3.975877587758776], 0.31376637663766377), ([0.62277227722772288, 1.247884788478848], 0.1802030203020302), ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
+#    obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704), ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583), ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166), ([0.098239823982398278, 3.975877587758776], 0.31376637663766377), ([0.62277227722772288, 1.247884788478848], 0.1802030203020302), ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
 # 3 obst
-#    obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358), ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469), ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
+    obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358), ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469), ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     kine_models = [UnicycleKineModel(
@@ -1589,18 +1590,18 @@ if __name__ == '__main__':
             Tc=Tc,                 # computation time
             Tp=2.0,                 # planning horizon
             Td=2.0,
-            def_epsilon=5.0,       # in meters
+            def_epsilon=1.0,       # in meters
             safe_epsilon=0.1,      # in meters
-            detec_rho=4.0,
+            detec_rho=3.0,
             log_lock=log_lock,
             ls_time_opt_scale=1.,
             dist_opt_offset = 5e1)]                 # planning horizon (for stand alone plan)
 
-    [r.set_option('acc', 1e-4) for r in robots] # accuracy (hard to understand the physical meaning of this)
+    [r.set_option('acc', 1e-3) for r in robots] # accuracy (hard to understand the physical meaning of this)
     [r.set_option('maxit', 15) for r in robots] # max number of iterations for the opt solver
     [r.set_option('ls_maxit', 20) for r in robots] # max number of iterations for the opt solver
 
-    world_sim = WorldSim(Tc, robots, obstacles, boundary) # create the world
+    world_sim = WorldSim(robots, obstacles, boundary) # create the world
 
     summary_info = world_sim.run(interac_plot=False, speed_plot=True) # run simulation (TODO take parameters out)
 
