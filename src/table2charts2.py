@@ -2,6 +2,7 @@ import csv
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import os
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.interpolate import interp1d
@@ -10,7 +11,7 @@ direc = "./"
 
 table = []
 header = []
-with open('../traces/temp/table.csv', 'rb') as csvfile:
+with open('../traces/temp/table_complete.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]
@@ -30,6 +31,10 @@ lmai = header.index('LMA')
 
 fig = []
 plt.hold(True)
+
+# define goodzone
+xy = np.array([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])
+good_zone = plt.Polygon(xy, color='b',fill=True,alpha=0.2)
 
 # Get how many different scenarios there are and how many obstacles each one has
 n_scenarios = 1
@@ -79,24 +84,23 @@ for scnt in scenarios_tables:
 #        print 'nstables len ', len(ns_tables)
 #        print 'nstables 0 shape ', ns_tables[0].shape
 
-        fig += [plt.figure()]
-        fidx = len(fig) - 1
-        print fidx
-        ax = fig[fidx].gca()
-
+        direc = '../traces/temp/charts/Scenario_{a:.0f}__N_knots_{b:.0f}/'.format(b=knt[0,nkni], a=scnt[0,nobsti])
+        os.mkdir(direc)
         for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
-            colors = plt.get_cmap('jet')([int(round(v)) for v in np.linspace(0, 255, len(ns_tables))])
-
 #            print 'nst shape ', nst.shape
+            fig += [plt.figure()]
+            fidx = len(fig) - 1
+            ax = fig[fidx].gca()
 
             all_tp = [nst[0, tpi]]
             for v in nst[1:, tpi]:
                 if v not in all_tp:
                     all_tp += [v]
+            all_tp.sort()
             n_Tp = len(all_tp)
-#            print all_tp
-            
-            n_Tc = list(nst[:,tpi]).count(nst[-1,tpi]) #final tp is the one that has more tcs
+
+            aux_tpi_column = sorted(nst[:,tpi])
+            n_Tc = list(aux_tpi_column).count(aux_tpi_column[-1]) #greater tp is the one that has more tcs
 
             rmg = np.zeros(n_Tc)
             aux_tp = nst[0,tpi]
@@ -104,62 +108,43 @@ for scnt in scenarios_tables:
             new_tctp_interv = np.linspace(nst[0,tci]/nst[0,tpi], nst[idxs[-1],tci]/nst[idxs[-1],tpi], n_Tc)
 
 #            print new_tctp_interv
+            for v, idx in zip(all_tp, range(n_Tp)):
+                colors = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Tp)])
 
-            for v, idx in zip(all_tp, range(len(all_tp))):
 #                print 'v ', v
 #                print 'nst : tpi ', nst[:,tpi]
                 idxs = list(np.where(nst[:,tpi] == v)[0])
 #                print 'dims ', nst[idxs,tci].shape, n_Tc
-                f = interp1d(np.divide(nst[idxs,tci],nst[idxs,tpi]), nst[idxs,rmgi], kind='cubic')
-                new_rmg = f(new_tctp_interv)
-                rmg += new_rmg
+                x = np.divide(nst[idxs,tci],nst[idxs,tpi])
+                sort_idxs = x.argsort()
+                x = x[sort_idxs]
+                y = nst[idxs,rmgi]
+                y = y[sort_idxs]
+#                f = interp1d(x, y, kind='cubic')
+#                f = interp1d(x, y, assume_sorted=True, bounds_error=False)
+#                new_rmg = f(new_tctp_interv)
+#                rmg += new_rmg
+                ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx])
 
-            rmg /= len(all_tp)
+#            rmg /= len(all_tp)
+            ax.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
+            ax.plot([0.5]*2, [0.0,5.0], ls='--',color='k')
+#            ax.set_ylim(0.0,.0)
+            ax.set_xlim(0.2,0.8)
+#            ax.add_artist(good_zone)
+            ax.set_xlabel('Tc/Tp')
+            ax.set_ylabel('real_max_Tc/Tc')
+            ax.set_title('Tc/Tp and real_max_Tc relation for Ns = {:.0f}, N_knots = {:.0f}, Scenario = {:.0f}'.format(nst[0,nsi], knt[0,nkni], scnt[0,nobsti]))
+            handles, labels = ax.get_legend_handles_labels()
+            plt.legend(handles, labels)
+            fig[fidx].set_size_inches(1.5*18.5/2.54,1.5*10.5/2.54)
+            fig[fidx].savefig(direc+'c{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            fig[fidx].savefig(direc+'c{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
             
-            ax.plot(new_tctp_interv, rmg, color=colors[nsidx])
-plt.show()
+            
+#plt.show()
 
-raw_input()
-
-nTp = 1
-v_aux = table[0,1]
-all_tp = [v_aux]
-for v in table[1:,1]:
-    if v != v_aux:
-        all_tp += [v] 
-        v_aux = v
-        nTp += 1
-nTc = list(table[:,tpi]).count(table[-1,tpi])
-
-fig_2d = plt.figure()
-ax2d = fig_2d.gca()
-#tpv = [v for v in all_tp if v >1.5 and v<3.5]
-tpv = np.linspace(1.4,5.8,int(round((5.8-1.4)/0.3)))
-tpv = [round(v,1) for v in tpv]
-
-#print [int(round(v)) for v in np.linspace(0, 255, len(tpv))]
-colors = plt.get_cmap('jet')([int(round(v)) for v in np.linspace(0, 255, len(tpv))])
-
-for v, idx in zip(tpv, range(len(tpv))):
-    idxs = list(np.where(table[:,tpi] == v)[0])
-    line, = ax2d.plot(np.divide(table[idxs,tci],
-            table[idxs,tpi]), table[idxs,rati],
-            label='Tp = {}'.format(v),linewidth=2,color=colors[idx])
-    for i in idxs[::4]:
-        ax2d.text(table[i,tci]/table[i,tpi], table[i,rati], '{0:.1f}'.format(table[i,toti],1))
-ax2d.plot([0.1, 0.9], [1.0]*2, label='real_max_Tc == Tc',ls='--',color='k')
-ax2d.plot([0.5]*2, [0.0,10], label='Tc/Tp == 0.5',ls='--',color='k')
-
-xy = np.ar1ray([[0.1, 0.0], [0.5, 0.0], [0.5, 1.0], [0.1, 1.0]])
-good_zone = plt.Polygon(xy, color='b',fill=True,alpha=0.2)
-ax2d.add_artist(good_zone)
-ax2d.set_ylim(0.0,5.0)
-ax2d.set_xlim(0.1,0.9)
-ax2d.set_xlabel('Tc/Tp')
-ax2d.set_ylabel('real_max_Tc/Tc')
-ax2d.set_title('Tc/Tp and real_max_Tc relation')
-handles, labels = ax2d.get_legend_handles_labels()
-plt.legend(handles, labels)
+raw_input('Kill me')
 
 # PLOT 3D
 

@@ -1,6 +1,3 @@
-*.swo
-*.swp
-*~
 pyopt
 workingsession.vim
 traces/*
@@ -14,3 +11,6 @@ traces/tableData2/pngs/*/
 !traces/temp/*/
 !traces/temp/pngs/*
 !traces/temp/pngs/*
+*.swo
+*.swp
+*~
