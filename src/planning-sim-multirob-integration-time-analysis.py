@@ -1279,13 +1279,14 @@ class Robot(object):
 #            if remaining_dist < self._D:
 #                break
 #            elif remaining_dist < self._ls_min_dist + self._Tc*self.k_mod.u_max[0,0] and False:
-            if remaining_dist < self._ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
+            ls_min_dist = min(self._ls_min_dist, self.k_mod.u_max[0,0]*(self._Td-self._Tp))
+            if remaining_dist < ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
                 self._log('d', 'R{0}: LAST STEP'.format(self.eyed))
                 self._log('d', 'R{0}: Approx remaining dist: {1}'.format(self.eyed, remaining_dist))
                 self._log('d', 'R{0}: Usual approx plan dist: {1}'.format(self.eyed, self._D))
                 self._log('d', 'R{0}: Approx gain in dist: {1}'.format(self.eyed, self._D-remaining_dist))
-                self._log('d', 'R{0}: Last step min dist: {1}'.format(self.eyed, self._ls_min_dist))
-                scale_factor = remaining_dist/self.k_mod.u_max[0,0]/self._Td
+                self._log('d', 'R{0}: Last step min dist: {1}'.format(self.eyed, ls_min_dist))
+                scale_factor = min(1., remaining_dist/self.k_mod.u_max[0,0]/self._Td)
                 self._n_knots = max(int(round(self._n_knots*scale_factor)), self._d-1)
                 self._n_ctrlpts = self._n_knots + self._d - 1 # nb of ctrl points
                 self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts+1)

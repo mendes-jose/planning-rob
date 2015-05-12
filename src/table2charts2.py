@@ -60,8 +60,8 @@ for scnt in scenarios_tables:
     for nkn in all_nknots:
         knots_tables += [np.squeeze(scnt[np.where(scnt[:,nkni] == nkn),:])]
 
-    print len(knots_tables)
-    print knots_tables[0].shape
+#    print len(knots_tables)
+#    print knots_tables[0].shape
 
     for knt in knots_tables:
         # Get how many different Ns there are and their values
@@ -81,12 +81,13 @@ for scnt in scenarios_tables:
 
         fig += [plt.figure()]
         fidx = len(fig) - 1
+        print fidx
         ax = fig[fidx].gca()
 
         for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
             colors = plt.get_cmap('jet')([int(round(v)) for v in np.linspace(0, 255, len(ns_tables))])
 
-            print 'nst shape ', nst.shape
+#            print 'nst shape ', nst.shape
 
             all_tp = [nst[0, tpi]]
             for v in nst[1:, tpi]:
