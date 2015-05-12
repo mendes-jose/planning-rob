@@ -57,15 +57,15 @@ under the following constraints $\forall k \in \{0,\dotsc,N_s -1\}$:
 \end{array}\right.
 \end{equation}
 
-\paragraph{Practical stuff for implementation}
+% \paragraph{Practical stuff for implementation}
+% 
+% $q \in \R^n$ and $u \in \R^m$. $N_s$ number of time steps used when computing the problem.
+% 
+% Number of equations: $2n + 2m$
+% 
+% Number of inequations: $N_s(m+\mathrm{card}(\mathcal{Q}_{occupied}))$
 
-$q \in \R^n$ and $u \in \R^m$. $N_s$ number of time steps used when computing the problem.
-
-Number of equations: $2n + 2m$
-
-Number of inequations: $N_s(m+\mathrm{card}(\mathcal{Q}_{occupied}))$
-
-\paragraph{OPTIMIZERS}\footnote{CFSQP, SNOPT, NLPQL and FSQP are licensed} CFSQP is the name of the solver used by Defoort.
+% \paragraph{OPTIMIZERS}\footnote{CFSQP, SNOPT, NLPQL and FSQP are licensed} CFSQP is the name of the solver used by Defoort.
 
 % \paragraph{SCIPY} Constrained minimization
 
@@ -113,14 +113,14 @@ The function $\varphi_3$ is as follows:
 \end{array}
 \]
 
-\item Error over max value
-\item change ACC according to the max speed
+% \item Error over max value
+% \item change ACC according to the max speed
 
-Kludge to reach convergence was decreasing accuracy (increasing the value of the ACC option).
-
-ACC equals to $0.5e-2$ works but seems really bad since the default value used on all algorithms based on the Dieter Kraft implementation in FORTRAN use $1e-6$.
-
-In my opinion, this suggests an error on my optimization problem definition or it could be the simple fact that with so many constraints (over 700 constraints) it is hard to a have a high accuracy "at the same time"
+% Kludge to reach convergence was decreasing accuracy (increasing the value of the ACC option).
+% 
+% ACC equals to $0.5e-2$ works but seems really bad since the default value used on all algorithms based on the Dieter Kraft implementation in FORTRAN use $1e-6$.
+% 
+% In my opinion, this suggests an error on my optimization problem definition or it could be the simple fact that with so many constraints (over 700 constraints) it is hard to a have a high accuracy "at the same time"
 
 \item Remake code using good objected oriented structure. It will be good for C++ part (\textcolor{red}{DONE})
 
@@ -179,31 +179,45 @@ sudo python setup.py install
 
 \subsection{The obstacles}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=.7\textwidth]{./img/obstacles-no-title.png}
-	\caption{Obstacle representation.\label{fig:obstacles}}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=.7\textwidth]{./img/obstacles-no-title.png}
+% 	\caption{Obstacle representation.\label{fig:obstacles}}
+% \end{figure}
 
 Two different representations of an obstacle are supported. Obstacles can be seen as circles or convex polygons.
 
-Representing an obstacle as a circle is probably the most simple way of doing so and has great advantages when calculating point to obstacle distance compared to other representations.
+Representing an obstacle as a circle is probably the most simple way of doing so and has great advantages when
+calculating point-to-obstacle distance compared to other representations.
 
-Nevertheless, obstacles such as walls, boxes and shelves cannot be satisfactorily represented by circles. Thus the need of a polygon representation.
+Nevertheless, obstacles such as walls, boxes and shelves cannot be satisfactorily represented by circles.
+Thus the need of a polygon representation.
 
 \subsubsection{Round Obstacles}
 
+
+
 \subsubsection{Convex Polygon Obstacles}
 
-\paragraph{Point to obstacle distance}
+\paragraph{Point-to-obstacle distance}
 
-The first naive approach to calculate the distance between a point and an obstacle represented by a convex polygon was to separate the problem in three cases with a different expression for the distance computation each. We see in the figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ are placed in three different zones with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through the vertex $0$ and are orthogonal to the the two adjacent edges. $B$ is "between" the edge $s_{3}$, and the orthogonal lines $r_{0,3}$ and $r_{3,2}$. $C$ is in the interior of the obstacle representation, i.e., surrounded by the four edges.
+The first naive approach to calculate the distance between a point and an obstacle represented by a convex polygon
+was to separate the problem in three cases with a different expression for the distance computation each.
+We see in the figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ are placed in three different
+zones with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through
+the vertex $0$ and are orthogonal to the the two adjacent edges. $B$ is "between" the edge $s_{3}$, and the
+orthogonal lines $r_{0,3}$ and $r_{3,2}$. $C$ is in the interior of the obstacle representation, i.e., surrounded by the four edges.
 
-It is easy to see that the computation of the point to obstacle distance for $A$ is a simple point to point distance using the appropriate vertex. For $B$ a point to line distance equation can be used. Finally, since $C$ is in the interior of the polygon its distance is considered as the shortest of the four distances from the point $C$ to the four edges multiplied by $-1$ (so, once more, point to line distance).
+It is easy to see that the computation of the point-to-obstacle distance for $A$ is a simple point-to-point distance
+using the appropriate vertex. For $B$ a point-to-line distance equation can be used. Finally, since $C$ is in the
+interior of the polygon its distance is considered as the shortest of the four distances from the point $C$ to the
+four edges multiplied by $-1$ (so, once more, point-to-line distance).
 
-Of course that the performance of this approach is "number of edges"-dependent and present fast results only or polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful value or delete it}
+Of course that the performance of this approach is "number of edges"-dependent and present fast results only or 
+polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful
+value or delete it}
 
-Gilbert-Johnson-Keerthi distance algorithm
+Gilbert-Johnson-Keerthi distance algorithm search Google code written in D language and/or the other one on stackverflow.
 
 \begin{figure}[!h]
 \centering
@@ -218,44 +232,6 @@ cube_hidden/.style={very thick,dashed},
 polygon/.style={very thick, black},
 axis/.style={-,blue,thick},
 point/.style={very thick,black}]
-	
-%draw a grid in the x-y plane 	
-% \foreach \x in {-0.5,0,...,3.0} 		
-% \foreach \y in {-0.5,0,...,3.0}
-% { 			
-% \draw[grid] (\x,-0.5) -- (\x,3.0); 			
-% \draw[grid] (-0.5,\y) -- (3.0,\y); 		
-% }
-
-%draw the XYZ axes 	
-% \draw[axis,red] (3.0,3.0,0) -- (3.5,3.0,0) node[anchor=west,color=red]{$x$}; 	
-% \draw[axis,red] (3.0,3.0,0) -- (3.0,3.5,0) node[anchor=west,color=red]{$y$}; 	
-% \draw[axis,red] (3.0,3.0,0) -- (3.0,3.0,0.5) node[anchor=west,color=red]{$z$};
-
-%draw the ABC axes 	
-% \draw[axis] (0,0,0) -- (3,0,0) node[anchor=west]{$a$}; 	
-% \draw[axis] (0,0,0) -- (0,3,0) node[anchor=west]{$b$}; 	
-% \draw[axis] (0,0,0) -- (0,0,3) node[anchor=west]{$c$};
-
-%draw the front of the cube 
-% \draw[cube,fill=gray!100] (2,0,0) -- (2,2,0) -- (2,2,2) -- (2,0,2) -- cycle;
-
-%draw the front-left of the cube 
-%\draw[cube,fill=gray!20] (0,2,0) -- (2,2,0) -- (2,2,2) -- (0,2,2) -- cycle;
-
-%draw the top of the cube
-%\draw[cube,fill=gray!60] (0,0,2) -- (0,2,2) -- (2,2,2) -- (2,0,2) -- cycle; 
-
-%draw dashed lines to represent hidden edges 	
-%\draw[cube_hidden] (0,0,0) -- (2,0,0); 	
-%\draw[cube_hidden] (0,0,0) -- (0,2,0); 	
-%\draw[cube_hidden] (0,0,0) -- (0,0,2);
-
-%draw the polygon
-% \draw[axis,red] (-1.,2.,0) -- (2.,-1.,0) node[anchor=north,color=red]{$s_0$};
-% \draw[axis,red] (0.,0.,0) -- (5.,0.,0) node[anchor=west,color=red]{$s_1$};
-% \draw[axis,red] (2.75,-.5,0) -- (4.5,3.,0) node[anchor=west,color=red]{$s_2$};
-% \draw[axis,red] (5.,2.25,0) -- (-1.,.75,0) node[anchor=east,color=red]{$s_3$};
 
 \draw[axis] (-.25,2.,0) -- (.5,-1.,0) node[anchor=west,color=blue]{$r_{0,3}$};
 \draw[axis] (-1.,0.,0) -- (1.,2.,0) node[anchor=west,color=blue]{$r_{0,1}$};
