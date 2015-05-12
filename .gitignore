@@ -12,11 +12,10 @@ traces/tableData2/pngs/*/
 !traces/temp/pngs/*
 !traces/temp/pngs/*
 pfe-writtenreport/*
-!pfe-writtenreport/img/
-!pfe-writtenreport/img/*
-!pfe-writtenreport/img/*/
 !pfe-writtenreport/*.tex
 !pfe-writtenreport/*.bib
+!pfe-writtenreport/img/*
+!pfe-writtenreport/img/*/
 *.swo
 *.swp
 *~
