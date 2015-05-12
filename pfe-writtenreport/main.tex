@@ -1,0 +1,181 @@
+\documentclass[12pt]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, left=2.8cm, right=2.0cm, top=3.0cm, bottom=3.0cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{subfigure}
+\usepackage{float}
+\usepackage{color}
+\usepackage[french,english]{babel}
+\usepackage{lipsum}
+\usepackage{subfigure}
+\usepackage{float}
+\usepackage{makeidx}
+\usepackage{setspace}
+\usepackage{url}
+\usepackage[table]{xcolor}
+\usepackage[nottoc]{tocbibind}
+\usepackage{parcolumns}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{subfigure}
+% \usepackage[enable]{easy-todo}
+\usepackage{xargs}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcommandx{\change}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+
+\newtheorem{problem}{Problem}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollorary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{idea}{Idea}
+
+\title{PFE-WrittenReport}
+\author{MENDES FILHO, José Magno}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\numberwithin{equation}{section}
+
+\newenvironment{abstractpage}
+  {\cleardoublepage\vspace*{\fill}\thispagestyle{empty}}
+  {\vfill\cleardoublepage}
+\newenvironment{Abstract}[1]
+  {\bigskip\selectlanguage{#1}%
+   \begin{center}\bfseries\abstractname\end{center}}
+  {\par\bigskip}
+
+\begin{document}
+
+%=======%
+% TITLE %
+%=======%
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center
+
+% Logos
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft}
+	\includegraphics[height=4.cm]{./img/logo_ensta.jpg}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+\begin{flushright}
+	\includegraphics[height=3.5cm]{./img/cea.png}
+\end{flushright}
+\end{minipage}
+\mbox{}\\[1.5cm]
+
+\textsc{\LARGE Projet de Fin d'Études (PFE)}\\[0.3cm]
+\textsc{\Large Ingénierie système: robotique et systèmes embarqués}\\[0.3cm]
+\Large{2014/2015}\\[0.6cm]
+
+\HRule \\[0.2cm]
+\Huge \textbf{Local Dynamic Path Planning for an Autonomous Forklift in Human Environment}\\[-0.2cm] % Title
+\HRule \\[0.5cm]
+
+\begin{center}
+\textbf{\textcolor{red}{\Large{
+Unclassified Report}\\[-0.4cm]% Classified
+\large{Can be made public on the internet}
+}}
+\end{center}
+
+\begin{minipage}{0.55\textwidth}
+\begin{flushleft} \Large
+\emph{Author:}\\
+José Magno \textsc{Mendes Filho} \\[0.7cm] % Author
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.35\textwidth}
+\begin{flushright} \Large
+\mbox{}\\[0.4cm]
+Promotion 2014
+\end{flushright}
+\end{minipage}\\[1.0cm]
+
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft} \large
+\emph{Supervisor - ENSTA:}\\
+David \textsc{Filliat} % Tuteur ENSTA
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.45\textwidth}
+\begin{flushright} \large
+\emph{Supervisors - CEA:} \\
+Éric \textsc{Lucet} % Tuteur Ailleurs
+\end{flushright}
+\end{minipage}\\[1.0cm]
+
+\large{Internship from 05 Mars 2015 to 28 August 2015}\\[0.6cm]
+\large{CEA LIST Digiteo Moulon\\ Bât. 660 91191 GIF-SUR-YVETTE Cedex, France}
+\end{titlepage}
+\thispagestyle{empty}
+
+\onehalfspace
+\frontmatter
+
+\pagestyle{fancy}
+\fancyhead{}
+%\fancyhead[LE,RO]{\rightmark} %section
+\fancyhead[RE,LO]{\leftmark} %chapter
+\fancyfoot{}
+\cfoot{\textsc{Mendes Filho} José Magno - CEA\\\textcolor{red}{Unclassified - Can be made public on the internet}}
+\fancyfoot[OR,EL]{\thepage}
+
+\chapter*{Acknowledgements}
+\lipsum[1-3]
+
+\begin{abstractpage}
+\thispagestyle{empty}
+\begin{Abstract}{french}
+    \lipsum[1]
+\end{Abstract}
+\begin{Abstract}{english}
+    \lipsum[1]
+\end{Abstract}
+\end{abstractpage}
+
+\selectlanguage{english}
+
+
+\setcounter{page}{1}
+\mainmatter
+\tableofcontents
+
+%======================================================%
+% 				MAIN TEXT							   %
+%======================================================%
+
+\input{part1.tex}
+
+
+\input{part2.tex}
+
+\nocite{*}
+\bibliography{rapport}
+\bibliographystyle{plain}
+
+%\setcounter{page}{1}
+%\pagenumbering{roman}
+
+\appendix
+\chapter{Random Graphs}
+\lipsum[1-5]
+
+
+\end{document}
