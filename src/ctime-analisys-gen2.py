@@ -36,7 +36,7 @@ for n_knots in [4, 5, 6]:
         for N_s in range(n_knots+3+1, 2*(n_knots+3+1), 1):
 #            for tp in np.linspace(2.0, 6.0, 10, endpoint=False):
             for tp in np.linspace(0.8, 1.6, 3, endpoint=True):
-                for tc in np.linspace(tp/5., 4.*tp/5., int(round(3.*tp/5./0.3)), endpoint=False):
+                for tc in np.linspace(tp/5., 4.*tp/5., int(round(3.*tp/5./0.1)), endpoint=False):
                     cmmd = "python planning-sim-multirob-integration-time-analysis.py"+\
                             " "+direc+\
                             " "+str(n_obsts)+\
