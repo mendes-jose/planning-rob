@@ -11,7 +11,7 @@ direc = "./"
 
 table = []
 header = []
-with open('../traces/temp/table_complete.csv', 'rb') as csvfile:
+with open('../traces/temp/table_complete2.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]

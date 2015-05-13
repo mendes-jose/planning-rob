@@ -33,9 +33,9 @@ The ALGENCAN method\todo[inline, size=\tiny]{describe algecan}
 % \item ALGENCAN
 % \end{itemize}
 
-\paragraph{Cost function} chosen was the $(t_{final}-t_{initial})^2$. This $J$ value yields to a convergence while the using only the difference does not (for a given accuracy). Also there is the Hessian problem: slsqp try to invert the Hessian matrix which will be virtually zero for a linear cost function (if zero the error \texttt{Singular matrix C in LSQ subproblem (Exit mode 6)} is shown when using \texttt{scipy} optimization module)
+%\paragraph{Cost function} chosen was the $(t_{final}-t_{initial})^2$. This $J$ value yields to a convergence while the using only the difference does not (for a given accuracy). Also there is the Hessian problem: slsqp try to invert the Hessian matrix which will be virtually zero for a linear cost function (if zero the error \texttt{Singular matrix C in LSQ subproblem (Exit mode 6)} is shown when using \texttt{scipy} optimization module)
 
-The optimization problem for the first implementation:
+%The optimization problem for the first implementation:
 
 % \begin{equation}
 % 	\underset{(t_{final},C_0,\dotsc,C_{d+n_{knot}-2})}{\mathrm{min}} J = \int_{t_{initial}}^{t_{final}}dt
@@ -177,6 +177,14 @@ https://pypi.python.org/pypi/scipy
 
 sudo python setup.py install
 
+\subsection{The mobile robot}
+
+For representing the mobile robot geometry in the planning plane a bounding circle was chosen.
+
+\subsubsection{Unicycle kinetic model}
+
+\subsubsection{Flat output formulation}
+
 \subsection{The obstacles}
 
 % \begin{figure}
@@ -193,35 +201,38 @@ calculating point-to-obstacle distance compared to other representations.
 Nevertheless, obstacles such as walls, boxes and shelves cannot be satisfactorily represented by circles.
 Thus the need of a polygon representation.
 
-\subsubsection{Round Obstacles}
+%\subsubsection{Convex Polygon Obstacles}
+
+\subsubsection{Robot-to-obstacle distance for the convex polygon representation}
 
 
-
-\subsubsection{Convex Polygon Obstacles}
-
-\paragraph{Point-to-obstacle distance}
-
-The first naive approach to calculate the distance between a point and an obstacle represented by a convex polygon
+As sad before the robot's geometric form is represented by a circle.
+When calculating the robot-to-obstacle distance this simplified representation is quite useful. 
+The first approach to calculate the distance between a point and an obstacle represented by a convex polygon
 was to separate the problem in three cases with a different expression for the distance computation each.
 We see in the figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ are placed in three different
-zones with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through
+regions with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through
 the vertex $0$ and are orthogonal to the the two adjacent edges. $B$ is "between" the edge $s_{3}$, and the
 orthogonal lines $r_{0,3}$ and $r_{3,2}$. $C$ is in the interior of the obstacle representation, i.e., surrounded by the four edges.
 
 It is easy to see that the computation of the point-to-obstacle distance for $A$ is a simple point-to-point distance
 using the appropriate vertex. For $B$ a point-to-line distance equation can be used. Finally, since $C$ is in the
-interior of the polygon its distance is considered as the shortest of the four distances from the point $C$ to the
+interior of the polygon the penetration distance is calculated. It is considered as the shortest of the four distances from the point $C$ to the
 four edges multiplied by $-1$ (so, once more, point-to-line distance).
 
 Of course that the performance of this approach is "number of edges"-dependent and present fast results only or 
 polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful
 value or delete it}
 
-Gilbert-Johnson-Keerthi distance algorithm search Google code written in D language and/or the other one on stackverflow.
+An important remark though is that for a given planning horizon several ($N_{s}$) point-to-obstacle distances have to be calculated. Intuitively we can say that there is a high probability that most of the $N_{s}$ points are inside the same zone defined by theirs relative positions to the obstacle. Besides, the probability of finding points inside zones that are "far" from the already occupied zones is smaller.
+% If not so some of them are likely to be in some adjacent zone and finally they are less likely to be in any other zone.
+This heuristic can be used to speed up the planning process by having a smarter initialization of point-to-obstacle distance computation when using a convex polygon representation.
+
+Finally, when dealing with more complex obstacles representations and/or with a more complex representation of the mobile robot geometry the Enhanced Gilbert-Johnson-Keerthi distance algorithm is a more suitable and efficient approach.
+\todo[inline]{some code is available on the internet, Google code written in D language and/or the other one on stackverflow}
 
 \begin{figure}[!h]
 \centering
-\subfigure[]
 {
 
 %% -------------------POSITION 1----------------------------
@@ -249,7 +260,7 @@ point/.style={very thick,black}]
 \draw[point] (2.6,0.5,0) node[anchor=east]{\textbullet $C$};
 
 \end{tikzpicture}}
-\caption{Potitioning different cases when calculating distance from point to a 4-vertices convex polygon. \label{fig:convexpolygon}}
+\caption{Potitioning cases when calculating point-to-obstacle distance in a convex polygon representation. \label{fig:convexpolygon}}
 \end{figure}
 
 \begin{figure}[!h]
