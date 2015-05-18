@@ -337,8 +337,14 @@ epub_exclude_files = ['search.html']
 #epub_use_index = True
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
-intersphinx_mapping = {'http://matplotlib.org/api/': None}
+intersphinx_cache_limit = 10     # days to keep the cached inventories
+intersphinx_mapping = {
+        'sphinx': ('http://sphinx.pocoo.org',  None),
+        'python':('http://docs.python.org/2.7',None),
+    'matplotlib':('http://matplotlib.sourceforge.net', None),
+         'numpy':('http://docs.scipy.org/doc/numpy',None),
+}
+
 
 
 # defined by user

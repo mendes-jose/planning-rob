@@ -123,10 +123,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RoundObstacle._plt_circle"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.RoundObstacle._plt_circle">[docs]</a>    <span class="k">def</span> <span class="nf">_plt_circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s">&#39;solid&#39;</span><span class="p">,</span> <span class="n">filled</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return a Circle_ object representing the obstacle</span>
+        <span class="sd">&quot;&quot;&quot; Return a :py:class:`matplotlib.patches.Circle` object representing the obstacle</span>
 <span class="sd">        geometry.</span>
-
-<span class="sd">        .. _Circle: http://matplotlib.org/api/patches_api.html#matplotlib.patches.Circle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="c"># position</span>
@@ -168,7 +166,9 @@
 <span class="sd">            *signed*: Optional flag deciding whether returned area retains its sign:</span>
 <span class="sd">                    If points are ordered counter clockwise, the signed area</span>
 <span class="sd">                    will be positive.</span>
-<span class="sd">                    If points are ordered clockwise, it will be negative</span>
+
+<span class="sd">                    If points are ordered clockwise, it will be negative.</span>
+
 <span class="sd">                    Default is False which means that the area is always positive.</span>
 <span class="sd">        Output</span>
 <span class="sd">            Area of polygon (subject to the value of argument signed)</span>
@@ -804,16 +804,18 @@
         <span class="sd">&quot;&quot;&quot; Combine base b-splines into a Bezier curve given control points and derivate order.</span>
 
 <span class="sd">        Input</span>
-<span class="sd">            *ctrl_pts*: numpy array with dimension :math:`n\\times m` n being the number of</span>
-<span class="sd">            the control points and m flat output dimension.</span>
+<span class="sd">            *ctrl_pts*: numpy array with dimension :math:`n_{ctrl}\\times z_{dim}`, :math:`n_{ctrl}`</span>
+<span class="sd">            being the number of</span>
+<span class="sd">            control points and :math:`z_{dim}` the flat output dimension.</span>
 
 <span class="sd">            *deriv_order*: derivative order of the Bezier curve.</span>
 
 <span class="sd">            *t*: discrete time array.</span>
 
 <span class="sd">        Return</span>
-<span class="sd">            :math:`m\\times p` numpy array representing the resulting Bezier curve, m being</span>
-<span class="sd">            the flat output dimension and p the discrete time array dimension.</span>
+<span class="sd">            :math:`z_{dim}\\times N_s` numpy array representing the resulting Bezier curve,</span>
+<span class="sd">            :math:`z_{dim}` being</span>
+<span class="sd">            the flat output dimension and :math:`N_{s}` the discrete time array dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_knots</span><span class="p">,</span> <span class="c"># knots</span>
@@ -1894,7 +1896,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ph_bound</span> <span class="o">=</span> <span class="n">phy_boundary</span>
 
 <div class="viewcode-block" id="WorldSim.run"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.WorldSim.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Run simulation by first calling the :py:meth:`multiprocessing.Process.start` method to</span>
+        <span class="sd">&quot;&quot;&quot; Run simulation by first calling the :py:meth:`multiprocessing.Process.start` method on</span>
+<span class="sd">        the :attr:`Robot.planning_process` to</span>
 <span class="sd">        initiate the motion planning of each robot. And secondly by parsing theirs solutions and</span>
 <span class="sd">        prompting the option to plot/save it.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2388,7 +2391,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2015, José MENDES.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

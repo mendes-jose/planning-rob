@@ -101,7 +101,7 @@ complete its mission.</p>
 <dl class="method">
 <dt id="planning_sim.RoundObstacle._plt_circle">
 <tt class="descname">_plt_circle</tt><big>(</big><em>color='k'</em>, <em>linestyle='solid'</em>, <em>filled=False</em>, <em>alpha=1.0</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle._plt_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RoundObstacle._plt_circle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a <a class="reference external" href="http://matplotlib.org/api/patches_api.html#matplotlib.patches.Circle">Circle</a> object representing the obstacle
+<dd><p>Return a <a class="reference external" href="http://matplotlib.org/api/patches_api.html#matplotlib.patches.Circle" title="(in Matplotlib v1.4.3)"><tt class="xref py py-class docutils literal"><span class="pre">matplotlib.patches.Circle</span></tt></a> object representing the obstacle
 geometry.</p>
 </dd></dl>
 
@@ -162,10 +162,11 @@ and less the obstacle radius (as a float).</p>
 <dt><em>polygon</em>: Numeric array of points (longitude, latitude). It is assumed</dt>
 <dd>to be closed, i.e. first and last points are identical</dd>
 <dt><em>signed</em>: Optional flag deciding whether returned area retains its sign:</dt>
-<dd>If points are ordered counter clockwise, the signed area
-will be positive.
-If points are ordered clockwise, it will be negative
-Default is False which means that the area is always positive.</dd>
+<dd><p class="first">If points are ordered counter clockwise, the signed area
+will be positive.</p>
+<p>If points are ordered clockwise, it will be negative.</p>
+<p class="last">Default is False which means that the area is always positive.</p>
+</dd>
 </dl>
 </dd>
 <dt>Output</dt>
@@ -625,14 +626,16 @@ u_{max} - |\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))|\\
 <dd><p>Combine base b-splines into a Bezier curve given control points and derivate order.</p>
 <dl class="docutils">
 <dt>Input</dt>
-<dd><p class="first"><em>ctrl_pts</em>: numpy array with dimension <span class="math">\(n\times m\)</span> n being the number of
-the control points and m flat output dimension.</p>
+<dd><p class="first"><em>ctrl_pts</em>: numpy array with dimension <span class="math">\(n_{ctrl}\times z_{dim}\)</span>, <span class="math">\(n_{ctrl}\)</span>
+being the number of
+control points and <span class="math">\(z_{dim}\)</span> the flat output dimension.</p>
 <p><em>deriv_order</em>: derivative order of the Bezier curve.</p>
 <p class="last"><em>t</em>: discrete time array.</p>
 </dd>
 <dt>Return</dt>
-<dd><span class="math">\(m\times p\)</span> numpy array representing the resulting Bezier curve, m being
-the flat output dimension and p the discrete time array dimension.</dd>
+<dd><span class="math">\(z_{dim}\times N_s\)</span> numpy array representing the resulting Bezier curve,
+<span class="math">\(z_{dim}\)</span> being
+the flat output dimension and <span class="math">\(N_{s}\)</span> the discrete time array dimension.</dd>
 </dl>
 </dd></dl>
 
@@ -1122,7 +1125,8 @@ interface for running the simulation.</p>
 <dl class="method">
 <dt id="planning_sim.WorldSim.run">
 <tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.WorldSim.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run simulation by first calling the <a class="reference external" href="http://docs.python.org/library/multiprocessing.html#multiprocessing.Process.start" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">multiprocessing.Process.start()</span></tt></a> method to
+<dd><p>Run simulation by first calling the <a class="reference external" href="http://docs.python.org/library/multiprocessing.html#multiprocessing.Process.start" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">multiprocessing.Process.start()</span></tt></a> method on
+the <a class="reference internal" href="#planning_sim.Robot.planning_process" title="planning_sim.Robot.planning_process"><tt class="xref py py-attr docutils literal"><span class="pre">Robot.planning_process</span></tt></a> to
 initiate the motion planning of each robot. And secondly by parsing theirs solutions and
 prompting the option to plot/save it.</p>
 </dd></dl>
@@ -1226,7 +1230,7 @@ prompting the option to plot/save it.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2015, José MENDES.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

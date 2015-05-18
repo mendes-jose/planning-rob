@@ -281,6 +281,8 @@ point/.style={very thick,black}]
 
 %Gilbert-Johnson-Keerthi distance algorithm
 
+\subsection{Analysis of real-time planning feasibility}
+
 \begin{figure}
         \centering
         \begin{subfigure}[b]{0.48\textwidth}
@@ -339,15 +341,76 @@ point/.style={very thick,black}]
 %planning-sim-multirob-integration-time-analysis_3_0.445714285714_1.2_9_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0
 
 For the sake of an exemple a simulation done with the following parameters:
+\begin{table}[!h]
+\caption {Motion planner main parameters} \label{tab:s3param}
 \begin{center}
-\begin{tabular}{ll}
-$T_p$ & 1.200s\\
-$T_c$ & 0.446s\\
+\begin{tabular}{|c|c|}
+\hline
+$T_p$ & 1.200 s\\
+\hline 
+$T_c$ & 0.446 s\\
+\hline 
 $N_s$ & 9\\
+\hline 
 $N_{knots}$ & 4\\
-a & b
+\hline
+$v_{max}$ & $1.00\ \mathrm{m/s}$\\
+\hline
+$\omega_{max}$ & $5.00\ \mathrm{rad/s}$\\
+\hline
+$q_{inital}$ & $[-0.05\ 0.00\ \pi/2]^T$\\
+\hline
+$q_{final}$ & $[0.10\ 7.00\ \pi/2]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$O_0$ & $[0.55\ 1.91\ 0.31]$\\
+\hline
+$O_1$ & $[-0.08\ 3.65\ 0.32]$\\
+\hline
+$O_2$ & $[0.38\ 4.65\ 0.16]$\\
+\hline
 \end{tabular}
 \end{center}
+\end{table}
+
+\begin{table}[!h]
+\caption {Motion planner main parameters} \label{tab:s3param}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+$T_p$ & 1.200 s\\
+\hline 
+$T_c$ & 0.446 s\\
+\hline 
+$N_s$ & 9\\
+\hline 
+$N_{knots}$ & 4\\
+\hline
+$v_{max}$ & $1.00\ \mathrm{m/s}$\\
+\hline
+$\omega_{max}$ & $5.00\ \mathrm{rad/s}$\\
+\hline
+$q_{inital}$ & $[-0.05\ 0.00\ \pi/2]^T$\\
+\hline
+$q_{final}$ & $[0.10\ 7.00\ \pi/2]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$O_0$ & $[0.55\ 1.91\ 0.31]$\\
+\hline
+$O_1$ & $[-0.08\ 3.65\ 0.32]$\\
+\hline
+$O_2$ & $[0.38\ 4.65\ 0.16]$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}1
+
 gave could be perfomed in within computing time smaller than the $T_c$ value for every planning section.
 
 \begin{figure}

@@ -72,10 +72,8 @@ class RoundObstacle(Obstacle):
         """
 
     def _plt_circle(self, color='k', linestyle='solid', filled=False, alpha=1.0, offset=0.0):
-        """ Return a Circle_ object representing the obstacle
+        """ Return a :py:class:`matplotlib.patches.Circle` object representing the obstacle
         geometry.
-
-        .. _Circle: http://matplotlib.org/api/patches_api.html#matplotlib.patches.Circle
         """
         return plt.Circle(
                 (self.x, self.y), # position
@@ -117,7 +115,9 @@ class PolygonObstacle(Obstacle):
             *signed*: Optional flag deciding whether returned area retains its sign:
                     If points are ordered counter clockwise, the signed area
                     will be positive.
-                    If points are ordered clockwise, it will be negative
+
+                    If points are ordered clockwise, it will be negative.
+
                     Default is False which means that the area is always positive.
         Output
             Area of polygon (subject to the value of argument signed)
@@ -753,16 +753,18 @@ class Robot(object):
         """ Combine base b-splines into a Bezier curve given control points and derivate order.
 
         Input
-            *ctrl_pts*: numpy array with dimension :math:`n\\times m` n being the number of
-            the control points and m flat output dimension.
+            *ctrl_pts*: numpy array with dimension :math:`n_{ctrl}\\times z_{dim}`, :math:`n_{ctrl}`
+            being the number of
+            control points and :math:`z_{dim}` the flat output dimension.
 
             *deriv_order*: derivative order of the Bezier curve.
 
             *t*: discrete time array.
 
         Return
-            :math:`m\\times p` numpy array representing the resulting Bezier curve, m being
-            the flat output dimension and p the discrete time array dimension.
+            :math:`z_{dim}\\times N_s` numpy array representing the resulting Bezier curve,
+            :math:`z_{dim}` being
+            the flat output dimension and :math:`N_{s}` the discrete time array dimension.
         """
         tup = (
                 self._knots, # knots
@@ -1843,7 +1845,8 @@ class WorldSim(object):
         self._ph_bound = phy_boundary
 
     def run(self):
-        """ Run simulation by first calling the :py:meth:`multiprocessing.Process.start` method to
+        """ Run simulation by first calling the :py:meth:`multiprocessing.Process.start` method on
+        the :attr:`Robot.planning_process` to
         initiate the motion planning of each robot. And secondly by parsing theirs solutions and
         prompting the option to plot/save it.
         """
