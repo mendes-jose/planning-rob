@@ -1,0 +1,1232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>planning_sim — Motion planning simulation &mdash; Motion Planning 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon_mp.ico"/>
+    <link rel="top" title="Motion Planning 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Motion Planning’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Motion Planning’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Motion Planning 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-planning_sim">
+<span id="planning-sim-motion-planning-simulation"></span><h1><a class="reference internal" href="#module-planning_sim" title="planning_sim"><tt class="xref py py-mod docutils literal"><span class="pre">planning_sim</span></tt></a> &#8212; Motion planning simulation<a class="headerlink" href="#module-planning_sim" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-planning_sim" title="planning_sim"><tt class="xref py py-mod docutils literal"><span class="pre">planning_sim</span></tt></a> module implements classes to simulate a navigation
+scenario consisting of one or more mobile robots that autonomously plan their
+motion from an initial state to a final state avoiding static obstacles and
+other robots, and respecting kinematic (including nonhonolonomic) constraints.</p>
+<p>The motion planner is based on the experimental work developed by Michael Defoort
+that seeks a near-optimal solution minimizing the time spend by a robot to
+complete its mission.</p>
+<div class="section" id="obstacles-and-boundary">
+<h2>Obstacles and Boundary<a class="headerlink" href="#obstacles-and-boundary" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.Obstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Obstacle</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Obstacle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Base class for implementing simulated obstacles.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>position</em>: array-like type representing the obstacle&#8217;s position (x,y).</dd>
+</dl>
+<dl class="method">
+<dt id="planning_sim.Obstacle.detected_dist">
+<tt class="descname">detected_dist</tt><big>(</big><em>pt</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle.detected_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Obstacle.detected_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the detected distance of this obstacle as seen by a robot at the position pt
+(as a float).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Obstacle.pt_2_obst">
+<tt class="descname">pt_2_obst</tt><big>(</big><em>pt</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle.pt_2_obst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Obstacle.pt_2_obst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the point-to-obstacle distance less the offset value (as a float).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Obstacle.centroid">
+<tt class="descname">centroid</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Obstacle.centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obstacle&#8217;s centroid. Considered here the obstacle given position.</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.RoundObstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">RoundObstacle</tt><big>(</big><em>position</em>, <em>radius</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RoundObstacle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#planning_sim.Obstacle" title="planning_sim.Obstacle"><tt class="xref py py-class docutils literal"><span class="pre">planning_sim.Obstacle</span></tt></a></p>
+<p>Representation of an obstacle as a circle.</p>
+<dl class="method">
+<dt id="planning_sim.RoundObstacle._plt_circle">
+<tt class="descname">_plt_circle</tt><big>(</big><em>color='k'</em>, <em>linestyle='solid'</em>, <em>filled=False</em>, <em>alpha=1.0</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle._plt_circle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RoundObstacle._plt_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference external" href="http://matplotlib.org/api/patches_api.html#matplotlib.patches.Circle">Circle</a> object representing the obstacle
+geometry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.detected_dist">
+<tt class="descname">detected_dist</tt><big>(</big><em>pt</em><big>)</big><a class="headerlink" href="#planning_sim.RoundObstacle.detected_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the detected distance of this obstacle as seen by a robot at the position pt
+(as a float).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.plot">
+<tt class="descname">plot</tt><big>(</big><em>fig</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RoundObstacle.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a figure this method gets its active axes and plots a grey circle representing
+the obstacle as well as a second, concentric, dashed circle having the original circle
+radius plus the offset value as its own radius.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.pt_2_obst">
+<tt class="descname">pt_2_obst</tt><big>(</big><em>pt</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle.pt_2_obst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RoundObstacle.pt_2_obst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the point-to-obstacle distance less the offset value
+and less the obstacle radius (as a float).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RoundObstacle.radius">
+<tt class="descname">radius</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RoundObstacle.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obstacle radius.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RoundObstacle.x">
+<tt class="descname">x</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RoundObstacle.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-coordinate of the obstacle centroid.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RoundObstacle.y">
+<tt class="descname">y</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RoundObstacle.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>y-coordinate of the obstacle centroid.</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.PolygonObstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">PolygonObstacle</tt><big>(</big><em>vertices</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#planning_sim.Obstacle" title="planning_sim.Obstacle"><tt class="xref py py-class docutils literal"><span class="pre">planning_sim.Obstacle</span></tt></a></p>
+<dl class="staticmethod">
+<dt id="planning_sim.PolygonObstacle._calculate_polygon_area">
+<em class="property">static </em><tt class="descname">_calculate_polygon_area</tt><big>(</big><em>polygon</em>, <em>signed=False</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle._calculate_polygon_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle._calculate_polygon_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the signed area of non-self-intersecting polygon</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><dl class="first last docutils">
+<dt><em>polygon</em>: Numeric array of points (longitude, latitude). It is assumed</dt>
+<dd>to be closed, i.e. first and last points are identical</dd>
+<dt><em>signed</em>: Optional flag deciding whether returned area retains its sign:</dt>
+<dd>If points are ordered counter clockwise, the signed area
+will be positive.
+If points are ordered clockwise, it will be negative
+Default is False which means that the area is always positive.</dd>
+</dl>
+</dd>
+<dt>Output</dt>
+<dd>Area of polygon (subject to the value of argument signed)</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="planning_sim.PolygonObstacle._calculate_polygon_centroid">
+<em class="property">static </em><tt class="descname">_calculate_polygon_centroid</tt><big>(</big><em>polygon</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle._calculate_polygon_centroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle._calculate_polygon_centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the centroid of non-self-intersecting polygon</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>polygon</em>: Numeric array of points (longitude, latitude). It is assumed
+to be closed, i.e. first and last points are identical</dd>
+<dt>Output</dt>
+<dd>Numeric (1 x 2) array of points representing the centroid</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle._create_aug_vertices">
+<tt class="descname">_create_aug_vertices</tt><big>(</big><em>offset</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle._create_aug_vertices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle._create_aug_vertices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create augmented vertices from original vertices and offset value</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>offset</em>: Real value used as offset from original vertices. Can also
+be seen as the radius of the circle that will be subtracted (in the
+Minkowski difference sense) from the obstacle geometry.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.detected_dist">
+<tt class="descname">detected_dist</tt><big>(</big><em>pt</em><big>)</big><a class="headerlink" href="#planning_sim.PolygonObstacle.detected_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the detected distance of this obstacle as seen by a robot at the position pt
+(as a float).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.plot">
+<tt class="descname">plot</tt><big>(</big><em>fig</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a figure this method gets its active axes and plots a grey polygon representing
+the obstacle as well as some dashed lines associated with the Minkowski difference of
+the obstacle representation and a circle of radius equals to offset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.pt_2_obst">
+<tt class="descname">pt_2_obst</tt><big>(</big><em>pt</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle.pt_2_obst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.PolygonObstacle.pt_2_obst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate distance from point to the obstacle</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><p class="first"><em>pt</em>: cardinal coordinates of the point</p>
+<p class="last"><em>offset</em>: offset distance that will be subtracted from the actual
+point-to-obstacle distance</p>
+</dd>
+<dt>Output</dt>
+<dd>Real number representing the distance pt_2_obstacle less offset. Negative value means
+that the point is closer then the offset value from the obstacle, or even inside it.</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Fix error handling</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.PolygonObstacle.bounding_circle_radius">
+<tt class="descname">bounding_circle_radius</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.PolygonObstacle.bounding_circle_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the radius of a bounding circle for the obstacle centred on the centroid.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is not necessarily the smaller bounding circle. It would be better to
+get the the midpoint of the greatest line segment formed by two of the
+polygons vertices as the circle center and half of the that line segment
+as its radius.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.PolygonObstacle.centroid">
+<tt class="descname">centroid</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.PolygonObstacle.centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obstacle&#8217;s centroid</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.PolygonObstacle.x">
+<tt class="descname">x</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.PolygonObstacle.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-coordinate of the obstacle centroid.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.PolygonObstacle.y">
+<tt class="descname">y</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.PolygonObstacle.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>y-coordinate of the obstacle centroid.</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.Boundary">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Boundary</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Boundary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Boundary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<dl class="attribute">
+<dt id="planning_sim.Boundary.x_max">
+<tt class="descname">x_max</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Boundary.x_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max bound in the x direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Boundary.x_min">
+<tt class="descname">x_min</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Boundary.x_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min bound in the x direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Boundary.y_max">
+<tt class="descname">y_max</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Boundary.y_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max bound on y direction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Boundary.y_min">
+<tt class="descname">y_min</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Boundary.y_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min bound in the y direction.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="robot-and-kinematic-model">
+<h2>Robot and Kinematic Model<a class="headerlink" href="#robot-and-kinematic-model" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.UnicycleKineModel">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">UnicycleKineModel</tt><big>(</big><em>q_init, q_final, u_init=[0.0, 0.0], u_final=[0.0, 0.0], u_max=[1.0, 5.0], a_max=[2.0, 10.0]</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>This class defines the kinematic model of an unicycle mobile robot.</p>
+<p>Unicycle kinematic model:</p>
+<div class="math">
+\[\begin{split}\begin{array}{c}
+\dot{q} = \mathrm{f}(q, u) \Rightarrow\\
+\left[\begin{array}{c}
+\dot{x}\\
+\dot{y}\\
+\dot{\theta}
+\end{array}\right]=
+\left[\begin{array}{c}
+v\cos(\theta)\\
+v\sin(\theta)\\
+w
+\end{array}\right]
+\end{array}\end{split}\]</div>
+<p>Changing variables (<span class="math">\(z = [x, y]^T\)</span>) we can rewrite the system using the
+flat output <span class="math">\(z\)</span> as:</p>
+<div class="math">
+\[\begin{split}\left[\begin{array}{c}
+x\\
+y\\
+\theta\\
+v\\
+w
+\end{array}\right]=
+\left[\begin{array}{c}
+z_1\\
+z_2\\
+\arctan(\dot{z}_2/\dot{z}_1)\\
+\sqrt{\dot{z}_{1}^{2} + \dot{z}_{2}^{2}}\\
+\dfrac{\dot{z}_{1}\ddot{z}_{2} - \dot{z}_{2}\ddot{z}_{1}}{\dot{z}_{1}^{2}+\dot{z}_{2}^{2}}
+\end{array}\right]\end{split}\]</div>
+<p>where the the state and input vector (<span class="math">\(q, v\)</span>) are function of <span class="math">\(z\)</span>
+and its derivatives.</p>
+<dl class="staticmethod">
+<dt id="planning_sim.UnicycleKineModel._unsigned_angle">
+<em class="property">static </em><tt class="descname">_unsigned_angle</tt><big>(</big><em>angle</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel._unsigned_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel._unsigned_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map signed angles (<span class="math">\(\theta \in (-\pi, \pi]\)</span>) to unsigned
+(<span class="math">\(\theta \in [0, 2\pi)\)</span>).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Method not used.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi_0">
+<tt class="descname">phi_0</tt><big>(</big><em>q</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel.phi_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <span class="math">\(z\)</span> given <span class="math">\(q\)</span></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi_1">
+<tt class="descname">phi_1</tt><big>(</big><em>zl</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel.phi_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <span class="math">\([x\ y\ \theta]^T\)</span> given <span class="math">\([z\ \dot{z}\ \dotsc\ z^{(l)}]\)</span>
+(only <span class="math">\(z\)</span> and <span class="math">\(\dot{z}\)</span> are used). <span class="math">\(\theta\)</span> is in the range
+<span class="math">\((-\pi, \pi]\)</span>.</p>
+<div class="math">
+\[\begin{split}\begin{array}{l}
+\varphi_1(z(t_k),\dotsc,z^{(l)}(t_k))=\
+\left[\begin{array}{c}
+x\\
+y\\
+\omega
+\end{array}\right]
+\left[\begin{array}{c}
+z_1\\
+z_2\\
+\arctan(\dot{z}_2/\dot{z}_1)\\
+\end{array}\right]
+\end{array}\end{split}\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi_2">
+<tt class="descname">phi_2</tt><big>(</big><em>zl</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel.phi_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <span class="math">\([v\ \omega]^T\)</span> given <span class="math">\([z\ \dot{z}\ \dotsc\ z^{(l)}]\)</span>
+(only <span class="math">\(\dot{z}\)</span> and <span class="math">\(\ddot{z}\)</span> are used).</p>
+<div class="math">
+\[\begin{split}\begin{array}{l}
+\varphi_2(z(t_k),\dotsc,z^{(l)}(t_k))=\
+\left[\begin{array}{c}
+v\\
+\omega
+\end{array}\right]
+= \left[\begin{array}{c}
+\sqrt{\dot{z}_{1}^{2} + \dot{z}_{2}^{2}}\\
+\dfrac{\dot{z}_{1}\ddot{z}_{2} -
+\dot{z}_{2}\ddot{z}_{1}}{\dot{z}_{1}^{2}+\dot{z}_{2}^{2}}
+\end{array}\right]
+\end{array}\end{split}\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi_3">
+<tt class="descname">phi_3</tt><big>(</big><em>zl</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi_3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.UnicycleKineModel.phi_3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <span class="math">\([\dot{v}\ \dot{\omega}]^T\)</span> given
+<span class="math">\([z\ \dot{z}\ \dotsc\ z^{(l+1)}]\)</span>.
+(only <span class="math">\(\dot{z}\)</span>, <span class="math">\(\ddot{z}\)</span> and <span class="math">\(z^{(3)}\)</span> are used).</p>
+<div class="math">
+\[\begin{split}\begin{array}{l}
+\varphi_3(z(t_k),\dotsc,z^{(l+1)}(t_k))=\
+\left[\begin{array}{c}
+\dot{v}\\
+\dot{\omega}
+\end{array}\right]
+= \left[\begin{array}{c}
+\frac{\partial}{\partial t}v\\
+\frac{\partial}{\partial t}\omega
+\end{array}\right]
+= \left[\begin{array}{c}
+\frac{\dot{z}_1\ddot{z}_1 + \dot{z}_2\ddot{z}_2}{\|\dot{z}\|}\\
+\frac{(\ddot{z}_1\ddot{z}_2+ z^{(3)}_2\dot{z}_1 -
+(\ddot{z}_2\ddot{z}_1+z^{(3)}_1\dot{z}_2))\|\dot{z}\|^2-
+2(\dot{z}_1\ddot{z}_2-\dot{z}_2\ddot{z}_1)\|\dot{z}\|\dot{v}}{\|\dot{z}\|^4}
+\end{array}\right]
+\end{array}\end{split}\]</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.acc_max">
+<tt class="descname">acc_max</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.acc_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Absolute maximum values for the first derivative of the input vector.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Value not used.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.l">
+<tt class="descname">l</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of flat output derivatives that are needed to calculate the state
+and input vectors.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.q_dim">
+<tt class="descname">q_dim</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.q_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>State vector order.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.q_final">
+<tt class="descname">q_final</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.q_final" title="Permalink to this definition">¶</a></dt>
+<dd><p>Final state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.q_init">
+<tt class="descname">q_init</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.q_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.u_dim">
+<tt class="descname">u_dim</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.u_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input vector order.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.u_final">
+<tt class="descname">u_final</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.u_final" title="Permalink to this definition">¶</a></dt>
+<dd><p>Final input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.u_init">
+<tt class="descname">u_init</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.u_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.u_max">
+<tt class="descname">u_max</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.u_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Absolute max input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.z_dim">
+<tt class="descname">z_dim</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.z_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flat output vector order.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.z_final">
+<tt class="descname">z_final</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.z_final" title="Permalink to this definition">¶</a></dt>
+<dd><p>Final flat output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.UnicycleKineModel.z_init">
+<tt class="descname">z_init</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.UnicycleKineModel.z_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial flat output.</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.Robot">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Robot</tt><big>(</big><em>eyed</em>, <em>kine_model</em>, <em>obstacles</em>, <em>phy_boundary</em>, <em>neigh</em>, <em>N_s=20</em>, <em>n_knots=6</em>, <em>t_init=0.0</em>, <em>t_sup=10000000000.0</em>, <em>Tc=1.0</em>, <em>Tp=3.0</em>, <em>Td=3.0</em>, <em>rho=0.2</em>, <em>detec_rho=3.0</em>, <em>com_range=15.0</em>, <em>def_epsilon=0.5</em>, <em>safe_epsilon=0.1</em>, <em>ls_time_opt_scale=1.0</em>, <em>dist_opt_offset=100.0</em>, <em>ls_min_dist=0.5</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Class for creating a robot in the simulation.
+It implements the Defoort&#8217;s experimental motion planning algorithm</p>
+<dl class="method">
+<dt id="planning_sim.Robot._co_criterion">
+<tt class="descname">_co_criterion</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._co_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._co_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost function to be minimized used for optimizing
+the first and intermediaries sections of the plan when conflicts are detected.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Cost value.</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Optimization solver can misbehave for costs too big (<span class="math">\(&gt; 10^{6}\)</span>).</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is just a call to the <a class="reference internal" href="#planning_sim.Robot._sa_criterion" title="planning_sim.Robot._sa_criterion"><tt class="xref py py-meth docutils literal"><span class="pre">_sa_criterion()</span></tt></a> method.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._co_feqcons">
+<tt class="descname">_co_feqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._co_feqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._co_feqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>equations</strong> constraints values for the first and intermadiaries
+section of the plan when there are conflicts.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the equations&#8217; values.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is just a call to the <a class="reference internal" href="#planning_sim.Robot._sa_feqcons" title="planning_sim.Robot._sa_feqcons"><tt class="xref py py-meth docutils literal"><span class="pre">_sa_feqcons()</span></tt></a> method.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._co_fieqcons">
+<tt class="descname">_co_fieqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._co_fieqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._co_fieqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>inequations</strong> constraints values for the first and intermadiaries
+section of the plan when there are conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+u_{max} - |\varphi_2(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec}))|\\
+u_{max} - |\varphi_2(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec}))|\\
+\dotsc\\
+u_{max} - |\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))|\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_0)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_1)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),
+\dotsc,z^{(l)}(t_{1,\ sec})), O_{M-1})\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),
+\dotsc,z^{(l)}(t_{2,\ sec})), O_{M-1})\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_{M-1})\\
+\mathrm{collision()}\\
+\mathrm{communication()}\\
+\mathrm{deviation()}
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(O_i\)</span></td>
+<td>is the ith detected obstacle.</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(M\)</span></td>
+<td>is the number of detected obstacles.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(N_s\)</span></td>
+<td>is the number of time samples for a plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Add the expression for collision, communication and deviation constraints.</p>
+</div>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the inequations&#8217; values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._comb_bsp">
+<tt class="descname">_comb_bsp</tt><big>(</big><em>t</em>, <em>ctrl_pts</em>, <em>deriv_order</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._comb_bsp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._comb_bsp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine base b-splines into a Bezier curve given control points and derivate order.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><p class="first"><em>ctrl_pts</em>: numpy array with dimension <span class="math">\(n\times m\)</span> n being the number of
+the control points and m flat output dimension.</p>
+<p><em>deriv_order</em>: derivative order of the Bezier curve.</p>
+<p class="last"><em>t</em>: discrete time array.</p>
+</dd>
+<dt>Return</dt>
+<dd><span class="math">\(m\times p\)</span> numpy array representing the resulting Bezier curve, m being
+the flat output dimension and p the discrete time array dimension.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._compute_conflicts">
+<tt class="descname">_compute_conflicts</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._compute_conflicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._compute_conflicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the list of conflictous robots among all other robots.
+This method updates the <tt class="xref py py-attr docutils literal"><span class="pre">_conflict_robots_idx</span></tt> private attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._detect_obst">
+<tt class="descname">_detect_obst</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._detect_obst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._detect_obst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determinate which obstacles are within the detection radius.
+This method updates the <tt class="xref py py-attr docutils literal"><span class="pre">_detected_obst_idxs</span></tt>
+private attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._gen_knots">
+<tt class="descname">_gen_knots</tt><big>(</big><em>t_init</em>, <em>t_final</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._gen_knots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._gen_knots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate b-spline knots given initial and final times.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._log">
+<tt class="descname">_log</tt><big>(</big><em>logid</em>, <em>strg</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log writer (multiprocess safe).</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><dl class="first docutils">
+<dt><em>logid</em>:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&#8216;d&#8217;</td>
+<td>for debug</td>
+</tr>
+<tr class="row-even"><td>&#8216;i&#8217;</td>
+<td>for information</td>
+</tr>
+<tr class="row-odd"><td>&#8216;w&#8217;</td>
+<td>for warning</td>
+</tr>
+<tr class="row-even"><td>&#8216;e&#8217;</td>
+<td>for error</td>
+</tr>
+<tr class="row-odd"><td>&#8216;c&#8217;</td>
+<td>for critical</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p class="last"><em>strg</em>: log string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_co_criterion">
+<tt class="descname">_ls_co_criterion</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_co_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_co_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost function to be minimized used for optimizing
+the last section of the plan when conflicts are detected.
+It calculates the square of the total plan time.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Cost value.</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Optimization solver can misbehave for costs too big (<span class="math">\(&gt; 10^{6}\)</span>).</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is just a call to the <a class="reference internal" href="#planning_sim.Robot._ls_sa_criterion" title="planning_sim.Robot._ls_sa_criterion"><tt class="xref py py-meth docutils literal"><span class="pre">_ls_sa_criterion()</span></tt></a> method.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_co_feqcons">
+<tt class="descname">_ls_co_feqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_co_feqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_co_feqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>equations</strong> constraints values for the last section of the plan when
+there are conflicts.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the equations&#8217; values.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is just a call to the <a class="reference internal" href="#planning_sim.Robot._ls_co_criterion" title="planning_sim.Robot._ls_co_criterion"><tt class="xref py py-meth docutils literal"><span class="pre">_ls_co_criterion()</span></tt></a> method.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_co_fieqcons">
+<tt class="descname">_ls_co_fieqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_co_fieqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_co_fieqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>inequations</strong> constraints values for the last section of the plan when
+there are conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+u_{max} - |\varphi_2(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec}))|\\
+u_{max} - |\varphi_2(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec}))|\\
+\dotsc\\
+u_{max} - |\varphi_2(z(t_{N_s-2,\ sec}),\dotsc,z^{(l)}(t_{N_s-2,\ sec}))|\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_0)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_1)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),
+\dotsc,z^{(l)}(t_{1,\ sec})), O_{M-1})\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),
+\dotsc,z^{(l)}(t_{2,\ sec})), O_{M-1})\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_{M-1})\\
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(O_i\)</span></td>
+<td>is the ith detected obstacle.</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(M\)</span></td>
+<td>is the number of detected obstacles.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(N_s\)</span></td>
+<td>is the number of time samples for a plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the inequations&#8217; values.</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">Take into account the coflict constraints!
+The way it is this method is identical to the <a class="reference internal" href="#planning_sim.Robot._ls_sa_fieqcons" title="planning_sim.Robot._ls_sa_fieqcons"><tt class="xref py py-meth docutils literal"><span class="pre">_ls_sa_fieqcons()</span></tt></a> method,
+which is pretty bad.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_sa_criterion">
+<tt class="descname">_ls_sa_criterion</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_sa_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_sa_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost function to be minimized used for optimizing
+the last section of the plan when no conflicts are detected.
+It calculates the square of the total plan time.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Cost value.</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Optimization solver can misbehave for costs too big (<span class="math">\(&gt; 10^{6}\)</span>).</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_sa_feqcons">
+<tt class="descname">_ls_sa_feqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_sa_feqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_sa_feqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>equations</strong> constraints values for the last section of the plan when
+there are no conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+\varphi_1(z(t_{0,\ sec}),\dotsc,z^{(l)}(t_{0,\ sec}))
+&amp;-&amp; q_{N_s-1,\ sec-1}\\
+\varphi_1(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))
+&amp;-&amp; q_{final}\\
+\varphi_2(z(t_{0,\ sec}),\dotsc,z^{(l)}(t_{0,\ sec}))
+&amp;-&amp;u_{N_s-1,\ sec-1}\\
+\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec})) &amp;-&amp; u_{final}\\
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the equations&#8217; values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._ls_sa_fieqcons">
+<tt class="descname">_ls_sa_fieqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._ls_sa_fieqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._ls_sa_fieqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>inequations</strong> constraints values for the last section of the plan when
+there are no conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+u_{max} - |\varphi_2(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec}))|\\
+u_{max} - |\varphi_2(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec}))|\\
+\dotsc\\
+u_{max} - |\varphi_2(z(t_{N_s-2,\ sec}),\dotsc,z^{(l)}(t_{N_s-2,\ sec}))|\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_0)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_1)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),
+\dotsc,z^{(l)}(t_{1,\ sec})), O_{M-1})\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),
+\dotsc,z^{(l)}(t_{2,\ sec})), O_{M-1})\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-2,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-2,\ sec})), O_{M-1})\\
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(O_i\)</span></td>
+<td>is the ith detected obstacle.</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(M\)</span></td>
+<td>is the number of detected obstacles.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(N_s\)</span></td>
+<td>is the number of time samples for a plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the inequations&#8217; values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._plan">
+<tt class="descname">_plan</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._plan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._plan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Motion/path planner method. At the end of its execution <a class="reference internal" href="#planning_sim.Robot.rtime" title="planning_sim.Robot.rtime"><tt class="xref py py-attr docutils literal"><span class="pre">rtime</span></tt></a>, <a class="reference internal" href="#planning_sim.Robot.ctime" title="planning_sim.Robot.ctime"><tt class="xref py py-attr docutils literal"><span class="pre">ctime</span></tt></a>
+and <a class="reference internal" href="#planning_sim.Robot.sol" title="planning_sim.Robot.sol"><tt class="xref py py-attr docutils literal"><span class="pre">sol</span></tt></a> attributes will be updated with the plan for completing the mission.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._plan_section">
+<tt class="descname">_plan_section</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._plan_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._plan_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method takes care of planning a section of the final path over a <span class="math">\(T_{d/p}\)</span>
+time horizon.</p>
+<p>It also performs syncronization and data exchange among the robots.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._sa_criterion">
+<tt class="descname">_sa_criterion</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._sa_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._sa_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost function to be minimized used for optimizing
+the first and intermediaries sections of the plan when no conflicts are detected.</p>
+<p>It calculates the distance between the final position of the proposed plan and
+the <em>goal point</em>.</p>
+<p>The <em>goal point</em> is calcualted as follows:</p>
+<div class="admonition-todo admonition" id="index-3">
+<p class="first admonition-title">Todo</p>
+<p class="last">Add the expression for computing the goal point.</p>
+</div>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Cost value.</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Optimization solver can misbehave for costs too big (<span class="math">\(&gt; 10^{6}\)</span>).</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._sa_feqcons">
+<tt class="descname">_sa_feqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._sa_feqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._sa_feqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>equations</strong> constraints values for the first and intermediaries
+sections of the plan when there are no conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+\varphi_1(z(t_{0,\ sec}),\dotsc,z^{(l)}(t_{0,\ sec}))
+&amp;-&amp; q_{N_s-1,\ sec-1}\\
+\varphi_2(z(t_{0,\ sec}),\dotsc,z^{(l)}(t_{0,\ sec}))
+&amp;-&amp; u_{N_s-1,\ sec-1}\\
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the equations&#8217; values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._sa_fieqcons">
+<tt class="descname">_sa_fieqcons</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._sa_fieqcons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._sa_fieqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the <strong>inequations</strong> constraints values for the first and intermediaries
+sections of the plan when there are no conflicts.</p>
+<p>The following expressions are evaluated:</p>
+<div class="math">
+\[\begin{split}\left\lbrace\begin{array}{lcl}
+u_{max} - |\varphi_2(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec}))|\\
+u_{max} - |\varphi_2(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec}))|\\
+\dotsc\\
+u_{max} - |\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))|\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_0)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_0)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),\dotsc,z^{(l)}(t_{1,\ sec})), O_1)\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),\dotsc,z^{(l)}(t_{2,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_1)\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{1,\ sec}),
+\dotsc,z^{(l)}(t_{1,\ sec})), O_{M-1})\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{2,\ sec}),
+\dotsc,z^{(l)}(t_{2,\ sec})), O_{M-1})\\
+\dotsc\\
+\mathrm{pt2obstacle}(\varphi_1(z(t_{N_s-1,\ sec}),
+\dotsc,z^{(l)}(t_{N_s-1,\ sec})), O_{M-1})\\
+\end{array}\right.\end{split}\]</div>
+<dl class="docutils">
+<dt>where:</dt>
+<dd><table border="1" class="first last docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><span class="math">\(sec\)</span></td>
+<td>indicates the current plan section.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(O_i\)</span></td>
+<td>is the ith detected obstacle.</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(M\)</span></td>
+<td>is the number of detected obstacles.</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(N_s\)</span></td>
+<td>is the number of time samples for a plan section.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Input</dt>
+<dd><em>x</em>: optimization argument.</dd>
+<dt>Return</dt>
+<dd>Array with the inequations&#8217; values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot._solve_opt_pbl">
+<tt class="descname">_solve_opt_pbl</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot._solve_opt_pbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot._solve_opt_pbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the optimization solver with the appropriate parameters and parse
+the information returned by it. This method updates the <tt class="xref py py-attr docutils literal"><span class="pre">_C</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">_dt_final</span></tt>
+and <tt class="xref py py-attr docutils literal"><span class="pre">_t_final</span></tt> attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Robot.set_option">
+<tt class="descname">set_option</tt><big>(</big><em>name</em>, <em>value=None</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot.set_option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot.set_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setter for some optimation parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.ctime">
+<tt class="descname">ctime</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.ctime" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of computation time spend for calculating each planned section.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.eyed">
+<tt class="descname">eyed</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.eyed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot ID.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.k_mod">
+<tt class="descname">k_mod</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.k_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot kinematic model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.planning_process">
+<tt class="descname">planning_process</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.planning_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planning process handler for where the planning routine is called.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.rho">
+<tt class="descname">rho</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot&#8217;s radius.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.rtime">
+<tt class="descname">rtime</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.rtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Race&#8221; time. Discrete time vector of the planning process.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.Robot.sol">
+<tt class="descname">sol</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.Robot.sol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solution, i.e., finded path.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="worldsim">
+<h2>WorldSim<a class="headerlink" href="#worldsim" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.WorldSim">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">WorldSim</tt><big>(</big><em>name_id</em>, <em>robots</em>, <em>obstacles</em>, <em>phy_boundary</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.WorldSim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>This class is a container of all simulation elements and also the
+interface for running the simulation.</p>
+<dl class="method">
+<dt id="planning_sim.WorldSim.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.WorldSim.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run simulation by first calling the <a class="reference external" href="http://docs.python.org/library/multiprocessing.html#multiprocessing.Process.start" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">multiprocessing.Process.start()</span></tt></a> method to
+initiate the motion planning of each robot. And secondly by parsing theirs solutions and
+prompting the option to plot/save it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="communication-message">
+<h2>Communication message<a class="headerlink" href="#communication-message" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<dl class="class">
+<dt id="planning_sim.RobotMsg">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">RobotMsg</tt><big>(</big><em>dp</em>, <em>ip_z1</em>, <em>ip_z2</em>, <em>lz</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RobotMsg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.RobotMsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Robot message class for exchanging information about theirs intentios.</p>
+<dl class="attribute">
+<dt id="planning_sim.RobotMsg.done_planning">
+<tt class="descname">done_planning</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RobotMsg.done_planning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag to indicate that the robot has finished its planning process.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RobotMsg.intended_path_z1">
+<tt class="descname">intended_path_z1</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RobotMsg.intended_path_z1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intended path (z1 coordiante).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RobotMsg.intended_path_z2">
+<tt class="descname">intended_path_z2</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RobotMsg.intended_path_z2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intended path (z2 coordiante).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="planning_sim.RobotMsg.latest_z">
+<tt class="descname">latest_z</tt><em class="property"> = None</em><a class="headerlink" href="#planning_sim.RobotMsg.latest_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>z value calculated on the previews planned section.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">planning_sim</span></tt> &#8212; Motion planning simulation</a><ul>
+<li><a class="reference internal" href="#obstacles-and-boundary">Obstacles and Boundary</a></li>
+<li><a class="reference internal" href="#robot-and-kinematic-model">Robot and Kinematic Model</a></li>
+<li><a class="reference internal" href="#worldsim">WorldSim</a></li>
+<li><a class="reference internal" href="#communication-message">Communication message</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter"> Welcome to Motion Planning&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Multi-robot motion planner.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Motion Planning’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Motion Planning 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, José MENDES.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

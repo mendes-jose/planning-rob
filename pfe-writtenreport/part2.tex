@@ -48,7 +48,7 @@ The ALGENCAN method\todo[inline, size=\tiny]{describe algecan}
 under the following constraints $\forall k \in \{0,\dotsc,N_s -1\}$:
 \begin{equation}%\label{eq:sysr4}
 \left\lbrace\begin{array}{lcl}
-	\varphi_1(z(t_{initial}),\dotsc,z^{(l-1)}(t_{initial})) & = & q_{initial}\\
+    \varphi_1(z(t_{initial}),\dotsc,z^{(l-1)}(t_{initial})) & = & q_{initial}\\
     \varphi_1(z(t_{final}),\dotsc,z^{(l-1)}(t_{final})) & = & q_{final}\\
     \varphi_2(z(t_{initial}),\dotsc,z^{(l)}(t_{initial})) & = & u_{initial}\\
     \varphi_2(z(t_{final}),\dotsc,z^{(l)}(t_{final}))& = & u_{final}\\
@@ -205,7 +205,6 @@ Thus the need of a polygon representation.
 
 \subsubsection{Robot-to-obstacle distance for the convex polygon representation}
 
-
 As sad before the robot's geometric form is represented by a circle.
 When calculating the robot-to-obstacle distance this simplified representation is quite useful. 
 The first approach to calculate the distance between a point and an obstacle represented by a convex polygon
@@ -224,7 +223,9 @@ Of course that the performance of this approach is "number of edges"-dependent a
 polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful
 value or delete it}
 
-An important remark though is that for a given planning horizon several ($N_{s}$) point-to-obstacle distances have to be calculated. Intuitively we can say that there is a high probability that most of the $N_{s}$ points are inside the same zone defined by theirs relative positions to the obstacle. Besides, the probability of finding points inside zones that are "far" from the already occupied zones is smaller.
+An important remark though is that for a given planning horizon several ($N_{s}$) point-to-obstacle distances have to be calculated. Intuitively we can say that there
+is a high probability that most of the $N_{s}$ points are inside the same zone defined by theirs relative positions to the obstacle.
+Besides, the probability of finding points inside zones that are "far" from the already occupied zones is smaller.
 % If not so some of them are likely to be in some adjacent zone and finally they are less likely to be in any other zone.
 This heuristic can be used to speed up the planning process by having a smarter initialization of point-to-obstacle distance computation when using a convex polygon representation.
 
@@ -260,7 +261,7 @@ point/.style={very thick,black}]
 \draw[point] (2.6,0.5,0) node[anchor=east]{\textbullet $C$};
 
 \end{tikzpicture}}
-\caption{Potitioning cases when calculating point-to-obstacle distance in a convex polygon representation. \label{fig:convexpolygon}}
+\caption{Positioning cases when calculating point-to-obstacle distance in a convex polygon representation. \label{fig:convexpolygon}}
 \end{figure}
 
 \begin{figure}[!h]
@@ -269,15 +270,126 @@ point/.style={very thick,black}]
 	\caption{Class diagram.\label{fig:classesdiagram}}
 \end{figure}
 
+%\subsection{Analysis of real-time planning feasibility}
 
-\subsection{Multi-robots}
+%\subsection{Multi-robots}
 
-Each robot must be able to access the position of any robot of the fleet. If a robot's position cannot be accessed that means the robot lost its connection with the fleet and will not be considered a conflictual robot by none of the others robots.
+%Each robot must be able to access the position of any robot of the fleet. If a robot's position cannot be accessed that means the robot lost its connection with the fleet and will not be considered a conflictual robot by none of the others robots.
 
 
-Symmetry problem \todo[inline, size=\tiny]{Tc too high no time to avoid another robot involved}
+%Symmetry problem \todo[inline, size=\tiny]{Tc too high no time to avoid another robot involved}
 
-Gilbert-Johnson-Keerthi distance algorithm
+%Gilbert-Johnson-Keerthi distance algorithm
+
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_4/uni.eps}
+                \caption{Four non-null knots intervals.}\label{fig:uni04}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_5/uni.eps}
+                \caption{Five non-null knots intervals.}\label{fig:uni05}
+        \end{subfigure}%
+        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_6/uni.eps}
+                \caption{Six non-null knots intervals.}\label{fig:uni06}
+        \end{subfigure}%
+        \caption{Zero obstacles scenario.}\label{fig:uni0}
+\end{figure}
+\begin{figure}
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_4/uni.eps}
+                \caption{Four non-null knots intervals.}\label{fig:uni34}
+        \end{subfigure}
+        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_5/uni.eps}
+                \caption{Five non-null knots intervals.}\label{fig:uni35}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/uni.eps}
+                \caption{Six non-null knots intervals.}\label{fig:uni36}
+        \end{subfigure}
+        \caption{Three obstacles scenario.}\label{fig:uni3}
+\end{figure}
+
+% INFO:R0: TOT: 7.30220981798
+% INFO:R0: NSE: 17
+% INFO:R0: FIR: 0.936461925507
+% INFO:R0: LAS: 0.359531164169
+% INFO:R0: LMA: 1
+% INFO:R0: MAX: 0.309299945831
+% INFO:R0: MIN: 0.0253689289093
+% INFO:R0: AVG: 0.131549866994
+% INFO:R0: RMP: 0.69394218616
+% INFO:R0: RMG: 0.806640432432
+%planning-sim-multirob-integration-time-analysis_3_0.445714285714_1.2_9_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0
+
+For the sake of an exemple a simulation done with the following parameters:
+\begin{center}
+\begin{tabular}{ll}
+$T_p$ & 1.200s\\
+$T_c$ & 0.446s\\
+$N_s$ & 9\\
+$N_{knots}$ & 4\\
+a & b
+\end{tabular}
+\end{center}
+gave could be perfomed in within computing time smaller than the $T_c$ value for every planning section.
+
+\begin{figure}
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/sim_results/multirobot-path.png}
+                \caption{Robot's path.}\label{fig:rpath}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./img/realtime/sim_results/multirobot-vw.png}
+                \caption{Robot's input.}\label{fig:rinput}
+        \end{subfigure}
+        \caption{Three obstacles scenario.}\label{fig:uni3}
+\end{figure}
+
+\begin{figure}
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_4/uni.eps}
+                \caption{Four non-null knots intervals.}\label{fig:uni64}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_5/uni.eps}
+                \caption{Five non-null knots intervals.}\label{fig:uni65}
+        \end{subfigure}
+        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_6/uni.eps}
+                \caption{Six non-null knots intervals.}\label{fig:uni66}
+        \end{subfigure}
+        \caption{Six obstacles scenario.}\label{fig:uni6}
+\end{figure}
 
 \newpage
 

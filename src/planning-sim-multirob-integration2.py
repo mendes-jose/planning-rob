@@ -1,4 +1,5 @@
-#!/usr/bin/python
+""" This module provides a simple way to simulate the the motion planning
+solution based mainly on Defoort works"""
 
 import numpy as np
 import numpy.linalg as LA

@@ -30,6 +30,7 @@ lmai = header.index('LMA')
 #table = table[np.where(table[:,rati] < 6.0)]
 
 fig = []
+fig_uni = []
 plt.hold(True)
 
 # define goodzone
@@ -85,7 +86,15 @@ for scnt in scenarios_tables:
 #        print 'nstables 0 shape ', ns_tables[0].shape
 
         direc = '../traces/temp/charts/Scenario_{a:.0f}__N_knots_{b:.0f}/'.format(b=knt[0,nkni], a=scnt[0,nobsti])
-        os.mkdir(direc)
+        try:
+            os.mkdir(direc)
+        except OSError:
+            print('Probably the output directory already exists, going to overwrite content')
+
+        fig_uni += [plt.figure()]
+        funiidx = len(fig_uni) - 1
+        ax_uni = fig_uni[funiidx].gca()
+        colorsa = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, len(ns_tables))])
         for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
 #            print 'nst shape ', nst.shape
             fig += [plt.figure()]
@@ -108,8 +117,8 @@ for scnt in scenarios_tables:
             new_tctp_interv = np.linspace(nst[0,tci]/nst[0,tpi], nst[idxs[-1],tci]/nst[idxs[-1],tpi], n_Tc)
 
 #            print new_tctp_interv
+            colors = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Tp)])
             for v, idx in zip(all_tp, range(n_Tp)):
-                colors = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Tp)])
 
 #                print 'v ', v
 #                print 'nst : tpi ', nst[:,tpi]
@@ -120,13 +129,14 @@ for scnt in scenarios_tables:
                 x = x[sort_idxs]
                 y = nst[idxs,rmgi]
                 y = y[sort_idxs]
-#                f = interp1d(x, y, kind='cubic')
-#                f = interp1d(x, y, assume_sorted=True, bounds_error=False)
-#                new_rmg = f(new_tctp_interv)
-#                rmg += new_rmg
+                f = interp1d(x, y, kind='cubic', bounds_error=False)
+                new_rmg = f(new_tctp_interv)
+                rmg += new_rmg
                 ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx])
 
-#            rmg /= len(all_tp)
+            rmg /= len(all_tp)
+            ax_uni.plot(new_tctp_interv, rmg, label='N_s = {}'.format(nst[0,nsi]),linewidth=1,color=colorsa[nsidx])
+
             ax.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
             ax.plot([0.5]*2, [0.0,5.0], ls='--',color='k')
 #            ax.set_ylim(0.0,.0)
@@ -134,14 +144,28 @@ for scnt in scenarios_tables:
 #            ax.add_artist(good_zone)
             ax.set_xlabel('Tc/Tp')
             ax.set_ylabel('real_max_Tc/Tc')
-            ax.set_title('Tc/Tp and real_max_Tc relation for Ns = {:.0f}, N_knots = {:.0f}, Scenario = {:.0f}'.format(nst[0,nsi], knt[0,nkni], scnt[0,nobsti]))
+#            ax.set_title('Tc/Tp and real_max_Tc relation for Ns = {:.0f},N_knots = {:.0f}, Scenario = {:.0f}'\
+#                    .format(nst[0,nsi], knt[0,nkni], scnt[0,nobsti]))
             handles, labels = ax.get_legend_handles_labels()
-            plt.legend(handles, labels)
-            fig[fidx].set_size_inches(1.5*18.5/2.54,1.5*10.5/2.54)
+            ax.legend(handles, labels)
+            fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
             fig[fidx].savefig(direc+'c{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
             fig[fidx].savefig(direc+'c{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
-            
-            
+
+        ax_uni.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
+        ax_uni.plot([0.5]*2, [0.0,4.0], ls='--',color='k')
+#        ax_uni.set_ylim(0.0,.0)
+        ax_uni.set_xlim(0.2,0.8)
+#        ax_uni.add_artist(good_zone)
+        ax_uni.set_xlabel('Tc/Tp')
+        ax_uni.set_ylabel('real_max_Tc/Tc')
+#        ax_uni.set_title('Tc/Tp and real_max_Tc relation for N_knots = {:.0f}, Scenario = {:.0f}'\
+#                .format(knt[0,nkni], scnt[0,nobsti]))
+        handles, labels = ax_uni.get_legend_handles_labels()
+        ax_uni.legend(handles, labels)
+        fig_uni[funiidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
+        fig_uni[funiidx].savefig(direc+'uni.eps', bbox_inches='tight', dpi=100)
+        fig_uni[funiidx].savefig(direc+'uni.png', bbox_inches='tight', dpi=100)
 #plt.show()
 
 raw_input('Kill me')
@@ -156,7 +180,7 @@ v_aux = table[0,1]
 all_tp = [v_aux]
 for v in table[1:,1]:
     if v != v_aux:
-        all_tp += [v] 
+        all_tp += [v]
         v_aux = v
         nTp += 1
 nTc = list(table[:,tpi]).count(table[-1,tpi])

@@ -1,0 +1,144 @@
+\begin{theindex}
+\def\bigletter#1{{\Large\sffamily#1}\nopagebreak\vspace{1mm}}
+
+  \bigletter {Symbols}
+  \item \_calculate\_polygon\_area() (planning\_sim.PolygonObstacle static method), \hyperpage{4}
+  \item \_calculate\_polygon\_centroid() (planning\_sim.PolygonObstacle static method), 
+		\hyperpage{4}
+  \item \_co\_criterion() (planning\_sim.Robot method), \hyperpage{7}
+  \item \_co\_feqcons() (planning\_sim.Robot method), \hyperpage{7}
+  \item \_co\_fieqcons() (planning\_sim.Robot method), \hyperpage{7}
+  \item \_comb\_bsp() (planning\_sim.Robot method), \hyperpage{8}
+  \item \_compute\_conflicts() (planning\_sim.Robot method), \hyperpage{8}
+  \item \_create\_aug\_vertices() (planning\_sim.PolygonObstacle method), \hyperpage{4}
+  \item \_detect\_obst() (planning\_sim.Robot method), \hyperpage{8}
+  \item \_gen\_knots() (planning\_sim.Robot method), \hyperpage{8}
+  \item \_log() (planning\_sim.Robot method), \hyperpage{9}
+  \item \_ls\_co\_criterion() (planning\_sim.Robot method), \hyperpage{9}
+  \item \_ls\_co\_feqcons() (planning\_sim.Robot method), \hyperpage{9}
+  \item \_ls\_co\_fieqcons() (planning\_sim.Robot method), \hyperpage{9}
+  \item \_ls\_sa\_criterion() (planning\_sim.Robot method), \hyperpage{10}
+  \item \_ls\_sa\_feqcons() (planning\_sim.Robot method), \hyperpage{10}
+  \item \_ls\_sa\_fieqcons() (planning\_sim.Robot method), \hyperpage{10}
+  \item \_plan() (planning\_sim.Robot method), \hyperpage{11}
+  \item \_plan\_section() (planning\_sim.Robot method), \hyperpage{11}
+  \item \_plt\_circle() (planning\_sim.RoundObstacle method), \hyperpage{3}
+  \item \_sa\_criterion() (planning\_sim.Robot method), \hyperpage{11}
+  \item \_sa\_feqcons() (planning\_sim.Robot method), \hyperpage{11}
+  \item \_sa\_fieqcons() (planning\_sim.Robot method), \hyperpage{12}
+  \item \_solve\_opt\_pbl() (planning\_sim.Robot method), \hyperpage{12}
+  \item \_unsigned\_angle() (planning\_sim.UnicycleKineModel static method), \hyperpage{5}
+
+  \indexspace
+  \bigletter A
+  \item acc\_max (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+
+  \indexspace
+  \bigletter B
+  \item Boundary (class in planning\_sim), \hyperpage{5}
+  \item bounding\_circle\_radius (planning\_sim.PolygonObstacle attribute), \hyperpage{4}
+
+  \indexspace
+  \bigletter C
+  \item centroid (planning\_sim.Obstacle attribute), \hyperpage{3}
+  \item centroid (planning\_sim.PolygonObstacle attribute), \hyperpage{5}
+  \item ctime (planning\_sim.Robot attribute), \hyperpage{12}
+
+  \indexspace
+  \bigletter D
+  \item detected\_dist() (planning\_sim.Obstacle method), \hyperpage{3}
+  \item detected\_dist() (planning\_sim.PolygonObstacle method), \hyperpage{4}
+  \item detected\_dist() (planning\_sim.RoundObstacle method), \hyperpage{3}
+  \item done\_planning (planning\_sim.RobotMsg attribute), \hyperpage{13}
+
+  \indexspace
+  \bigletter E
+  \item eyed (planning\_sim.Robot attribute), \hyperpage{12}
+
+  \indexspace
+  \bigletter I
+  \item intended\_path\_z1 (planning\_sim.RobotMsg attribute), \hyperpage{13}
+  \item intended\_path\_z2 (planning\_sim.RobotMsg attribute), \hyperpage{13}
+
+  \indexspace
+  \bigletter K
+  \item k\_mod (planning\_sim.Robot attribute), \hyperpage{12}
+
+  \indexspace
+  \bigletter L
+  \item l (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item latest\_z (planning\_sim.RobotMsg attribute), \hyperpage{13}
+
+  \indexspace
+  \bigletter O
+  \item Obstacle (class in planning\_sim), \hyperpage{3}
+
+  \indexspace
+  \bigletter P
+  \item phi\_0() (planning\_sim.UnicycleKineModel method), \hyperpage{6}
+  \item phi\_1() (planning\_sim.UnicycleKineModel method), \hyperpage{6}
+  \item phi\_2() (planning\_sim.UnicycleKineModel method), \hyperpage{6}
+  \item phi\_3() (planning\_sim.UnicycleKineModel method), \hyperpage{6}
+  \item planning\_process (planning\_sim.Robot attribute), \hyperpage{13}
+  \item planning\_sim (module), \hyperpage{3}
+  \item plot() (planning\_sim.PolygonObstacle method), \hyperpage{4}
+  \item plot() (planning\_sim.RoundObstacle method), \hyperpage{3}
+  \item PolygonObstacle (class in planning\_sim), \hyperpage{4}
+  \item pt\_2\_obst() (planning\_sim.Obstacle method), \hyperpage{3}
+  \item pt\_2\_obst() (planning\_sim.PolygonObstacle method), \hyperpage{4}
+  \item pt\_2\_obst() (planning\_sim.RoundObstacle method), \hyperpage{3}
+
+  \indexspace
+  \bigletter Q
+  \item q\_dim (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item q\_final (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item q\_init (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+
+  \indexspace
+  \bigletter R
+  \item radius (planning\_sim.RoundObstacle attribute), \hyperpage{3}
+  \item rho (planning\_sim.Robot attribute), \hyperpage{13}
+  \item Robot (class in planning\_sim), \hyperpage{7}
+  \item RobotMsg (class in planning\_sim), \hyperpage{13}
+  \item RoundObstacle (class in planning\_sim), \hyperpage{3}
+  \item rtime (planning\_sim.Robot attribute), \hyperpage{13}
+  \item run() (planning\_sim.WorldSim method), \hyperpage{13}
+
+  \indexspace
+  \bigletter S
+  \item set\_option() (planning\_sim.Robot method), \hyperpage{12}
+  \item sol (planning\_sim.Robot attribute), \hyperpage{13}
+
+  \indexspace
+  \bigletter U
+  \item u\_dim (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item u\_final (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item u\_init (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item u\_max (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item UnicycleKineModel (class in planning\_sim), \hyperpage{5}
+
+  \indexspace
+  \bigletter W
+  \item WorldSim (class in planning\_sim), \hyperpage{13}
+
+  \indexspace
+  \bigletter X
+  \item x (planning\_sim.PolygonObstacle attribute), \hyperpage{5}
+  \item x (planning\_sim.RoundObstacle attribute), \hyperpage{4}
+  \item x\_max (planning\_sim.Boundary attribute), \hyperpage{5}
+  \item x\_min (planning\_sim.Boundary attribute), \hyperpage{5}
+
+  \indexspace
+  \bigletter Y
+  \item y (planning\_sim.PolygonObstacle attribute), \hyperpage{5}
+  \item y (planning\_sim.RoundObstacle attribute), \hyperpage{4}
+  \item y\_max (planning\_sim.Boundary attribute), \hyperpage{5}
+  \item y\_min (planning\_sim.Boundary attribute), \hyperpage{5}
+
+  \indexspace
+  \bigletter Z
+  \item z\_dim (planning\_sim.UnicycleKineModel attribute), \hyperpage{6}
+  \item z\_final (planning\_sim.UnicycleKineModel attribute), \hyperpage{7}
+  \item z\_init (planning\_sim.UnicycleKineModel attribute), \hyperpage{7}
+
+\end{theindex}

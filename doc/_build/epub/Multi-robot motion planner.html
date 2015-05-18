@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Multi-robot motion planner</title>
+    
+    <link rel="stylesheet" href="_static/epub.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Motion Planning’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Motion Planning 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="module-planning_sim">
+<span id="multi-robot-motion-planner"></span><h1>Multi-robot motion planner</h1>
+<dl class="class">
+<dt id="planning_sim.Boundary">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Boundary</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Boundary"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.Obstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Obstacle</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+<dl class="method">
+<dt id="planning_sim.Obstacle.detection_dist">
+<tt class="descname">detection_dist</tt><big>(</big><em>pos</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle.detection_dist"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.Obstacle.pt2obst">
+<tt class="descname">pt2obst</tt><big>(</big><em>pos</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Obstacle.pt2obst"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.PolygonObstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">PolygonObstacle</tt><big>(</big><em>vertices</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#planning_sim.Obstacle" title="planning_sim.Obstacle"><tt class="xref py py-class docutils literal"><span class="pre">planning_sim.Obstacle</span></tt></a></p>
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.detection_dist">
+<tt class="descname">detection_dist</tt><big>(</big><em>pos</em><big>)</big></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.plot">
+<tt class="descname">plot</tt><big>(</big><em>fig</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle.plot"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.PolygonObstacle.pt2obst">
+<tt class="descname">pt2obst</tt><big>(</big><em>pos</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#PolygonObstacle.pt2obst"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculate distance from point to the obstacle</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd>pos: Cardian coordiantes of the point
+offset: offset distance that will be subtracted from the actual distance pt2obstacle</dd>
+<dt>Output</dt>
+<dd>Real number representing the distance pt2obstacle - offset. Negative value means that
+the point is closer then the offset value from the obstacle, or even inside it.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.Robot">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Robot</tt><big>(</big><em>eyed</em>, <em>kine_model</em>, <em>obstacles</em>, <em>phy_boundary</em>, <em>tc_syncer</em>, <em>tc_syncer_cond</em>, <em>conflict_syncer</em>, <em>conflict_syncer_conds</em>, <em>com_link</em>, <em>sol</em>, <em>robots_time</em>, <em>robots_comp_time</em>, <em>neigh</em>, <em>N_s=20</em>, <em>n_knots=6</em>, <em>t_init=0.0</em>, <em>t_sup=10000000000.0</em>, <em>Tc=1.0</em>, <em>Tp=3.0</em>, <em>Td=3.0</em>, <em>rho=0.2</em>, <em>detec_rho=3.0</em>, <em>com_range=15.0</em>, <em>def_epsilon=0.5</em>, <em>safe_epsilon=0.1</em>, <em>log_lock=None</em>, <em>ls_time_opt_scale=1.0</em>, <em>dist_opt_offset=100.0</em>, <em>ls_min_dist=0.5</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+<dl class="method">
+<dt id="planning_sim.Robot.set_option">
+<tt class="descname">set_option</tt><big>(</big><em>name</em>, <em>value=None</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot.set_option"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.RobotMsg">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">RobotMsg</tt><big>(</big><em>dp</em>, <em>ip_x</em>, <em>ip_y</em>, <em>lz</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RobotMsg"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.RoundObstacle">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">RoundObstacle</tt><big>(</big><em>position</em>, <em>radius</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#planning_sim.Obstacle" title="planning_sim.Obstacle"><tt class="xref py py-class docutils literal"><span class="pre">planning_sim.Obstacle</span></tt></a></p>
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.detection_dist">
+<tt class="descname">detection_dist</tt><big>(</big><em>pos</em><big>)</big></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.plot">
+<tt class="descname">plot</tt><big>(</big><em>fig</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle.plot"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.RoundObstacle.pt2obst">
+<tt class="descname">pt2obst</tt><big>(</big><em>pos</em>, <em>offset=0.0</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#RoundObstacle.pt2obst"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.UnicycleKineModel">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">UnicycleKineModel</tt><big>(</big><em>q_init, q_final, u_init=[0.0, 0.0], u_final=[0.0, 0.0], u_max=[1.0, 5.0], a_max=[2.0, 10.0]</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+<p>This class defines the kinematic model of an unicycle mobile robot.
+Unicycle kinematic model:
+q&#8217; = f(q, u)
+[x&#8217;, y&#8217;, theta&#8217;]^T = [v cos(theta), v sin(theta), w]^T</p>
+<p>Changing variables (z = [x, y]^T) we rewrite the system as:</p>
+<p><a href="#id1"><span class="problematic" id="id2">|x    |   |z1                                 |
+|y    |   |z2                                 |
+|theta|</span></a> = <a href="#id3"><span class="problematic" id="id4">|arctan(z2&#8217;/z1&#8217;)                    |
+|v    |   |sqrt(z1&#8217;^2 + z2&#8217;^2)                |
+|w    |   |(z1&#8217;z2&#8217;&#8217; - z2&#8217;z1&#8217;&#8216;)/(z1&#8217;^2 + z2&#8217;^2)|</span></a></p>
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi0">
+<tt class="descname">phi0</tt><big>(</big><em>q</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi0"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns z given q</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi1">
+<tt class="descname">phi1</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi1"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns [x, y, theta]^T given [z dz ddz] (only z and dz are used)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi2">
+<tt class="descname">phi2</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi2"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns [v, w]^T given [z dz ddz] (only dz and ddz are used)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="planning_sim.UnicycleKineModel.phi3">
+<tt class="descname">phi3</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#UnicycleKineModel.phi3"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="planning_sim.WorldSim">
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">WorldSim</tt><big>(</big><em>name_id</em>, <em>robots</em>, <em>obstacles</em>, <em>phy_boundary</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a><span class="link-target"> [http://docs.python.org/library/functions.html#object]</span></p>
+<p>Where to instatiate obstacles, robots, bonderies
+initial and final conditions etc</p>
+<dl class="method">
+<dt id="planning_sim.WorldSim.run">
+<tt class="descname">run</tt><big>(</big><em>interac_plot=False</em>, <em>speed_plot=False</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim.run"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="planning_sim.parse_cmdline">
+<tt class="descclassname">planning_sim.</tt><tt class="descname">parse_cmdline</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#parse_cmdline"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="planning_sim.rand_round_obst">
+<tt class="descclassname">planning_sim.</tt><tt class="descname">rand_round_obst</tt><big>(</big><em>no</em>, <em>boundary</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#rand_round_obst"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, José MENDES.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
