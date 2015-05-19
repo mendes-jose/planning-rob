@@ -1,6 +1,7 @@
 import planning_sim as ps
 import numpy as np
 
+# Parameters
 n_robots = 2
 n_obsts = 2
 Tc = 0.5
@@ -17,7 +18,6 @@ seps = 0.1
 drho = 3.0
 ls_min_dist = 0.5
 ls_time_opt_scale = 1.0
-dist_opt_offset = 10.0 # unused
 
 scriptname = ps.parse_cmdline()
 
@@ -34,31 +34,30 @@ name_id = '_'+str(n_obsts)+\
         '_'+str(seps)+\
         '_'+str(drho)+\
         '_'+str(ls_min_dist)+\
-        '_'+str(ls_time_opt_scale)+\
-        '_'+str(dist_opt_offset)
+        '_'+str(ls_time_opt_scale)
 
 fname = scriptname[0:-3]+name_id+'.log'
 
-#logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
+# Logging on a file
+#ps.logging.basicConfig(filename=fname, format='%(levelname)s:%(message)s', \
 #        filemode='w', level=logging.DEBUG)
+
 ps.logging.basicConfig(format='%(levelname)s:%(message)s', level=ps.logging.DEBUG)
 
 boundary = ps.Boundary([-12.0, 12.0], [-12.0, 12.0])
 
-#obst_info = rand_round_obst(n_obsts, Boundary([-1., 1.], [0.8, 5.2]))
-#print 'OBSTS\n', obst_info
+# Generate random round obstacles
+#obst_info = ps.rand_round_obst(n_obsts, ps.Boundary([-1., 1.], [0.8, 5.2]))
 
 # 0 obsts
 if n_obsts == 0:
     obst_info = []
+# 2 obsts exemple
 elif n_obsts == 2:
     obst_info = [#([0.0, 1.6], 0.3),
             ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
-# 3 obsts
+# 3 obsts exemple
 elif n_obsts == 3:
-    #obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),
-    #        ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),
-    #        ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
     obst_info = [([0.0, 1.6], 0.3),
             ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
 # 6 obsts
@@ -70,13 +69,14 @@ elif n_obsts == 6:
             ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
             ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
 else:
-    ps.logging.info("Only 3 or 6 obstacles configurations are permited")
     ps.logging.info("Using 3 obstacles configuration")
     obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),
             ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),
             ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
 
 obstacles = [ps.RoundObstacle(i[0], i[1]) for i in obst_info]
+
+# Polygon obstacle exemple
 #obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
 kine_models = [ps.UnicycleKineModel(
@@ -93,13 +93,18 @@ kine_models = [ps.UnicycleKineModel(
         [1.0,  5.0])]          # u_max
 
 robots = []
+
 for i in range(n_robots):
+
+    # Creating communication neighburs
     if i-1 >= 0 and i+1 < n_robots:
         neigh = [i-1, i+1]
     elif i-1 >= 0:
         neigh = [i-1]
     else:
         neigh = [i+1]
+
+    # Creating robots
     robots += [ps.Robot(
         i,                      # Robot ID
         kine_models[i],         # kinetic model
@@ -116,8 +121,7 @@ for i in range(n_robots):
         safe_epsilon=seps,      # in meters
         detec_rho=drho,
         ls_time_opt_scale = ls_time_opt_scale,
-        dist_opt_offset = dist_opt_offset,          # TODO param deprecated
-        ls_min_dist = ls_min_dist)]                 # planning horizon (for stand alone plan)
+        ls_min_dist = ls_min_dist)]
 
 [r.set_option('acc', acc) for r in robots] # accuracy (hard to understand the physical meaning of this)
 [r.set_option('maxit', maxit) for r in robots] # max number of iterations for intermediary steps

@@ -49,8 +49,8 @@
           <div class="body">
             
   <h1>Source code for planning_sim</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;The planning_sim module implements classes to simulate a navigation</span>
-<span class="sd">scenario consisting of one or more mobile robots that autonomously plan their</span>
+<span class="sd">&quot;&quot;&quot; The :mod:`planning_sim` module implements classes and functions to simulate a</span>
+<span class="sd">navigation scenario consisting of one or more mobile robots that autonomously plan their</span>
 <span class="sd">motion from an initial state to a final state avoiding static obstacles and</span>
 <span class="sd">other robots, and respecting kinematic (including nonhonolonomic) constraints.</span>
 
@@ -671,7 +671,6 @@
             <span class="n">def_epsilon</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
             <span class="n">safe_epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
             <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
-            <span class="n">dist_opt_offset</span> <span class="o">=</span> <span class="mf">1e2</span><span class="p">,</span>
             <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">eyed</span> <span class="o">=</span> <span class="n">eyed</span>
@@ -713,7 +712,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_safe_epsilon</span> <span class="o">=</span> <span class="n">safe_epsilon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_lock</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ls_time_opt_scale</span> <span class="o">=</span> <span class="n">ls_time_opt_scale</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dist_opt_offset</span> <span class="o">=</span> <span class="n">dist_opt_offset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ls_min_dist</span> <span class="o">=</span> <span class="n">ls_min_dist</span>
 
         <span class="c"># number of robots</span>
@@ -2190,11 +2188,25 @@
                 <span class="k">return</span> <span class="bp">False</span>
     <span class="k">return</span> <span class="bp">True</span>
 
-<span class="k">def</span> <span class="nf">rand_round_obst</span><span class="p">(</span><span class="n">no</span><span class="p">,</span> <span class="n">boundary</span><span class="p">):</span>
+<div class="viewcode-block" id="rand_round_obst"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.rand_round_obst">[docs]</a><span class="k">def</span> <span class="nf">rand_round_obst</span><span class="p">(</span><span class="n">no</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">min_radius</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">max_radius</span><span class="o">=</span><span class="mf">0.40</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generate random values for creating :class:`RoundObstacle` objects.</span>
+<span class="sd">    Obstacles will have a random radius between *min_radius* and *max_radius*</span>
+<span class="sd">    meters and a random position such as the whole obstacle will be within the area</span>
+<span class="sd">    determined by the *boundary* parameter.</span>
 
+<span class="sd">    Input</span>
+<span class="sd">        *no*: number of round obstacles to be generated.</span>
+
+<span class="sd">        *boundary*: area where the obstacles shall be placed.</span>
+
+<span class="sd">        *min_radius*: minimum radius length.</span>
+
+<span class="sd">        *max_radius*: maximum radius length.</span>
+
+<span class="sd">    Return</span>
+<span class="sd">        List containing the information to initialize a :class:`RoundObstacle` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">N</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">0.0001</span>
-    <span class="n">min_radius</span> <span class="o">=</span> <span class="mf">0.15</span>
-    <span class="n">max_radius</span> <span class="o">=</span> <span class="mf">0.4</span>
     <span class="n">radius_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_radius</span><span class="p">,</span> <span class="n">max_radius</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="n">x_range</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">boundary</span><span class="o">.</span><span class="n">x_min</span><span class="o">+</span><span class="n">max_radius</span><span class="p">,</span> <span class="n">boundary</span><span class="o">.</span><span class="n">x_max</span><span class="o">-</span><span class="n">max_radius</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
     <span class="n">y_range</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">boundary</span><span class="o">.</span><span class="n">y_min</span><span class="o">+</span><span class="n">max_radius</span><span class="p">,</span> <span class="n">boundary</span><span class="o">.</span><span class="n">y_max</span><span class="o">-</span><span class="n">max_radius</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
@@ -2209,15 +2221,18 @@
             <span class="n">obsts</span> <span class="o">+=</span> <span class="p">[([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">r</span><span class="p">)]</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">obsts</span>
+</div>
+<div class="viewcode-block" id="parse_cmdline"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.parse_cmdline">[docs]</a><span class="k">def</span> <span class="nf">parse_cmdline</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Parse command line options.</span>
 
-<span class="k">def</span> <span class="nf">parse_cmdline</span><span class="p">():</span>
-    <span class="c"># parsing command line eventual optmization method options</span>
+<span class="sd">    .. todo:: Implement more stuff then only reading the script name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">scriptname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">scriptname</span>
 
 <span class="c"># MAIN ########################################################################</span>
-
+</div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
 
     <span class="n">n_robots</span> <span class="o">=</span> <span class="mi">2</span>
@@ -2236,7 +2251,6 @@
     <span class="n">drho</span> <span class="o">=</span> <span class="mf">3.0</span>
     <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">dist_opt_offset</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="c"># unused</span>
 
     <span class="n">scriptname</span> <span class="o">=</span> <span class="n">parse_cmdline</span><span class="p">()</span>
 
@@ -2253,8 +2267,7 @@
             <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">seps</span><span class="p">)</span><span class="o">+</span>\
             <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">drho</span><span class="p">)</span><span class="o">+</span>\
             <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_min_dist</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_time_opt_scale</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">dist_opt_offset</span><span class="p">)</span>
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_time_opt_scale</span><span class="p">)</span>
 
     <span class="n">fname</span> <span class="o">=</span> <span class="n">scriptname</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">name_id</span><span class="o">+</span><span class="s">&#39;.log&#39;</span>
 
@@ -2341,7 +2354,6 @@
             <span class="n">safe_epsilon</span><span class="o">=</span><span class="n">seps</span><span class="p">,</span>      <span class="c"># in meters</span>
             <span class="n">detec_rho</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span>
             <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="n">ls_time_opt_scale</span><span class="p">,</span>
-            <span class="n">dist_opt_offset</span> <span class="o">=</span> <span class="n">dist_opt_offset</span><span class="p">,</span>          <span class="c"># TODO param deprecated</span>
             <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="n">ls_min_dist</span><span class="p">)]</span>                 <span class="c"># planning horizon (for stand alone plan)</span>
 
     <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;acc&#39;</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> <span class="c"># accuracy (hard to understand the physical meaning of this)</span>

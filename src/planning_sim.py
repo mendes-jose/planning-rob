@@ -1,5 +1,5 @@
-"""The planning_sim module implements classes to simulate a navigation
-scenario consisting of one or more mobile robots that autonomously plan their
+""" The :mod:`planning_sim` module implements classes and functions to simulate a
+navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
 other robots, and respecting kinematic (including nonhonolonomic) constraints.
 
@@ -620,7 +620,6 @@ class Robot(object):
             def_epsilon=0.5,
             safe_epsilon=0.1,
             ls_time_opt_scale = 1.,
-            dist_opt_offset = 1e2,
             ls_min_dist = 0.5):
 
         self.eyed = eyed
@@ -662,7 +661,6 @@ class Robot(object):
         self._safe_epsilon = safe_epsilon
         self._log_lock = None
         self._ls_time_opt_scale = ls_time_opt_scale
-        self._dist_opt_offset = dist_opt_offset
         self._ls_min_dist = ls_min_dist
 
         # number of robots
@@ -2139,11 +2137,25 @@ def _isobstok(obsts, c, r):
                 return False
     return True
 
-def rand_round_obst(no, boundary):
+def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
+    """ Generate random values for creating :class:`RoundObstacle` objects.
+    Obstacles will have a random radius between *min_radius* and *max_radius*
+    meters and a random position such as the whole obstacle will be within the area
+    determined by the *boundary* parameter.
 
+    Input
+        *no*: number of round obstacles to be generated.
+
+        *boundary*: area where the obstacles shall be placed.
+
+        *min_radius*: minimum radius length.
+
+        *max_radius*: maximum radius length.
+
+    Return
+        List containing the information to initialize a :class:`RoundObstacle` object.
+    """
     N = 1/0.0001
-    min_radius = 0.15
-    max_radius = 0.4
     radius_range = np.linspace(min_radius, max_radius, N)
     x_range =np.linspace(boundary.x_min+max_radius, boundary.x_max-max_radius, N)
     y_range =np.linspace(boundary.y_min+max_radius, boundary.y_max-max_radius, N)
@@ -2160,7 +2172,10 @@ def rand_round_obst(no, boundary):
     return obsts
 
 def parse_cmdline():
-    # parsing command line eventual optmization method options
+    """ Parse command line options.
+
+    .. todo:: Implement more stuff then only reading the script name.
+    """
     scriptname = sys.argv[0]
 
     return scriptname
@@ -2185,7 +2200,6 @@ if __name__ == '__main__':
     drho = 3.0
     ls_min_dist = 0.5
     ls_time_opt_scale = 1.0
-    dist_opt_offset = 10.0 # unused
 
     scriptname = parse_cmdline()
 
@@ -2202,8 +2216,7 @@ if __name__ == '__main__':
             '_'+str(seps)+\
             '_'+str(drho)+\
             '_'+str(ls_min_dist)+\
-            '_'+str(ls_time_opt_scale)+\
-            '_'+str(dist_opt_offset)
+            '_'+str(ls_time_opt_scale)
 
     fname = scriptname[0:-3]+name_id+'.log'
 
@@ -2290,7 +2303,6 @@ if __name__ == '__main__':
             safe_epsilon=seps,      # in meters
             detec_rho=drho,
             ls_time_opt_scale = ls_time_opt_scale,
-            dist_opt_offset = dist_opt_offset,          # TODO param deprecated
             ls_min_dist = ls_min_dist)]                 # planning horizon (for stand alone plan)
 
     [r.set_option('acc', acc) for r in robots] # accuracy (hard to understand the physical meaning of this)

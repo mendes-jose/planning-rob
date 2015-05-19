@@ -7,6 +7,12 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.interpolate import interp1d
 
+font = {'family' : 'sans-serif',
+        'weight' : 'normal',
+        'size'   : 10}
+
+mpl.rc('font', **font)
+
 direc = "./"
 
 table = []
@@ -30,6 +36,7 @@ lmai = header.index('LMA')
 #table = table[np.where(table[:,rati] < 6.0)]
 
 fig = []
+figtot = []
 fig_uni = []
 plt.hold(True)
 
@@ -98,8 +105,10 @@ for scnt in scenarios_tables:
         for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
 #            print 'nst shape ', nst.shape
             fig += [plt.figure()]
+            figtot += [plt.figure()]
             fidx = len(fig) - 1
             ax = fig[fidx].gca()
+            axtot = figtot[fidx].gca()
 
             all_tp = [nst[0, tpi]]
             for v in nst[1:, tpi]:
@@ -132,15 +141,22 @@ for scnt in scenarios_tables:
                 f = interp1d(x, y, kind='cubic', bounds_error=False)
                 new_rmg = f(new_tctp_interv)
                 rmg += new_rmg
-                ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx])
+                ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='o')
+                xtot = nst[idxs,toti]
+                totidx = xtot.argsort()
+                xtot = xtot[totidx]
+                ytc = nst[idxs,tci]
+                ytc = ytc[totidx]
+                axtot.plot(xtot, ytc, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='o')
 
             rmg /= len(all_tp)
-            ax_uni.plot(new_tctp_interv, rmg, label='N_s = {}'.format(nst[0,nsi]),linewidth=1,color=colorsa[nsidx])
+            ax_uni.plot(new_tctp_interv, rmg, label='N_s = {}'.format(nst[0,nsi]),linewidth=1,\
+                    color=colorsa[nsidx],marker='o')
 
             ax.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
-            ax.plot([0.5]*2, [0.0,5.0], ls='--',color='k')
+#            ax.plot([0.5]*2, [0.0,5.0], ls='--',color='k')
 #            ax.set_ylim(0.0,.0)
-            ax.set_xlim(0.2,0.8)
+            ax.set_xlim(0.2,0.9)
 #            ax.add_artist(good_zone)
             ax.set_xlabel('Tc/Tp')
             ax.set_ylabel('real_max_Tc/Tc')
@@ -148,12 +164,17 @@ for scnt in scenarios_tables:
 #                    .format(nst[0,nsi], knt[0,nkni], scnt[0,nobsti]))
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles, labels)
+            handles, labels = axtot.get_legend_handles_labels()
+            axtot.legend(handles, labels)
             fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
             fig[fidx].savefig(direc+'c{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
             fig[fidx].savefig(direc+'c{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            figtot[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
+            figtot[fidx].savefig(direc+'tot{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            figtot[fidx].savefig(direc+'tot{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
 
         ax_uni.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
-        ax_uni.plot([0.5]*2, [0.0,4.0], ls='--',color='k')
+#        ax_uni.plot([0.5]*2, [0.0,4.0], ls='--',color='k')
 #        ax_uni.set_ylim(0.0,.0)
         ax_uni.set_xlim(0.2,0.8)
 #        ax_uni.add_artist(good_zone)
@@ -168,71 +189,3 @@ for scnt in scenarios_tables:
         fig_uni[funiidx].savefig(direc+'uni.png', bbox_inches='tight', dpi=100)
 #plt.show()
 
-raw_input('Kill me')
-
-# PLOT 3D
-
-table = table[np.where(table[:,rati] < 28.0)]
-table = table[np.where(table[:,tpi] < 6.0)]
-table = table[np.where(np.divide(table[:,tci], table[:,tpi]) <= 0.5)]
-nTp = 1
-v_aux = table[0,1]
-all_tp = [v_aux]
-for v in table[1:,1]:
-    if v != v_aux:
-        all_tp += [v]
-        v_aux = v
-        nTp += 1
-nTc = list(table[:,tpi]).count(table[-1,tpi])
-
-X = np.zeros((nTc, nTp))
-Y = np.zeros((nTc, nTp))
-Z = np.zeros((nTc, nTp))
-
-idi = 0
-cidx = 0
-idx = 1
-v_aux = table[0,1]
-for v in np.append(table[1:,1], np.array([-1.0])):
-    if v != v_aux:
-#        print v, v_aux
-#        print table[idi,tci]
-#        print table[idx-1,tci]
-        new_tc_interv = np.linspace(table[idi,tci]/v_aux, table[idx-1,tci]/v_aux, nTc)
-#        print new_tc_interv
-#        print table[idi:idx,tci]
-        X[:,cidx] = new_tc_interv
-        f = interp1d(table[idi:idx,tci]/v_aux, table[idi:idx,rati], kind='cubic')
-        Z[:,cidx] = f(new_tc_interv)
-        Y[:,cidx] = np.zeros(nTc)+v_aux
-        idi = idx
-        cidx += 1
-        v_aux = v
-    idx += 1
-
-fig = plt.figure()
-ax3d = fig.gca(projection='3d')
-ax3d.plot_surface(X, Y, Z,
-        cmap=cm.jet, linewidth=1)
-ax3d.plot_surface([[0.1,0.5],[0.1,0.5]], [[1.0, 1.0],[6.0,6.0]],[[1.0,1.0],[1.0,1.0]],color='b',alpha=0.0)
-ax3d.set_xlabel('Tc/Tp')
-ax3d.set_ylabel('Tp')
-ax3d.set_zlabel('real_max_Tc/Tc')
-plt.show()
-
-#x, y = np.meshgrid(table[:,tpi], np.divide(table[:,tci],table[:,tpi]))
-#table = np.array(sorted(table, key=lambda x:x[tpi]))
-#table = np.array(sorted(table, key=lambda x:x[rati]))
-#ax.plot_surface(table[:,tpi], np.divide(table[:,tci],table[:,tpi]), table[:,rati],
-#        rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0)
-#ax.plot_trisurf(table2[:,tpi], np.divide(table2[:,tci],table2[:,tpi]), table2[:,rati])
-#ax.plot(table2[:,tpi], np.divide(table2[:,tci],table2[:,tpi]), table2[:,rati])
-#for idx in range(1,table.shape[0]):
-#    if table[idx,1] != table[idx-1,1]:
-#        tci = header.index('Tc')
-#        tpi = header.index('Tp')
-#        rati = header.index('RAT')
-#        ax.plot(table[p_idx,tpi], np.divide(table[p_idx:idx,tci],table[p_idx:idx,tpi]), table[p_idx:idx,rati], color=colors[cnt])
-#        p_idx = idx
-#        cnt += 1
-#plt.show()

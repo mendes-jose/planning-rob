@@ -2,8 +2,8 @@
 ====================================================
 .. module:: planning_sim
 
-The :mod:`planning_sim` module implements classes to simulate a navigation
-scenario consisting of one or more mobile robots that autonomously plan their
+The :mod:`planning_sim` module implements classes and functions to simulate a
+navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
 other robots, and respecting kinematic (including nonhonolonomic) constraints.
 
@@ -11,8 +11,8 @@ The motion planner is based on the experimental work developed by Michael Defoor
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.
 
-Obstacles and Boundary
------------------------
+Obstacles and Boundary classes
+------------------------------
 
 ------------------------------------
 |
@@ -58,8 +58,8 @@ Obstacles and Boundary
     :inherited-members:
     :show-inheritance:
 
-Robot and Kinematic Model
--------------------------
+Robot and Kinematic Model classes
+---------------------------------
 
 ------------------------------------
 |
@@ -83,8 +83,8 @@ Robot and Kinematic Model
     :inherited-members:
     :show-inheritance:
 
-WorldSim
---------
+WorldSim class
+--------------
 
 ------------------------------------
 |
@@ -97,8 +97,8 @@ WorldSim
     :inherited-members:
     :show-inheritance:
 
-Communication message
----------------------
+Communication link class
+------------------------
 
 ------------------------------------
 |
@@ -111,3 +111,13 @@ Communication message
     :inherited-members:
     :show-inheritance:
 
+Functions
+---------
+
+------------------------------------
+|
+------------------------------------
+
+.. autofunction:: planning_sim.parse_cmdline
+
+.. autofunction:: planning_sim.rand_round_obst

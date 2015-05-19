@@ -52,15 +52,15 @@
             
   <div class="section" id="module-planning_sim">
 <span id="planning-sim-motion-planning-simulation"></span><h1><a class="reference internal" href="#module-planning_sim" title="planning_sim"><tt class="xref py py-mod docutils literal"><span class="pre">planning_sim</span></tt></a> &#8212; Motion planning simulation<a class="headerlink" href="#module-planning_sim" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="#module-planning_sim" title="planning_sim"><tt class="xref py py-mod docutils literal"><span class="pre">planning_sim</span></tt></a> module implements classes to simulate a navigation
-scenario consisting of one or more mobile robots that autonomously plan their
+<p>The <a class="reference internal" href="#module-planning_sim" title="planning_sim"><tt class="xref py py-mod docutils literal"><span class="pre">planning_sim</span></tt></a> module implements classes and functions to simulate a
+navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
 other robots, and respecting kinematic (including nonhonolonomic) constraints.</p>
 <p>The motion planner is based on the experimental work developed by Michael Defoort
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.</p>
-<div class="section" id="obstacles-and-boundary">
-<h2>Obstacles and Boundary<a class="headerlink" href="#obstacles-and-boundary" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="obstacles-and-boundary-classes">
+<h2>Obstacles and Boundary classes<a class="headerlink" href="#obstacles-and-boundary-classes" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.Obstacle">
@@ -299,8 +299,8 @@ as its radius.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="robot-and-kinematic-model">
-<h2>Robot and Kinematic Model<a class="headerlink" href="#robot-and-kinematic-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="robot-and-kinematic-model-classes">
+<h2>Robot and Kinematic Model classes<a class="headerlink" href="#robot-and-kinematic-model-classes" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.UnicycleKineModel">
@@ -508,7 +508,7 @@ and input vectors.</p>
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.Robot">
-<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Robot</tt><big>(</big><em>eyed</em>, <em>kine_model</em>, <em>obstacles</em>, <em>phy_boundary</em>, <em>neigh</em>, <em>N_s=20</em>, <em>n_knots=6</em>, <em>t_init=0.0</em>, <em>t_sup=10000000000.0</em>, <em>Tc=1.0</em>, <em>Tp=3.0</em>, <em>Td=3.0</em>, <em>rho=0.2</em>, <em>detec_rho=3.0</em>, <em>com_range=15.0</em>, <em>def_epsilon=0.5</em>, <em>safe_epsilon=0.1</em>, <em>ls_time_opt_scale=1.0</em>, <em>dist_opt_offset=100.0</em>, <em>ls_min_dist=0.5</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">Robot</tt><big>(</big><em>eyed</em>, <em>kine_model</em>, <em>obstacles</em>, <em>phy_boundary</em>, <em>neigh</em>, <em>N_s=20</em>, <em>n_knots=6</em>, <em>t_init=0.0</em>, <em>t_sup=10000000000.0</em>, <em>Tc=1.0</em>, <em>Tp=3.0</em>, <em>Td=3.0</em>, <em>rho=0.2</em>, <em>detec_rho=3.0</em>, <em>com_range=15.0</em>, <em>def_epsilon=0.5</em>, <em>safe_epsilon=0.1</em>, <em>ls_time_opt_scale=1.0</em>, <em>ls_min_dist=0.5</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#Robot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.Robot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Class for creating a robot in the simulation.
 It implements the Defoort&#8217;s experimental motion planning algorithm</p>
@@ -1113,8 +1113,8 @@ and <tt class="xref py py-attr docutils literal"><span class="pre">_t_final</spa
 </dd></dl>
 
 </div>
-<div class="section" id="worldsim">
-<h2>WorldSim<a class="headerlink" href="#worldsim" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="worldsim-class">
+<h2>WorldSim class<a class="headerlink" href="#worldsim-class" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.WorldSim">
@@ -1134,8 +1134,8 @@ prompting the option to plot/save it.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="communication-message">
-<h2>Communication message<a class="headerlink" href="#communication-message" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="communication-link-class">
+<h2>Communication link class<a class="headerlink" href="#communication-link-class" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.RobotMsg">
@@ -1169,6 +1169,39 @@ prompting the option to plot/save it.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<dl class="function">
+<dt id="planning_sim.parse_cmdline">
+<tt class="descclassname">planning_sim.</tt><tt class="descname">parse_cmdline</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/planning_sim.html#parse_cmdline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.parse_cmdline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse command line options.</p>
+<div class="admonition-todo admonition" id="index-4">
+<p class="first admonition-title">Todo</p>
+<p class="last">Implement more stuff then only reading the script name.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="planning_sim.rand_round_obst">
+<tt class="descclassname">planning_sim.</tt><tt class="descname">rand_round_obst</tt><big>(</big><em>no</em>, <em>boundary</em>, <em>min_radius=0.15</em>, <em>max_radius=0.4</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#rand_round_obst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.rand_round_obst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate random values for creating <a class="reference internal" href="#planning_sim.RoundObstacle" title="planning_sim.RoundObstacle"><tt class="xref py py-class docutils literal"><span class="pre">RoundObstacle</span></tt></a> objects.
+Obstacles will have a random radius between <em>min_radius</em> and <em>max_radius</em>
+meters and a random position such as the whole obstacle will be within the area
+determined by the <em>boundary</em> parameter.</p>
+<dl class="docutils">
+<dt>Input</dt>
+<dd><p class="first"><em>no</em>: number of round obstacles to be generated.</p>
+<p><em>boundary</em>: area where the obstacles shall be placed.</p>
+<p><em>min_radius</em>: minimum radius length.</p>
+<p class="last"><em>max_radius</em>: maximum radius length.</p>
+</dd>
+<dt>Return</dt>
+<dd>List containing the information to initialize a <a class="reference internal" href="#planning_sim.RoundObstacle" title="planning_sim.RoundObstacle"><tt class="xref py py-class docutils literal"><span class="pre">RoundObstacle</span></tt></a> object.</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -1180,10 +1213,11 @@ prompting the option to plot/save it.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">planning_sim</span></tt> &#8212; Motion planning simulation</a><ul>
-<li><a class="reference internal" href="#obstacles-and-boundary">Obstacles and Boundary</a></li>
-<li><a class="reference internal" href="#robot-and-kinematic-model">Robot and Kinematic Model</a></li>
-<li><a class="reference internal" href="#worldsim">WorldSim</a></li>
-<li><a class="reference internal" href="#communication-message">Communication message</a></li>
+<li><a class="reference internal" href="#obstacles-and-boundary-classes">Obstacles and Boundary classes</a></li>
+<li><a class="reference internal" href="#robot-and-kinematic-model-classes">Robot and Kinematic Model classes</a></li>
+<li><a class="reference internal" href="#worldsim-class">WorldSim class</a></li>
+<li><a class="reference internal" href="#communication-link-class">Communication link class</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
 </ul>
 </li>
 </ul>
