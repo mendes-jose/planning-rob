@@ -7,7 +7,10 @@ import sys
 # output directory
 direc = sys.argv[1]
 
-os.system("mkdir -p "+direc)
+try:
+    os.mkdir(direc)
+except OSError:
+    print('Probably the output directory '+direc+' already exists.')
 
 # output from simulation delimiter
 delim = " "
@@ -28,40 +31,50 @@ init_time = time.strftime("%H:%M:%S")
 # parameters definition
 #stepTp = 0.1
 #stepTc = 0.1
-acc = 1e-3; maxit = 15; ls_maxit = 20; fs_maxit = 40;
-deps = 5.0; seps = 0.1; drho = 3.0; ls_min_dist = 0.5; ls_time_opt = 1.0;
+acc = 1e-3; maxit = 15; ls_maxit = 15; fs_maxit = 40;
+deps = 5.0; seps = 0.1; drho = 6.0; ls_min_dist = 0.5; ls_time_opt = 1.0;
 dist_opt = 1e1 # param deprecated TODO
-for n_knots in [4, 5, 6]:
-    for n_obsts in [0, 3, 6]:
-        for N_s in range(n_knots+3+1, 2*(n_knots+3+1), 1):
+for n_obsts in [3]:
+    for n_knots in [5]:
+#        for N_s in range(n_knots+3+1, (n_knots+3+1)+3, 1):
+        for N_s in [14]:
 #            for tp in np.linspace(2.0, 6.0, 10, endpoint=False):
-            for tp in np.linspace(0.8, 1.6, 3, endpoint=True):
-                for tc in np.linspace(tp/5., 4.*tp/5., int(round(3.*tp/5./0.1)), endpoint=False):
-                    cmmd = "python planning-sim-multirob-integration-time-analysis.py"+\
-                            " "+direc+\
-                            " "+str(n_obsts)+\
-                            " "+str(tc)+\
-                            " "+str(tp)+\
-                            " "+str(N_s)+\
-                            " "+str(n_knots)+\
-                            " "+str(acc)+\
-                            " "+str(maxit)+\
-                            " "+str(fs_maxit)+\
-                            " "+str(ls_maxit)+\
-                            " "+str(deps)+\
-                            " "+str(seps)+\
-                            " "+str(drho)+\
-                            " "+str(ls_min_dist)+\
-                            " "+str(ls_time_opt)+\
-                            " "+str(dist_opt)
+            tp_i = .8
+            tp_f = 5.0
+            tp_s = 0.1
+            for tp in np.linspace(tp_i, tp_f, (tp_f-tp_i)/tp_s+1, endpoint=True):
+                tc_i = 0.2
+                tc_s = 0.1
+                tcv = []
+                n = 0
+                while n*tc_s+tc_i < tp:
+                    tcv += [round(n*tc_s+tc_i, 4)]
+                    n+=1
+                for tc in tcv:
+                    cmmd = "python planning_sim.py"+\
+                            " -b1 -L"\
+                            " -P"+direc+\
+                            " -o"+str(n_obsts)+\
+                            " -c"+str(tc)+\
+                            " -p"+str(tp)+\
+                            " -s"+str(N_s)+\
+                            " -k"+str(n_knots)+\
+                            " -a"+str(acc)+\
+                            " -m"+str(maxit)+\
+                            " -i"+str(fs_maxit)+\
+                            " -I"+str(ls_maxit)+\
+                            " -d"+str(deps)+\
+                            " -f"+str(seps)+\
+                            " -r"+str(drho)+\
+                            " -l"+str(ls_min_dist)
                     # run simulation
-                    print cmmd
+                    print 'Running '+cmmd
                     os.system(cmmd)
-                    print 'Done'
+                    print cmmd+' is DONE'
             
                     # open log file
-                    with open(direc+"planning-sim-multirob-integration-time-analysis"+
-                            "_"+str(n_obsts)+\
+                    with open(direc+"/planning_sim"+
+                            "_1_"+str(n_obsts)+\
                             "_"+str(tc)+\
                             "_"+str(tp)+\
                             "_"+str(N_s)+\
@@ -74,8 +87,6 @@ for n_knots in [4, 5, 6]:
                             "_"+str(seps)+\
                             "_"+str(drho)+\
                             "_"+str(ls_min_dist)+\
-                            "_"+str(ls_time_opt)+\
-                            "_"+str(dist_opt)+\
                             ".log") as f:
                         values = range(len(key_words))
                         for line in f:

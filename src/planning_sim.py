@@ -1496,7 +1496,7 @@ class Robot(object):
 
             init_guess = np.append(np.asarray([self._est_dtime]),
                     self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
-            acc = 1e-1
+            acc = self._acc
             maxit = self._ls_maxit
 
         output = fmin_slsqp(
@@ -1796,7 +1796,7 @@ class Robot(object):
                 self._log('d', 'R{0}: Usual approx plan dist: {1}'.format(self.eyed, self._D))
                 self._log('d', 'R{0}: Approx gain in dist: {1}'.format(self.eyed, self._D-remaining_dist))
                 self._log('d', 'R{0}: Last step min dist: {1}'.format(self.eyed, self._ls_min_dist))
-                scale_factor = remaining_dist/self.k_mod.u_max[0,0]/self._Td
+                scale_factor = min(1., remaining_dist/self.k_mod.u_max[0,0]/self._Td)
                 self._n_knots = max(int(round(self._n_knots*scale_factor)), self._d-1)
                 self._n_ctrlpts = self._n_knots + self._d - 1 # nb of ctrl points
                 self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts+1)
@@ -1953,7 +1953,10 @@ class WorldSim(object):
         # Logging simulation summary
         for i in range(len(self._robs)):
             ctime_len = len(ctime[i])
-            g_max_idx = np.argmax(ctime[i][1:]) + 1
+            if ctime_len > 1:
+                g_max_idx = np.argmax(ctime[i][1:]) + 1
+            else:
+                g_max_idx = 0
             logging.info('R{rid}: TOT: {d}'.format(rid=i, d=rtime[i][-1]))
             logging.info('R{rid}: NSE: {d}'.format(rid=i, d=ctime_len))
             logging.info('R{rid}: FIR: {d}'.format(rid=i, d=ctime[i][0]))
@@ -2003,16 +2006,16 @@ class WorldSim(object):
             plt.ion()
 
         try:
-            os.mkdir(self._direc+'/pngs/')
+            os.mkdir(self._direc+'/images/')
         except OSError:
             print('Probably the output directory '+self._direc+\
-                    '/pngs'+' already exists, going to overwrite content')
+                    '/images'+' already exists, going to overwrite content')
 
         try:
-            os.mkdir(self._direc+'/pngs/'+self._sn)
+            os.mkdir(self._direc+'/images/'+self._sn)
         except OSError:
             print('Probably the output directory '+self._direc+\
-                    '/pngs/'+self._sn+' already exists, going to overwrite content')
+                    '/images/'+self._sn+' already exists, going to overwrite content')
 
         fig_s, axarray = plt.subplots(2)
         axarray[0].set_ylabel('v(m/s)')
@@ -2093,14 +2096,14 @@ class WorldSim(object):
                     ax.relim()
                     ax.autoscale_view(True, True, True)
                     fig.canvas.draw()
-                    fig.savefig(self._direc+'/pngs/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
+                    fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
                             bbox_inches='tight')
             #end
 
             ax.relim()
             ax.autoscale_view(True, True, True)
             fig.canvas.draw()
-            fig.savefig(self._direc+'/pngs/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
+            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
 
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]
@@ -2112,7 +2115,7 @@ class WorldSim(object):
             axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
             axarray[1].set_ylim([-5.5, 5.5])
             fig_s.canvas.draw()
-            fig_s.savefig(self._direc+'/pngs/'+self._sn+'/multirobot-vw.png',bbox_inches='tight')
+            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight')
 
             if self._plot:
                 while True:
@@ -2233,7 +2236,7 @@ if __name__ == '__main__':
         parser.add_option('-f', '--safety', dest='seps', default=0.1,
                 action='store', type='float',
                 help='minimal allowed distance between two robots (in meters)')
-        parser.add_option('-r', '--detectionradius', dest='drho', default=3.0,
+        parser.add_option('-r', '--detectionradius', dest='drho', default=6.0,
                 action='store', type='float',
                 help='detection radius within which the robot can detect an obstacle (in meters)')
         parser.add_option('-l', '--lastsecmindist', dest='ls_min_dist', default=0.5,
@@ -2289,8 +2292,9 @@ if __name__ == '__main__':
                 ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
     # 3 obsts
     elif options.no_obsts == 3:
-        obst_info = [([0.0, 1.6], 0.3),
-                ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
+        obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),
+                ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),
+                ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
     # 6 obsts
     elif options.no_obsts == 6:
         obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
@@ -2310,8 +2314,8 @@ if __name__ == '__main__':
 #    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
     kine_models = [UnicycleKineModel(
-            [-0.4, 0., np.pi/2.], # q_initial
-            [0.4,  5.0, np.pi/2.], # q_final
+            [-0.05, 0., np.pi/2.], # q_initial
+            [0.1,  7.0, np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max
