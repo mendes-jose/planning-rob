@@ -49,7 +49,8 @@
           <div class="body">
             
   <h1>Source code for planning_sim</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; The :mod:`planning_sim` module implements classes and functions to simulate a</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The :mod:`planning_sim` module implements classes and functions to simulate a</span>
 <span class="sd">navigation scenario consisting of one or more mobile robots that autonomously plan their</span>
 <span class="sd">motion from an initial state to a final state avoiding static obstacles and</span>
 <span class="sd">other robots, and respecting kinematic (including nonhonolonomic) constraints.</span>
@@ -57,7 +58,11 @@
 <span class="sd">The motion planner is based on the experimental work developed by Michael Defoort</span>
 <span class="sd">that seeks a near-optimal solution minimizing the time spend by a robot to</span>
 <span class="sd">complete its mission.</span>
+
+<span class="sd">.. codeauthor:: Jose Magno MENDES FILHO &lt;josemagno.mendes@gmail.com&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># 05/20115</span>
+<span class="c"># Copyright 2015 CEA</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="kn">as</span> <span class="nn">LA</span>
@@ -70,6 +75,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">fmin_slsqp</span>
+<span class="kn">from</span> <span class="nn">optparse</span> <span class="kn">import</span> <span class="n">OptionParser</span>
 
 <span class="c">###############################################################################</span>
 <span class="c"># Obstacle</span>
@@ -2221,15 +2227,6 @@
             <span class="n">obsts</span> <span class="o">+=</span> <span class="p">[([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">r</span><span class="p">)]</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">obsts</span>
-</div>
-<div class="viewcode-block" id="parse_cmdline"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.parse_cmdline">[docs]</a><span class="k">def</span> <span class="nf">parse_cmdline</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Parse command line options.</span>
-
-<span class="sd">    .. todo:: Implement more stuff then only reading the script name.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">scriptname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">scriptname</span>
 
 <span class="c"># MAIN ########################################################################</span>
 </div>
@@ -2252,7 +2249,16 @@
     <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-    <span class="n">scriptname</span> <span class="o">=</span> <span class="n">parse_cmdline</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-f&quot;</span><span class="p">,</span> <span class="s">&quot;--file&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;filename&quot;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s">&quot;write report to FILE&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-q&quot;</span><span class="p">,</span> <span class="s">&quot;--quiet&quot;</span><span class="p">,</span>
+                      <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;verbose&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s">&quot;don&#39;t print status messages to stdout&quot;</span><span class="p">)</span>
+    
+    <span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
 
     <span class="n">name_id</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_obsts</span><span class="p">)</span><span class="o">+</span>\
             <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Tc</span><span class="p">)</span><span class="o">+</span>\

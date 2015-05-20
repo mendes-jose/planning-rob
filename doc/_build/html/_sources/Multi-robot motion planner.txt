@@ -11,10 +11,11 @@ The motion planner is based on the experimental work developed by Michael Defoor
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.
 
+.. codeauthor:: Jose Magno MENDES FILHO <josemagno.mendes@gmail.com>
+
 Obstacles and Boundary classes
 ------------------------------
 
-------------------------------------
 |
 ------------------------------------
 
@@ -25,7 +26,6 @@ Obstacles and Boundary classes
     :inherited-members:
     :show-inheritance:
 
-------------------------------------
 |
 ------------------------------------
 
@@ -36,7 +36,6 @@ Obstacles and Boundary classes
     :inherited-members:
     :show-inheritance:
 
-------------------------------------
 |
 ------------------------------------
 
@@ -47,7 +46,6 @@ Obstacles and Boundary classes
     :inherited-members:
     :show-inheritance:
 
-------------------------------------
 |
 ------------------------------------
 
@@ -61,7 +59,6 @@ Obstacles and Boundary classes
 Robot and Kinematic Model classes
 ---------------------------------
 
-------------------------------------
 |
 ------------------------------------
 
@@ -72,7 +69,6 @@ Robot and Kinematic Model classes
     :inherited-members:
     :show-inheritance:
 
-------------------------------------
 |
 ------------------------------------
 
@@ -86,7 +82,6 @@ Robot and Kinematic Model classes
 WorldSim class
 --------------
 
-------------------------------------
 |
 ------------------------------------
 
@@ -100,7 +95,6 @@ WorldSim class
 Communication link class
 ------------------------
 
-------------------------------------
 |
 ------------------------------------
 
@@ -114,10 +108,7 @@ Communication link class
 Functions
 ---------
 
-------------------------------------
 |
 ------------------------------------
-
-.. autofunction:: planning_sim.parse_cmdline
 
 .. autofunction:: planning_sim.rand_round_obst
