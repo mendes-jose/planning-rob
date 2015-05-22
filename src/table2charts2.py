@@ -13,15 +13,16 @@ font = {'family' : 'sans-serif',
 
 mpl.rc('font', **font)
 
-direc = "./"
+direc = "../traces/realtimeanalysis-uiuf"
 
 table = []
 header = []
-with open('../traces/temp/table_complete2.csv', 'rb') as csvfile:
+with open(direc+'/table.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]
     table = np.array(tlist[1:])
+
 
 nkni = header.index('Nkn')
 nobsti = header.index('Nobsts')
@@ -37,6 +38,7 @@ lmai = header.index('LMA')
 
 fig = []
 figtot = []
+fig_tot_1tp = []
 fig_uni = []
 plt.hold(True)
 
@@ -92,9 +94,15 @@ for scnt in scenarios_tables:
 #        print 'nstables len ', len(ns_tables)
 #        print 'nstables 0 shape ', ns_tables[0].shape
 
-        direc = '../traces/temp/charts/Scenario_{a:.0f}__N_knots_{b:.0f}/'.format(b=knt[0,nkni], a=scnt[0,nobsti])
+        direc_charts = direc+'/charts'
         try:
-            os.mkdir(direc)
+            os.mkdir(direc_charts)
+        except OSError:
+            print('Probably the output directory already exists, going to overwrite content')
+
+        direc_scen = direc_charts+'/Scenario_{a:.0f}__N_knots_{b:.0f}'.format(b=knt[0,nkni], a=scnt[0,nobsti])
+        try:
+            os.mkdir(direc_scen)
         except OSError:
             print('Probably the output directory already exists, going to overwrite content')
 
@@ -107,8 +115,11 @@ for scnt in scenarios_tables:
             fig += [plt.figure()]
             figtot += [plt.figure()]
             fidx = len(fig) - 1
+            fig_tot_1tp += [plt.figure()]
+            f_tot_1tp_idx = len(fig_tot_1tp) - 1
             ax = fig[fidx].gca()
             axtot = figtot[fidx].gca()
+            ax_tot_1tp = fig_tot_1tp[f_tot_1tp_idx].gca()
 
             all_tp = [nst[0, tpi]]
             for v in nst[1:, tpi]:
@@ -126,8 +137,8 @@ for scnt in scenarios_tables:
             new_tctp_interv = np.linspace(nst[0,tci]/nst[0,tpi], nst[idxs[-1],tci]/nst[idxs[-1],tpi], n_Tc)
 
 #            print new_tctp_interv
-            colors = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Tp)])
-            for v, idx in zip(all_tp, range(n_Tp)):
+            colors = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, 7)])
+            for v, idx in zip(all_tp[2:9], range(7)):
 
 #                print 'v ', v
 #                print 'nst : tpi ', nst[:,tpi]
@@ -141,17 +152,41 @@ for scnt in scenarios_tables:
                 f = interp1d(x, y, kind='cubic', bounds_error=False)
                 new_rmg = f(new_tctp_interv)
                 rmg += new_rmg
-                ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='o')
-                xtot = nst[idxs,toti]
-                totidx = xtot.argsort()
-                xtot = xtot[totidx]
-                ytc = nst[idxs,tci]
+                ax.plot(x, y, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='.')
+                #scenarios_tables += [np.squeeze(table[np.where(table[:,nobsti] == nobst),:])]
+                tpt = nst[idxs,:]
+                a = tpt[:,toti] < 7.6
+                b = tpt[:,toti] > 7.16
+                c = a * b
+                reduced_tpt = np.squeeze(tpt[np.where(c), :])
+                ytc = reduced_tpt[:,tci]
+                totidx = ytc.argsort()
                 ytc = ytc[totidx]
-                axtot.plot(xtot, ytc, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='o')
+                xtot = reduced_tpt[:,toti]
+                xtot = xtot[totidx]
+                y2 = nst[idxs,toti]
+                y2 = y2[sort_idxs]
+                axtot.plot(x, y2, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='.')
+
+            # print only one tp
+            idxs = list(np.where(nst[:,tpi] == 3.5)[0])
+            print nst[:,tpi]
+            print idxs
+            tpt = nst[idxs,:]
+            a = tpt[:,toti] < 7.6
+            b = tpt[:,toti] > 7.16
+            c = a * b
+            reduced_tpt = np.squeeze(tpt[np.where(c), :])
+            ytc = reduced_tpt[:,tci]
+            totidx = ytc.argsort()
+            ytc = ytc[totidx]
+            xtot = reduced_tpt[:,toti]
+            xtot = xtot[totidx]
+            ax_tot_1tp.plot(ytc, xtot, label='Tp = {}'.format(v),linewidth=1,color=colors[idx],marker='.')
 
             rmg /= len(all_tp)
             ax_uni.plot(new_tctp_interv, rmg, label='N_s = {}'.format(nst[0,nsi]),linewidth=1,\
-                    color=colorsa[nsidx],marker='o')
+                    color=colorsa[nsidx],marker='.')
 
             ax.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
 #            ax.plot([0.5]*2, [0.0,5.0], ls='--',color='k')
@@ -166,12 +201,18 @@ for scnt in scenarios_tables:
             ax.legend(handles, labels)
             handles, labels = axtot.get_legend_handles_labels()
             axtot.legend(handles, labels)
+            axtot.set_ylim(7.16,7.6)
+            axtot.set_xlabel('Tc')
+            axtot.set_ylabel('Tt')
             fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-            fig[fidx].savefig(direc+'c{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
-            fig[fidx].savefig(direc+'c{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            fig[fidx].savefig(direc_scen+'/c{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            fig[fidx].savefig(direc_scen+'/c{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
             figtot[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-            figtot[fidx].savefig(direc+'tot{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
-            figtot[fidx].savefig(direc+'tot{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            figtot[fidx].savefig(direc_scen+'/tot{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            figtot[fidx].savefig(direc_scen+'/tot{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            fig_tot_1tp[f_tot_1tp_idx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
+            fig_tot_1tp[f_tot_1tp_idx].savefig(direc_scen+'/tot1tp{:.0f}.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+            fig_tot_1tp[f_tot_1tp_idx].savefig(direc_scen+'/tot1tp{:.0f}.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
 
         ax_uni.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
 #        ax_uni.plot([0.5]*2, [0.0,4.0], ls='--',color='k')
@@ -185,7 +226,7 @@ for scnt in scenarios_tables:
         handles, labels = ax_uni.get_legend_handles_labels()
         ax_uni.legend(handles, labels)
         fig_uni[funiidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-        fig_uni[funiidx].savefig(direc+'uni.eps', bbox_inches='tight', dpi=100)
-        fig_uni[funiidx].savefig(direc+'uni.png', bbox_inches='tight', dpi=100)
+        fig_uni[funiidx].savefig(direc_scen+'/uni.eps', bbox_inches='tight', dpi=100)
+        fig_uni[funiidx].savefig(direc_scen+'/uni.png', bbox_inches='tight', dpi=100)
 #plt.show()
 

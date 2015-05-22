@@ -21,7 +21,7 @@ key_words = ["NSE:","FIR:","LAS:","LMA:","MAX:","MIN:","AVG:","RMP:","RMG:","TOT
 
 # write first line with the fields names 
 #with open('../traces/tableData2/table.csv', 'w') as csv_file:
-with open(direc+'table.csv', 'w') as csv_file:
+with open(direc+'/table.csv', 'w') as csv_file:
     table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_NONNUMERIC)
     table_writer.writerow(input_names+[kw[0:-1] for kw in key_words])
 
@@ -99,7 +99,7 @@ for n_obsts in [3]:
                         ii = [n_obsts, tc, tp, N_s, n_knots, acc, maxit, fs_maxit, ls_maxit, deps, seps, drho, ls_min_dist, ls_time_opt, dist_opt]
             
                         # csv file
-                        with open(direc+'table.csv', 'a') as csv_file:
+                        with open(direc+'/table.csv', 'a') as csv_file:
                             table_writer = csv.writer(csv_file, delimiter=',',quotechar='|', quoting=csv.QUOTE_NONNUMERIC)
                             table_writer.writerow(ii+oi)
                         print('TIME: '+time.strftime("%H:%M:%S"))
