@@ -59,6 +59,24 @@ other robots, and respecting kinematic (including nonhonolonomic) constraints.</
 <p>The motion planner is based on the experimental work developed by Michael Defoort
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.</p>
+<p class="graphviz">
+<img src="_images/graphviz-f5a2dbd6e20395848fd36bdccb5a5c0c877dd286.png" alt="digraph &quot;classes_planning_sim&quot; {
+charset=&quot;utf-8&quot;
+rankdir=BT
+&quot;0&quot; [label=&quot;{Boundary|x_max\lx_min\ly_max\ly_min\l|}&quot;, shape=&quot;record&quot;];
+&quot;1&quot; [label=&quot;{Obstacle|centroid\l|detected_dist()\lpt_2_obst()\l}&quot;, shape=&quot;record&quot;];
+&quot;2&quot; [label=&quot;{PolygonObstacle|bounding_circle_radius\lcentroid\lx\ly\l|plot()\lpt_2_obst()\l}&quot;, shape=&quot;record&quot;];
+&quot;3&quot; [label=&quot;{Process|name : str\lpid\l|authkey()\ldaemon()\lexitcode()\lident()\lis_alive()\ljoin()\lname()\lrun()\lstart()\lterminate()\l}&quot;, shape=&quot;record&quot;];
+&quot;4&quot; [label=&quot;{Robot|ctime : NoneType\leyed\lk_mod\lplanning_process\lrho : float\lrtime : NoneType\lsol : NoneType\l|set_option()\l}&quot;, shape=&quot;record&quot;];
+&quot;5&quot; [label=&quot;{RobotMsg|done_planning\lintended_path_z1\lintended_path_z2\llatest_z\l|}&quot;, shape=&quot;record&quot;];
+&quot;6&quot; [label=&quot;{RoundObstacle|radius\lx\ly\l|plot()\lpt_2_obst()\l}&quot;, shape=&quot;record&quot;];
+&quot;7&quot; [label=&quot;{UnicycleKineModel|acc_max\ll : int\lq_dim : int\lq_final\lq_init\lu_dim : int\lu_final\lu_init\lu_max\lz_dim : int\lz_final\lz_init\l|phi_0()\lphi_1()\lphi_2()\lphi_3()\l}&quot;, shape=&quot;record&quot;];
+&quot;8&quot; [label=&quot;{WorldSim|\l|run()\l}&quot;, shape=&quot;record&quot;];
+&quot;2&quot; -&gt; &quot;1&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;6&quot; -&gt; &quot;1&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;3&quot; -&gt; &quot;4&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;planning_process&quot;, style=&quot;solid&quot;];
+}" />
+</p>
 <div class="section" id="obstacles-and-boundary-classes">
 <h2>Obstacles and Boundary classes<a class="headerlink" href="#obstacles-and-boundary-classes" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
@@ -1139,7 +1157,7 @@ and <tt class="xref py py-attr docutils literal"><span class="pre">_t_final</spa
 <hr class="docutils" />
 <dl class="class">
 <dt id="planning_sim.WorldSim">
-<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">WorldSim</tt><big>(</big><em>name_id</em>, <em>robots</em>, <em>obstacles</em>, <em>phy_boundary</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.WorldSim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">planning_sim.</tt><tt class="descname">WorldSim</tt><big>(</big><em>sim_id_str</em>, <em>path</em>, <em>robots</em>, <em>obstacles</em>, <em>phy_boundary</em>, <em>plot=False</em><big>)</big><a class="reference internal" href="_modules/planning_sim.html#WorldSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#planning_sim.WorldSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class is a container of all simulation elements and also the
 interface for running the simulation.</p>

@@ -36,6 +36,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+	'sphinx.ext.graphviz',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -345,8 +346,7 @@ intersphinx_mapping = {
          'numpy':('http://docs.scipy.org/doc/numpy',None),
 }
 
-
-
 # defined by user
 todo_include_todos = True
 autodoc_member_order = 'groupwise'
+graphviz_dot = r"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"

@@ -11,6 +11,8 @@ The motion planner is based on the experimental work developed by Michael Defoor
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.
 
+.. graphviz:: classes_planning_sim.dot
+
 .. codeauthor:: Jose Magno MENDES FILHO <josemagno.mendes@gmail.com>
 
 Obstacles and Boundary classes

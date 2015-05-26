@@ -14,7 +14,7 @@
 
 
 \title{Motion Planning Documentation}
-\date{May 18, 2015}
+\date{May 26, 2015}
 \release{1.0}
 \author{José MENDES}
 \newcommand{\sphinxlogo}{}
@@ -75,10 +75,11 @@
 \expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
 \expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
 \expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
@@ -114,6 +115,8 @@
 \def\PYGZrb{]}
 \makeatother
 
+\renewcommand\PYGZsq{\textquotesingle}
+
 \begin{document}
 
 \maketitle
@@ -126,8 +129,8 @@ Contents:
 
 \chapter{\texttt{planning\_sim} --- Motion planning simulation}
 \label{Multi-robot motion planner:planning-sim-motion-planning-simulation}\label{Multi-robot motion planner::doc}\label{Multi-robot motion planner:logo-welcome-to-motion-planning-s-documentation}\label{Multi-robot motion planner:module-planning_sim}\index{planning\_sim (module)}
-The {\hyperref[Multi-robot motion planner:module-planning_sim]{\code{planning\_sim}}} module implements classes to simulate a navigation
-scenario consisting of one or more mobile robots that autonomously plan their
+The {\hyperref[Multi-robot motion planner:module-planning_sim]{\code{planning\_sim}}} module implements classes and functions to simulate a
+navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
 other robots, and respecting kinematic (including nonhonolonomic) constraints.
 
@@ -135,9 +138,15 @@ The motion planner is based on the experimental work developed by Michael Defoor
 that seeks a near-optimal solution minimizing the time spend by a robot to
 complete its mission.
 
+\includegraphics{graphviz-f5a2dbd6e20395848fd36bdccb5a5c0c877dd286.pdf}
 
-\section{Obstacles and Boundary}
-\label{Multi-robot motion planner:obstacles-and-boundary}
+
+\section{Obstacles and Boundary classes}
+\label{Multi-robot motion planner:obstacles-and-boundary-classes}
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -182,6 +191,10 @@ Obstacle's centroid. Considered here the obstacle given position.
 \end{fulllineitems}
 
 
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -196,7 +209,7 @@ Representation of an obstacle as a circle.
 
 \begin{fulllineitems}
 \phantomsection\label{Multi-robot motion planner:planning_sim.RoundObstacle._plt_circle}\pysiglinewithargsret{\bfcode{\_plt\_circle}}{\emph{color='k'}, \emph{linestyle='solid'}, \emph{filled=False}, \emph{alpha=1.0}, \emph{offset=0.0}}{}
-Return a \href{http://matplotlib.org/api/patches\_api.html\#matplotlib.patches.Circle}{Circle} object representing the obstacle
+Return a \href{http://matplotlib.org/api/patches\_api.html\#matplotlib.patches.Circle}{\code{matplotlib.patches.Circle}} object representing the obstacle
 geometry.
 
 \end{fulllineitems}
@@ -257,6 +270,10 @@ y-coordinate of the obstacle centroid.
 \end{fulllineitems}
 
 
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -278,7 +295,9 @@ to be closed, i.e. first and last points are identical
 \item[{\emph{signed}: Optional flag deciding whether returned area retains its sign:}] \leavevmode
 If points are ordered counter clockwise, the signed area
 will be positive.
-If points are ordered clockwise, it will be negative
+
+If points are ordered clockwise, it will be negative.
+
 Default is False which means that the area is always positive.
 
 \end{description}
@@ -409,6 +428,10 @@ y-coordinate of the obstacle centroid.
 \end{fulllineitems}
 
 
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -454,8 +477,12 @@ Min bound in the y direction.
 
 
 
-\section{Robot and Kinematic Model}
-\label{Multi-robot motion planner:robot-and-kinematic-model}
+\section{Robot and Kinematic Model classes}
+\label{Multi-robot motion planner:robot-and-kinematic-model-classes}
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -703,13 +730,17 @@ Initial flat output.
 \end{fulllineitems}
 
 
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
 \index{Robot (class in planning\_sim)}
 
 \begin{fulllineitems}
-\phantomsection\label{Multi-robot motion planner:planning_sim.Robot}\pysiglinewithargsret{\strong{class }\code{planning\_sim.}\bfcode{Robot}}{\emph{eyed}, \emph{kine\_model}, \emph{obstacles}, \emph{phy\_boundary}, \emph{neigh}, \emph{N\_s=20}, \emph{n\_knots=6}, \emph{t\_init=0.0}, \emph{t\_sup=10000000000.0}, \emph{Tc=1.0}, \emph{Tp=3.0}, \emph{Td=3.0}, \emph{rho=0.2}, \emph{detec\_rho=3.0}, \emph{com\_range=15.0}, \emph{def\_epsilon=0.5}, \emph{safe\_epsilon=0.1}, \emph{ls\_time\_opt\_scale=1.0}, \emph{dist\_opt\_offset=100.0}, \emph{ls\_min\_dist=0.5}}{}
+\phantomsection\label{Multi-robot motion planner:planning_sim.Robot}\pysiglinewithargsret{\strong{class }\code{planning\_sim.}\bfcode{Robot}}{\emph{eyed}, \emph{kine\_model}, \emph{obstacles}, \emph{phy\_boundary}, \emph{neigh}, \emph{N\_s=20}, \emph{n\_knots=6}, \emph{t\_init=0.0}, \emph{t\_sup=10000000000.0}, \emph{Tc=1.0}, \emph{Tp=3.0}, \emph{Td=3.0}, \emph{rho=0.2}, \emph{detec\_rho=3.0}, \emph{com\_range=15.0}, \emph{def\_epsilon=0.5}, \emph{safe\_epsilon=0.1}, \emph{ls\_time\_opt\_scale=1.0}, \emph{ls\_min\_dist=0.5}}{}
 Bases: \href{http://docs.python.org/library/functions.html\#object}{\code{object}}
 
 Class for creating a robot in the simulation.
@@ -805,17 +836,17 @@ u_{max} - |\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))|\\
  & 
 indicates the current plan section.
 \\
-\hline
+
 \(O_i\)
  & 
 is the ith detected obstacle.
 \\
-\hline
+
 \(M\)
  & 
 is the number of detected obstacles.
 \\
-\hline
+
 \(N_s\)
  & 
 is the number of time samples for a plan section.
@@ -847,16 +878,18 @@ Array with the inequations' values.
 Combine base b-splines into a Bezier curve given control points and derivate order.
 \begin{description}
 \item[{Input}] \leavevmode
-\emph{ctrl\_pts}: numpy array with dimension \(n\times m\) n being the number of
-the control points and m flat output dimension.
+\emph{ctrl\_pts}: numpy array with dimension \(n_{ctrl}\times z_{dim}\), \(n_{ctrl}\)
+being the number of
+control points and \(z_{dim}\) the flat output dimension.
 
 \emph{deriv\_order}: derivative order of the Bezier curve.
 
 \emph{t}: discrete time array.
 
 \item[{Return}] \leavevmode
-\(m\times p\) numpy array representing the resulting Bezier curve, m being
-the flat output dimension and p the discrete time array dimension.
+\(z_{dim}\times N_s\) numpy array representing the resulting Bezier curve,
+\(z_{dim}\) being
+the flat output dimension and \(N_{s}\) the discrete time array dimension.
 
 \end{description}
 
@@ -904,22 +937,22 @@ Log writer (multiprocess safe).
  & 
 for debug
 \\
-\hline
+
 `i'
  & 
 for information
 \\
-\hline
+
 `w'
  & 
 for warning
 \\
-\hline
+
 `e'
  & 
 for error
 \\
-\hline
+
 `c'
  & 
 for critical
@@ -1024,17 +1057,17 @@ u_{max} - |\varphi_2(z(t_{N_s-2,\ sec}),\dotsc,z^{(l)}(t_{N_s-2,\ sec}))|\\
  & 
 indicates the current plan section.
 \\
-\hline
+
 \(O_i\)
  & 
 is the ith detected obstacle.
 \\
-\hline
+
 \(M\)
  & 
 is the number of detected obstacles.
 \\
-\hline
+
 \(N_s\)
  & 
 is the number of time samples for a plan section.
@@ -1163,17 +1196,17 @@ u_{max} - |\varphi_2(z(t_{N_s-2,\ sec}),\dotsc,z^{(l)}(t_{N_s-2,\ sec}))|\\
  & 
 indicates the current plan section.
 \\
-\hline
+
 \(O_i\)
  & 
 is the ith detected obstacle.
 \\
-\hline
+
 \(M\)
  & 
 is the number of detected obstacles.
 \\
-\hline
+
 \(N_s\)
  & 
 is the number of time samples for a plan section.
@@ -1321,17 +1354,17 @@ u_{max} - |\varphi_2(z(t_{N_s-1,\ sec}),\dotsc,z^{(l)}(t_{N_s-1,\ sec}))|\\
  & 
 indicates the current plan section.
 \\
-\hline
+
 \(O_i\)
  & 
 is the ith detected obstacle.
 \\
-\hline
+
 \(M\)
  & 
 is the number of detected obstacles.
 \\
-\hline
+
 \(N_s\)
  & 
 is the number of time samples for a plan section.
@@ -1428,15 +1461,19 @@ Solution, i.e., finded path.
 
 
 
-\section{WorldSim}
-\label{Multi-robot motion planner:worldsim}
+\section{WorldSim class}
+\label{Multi-robot motion planner:worldsim-class}
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
 \index{WorldSim (class in planning\_sim)}
 
 \begin{fulllineitems}
-\phantomsection\label{Multi-robot motion planner:planning_sim.WorldSim}\pysiglinewithargsret{\strong{class }\code{planning\_sim.}\bfcode{WorldSim}}{\emph{name\_id}, \emph{robots}, \emph{obstacles}, \emph{phy\_boundary}}{}
+\phantomsection\label{Multi-robot motion planner:planning_sim.WorldSim}\pysiglinewithargsret{\strong{class }\code{planning\_sim.}\bfcode{WorldSim}}{\emph{sim\_id\_str}, \emph{path}, \emph{robots}, \emph{obstacles}, \emph{phy\_boundary}, \emph{plot=False}}{}
 Bases: \href{http://docs.python.org/library/functions.html\#object}{\code{object}}
 
 This class is a container of all simulation elements and also the
@@ -1445,7 +1482,8 @@ interface for running the simulation.
 
 \begin{fulllineitems}
 \phantomsection\label{Multi-robot motion planner:planning_sim.WorldSim.run}\pysiglinewithargsret{\bfcode{run}}{}{}
-Run simulation by first calling the \href{http://docs.python.org/library/multiprocessing.html\#multiprocessing.Process.start}{\code{multiprocessing.Process.start()}} method to
+Run simulation by first calling the \href{http://docs.python.org/library/multiprocessing.html\#multiprocessing.Process.start}{\code{multiprocessing.Process.start()}} method on
+the {\hyperref[Multi-robot motion planner:planning_sim.Robot.planning_process]{\code{Robot.planning\_process}}} to
 initiate the motion planning of each robot. And secondly by parsing theirs solutions and
 prompting the option to plot/save it.
 
@@ -1456,8 +1494,12 @@ prompting the option to plot/save it.
 
 
 
-\section{Communication message}
-\label{Multi-robot motion planner:communication-message}
+\section{Communication link class}
+\label{Multi-robot motion planner:communication-link-class}
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
 
 \bigskip\hrule{}\bigskip
 
@@ -1500,6 +1542,42 @@ z value calculated on the previews planned section.
 
 \end{fulllineitems}
 
+
+\end{fulllineitems}
+
+
+
+\section{Functions}
+\label{Multi-robot motion planner:functions}
+\begin{DUlineblock}{0em}
+\item[] 
+\end{DUlineblock}
+
+
+\bigskip\hrule{}\bigskip
+
+\index{rand\_round\_obst() (in module planning\_sim)}
+
+\begin{fulllineitems}
+\phantomsection\label{Multi-robot motion planner:planning_sim.rand_round_obst}\pysiglinewithargsret{\code{planning\_sim.}\bfcode{rand\_round\_obst}}{\emph{no}, \emph{boundary}, \emph{min\_radius=0.15}, \emph{max\_radius=0.4}}{}
+Generate random values for creating {\hyperref[Multi-robot motion planner:planning_sim.RoundObstacle]{\code{RoundObstacle}}} objects.
+Obstacles will have a random radius between \emph{min\_radius} and \emph{max\_radius}
+meters and a random position such as the whole obstacle will be within the area
+determined by the \emph{boundary} parameter.
+\begin{description}
+\item[{Input}] \leavevmode
+\emph{no}: number of round obstacles to be generated.
+
+\emph{boundary}: area where the obstacles shall be placed.
+
+\emph{min\_radius}: minimum radius length.
+
+\emph{max\_radius}: maximum radius length.
+
+\item[{Return}] \leavevmode
+List containing the information to initialize a {\hyperref[Multi-robot motion planner:planning_sim.RoundObstacle]{\code{RoundObstacle}}} object.
+
+\end{description}
 
 \end{fulllineitems}
 

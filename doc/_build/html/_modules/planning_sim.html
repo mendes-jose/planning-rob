@@ -1547,7 +1547,7 @@
 
             <span class="n">init_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_est_dtime</span><span class="p">]),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_C</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_ctrlpts</span><span class="p">,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_ctrlpts</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_dim</span><span class="p">))</span>
-            <span class="n">acc</span> <span class="o">=</span> <span class="mf">1e-1</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_acc</span>
             <span class="n">maxit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ls_maxit</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">fmin_slsqp</span><span class="p">(</span>
@@ -1847,7 +1847,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;R{0}: Usual approx plan dist: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eyed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_D</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;R{0}: Approx gain in dist: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eyed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_D</span><span class="o">-</span><span class="n">remaining_dist</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;R{0}: Last step min dist: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eyed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ls_min_dist</span><span class="p">))</span>
-                <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">remaining_dist</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_max</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_Td</span>
+                <span class="n">scale_factor</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">remaining_dist</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_max</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_Td</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_n_knots</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_knots</span><span class="o">*</span><span class="n">scale_factor</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_n_ctrlpts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_knots</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">-</span> <span class="mi">1</span> <span class="c"># nb of ctrl points</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_N_s</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_N_s</span><span class="o">*</span><span class="n">scale_factor</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_ctrlpts</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
@@ -1892,12 +1892,14 @@
     <span class="sd">&quot;&quot;&quot; This class is a container of all simulation elements and also the</span>
 <span class="sd">    interface for running the simulation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_id</span><span class="p">,</span> <span class="n">robots</span><span class="p">,</span> <span class="n">obstacles</span><span class="p">,</span> <span class="n">phy_boundary</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sn</span> <span class="o">=</span> <span class="n">name_id</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_id_str</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">robots</span><span class="p">,</span> <span class="n">obstacles</span><span class="p">,</span> <span class="n">phy_boundary</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sn</span> <span class="o">=</span> <span class="n">sim_id_str</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span> <span class="o">=</span> <span class="n">robots</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_obsts</span> <span class="o">=</span> <span class="n">obstacles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Tc</span> <span class="o">=</span> <span class="n">robots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_Tc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ph_bound</span> <span class="o">=</span> <span class="n">phy_boundary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_direc</span> <span class="o">=</span> <span class="n">path</span>
 
 <div class="viewcode-block" id="WorldSim.run"><a class="viewcode-back" href="../Multi-robot motion planner.html#planning_sim.WorldSim.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Run simulation by first calling the :py:meth:`multiprocessing.Process.start` method on</span>
@@ -1909,7 +1911,9 @@
         <span class="n">n_robots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">)</span>
         <span class="n">N_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_N_s</span>
 
+        <span class="c">####################################################################</span>
         <span class="c"># Multiprocessing stuff ############################################</span>
+        <span class="c">####################################################################</span>
         <span class="c"># Log Lock</span>
         <span class="n">log_lock</span> <span class="o">=</span> <span class="n">mpc</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 
@@ -1937,7 +1941,6 @@
         <span class="n">solutions</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">))</span>
         <span class="n">race_time</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">))</span>
         <span class="n">comp_time</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">))</span>
-        <span class="c">####################################################################</span>
 
         <span class="c"># Setting multiprocessing stuff for every robot</span>
         <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;log_lock&#39;</span><span class="p">,</span> <span class="n">log_lock</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">]</span>
@@ -1949,6 +1952,9 @@
         <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;sol&#39;</span><span class="p">,</span> <span class="n">solutions</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">]</span>
         <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;rtime&#39;</span><span class="p">,</span> <span class="n">race_time</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">]</span>
         <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;ctime&#39;</span><span class="p">,</span> <span class="n">comp_time</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">]</span>
+        <span class="c">####################################################################</span>
+        <span class="c">####################################################################</span>
+        <span class="c">####################################################################</span>
 
         <span class="c"># Make all robots plan their trajectories</span>
         <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">planning_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">]</span>
@@ -1969,7 +1975,8 @@
         <span class="n">zdzddz</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">)):</span>
             <span class="n">zdzddz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_dim</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
+                    <span class="n">z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_dim</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>\
+                    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
 
         <span class="c"># get a list over time of command values u(t)</span>
         <span class="n">ut</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">))</span>
@@ -1997,7 +2004,10 @@
         <span class="c"># Logging simulation summary</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">)):</span>
             <span class="n">ctime_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">g_max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">ctime_len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">g_max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">g_max_idx</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;R{rid}: TOT: {d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rid</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">rtime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;R{rid}: NSE: {d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rid</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">ctime_len</span><span class="p">))</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;R{rid}: FIR: {d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rid</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
@@ -2019,36 +2029,44 @@
                 <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;R{rid}: RMP: {d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rid</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_Tc</span><span class="p">))</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;R{rid}: RMG: {d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rid</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">ctime</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_Tc</span><span class="p">))</span>
 
-        <span class="c"># PLOT ###############################################################</span>
+        <span class="c"># PLOT/SAVE ###########################################################</span>
 
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;Want to see the result plotted? [y/n]: &quot;</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;n&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;N&#39;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;y&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;Y&#39;</span><span class="p">:</span>
-                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;I&#39;ll take that as an </span><span class="se">\&#39;</span><span class="s">n</span><span class="se">\&#39;</span><span class="s">.&quot;</span><span class="p">)</span>
-                        <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
-                <span class="k">break</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;Oops! That was no valid characther. Try again...&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Good bye!&quot;</span><span class="p">)</span>
-                <span class="k">return</span>
-
-        <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;n&#39;</span><span class="p">:</span>
-            <span class="k">return</span>
+<span class="c">#        while True:</span>
+<span class="c">#            try:</span>
+<span class="c">#                x = str(raw_input(&quot;Want to see the result plotted? [y/n]: &quot;))</span>
+<span class="c">#                if x != &#39;n&#39; and x != &#39;N&#39;:</span>
+<span class="c">#                    if x != &#39;y&#39; and x != &#39;Y&#39;:</span>
+<span class="c">#                        print(&quot;I&#39;ll take that as an \&#39;n\&#39;.&quot;)</span>
+<span class="c">#                        x = &#39;n&#39;</span>
+<span class="c">#                    else:</span>
+<span class="c">#                        x = &#39;y&#39;</span>
+<span class="c">#                else:</span>
+<span class="c">#                    x = &#39;n&#39;</span>
+<span class="c">#                break</span>
+<span class="c">#            except ValueError:</span>
+<span class="c">#                print(&quot;Oops! That was no valid characther. Try again...&quot;)</span>
+<span class="c">#            except KeyboardInterrupt:</span>
+<span class="c">#                print(&quot;\nGood bye!&quot;)</span>
+<span class="c">#                return</span>
+<span class="c">#</span>
+<span class="c">#        if x == &#39;n&#39;:</span>
+<span class="c">#            return</span>
 
         <span class="c"># Interactive plot</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s">&quot;../traces/pngs/&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span><span class="s">&#39;/images/&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Probably the output directory already exists, going to overwrite content&#39;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Probably the output directory &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span>\
+                    <span class="s">&#39;/images&#39;</span><span class="o">+</span><span class="s">&#39; already exists, going to overwrite content&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span><span class="s">&#39;/images/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Probably the output directory &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span>\
+                    <span class="s">&#39;/images/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39; already exists, going to overwrite content&#39;</span><span class="p">)</span>
 
         <span class="n">fig_s</span><span class="p">,</span> <span class="n">axarray</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">axarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;v(m/s)&#39;</span><span class="p">)</span>
@@ -2097,19 +2115,16 @@
 
             <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">plt_robots_c</span><span class="p">]</span>
             <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">plt_robots_t</span><span class="p">]</span>
-            <span class="c"># BUG TODO</span>
-            <span class="c"># This savefig chashes for initial robot position = (0,0)</span>
-<span class="c">#            for i in range(1, 10):</span>
-<span class="c">#                fig.savefig(&#39;../traces/pngs/multirobot-path-&#39;+str(i)+&#39;.png&#39;)</span>
-
-            <span class="n">ctr</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="n">ctr</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
+
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="n">ctr</span> <span class="o">&lt;</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                         <span class="n">plt_paths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">ctr</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
                         <span class="n">plt_paths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">ctr</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-                        <span class="n">aux</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seg_pts_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span>  <span class="n">ctr</span> <span class="o">&gt;</span> <span class="n">s</span> <span class="p">]</span>
+                        <span class="n">aux</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seg_pts_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span>  <span class="n">ctr</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">]</span>
                         <span class="n">plt_seg_pts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">aux</span><span class="p">])</span>
                         <span class="n">plt_seg_pts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span> <span class="n">aux</span><span class="p">])</span>
                         <span class="n">plt_robots_c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">ctr</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span> <span class="n">ctr</span><span class="p">]</span>
@@ -2124,23 +2139,22 @@
                         <span class="n">plt_robots_t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xy</span><span class="p">(</span><span class="n">xy</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">end</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">):</span>
                     <span class="k">break</span>
 <span class="c">#                time.sleep(0.01)</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">relim</span><span class="p">()</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">autoscale_view</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-                <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-                <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;../traces/pngs/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-path-&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ctr</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>\
-                        <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">relim</span><span class="p">()</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">autoscale_view</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span><span class="s">&#39;/images/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-path-&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ctr</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span><span class="p">,</span>\
+                            <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
             <span class="c">#end</span>
 
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-                <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;../traces/pngs/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-path-&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ctr</span><span class="o">+</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
-<span class="c">#            ax.relim()</span>
-<span class="c">#            ax.autoscale_view(True, True, True)</span>
-<span class="c">#            fig.canvas.draw()</span>
-<span class="c">#            fig.savefig(direc+&#39;pngs/p&#39;+self._sn+&#39;/multirobot-path.png&#39;, bbox_inches=&#39;tight&#39;)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">relim</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">autoscale_view</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span><span class="s">&#39;/images/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-path.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">)):</span>
                 <span class="n">linspeed</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ut</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
@@ -2151,30 +2165,31 @@
             <span class="n">axarray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
             <span class="n">axarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.1</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_robs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">k_mod</span><span class="o">.</span><span class="n">u_max</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
             <span class="n">axarray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">5.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">])</span>
-<span class="c">#            ax.relim()</span>
-<span class="c">#            ax.autoscale_view(True, True, True)</span>
             <span class="n">fig_s</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-            <span class="n">fig_s</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;../traces/pngs/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-vw.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
+            <span class="n">fig_s</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_direc</span><span class="o">+</span><span class="s">&#39;/images/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn</span><span class="o">+</span><span class="s">&#39;/multirobot-vw.png&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s">&#39;tight&#39;</span><span class="p">)</span>
 
-            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;Plot again? [y/n]: &quot;</span><span class="p">))</span>
-                    <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;n&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;N&#39;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;y&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;Y&#39;</span><span class="p">:</span>
-                            <span class="k">print</span><span class="p">(</span><span class="s">&quot;I&#39;ll take that as an </span><span class="se">\&#39;</span><span class="s">n</span><span class="se">\&#39;</span><span class="s">.&quot;</span><span class="p">)</span>
-                            <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot</span><span class="p">:</span>
+                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;Plot again? [y/n]: &quot;</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;n&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;N&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;y&#39;</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="s">&#39;Y&#39;</span><span class="p">:</span>
+                                <span class="k">print</span><span class="p">(</span><span class="s">&quot;I&#39;ll take that as an </span><span class="se">\&#39;</span><span class="s">n</span><span class="se">\&#39;</span><span class="s">.&quot;</span><span class="p">)</span>
+                                <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;y&#39;</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
-                    <span class="k">break</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Oops! That was no valid characther. Try again...&quot;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Good bye!&quot;</span><span class="p">)</span>
+                            <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;n&#39;</span>
+                        <span class="k">break</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Oops! That was no valid characther. Try again...&quot;</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Good bye!&quot;</span><span class="p">)</span>
+                        <span class="k">return</span>
+    
+                <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;n&#39;</span><span class="p">:</span>
                     <span class="k">return</span>
-
-            <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;n&#39;</span><span class="p">:</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span>
 
             <span class="n">axarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
@@ -2232,75 +2247,107 @@
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
 
-    <span class="n">n_robots</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">n_obsts</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">Tc</span> <span class="o">=</span> <span class="mf">0.5</span>
-    <span class="n">Tp</span> <span class="o">=</span> <span class="mf">2.0</span>
-    <span class="n">Td</span> <span class="o">=</span> <span class="mf">2.0</span>
-    <span class="n">N_s</span> <span class="o">=</span> <span class="mi">14</span>
-    <span class="n">n_knots</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">acc</span> <span class="o">=</span> <span class="mf">1e-3</span>
-    <span class="n">maxit</span> <span class="o">=</span> <span class="mi">20</span>
-    <span class="n">fs_maxit</span> <span class="o">=</span> <span class="mi">50</span>
-    <span class="n">ls_maxit</span> <span class="o">=</span> <span class="mi">25</span>
-    <span class="n">deps</span> <span class="o">=</span> <span class="mf">5.0</span>
-    <span class="n">seps</span> <span class="o">=</span> <span class="mf">0.1</span>
-    <span class="n">drho</span> <span class="o">=</span> <span class="mf">3.0</span>
-    <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="mf">0.5</span>
     <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
 
+    <span class="k">def</span> <span class="nf">add_cmdline_options</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-L&quot;</span><span class="p">,</span> <span class="s">&quot;--savelog&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;savelog&#39;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;create log file&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--veiwplot&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;plot&#39;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;view results in a iteractive plot and save each frame&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-P&#39;</span><span class="p">,</span> <span class="s">&#39;--storepath&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;direc&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;path for storing simulation data&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;PATH&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;./simoutput&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-b&#39;</span><span class="p">,</span> <span class="s">&#39;--robots&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;no_robots&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of robots&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-o&#39;</span><span class="p">,</span> <span class="s">&#39;--obstacles&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;no_obsts&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of obstacles&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-c&#39;</span><span class="p">,</span> <span class="s">&#39;--comphorizon&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;time_c&#39;</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;computation time horizon&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-p&#39;</span><span class="p">,</span> <span class="s">&#39;--planhorizon&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;time_p&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;planning time horizon&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-s&#39;</span><span class="p">,</span> <span class="s">&#39;--timesampling&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;no_s&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of time samples&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-k&#39;</span><span class="p">,</span> <span class="s">&#39;--knots&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;no_knots&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of internal knots&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-a&#39;</span><span class="p">,</span> <span class="s">&#39;--accuracy&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;acc&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1E-3</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;optimization accuracy&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-m&#39;</span><span class="p">,</span> <span class="s">&#39;--maxiteration&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;max_it&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of maximum iterations for intermadiaries plan sections&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-I&#39;</span><span class="p">,</span> <span class="s">&#39;--lastmaxiteration&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;l_max_it&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of maximum iterations for last plan sections&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;--firstmaxiteration&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;f_max_it&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;number of maximum iterations for first plan sections&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--deviation&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;deps&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;path deviation from initial one when dealing with conflict (in meters)&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-f&#39;</span><span class="p">,</span> <span class="s">&#39;--safety&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;seps&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;minimal allowed distance between two robots (in meters)&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-r&#39;</span><span class="p">,</span> <span class="s">&#39;--detectionradius&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;drho&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span><span class="s">&#39;detection radius within which the robot can detect an obstacle (in meters)&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-l&#39;</span><span class="p">,</span> <span class="s">&#39;--lastsecmindist&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;ls_min_dist&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="n">help</span><span class="o">=</span>\
+                <span class="s">&#39;minimal distance left for completing the last section of the planning (in meters)&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">scriptname</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
     <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-f&quot;</span><span class="p">,</span> <span class="s">&quot;--file&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;filename&quot;</span><span class="p">,</span>
-                      <span class="n">help</span><span class="o">=</span><span class="s">&quot;write report to FILE&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-q&quot;</span><span class="p">,</span> <span class="s">&quot;--quiet&quot;</span><span class="p">,</span>
-                      <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;verbose&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">help</span><span class="o">=</span><span class="s">&quot;don&#39;t print status messages to stdout&quot;</span><span class="p">)</span>
-    
+    <span class="n">add_cmdline_options</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
     <span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">direc</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Probably the output directory &#39;</span><span class="o">+</span><span class="n">options</span><span class="o">.</span><span class="n">direc</span><span class="o">+</span><span class="s">&#39; already exists.&#39;</span><span class="p">)</span>
 
+    <span class="n">sim_id</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">no_robots</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">no_obsts</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">time_c</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">time_p</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">no_s</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">no_knots</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">acc</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">max_it</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">f_max_it</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">l_max_it</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">deps</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">seps</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">drho</span><span class="p">)</span><span class="o">+</span>\
+            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">ls_min_dist</span><span class="p">)</span>
 
-    <span class="n">name_id</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_obsts</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Tc</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Tp</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">N_s</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n_knots</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">maxit</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">fs_maxit</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_maxit</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">seps</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">drho</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_min_dist</span><span class="p">)</span><span class="o">+</span>\
-            <span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ls_time_opt_scale</span><span class="p">)</span>
-
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">scriptname</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">name_id</span><span class="o">+</span><span class="s">&#39;.log&#39;</span>
-
-<span class="c">#    logging.basicConfig(filename=fname, format=&#39;%(levelname)s:%(message)s&#39;, \</span>
-<span class="c">#            filemode=&#39;w&#39;, level=logging.DEBUG)</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(levelname)s</span><span class="s">:</span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">savelog</span><span class="p">:</span>
+        <span class="n">flog</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">direc</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="n">scriptname</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">sim_id</span><span class="o">+</span><span class="s">&#39;.log&#39;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">flog</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(levelname)s</span><span class="s">:</span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> \
+                <span class="n">filemode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(levelname)s</span><span class="s">:</span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
     <span class="n">boundary</span> <span class="o">=</span> <span class="n">Boundary</span><span class="p">([</span><span class="o">-</span><span class="mf">12.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">12.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">])</span>
 
-<span class="c">#    obst_info = rand_round_obst(n_obsts, Boundary([-1., 1.], [0.8, 5.2]))</span>
-<span class="c">#    print &#39;OBSTS\n&#39;, obst_info</span>
+<span class="c"># Generate random round obstacles</span>
+<span class="c">#    obst_info = rand_round_obst(options.no_obsts, Boundary([-1., 1.], [0.8, 5.2]))</span>
 
     <span class="c"># 0 obsts</span>
-    <span class="k">if</span> <span class="n">n_obsts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">no_obsts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">elif</span> <span class="n">n_obsts</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="c"># 2 obsts</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">no_obsts</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[</span><span class="c">#([0.0, 1.6], 0.3),</span>
                 <span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">),</span> <span class="p">([</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">)]</span>
     <span class="c"># 3 obsts</span>
-    <span class="k">elif</span> <span class="n">n_obsts</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-<span class="c">#        obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),</span>
-<span class="c">#                ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),</span>
-<span class="c">#                ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]</span>
-        <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">],</span> <span class="mf">0.3</span><span class="p">),</span>
-                <span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">),</span> <span class="p">([</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">no_obsts</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">0.55043504350435046</span><span class="p">,</span> <span class="mf">1.9089108910891091</span><span class="p">],</span> <span class="mf">0.31361636163616358</span><span class="p">),</span>
+                <span class="p">([</span><span class="o">-</span><span class="mf">0.082028202820282003</span><span class="p">,</span> <span class="mf">3.6489648964896491</span><span class="p">],</span> <span class="mf">0.32471747174717469</span><span class="p">),</span>
+                <span class="p">([</span><span class="mf">0.37749774977497741</span><span class="p">,</span> <span class="mf">4.654905490549055</span><span class="p">],</span> <span class="mf">0.16462646264626463</span><span class="p">)]</span>
     <span class="c"># 6 obsts</span>
-    <span class="k">elif</span> <span class="n">n_obsts</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">no_obsts</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
         <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[([</span><span class="o">-</span><span class="mf">0.35104510451045101</span><span class="p">,</span> <span class="mf">1.3555355535553557</span><span class="p">],</span> <span class="mf">0.38704870487048704</span><span class="p">),</span>
                 <span class="p">([</span><span class="mf">0.21441144114411448</span><span class="p">,</span> <span class="mf">2.5279927992799281</span><span class="p">],</span> <span class="mf">0.32584258425842583</span><span class="p">),</span>
                 <span class="p">([</span><span class="o">-</span><span class="mf">0.3232123212321232</span><span class="p">,</span> <span class="mf">4.8615661566156621</span><span class="p">],</span> <span class="mf">0.23165816581658166</span><span class="p">),</span>
@@ -2308,37 +2355,31 @@
                 <span class="p">([</span><span class="mf">0.62277227722772288</span><span class="p">,</span> <span class="mf">1.247884788478848</span><span class="p">],</span> <span class="mf">0.1802030203020302</span><span class="p">),</span>
                 <span class="p">([</span><span class="mf">1.16985698569856988</span><span class="p">,</span> <span class="mf">3.6557155715571559</span><span class="p">],</span> <span class="mf">0.25223522352235223</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Only 3 or 6 obstacles configurations are permited&quot;</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Using 3 obstacles configuration&quot;</span><span class="p">)</span>
-        <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">0.55043504350435046</span><span class="p">,</span> <span class="mf">1.9089108910891091</span><span class="p">],</span> <span class="mf">0.31361636163616358</span><span class="p">),</span>
-                <span class="p">([</span><span class="o">-</span><span class="mf">0.082028202820282003</span><span class="p">,</span> <span class="mf">3.6489648964896491</span><span class="p">],</span> <span class="mf">0.32471747174717469</span><span class="p">),</span>
-                <span class="p">([</span><span class="mf">0.37749774977497741</span><span class="p">,</span> <span class="mf">4.654905490549055</span><span class="p">],</span> <span class="mf">0.16462646264626463</span><span class="p">)]</span>
+        <span class="n">obst_info</span> <span class="o">=</span> <span class="p">[([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">],</span> <span class="mf">0.3</span><span class="p">),</span>
+                <span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">),</span> <span class="p">([</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="mf">0.35</span><span class="p">)]</span>
 
     <span class="n">obstacles</span> <span class="o">=</span> <span class="p">[</span><span class="n">RoundObstacle</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">obst_info</span><span class="p">]</span>
+
+    <span class="c"># Polygon obstacle exemple</span>
 <span class="c">#    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]</span>
 
     <span class="n">kine_models</span> <span class="o">=</span> <span class="p">[</span><span class="n">UnicycleKineModel</span><span class="p">(</span>
-            <span class="p">[</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_initial</span>
-            <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span>  <span class="mf">5.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_final</span>
-            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_initial</span>
-            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_final</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_initial</span>
+            <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span>  <span class="mf">7.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_final</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_initial</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_final</span>
             <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">5.0</span><span class="p">]),</span>          <span class="c"># u_max</span>
             <span class="n">UnicycleKineModel</span><span class="p">(</span>
             <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_initial</span>
             <span class="p">[</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">],</span> <span class="c"># q_final</span>
-            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_initial</span>
-            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_final</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_initial</span>
+            <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">],</span>          <span class="c"># u_final</span>
             <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">5.0</span><span class="p">])]</span>          <span class="c"># u_max</span>
-<span class="c">#            UnicycleKineModel(</span>
-<span class="c">#            [-2.4,  0.1, 0.0], # q_initial</span>
-<span class="c">#            [2.6, -1.5, 0.0], # q_final</span>
-<span class="c">#            [0.0,  0.0],          # u_initial</span>
-<span class="c">#            [0.0,  0.0],          # u_final</span>
-<span class="c">#            [1.0,  5.0])]          # u_max</span>
 
     <span class="n">robots</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">n_robots</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">no_robots</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">options</span><span class="o">.</span><span class="n">no_robots</span><span class="p">:</span>
             <span class="n">neigh</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">neigh</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -2351,23 +2392,23 @@
             <span class="n">boundary</span><span class="p">,</span>               <span class="c"># planning plane boundary</span>
             <span class="n">neigh</span><span class="p">,</span>                  <span class="c"># neighbors to whom this robot shall talk ...</span>
                                     <span class="c">#...(used for conflict only, not for real comm between process)</span>
-            <span class="n">N_s</span><span class="o">=</span><span class="n">N_s</span><span class="p">,</span>                <span class="c"># numbers samplings for each planning interval</span>
-            <span class="n">n_knots</span><span class="o">=</span><span class="n">n_knots</span><span class="p">,</span>        <span class="c"># number of knots for b-spline interpolation</span>
-            <span class="n">Tc</span><span class="o">=</span><span class="n">Tc</span><span class="p">,</span>                  <span class="c"># computation time</span>
-            <span class="n">Tp</span><span class="o">=</span><span class="n">Tp</span><span class="p">,</span>                  <span class="c"># planning horizon</span>
-            <span class="n">Td</span><span class="o">=</span><span class="n">Tp</span><span class="p">,</span>
-            <span class="n">def_epsilon</span><span class="o">=</span><span class="n">deps</span><span class="p">,</span>       <span class="c"># in meters</span>
-            <span class="n">safe_epsilon</span><span class="o">=</span><span class="n">seps</span><span class="p">,</span>      <span class="c"># in meters</span>
-            <span class="n">detec_rho</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span>
+            <span class="n">N_s</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">no_s</span><span class="p">,</span>                <span class="c"># numbers samplings for each planning interval</span>
+            <span class="n">n_knots</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">no_knots</span><span class="p">,</span><span class="c"># number of knots for b-spline interpolation</span>
+            <span class="n">Tc</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">time_c</span><span class="p">,</span>       <span class="c"># computation time</span>
+            <span class="n">Tp</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">time_p</span><span class="p">,</span>       <span class="c"># planning horizon</span>
+            <span class="n">Td</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">time_p</span><span class="p">,</span>
+            <span class="n">def_epsilon</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">deps</span><span class="p">,</span>       <span class="c"># in meters</span>
+            <span class="n">safe_epsilon</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">seps</span><span class="p">,</span>      <span class="c"># in meters</span>
+            <span class="n">detec_rho</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">drho</span><span class="p">,</span>
             <span class="n">ls_time_opt_scale</span> <span class="o">=</span> <span class="n">ls_time_opt_scale</span><span class="p">,</span>
-            <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="n">ls_min_dist</span><span class="p">)]</span>                 <span class="c"># planning horizon (for stand alone plan)</span>
+            <span class="n">ls_min_dist</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">ls_min_dist</span><span class="p">)]</span> 
 
-    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;acc&#39;</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> <span class="c"># accuracy (hard to understand the physical meaning of this)</span>
-    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;maxit&#39;</span><span class="p">,</span> <span class="n">maxit</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> <span class="c"># max number of iterations for intermediary steps</span>
-    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;ls_maxit&#39;</span><span class="p">,</span> <span class="n">ls_maxit</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> <span class="c"># max number of iterations for the last step</span>
-    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;fs_maxit&#39;</span><span class="p">,</span> <span class="n">fs_maxit</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> <span class="c"># max number of iterations for the first step</span>
+    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;acc&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">acc</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> 
+    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;maxit&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">max_it</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> 
+    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;ls_maxit&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">l_max_it</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span> 
+    <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;fs_maxit&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">f_max_it</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">]</span>
 
-    <span class="n">world_sim</span> <span class="o">=</span> <span class="n">WorldSim</span><span class="p">(</span><span class="n">name_id</span><span class="p">,</span> <span class="n">robots</span><span class="p">,</span> <span class="n">obstacles</span><span class="p">,</span> <span class="n">boundary</span><span class="p">)</span> <span class="c"># create the world</span>
+    <span class="n">world_sim</span> <span class="o">=</span> <span class="n">WorldSim</span><span class="p">(</span><span class="n">sim_id</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">direc</span><span class="p">,</span> <span class="n">robots</span><span class="p">,</span> <span class="n">obstacles</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">plot</span><span class="p">)</span>
 
     <span class="n">summary_info</span> <span class="o">=</span> <span class="n">world_sim</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c"># run simulation</span>
 </pre></div>

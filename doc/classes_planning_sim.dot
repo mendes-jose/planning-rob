@@ -1,0 +1,16 @@
+digraph "classes_planning_sim" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{Boundary|x_max\lx_min\ly_max\ly_min\l|}", shape="record"];
+"1" [label="{Obstacle|centroid\l|detected_dist()\lpt_2_obst()\l}", shape="record"];
+"2" [label="{PolygonObstacle|bounding_circle_radius\lcentroid\lx\ly\l|plot()\lpt_2_obst()\l}", shape="record"];
+"3" [label="{Process|name : str\lpid\l|authkey()\ldaemon()\lexitcode()\lident()\lis_alive()\ljoin()\lname()\lrun()\lstart()\lterminate()\l}", shape="record"];
+"4" [label="{Robot|ctime : NoneType\leyed\lk_mod\lplanning_process\lrho : float\lrtime : NoneType\lsol : NoneType\l|set_option()\l}", shape="record"];
+"5" [label="{RobotMsg|done_planning\lintended_path_z1\lintended_path_z2\llatest_z\l|}", shape="record"];
+"6" [label="{RoundObstacle|radius\lx\ly\l|plot()\lpt_2_obst()\l}", shape="record"];
+"7" [label="{UnicycleKineModel|acc_max\ll : int\lq_dim : int\lq_final\lq_init\lu_dim : int\lu_final\lu_init\lu_max\lz_dim : int\lz_final\lz_init\l|phi_0()\lphi_1()\lphi_2()\lphi_3()\l}", shape="record"];
+"8" [label="{WorldSim|\l|run()\l}", shape="record"];
+"2" -> "1" [arrowhead="empty", arrowtail="none"];
+"6" -> "1" [arrowhead="empty", arrowtail="none"];
+"3" -> "4" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="planning_process", style="solid"];
+}
