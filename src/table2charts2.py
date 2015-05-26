@@ -13,11 +13,11 @@ font = {'family' : 'sans-serif',
 
 mpl.rc('font', **font)
 
-direc = "../traces/realtimeanalysis-uiuf"
+direc = "../traces/rt-full-table"
 
 table = []
 header = []
-with open(direc+'/table.csv', 'rb') as csvfile:
+with open(direc+'/table_complete2.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]
@@ -194,8 +194,8 @@ for scnt in scenarios_tables:
             ax.set_xlim(0.2,0.9)
 #            ax.add_artist(good_zone)
             ax.set_xlabel('Tc/Tp')
-            ax.set_ylabel('real_max_Tc/Tc')
-#            ax.set_title('Tc/Tp and real_max_Tc relation for Ns = {:.0f},N_knots = {:.0f}, Scenario = {:.0f}'\
+            ax.set_ylabel('max_comp_t/Tc')
+#            ax.set_title('Tc/Tp and max_comp_t relation for Ns = {:.0f},N_knots = {:.0f}, Scenario = {:.0f}'\
 #                    .format(nst[0,nsi], knt[0,nkni], scnt[0,nobsti]))
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles, labels)
@@ -220,8 +220,8 @@ for scnt in scenarios_tables:
         ax_uni.set_xlim(0.2,0.8)
 #        ax_uni.add_artist(good_zone)
         ax_uni.set_xlabel('Tc/Tp')
-        ax_uni.set_ylabel('real_max_Tc/Tc')
-#        ax_uni.set_title('Tc/Tp and real_max_Tc relation for N_knots = {:.0f}, Scenario = {:.0f}'\
+        ax_uni.set_ylabel('max_comp_t/Tc')
+#        ax_uni.set_title('Tc/Tp and max_comp_t relation for N_knots = {:.0f}, Scenario = {:.0f}'\
 #                .format(knt[0,nkni], scnt[0,nobsti]))
         handles, labels = ax_uni.get_legend_handles_labels()
         ax_uni.legend(handles, labels)
