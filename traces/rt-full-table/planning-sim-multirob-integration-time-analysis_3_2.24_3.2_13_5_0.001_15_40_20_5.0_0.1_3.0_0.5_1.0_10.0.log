@@ -1,0 +1,42 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimisation problem: 1.50172710419
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.1333: Time to solve stand alone optimisation problem: 0.419648885727
+INFO:R0@tkref=2.1333: N of unsatisfied eq: 2
+INFO:R0@tkref=2.1333: N of unsatisfied ieq: 9
+INFO:R0@tkref=2.1333: Summary: Optimization terminated successfully. after 9 it.
+DEBUG:R0@tkref=2.1333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.2667: Time to solve stand alone optimisation problem: 0.232661962509
+INFO:R0@tkref=4.2667: N of unsatisfied eq: 3
+INFO:R0@tkref=4.2667: N of unsatisfied ieq: 7
+INFO:R0@tkref=4.2667: Summary: Optimization terminated successfully. after 5 it.
+DEBUG:R0@tkref=4.2667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 1.03101423063
+DEBUG:R0: Usual approx plan dist: 3.2
+DEBUG:R0: Approx gain in dist: 2.16898576937
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.322191947071 Ns 7 Nk 3
+INFO:R0@tkref=6.4000: Time to solve stand alone optimisation problem: 0.406112909317
+INFO:R0@tkref=6.4000: N of unsatisfied eq: 10
+INFO:R0@tkref=6.4000: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.4000: Summary: Iteration limit exceeded after 21 it.
+DEBUG:R0@tkref=6.4000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.55795113642
+INFO:R0: NSE: 4
+INFO:R0: FIR: 1.50384688377
+INFO:R0: LAS: 0.406974077225
+INFO:R0: LMA: 0
+INFO:R0: MAX: 0.420493125916
+INFO:R0: MIN: 0.233524084091
+INFO:R0: AVG: 0.327008605003
+INFO:R0: RMP: 0.187720145498
+INFO:R0: RMG: 0.187720145498

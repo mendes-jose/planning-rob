@@ -1,0 +1,81 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimisation problem: 2.06787610054
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 4
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 2
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.2923: Time to solve stand alone optimisation problem: 0.694894075394
+INFO:R0@tkref=1.2923: N of unsatisfied eq: 1
+INFO:R0@tkref=1.2923: N of unsatisfied ieq: 3
+INFO:R0@tkref=1.2923: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=1.2923: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.5846: Time to solve stand alone optimisation problem: 1.00619792938
+INFO:R0@tkref=2.5846: N of unsatisfied eq: 3
+INFO:R0@tkref=2.5846: N of unsatisfied ieq: 11
+INFO:R0@tkref=2.5846: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=2.5846: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: Big problem 825084129.565
+DEBUG:R0: Big problem 8234122.77398
+DEBUG:R0: Big problem 74996296.0698
+INFO:R0@tkref=3.8769: Time to solve stand alone optimisation problem: 1.10121417046
+INFO:R0@tkref=3.8769: N of unsatisfied eq: 4
+INFO:R0@tkref=3.8769: N of unsatisfied ieq: 10
+INFO:R0@tkref=3.8769: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=3.8769: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.1692: Time to solve stand alone optimisation problem: 0.972831010818
+INFO:R0@tkref=5.1692: N of unsatisfied eq: 3
+INFO:R0@tkref=5.1692: N of unsatisfied ieq: 12
+INFO:R0@tkref=5.1692: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=5.1692: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=6.4615: Time to solve stand alone optimisation problem: 0.805517911911
+INFO:R0@tkref=6.4615: N of unsatisfied eq: 3
+INFO:R0@tkref=6.4615: N of unsatisfied ieq: 3
+INFO:R0@tkref=6.4615: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=6.4615: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=7.7538: Time to solve stand alone optimisation problem: 0.90779709816
+INFO:R0@tkref=7.7538: N of unsatisfied eq: 3
+INFO:R0@tkref=7.7538: N of unsatisfied ieq: 7
+INFO:R0@tkref=7.7538: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=7.7538: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=9.0462: Time to solve stand alone optimisation problem: 0.339395046234
+INFO:R0@tkref=9.0462: N of unsatisfied eq: 3
+INFO:R0@tkref=9.0462: N of unsatisfied ieq: 7
+INFO:R0@tkref=9.0462: Summary: Optimization terminated successfully. after 7 it.
+DEBUG:R0@tkref=9.0462: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=10.3385: Time to solve stand alone optimisation problem: 0.128223896027
+INFO:R0@tkref=10.3385: N of unsatisfied eq: 3
+INFO:R0@tkref=10.3385: N of unsatisfied ieq: 5
+INFO:R0@tkref=10.3385: Summary: Optimization terminated successfully. after 3 it.
+DEBUG:R0@tkref=10.3385: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.414474430985
+DEBUG:R0: Usual approx plan dist: 5.6
+DEBUG:R0: Approx gain in dist: 5.18552556902
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.0740132912473 Ns 7 Nk 3
+INFO:R0@tkref=11.6308: Time to solve stand alone optimisation problem: 0.398626804352
+INFO:R0@tkref=11.6308: N of unsatisfied eq: 9
+INFO:R0@tkref=11.6308: N of unsatisfied ieq: 0
+INFO:R0@tkref=11.6308: Summary: Iteration limit exceeded after 21 it.
+DEBUG:R0@tkref=11.6308: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 15.9092333568
+INFO:R0: NSE: 10
+INFO:R0: FIR: 2.07053303719
+INFO:R0: LAS: 0.399508953094
+INFO:R0: LMA: 0
+INFO:R0: MAX: 1.10212111473
+INFO:R0: MIN: 0.12907409668
+INFO:R0: AVG: 0.74541285634
+INFO:R0: RMP: 0.984036709581
+INFO:R0: RMG: 0.984036709581

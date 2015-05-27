@@ -17,7 +17,7 @@ direc = "../traces/rt-full-table"
 
 table = []
 header = []
-with open(direc+'/table_complete2.csv', 'rb') as csvfile:
+with open(direc+'/table.csv', 'rb') as csvfile:
     treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
     tlist = list(treader)
     header = tlist[0]
@@ -77,6 +77,13 @@ for scnt in scenarios_tables:
     for nkn in all_nknots:
         knots_tables += [np.squeeze(scnt[np.where(scnt[:,nkni] == nkn),:])]
 
+    # get N_s limits
+    nsinf = min(knots_tables[0][:, nsi])
+    nssup = max(knots_tables[0][:, nsi])
+    for knt in knots_tables[1:]:
+        nsinf = min(knt[:, nsi]) if nsinf < min(knt[:, nsi]) else nsinf
+        nssup = max(knt[:, nsi]) if nssup > max(knt[:, nsi]) else nssup
+
     # iterate on knots tables
     for knt in knots_tables:
 
@@ -86,9 +93,9 @@ for scnt in scenarios_tables:
         ax = fig[fidx].gca()
 
         # Get how many different Ns there are and their values
-        all_Ns = [knt[0, nsi]]
-        for v in knt[1:, nsi]:
-            if v not in all_Ns:
+        all_Ns = []
+        for v in knt[:, nsi]:
+            if v not in all_Ns and (v >= nsinf and v <= nssup):
                 all_Ns += [v]
         n_Ns = len(all_Ns)
 
@@ -114,11 +121,17 @@ for scnt in scenarios_tables:
         except OSError:
             print('Probably the output directory already exists, going to overwrite content')
 
+
         # create lines colors
-        colors_ns = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, len(ns_tables))])
+        colors_ns = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Ns)])
+
+        all_y_init = False
 
         # iterate over ns_tables
         for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
+
+            if nst[0, nsi] < nsinf or nst[0, nsi] > nssup:
+                continue
 
             # get all Tp values
             all_tp = [nst[0, tpi]]
@@ -155,8 +168,9 @@ for scnt in scenarios_tables:
 
             rmg /= len(all_tp)
 
-            if nsidx == 0:
+            if not all_y_init:
                 all_y = rmg
+                all_y_init = True
             else:
                 all_y = np.vstack((all_y,rmg))
 

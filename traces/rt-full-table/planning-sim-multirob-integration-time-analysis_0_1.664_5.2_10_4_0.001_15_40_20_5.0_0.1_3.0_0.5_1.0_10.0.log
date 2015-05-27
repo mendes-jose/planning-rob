@@ -1,0 +1,48 @@
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimisation problem: 0.771380186081
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.7333: Time to solve stand alone optimisation problem: 0.0198149681091
+INFO:R0@tkref=1.7333: N of unsatisfied eq: 3
+INFO:R0@tkref=1.7333: N of unsatisfied ieq: 3
+INFO:R0@tkref=1.7333: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=1.7333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.4667: Time to solve stand alone optimisation problem: 0.0202670097351
+INFO:R0@tkref=3.4667: N of unsatisfied eq: 3
+INFO:R0@tkref=3.4667: N of unsatisfied ieq: 6
+INFO:R0@tkref=3.4667: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=3.4667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.2000: Time to solve stand alone optimisation problem: 0.0275061130524
+INFO:R0@tkref=5.2000: N of unsatisfied eq: 3
+INFO:R0@tkref=5.2000: N of unsatisfied ieq: 7
+INFO:R0@tkref=5.2000: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=5.2000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.480998522171
+DEBUG:R0: Usual approx plan dist: 5.2
+DEBUG:R0: Approx gain in dist: 4.71900147783
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.0924997158021 Ns 7 Nk 3
+INFO:R0@tkref=6.9333: Time to solve stand alone optimisation problem: 0.306392192841
+INFO:R0@tkref=6.9333: N of unsatisfied eq: 10
+INFO:R0@tkref=6.9333: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.9333: Summary: Iteration limit exceeded after 21 it.
+DEBUG:R0@tkref=6.9333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.47348023204
+INFO:R0: NSE: 5
+INFO:R0: FIR: 0.773053884506
+INFO:R0: LAS: 0.307245969772
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.0283839702606
+INFO:R0: MIN: 0.0205268859863
+INFO:R0: AVG: 0.0232935746511
+INFO:R0: RMP: 0.0170576744355
+INFO:R0: RMG: 0.18464301068

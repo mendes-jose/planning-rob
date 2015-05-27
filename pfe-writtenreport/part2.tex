@@ -495,6 +495,17 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
 
 \subsubsection{Six obstacles scenario}
 
+%INFO:R0: TOT: 7.76460065867
+%INFO:R0: NSE: 7
+%INFO:R0: FIR: 2.3883190155
+%INFO:R0: LAS: 0.536874055862
+%INFO:R0: LMA: 0
+%INFO:R0: MAX: 1.1533639431
+%INFO:R0: MIN: 0.116408824921
+%INFO:R0: AVG: 0.802022314072
+%INFO:R0: RMP: 0.901065580547
+%INFO:R0: RMG: 0.901065580547
+
 \begin{figure}
         \centering
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
@@ -518,75 +529,65 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \end{subfigure}
         \caption{Six obstacles scenario.}\label{fig:uni6}
 \end{figure}
-%
-%%INFO:R0: TOT: 7.57429378065
-%%INFO:R0: NSE: 15
-%%INFO:R0: FIR: 1.07032418251
-%%INFO:R0: LAS: 0.402824163437
-%%INFO:R0: LMA: 1
-%%INFO:R0: MAX: 0.243094921112
-%%INFO:R0: MIN: 0.0298509597778
-%%INFO:R0: AVG: 0.156346522845
-%%INFO:R0: RMP: 0.506447752317
-%%INFO:R0: RMG: 0.83921700716
-%%p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0
-%
-%For the sake of an exemple a simulation done with the following parameters:
-%
-%\begin{table}[!h]
-%\caption {Motion planner main parameters} \label{tab:s3param}
-%\begin{center}
-%\begin{tabular}{|c|c|}
-%\hline
-%$T_p$ & 2.40 s\\
-%\hline 
-%$T_c$ & 0.48 s\\
-%\hline 
-%$N_s$ & 11\\
-%\hline 
-%$N_{knots}$ & 4\\
-%\hline
-%$v_{max}$ & $1.00\ \mathrm{m/s}$\\
-%\hline
-%$\omega_{max}$ & $5.00\ \mathrm{rad/s}$\\
-%\hline
-%$q_{inital}$ & $[-0.05\ 0.00\ \pi/2]^T$\\
-%\hline
-%$q_{final}$ & $[0.10\ 7.00\ \pi/2]^T$\\
-%\hline
-%$u_{final}$ & $[0.00\ 0.00]^T$\\
-%\hline
-%$u_{final}$ & $[0.00\ 0.00]^T$\\
-%\hline
-%$O_0$ & $[0.55\ 1.91\ 0.31]$\\
-%\hline
-%$O_1$ & $[-0.08\ 3.65\ 0.32]$\\
-%\hline
-%$O_2$ & $[0.38\ 4.65\ 0.16]$\\
-%\hline
-%\end{tabular}
-%\end{center}
-%\end{table}
-%
-%gave could be perfomed in within computing time smaller than the $T_c$ value for every planning section.
-%
-%\begin{figure}
-%        \centering
-%        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-%          %(or a blank line to force the subfigure onto a new line)
-%        \begin{subfigure}[b]{0.48\textwidth}
-%                \includegraphics[width=\textwidth]{./img/realtime/sim_results/p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-path.png}
-%                \caption{Robot's path.}\label{fig:rpath}
-%        \end{subfigure}
-%        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-%          %(or a blank line to force the subfigure onto a new line)
-%        \begin{subfigure}[b]{0.48\textwidth}
-%		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
-%                \caption{Robot's input.}\label{fig:rinput}
-%        \end{subfigure}
-%        \caption{Three obstacles scenario.}\label{fig:uni3}
-%\end{figure}
-%\newpage
+\begin{table}[!h]
+\caption {Motion planner main parameters} \label{tab:s3param}
+
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+$T_p$ & 3.20 s\\
+\hline 
+$T_c$ & 1.28 s\\
+\hline 
+$N_s$ & 12\\
+\hline 
+$N_{knots}$ & 6\\
+\hline
+$v_{max}$ & $1.00\ \mathrm{m/s}$\\
+\hline
+$\omega_{max}$ & $5.00\ \mathrm{rad/s}$\\
+\hline
+$q_{inital}$ & $[-0.05\ 0.00\ \pi/2]^T$\\
+\hline
+$q_{final}$ & $[0.10\ 7.00\ \pi/2]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$u_{final}$ & $[0.00\ 0.00]^T$\\
+\hline
+$O_0$ & $[-0.35\ 1.36\ 0.39]$\\
+\hline
+$O_1$ & $[0.21\ 2.53\ 0.33]$\\
+\hline
+$O_2$ & $[-0.32\ 4.86\ 0.23]$\\
+\hline
+$O_3$ & $[0.10\ 3.98\ 0.31]$\\
+\hline
+$O_4$ & $[0.62\ 1.25\ 0.18]$\\
+\hline
+$O_5$ & $[1.17\ 3.66\ 0.25]$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[!h]
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/sim_results/p_6_1.28_3.2_12_6_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-path.png}
+                \caption{Robot's path.}\label{fig:rpath}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_6_1.28_3.2_12_6_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
+                \caption{Robot's input.}\label{fig:rinput}
+        \end{subfigure}
+        \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
+\end{figure}
 
 %A planning horizon can make the optimization problem more expensive and since more obstacles will be taken into account within one planning section. This may explain the fact that for a given optimization solver configuration (same accuracy and same maximum number of iterations) and a given computing horizon the total time to complete the mission is greater then for some smaller planning horizons.
 %
