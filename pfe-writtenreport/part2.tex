@@ -11,7 +11,7 @@
 
 \subsection{Optimizers}
 
-There is a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems \cite{pyopt-paper}. Each of them may have their own way of defining the optimization problem and may or may not support specific kinds of constraints (equations, inequations or boundaries).
+There is a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}. Each of them may have their own way of defining the optimization problem and may or may not support specific kinds of constraints (equations, inequations or boundaries).
 
 For the initial implementation written in python two packages stood out as good, easy-to-use options for solving the constrained optimization problem that models the planning motion task.
 
@@ -19,7 +19,7 @@ For the initial implementation written in python two packages stood out as good,
 
 \textbf{pyOpt} is a much smaller ecosystem than Scipy that is specialized in optimization. It gathers many different numerical optimization algorithms some of them free and some licensed. Again, among all of them there were only a few suitable for this problem which were also free: SLSQP (same as the one implemented within Sicpy), PSQP and ALGENCAN.
 
-SLSQP and PSQP are both SQP (for sequential quadratic programming) methods. A SQP method attempts to solve a nonlinearly constrained optimization problem where the object function and the constraints are twice continuously differentiable. It does so by modeling the object function ($\min f(x)$) at the current iterate $x_k$ by a quadratic programming subproblem and using the minimizer of this subproblem to define a new iterate $x_{k+1}$ \cite{Nocedal}.
+SLSQP and PSQP are both SQP (for sequential quadratic programming) methods. A SQP method attempts to solve a nonlinearly constrained optimization problem where the object function and the constraints are twice continuously differentiable. It does so by modeling the object function ($\min f(x)$) at the current iterate $x_k$ by a quadratic programming subproblem and using the minimizer of this subproblem to define a new iterate $x_{k+1}$~\cite{Nocedal}.
 
 The ALGENCAN method\todo[inline, size=\tiny]{describe algecan}
 
@@ -184,7 +184,7 @@ For representing the mobile robot geometry in the planning plane a bounding circ
 \subsubsection{Unicycle kinetic model}
 
 \subsubsection{Flat output formulation}
-
+\pagebreak
 \subsection{The obstacles}
 
 % \begin{figure}
@@ -203,7 +203,7 @@ Thus the need of a polygon representation.
 
 %\subsubsection{Convex Polygon Obstacles}
 
-\subsubsection{Robot-to-obstacle distance for the convex polygon representation}
+\subsubsection{Robot-to-obstacle distance calculation for the convex polygon representation}
 
 As sad before the robot's geometric form is represented by a circle.
 When calculating the robot-to-obstacle distance this simplified representation is quite useful. 
@@ -213,24 +213,6 @@ We see in the figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ ar
 regions with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through
 the vertex $0$ and are orthogonal to the the two adjacent edges. $B$ is "between" the edge $s_{3}$, and the
 orthogonal lines $r_{0,3}$ and $r_{3,2}$. $C$ is in the interior of the obstacle representation, i.e., surrounded by the four edges.
-
-It is easy to see that the computation of the point-to-obstacle distance for $A$ is a simple point-to-point distance
-using the appropriate vertex. For $B$ a point-to-line distance equation can be used. Finally, since $C$ is in the
-interior of the polygon the penetration distance is calculated. It is considered as the shortest of the four distances from the point $C$ to the
-four edges multiplied by $-1$ (so, once more, point-to-line distance).
-
-Of course that the performance of this approach is "number of edges"-dependent and present fast results only or 
-polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful
-value or delete it}
-
-An important remark though is that for a given planning horizon several ($N_{s}$) point-to-obstacle distances have to be calculated. Intuitively we can say that there
-is a high probability that most of the $N_{s}$ points are inside the same zone defined by theirs relative positions to the obstacle.
-Besides, the probability of finding points inside zones that are "far" from the already occupied zones is smaller.
-% If not so some of them are likely to be in some adjacent zone and finally they are less likely to be in any other zone.
-This heuristic can be used to speed up the planning process by having a smarter initialization of point-to-obstacle distance computation when using a convex polygon representation.
-
-Finally, when dealing with more complex obstacles representations and/or with a more complex representation of the mobile robot geometry the Enhanced Gilbert-Johnson-Keerthi distance algorithm is a more suitable and efficient approach.
-\todo[inline]{some code is available on the internet, Google code written in D language and/or the other one on stackverflow}
 
 \begin{figure}[!h]
 \centering
@@ -261,8 +243,29 @@ point/.style={very thick,black}]
 \draw[point] (2.6,0.5,0) node[anchor=east]{\textbullet $C$};
 
 \end{tikzpicture}}
-\caption{Positioning cases when calculating point-to-obstacle distance in a convex polygon representation. \label{fig:convexpolygon}}
+\caption{Voronoi regions used for case differentiation. \label{fig:convexpolygon}}
 \end{figure}
+
+These cases make use of Voronoi regions~\cite{ericson2004real}. Based on the three types of regions (here we consider the interior of the polygon as a third one) a case differentiation is made and, depending on the case, equations are solved.
+
+It is easy to see that the computation of the point-to-obstacle distance for $A$ is a simple point-to-point distance
+using the appropriate vertex. For $B$ a point-to-line distance equation can be used. Finally, since $C$ is in the
+interior of the polygon the penetration distance is calculated. It is considered as the shortest of the four distances from the point $C$ to the
+four edges multiplied by $-1$ (so, once more, point-to-line distance).
+
+Of course that the performance of this approach is "number of edges"-dependent and present fast results only or 
+polygons with few edges (less than 10). \todo[inline, size=\tiny]{10 was arbitrary, improve this finding a meaningful
+value or delete it}
+
+An important remark though is that for a given planning horizon $N_{s}$ point-to-obstacle distances have to be calculated. Intuitively we can say that there
+is a high probability that most of the $N_{s}$ points are inside the same region defined by theirs relative positions to the obstacle.
+Besides, the probability of finding points inside regions that are "far" from the already occupied zones is smaller.
+% If not so some of them are likely to be in some adjacent zone and finally they are less likely to be in any other zone.
+This heuristic can be used to speed up the planning process by having a smarter initialization of point-to-obstacle distance computation when using a convex polygon representation.
+
+Finally, when dealing with more complex obstacles representations and/or with a more complex representation of the mobile robot geometry the Enhanced Gilbert-Johnson-Keerthi distance algorithm~\cite{ericson2004real} is a more suitable and efficient approach.
+\todo[inline]{some code is available on the internet, Google code written in D language and/or the other one on stackverflow, see bookmarks}
+
 
 %\begin{figure}[!h]
 %	\centering
@@ -274,26 +277,20 @@ point/.style={very thick,black}]
 %Each robot must be able to access the position of any robot of the fleet. If a robot's position cannot be accessed that means the robot lost its connection with the fleet and will not be considered a conflictual robot by none of the others robots.
 %Symmetry problem \todo[inline, size=\tiny]{Tc too high no time to avoid another robot involved}
 %Gilbert-Johnson-Keerthi distance algorithm
-\pagebreak
+
 \subsection{Analysis of real-time planning feasibility and total time performance}
 
 The performance of the motion planning algorithm previously presented depends on several parameters. For starters these parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group the most important ones are: the number of sample for time discretization ($N_s$), the number of internal knots for the B-splines curves ($n_{knots}$), and the planning and computation time horizons ($T_p$ and $T_c$ respectively). The latter kind depends on the optimization solver adopted but since most of them are iterative methods is common to have at least a "maximum number of iterations" and a "stop condition" parameters.
 
 The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the mission) is quite laborious.
 
-We attempt nevertheless to extract some \st{qualitative} knowledge about how these parameters impact the generated solution based on several simulations run with different parameters configurations. The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
+We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution based on several simulations run with different parameters configurations. The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
 
-Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A fist scenario where the robot did not had to avoid any obstacle to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second only with six instead of three obstacles.
+Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second only with six instead of three obstacles.
 
-In the other hand, to reduce the problem's size, an unique optimization solver with fixed parameters was used for all simulations. The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process. The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first optimization problem solving, for all intermediaries ones and for the last one.
+In the other hand, to reduce the problem's size, a unique optimization solver with fixed parameters was used for all simulations. The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process. The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first optimization problem solving, for all intermediaries ones and for the last one.
 
 \todo[inline]{talk about accuracy}
-
-Real-time feasibility in this context can be considered as having the \textit{maximum computational time} spend for planning the path sections \footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$) . Here though we are only interest in understanding the variation of \textit{maximum computational time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
-
-Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
-
-After this analysis we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints and minimizing the \textit{maximum computational time}/$T_c$ ratio.
 
 \begin{table}[!h]
 \caption {Optimization solver parameters} \label{tab:optparam}
@@ -314,6 +311,13 @@ accuracy & $10^{-3}$\\
 \end{center}
 \end{table}
 
+Real-time feasibility in this context can be considered as having the \textit{maximum computational time} spend for planning the path sections \footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$) . Here though we are only interest in understanding the variation of \textit{maximum computational time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
+
+Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
+
+After this analysis we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints and minimizing the \textit{maximum computational time}/$T_c$ ratio.
+
+
 \subsection{Computation time analysis}
 
 \paragraph{No obstacles scenario}
@@ -328,9 +332,9 @@ accuracy & $10^{-3}$\\
 %INFO:R0: RMP: 0.125865340233
 %INFO:R0: RMG: 0.77944278717
 
-The images in the figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computational time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computational time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ in order to be $T_p$ invariant.
+The images in the figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computational time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computational time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ values in order to be $T_p$ invariant.
 
-We can see that for a "no obstacles" scenario the overall performance with respect to the \textit{maximum computational time}/$T_c$ ratio is not greatly impacted by variations in the number of samples ($N_s$) nor in the number of internal knots ($N_{knots}$). Within a given image the lines are close together showing that variations in $N_s$ have weak impact. In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence.
+We can see that for a "no obstacles" scenario the overall performance with respect to the \textit{maximum computational time}/$T_c$ ratio is only slightly impacted by variations in the number of samples ($N_s$) and in the number of internal knots ($N_{knots}$). Within a given image the lines are close together showing that variations in $N_s$ have weak impact. In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence.
 
 \begin{figure}[!h]
         \centering
