@@ -26,6 +26,8 @@ import logging
 from scipy.optimize import fmin_slsqp
 from optparse import OptionParser
 
+__version__ = '1.0.0'
+
 ###############################################################################
 # Obstacle
 ###############################################################################
@@ -675,8 +677,11 @@ class Robot(object):
         # index for sliding windows
         td_step = (self._Td-self._t_init)/(self._N_s-1)
         tp_step = (self._Tp-self._t_init)/(self._N_s-1)
+        # finding the index of the discrete value in the...
+        # ... planning horizon that is closest to the computing horizon value
         self._Tcd_idx = int(round(self._Tc/td_step))
         self._Tcp_idx = int(round(self._Tc/tp_step))
+        # find the actual computing horizons
         self._Tcd = self._Tcd_idx*td_step
         self._Tcp = self._Tcp_idx*tp_step
 
@@ -1741,7 +1746,6 @@ class Robot(object):
             else:                                # otherwise wake up everybody
                 self._tc_syncer_cond.notify_all()
             self._tc_syncer.value -= 1            # decrement syncer (idem)
-#            self._com_link.latest_z[self.eyed] = latest_z
             for i in range(self.k_mod.u_dim):
                 self._com_link.latest_z[self.eyed][i] = latest_z[i, 0]
 
@@ -1749,7 +1753,7 @@ class Robot(object):
             self._conflict_syncer[self.eyed].value = 0
 
 
-#        if not self._final_step:
+#        print 'mtime[0] antes', self._mtime[0]
         if self._plan_state != 'ls':
             if self._std_alone == False:
                 self._knots = self._knots + self._Tcp
@@ -1767,6 +1771,7 @@ class Robot(object):
         btoc = time.time()
         self._all_comp_times.append(btoc-btic)
 
+#        print 'mtime[0] depois', self._mtime[0]
 #        print 'Solved C :\n', self._C
 
     def _plan(self):
@@ -1812,11 +1817,14 @@ class Robot(object):
         self._est_dtime = LA.norm(self._latest_z - self._final_z)/self.k_mod.u_max[0, 0]
 
         self._knots = self._gen_knots(self._mtime[0], self._mtime[0]+self._est_dtime)
+#        print 'LAST mtime[0]', self._mtime[0]
+#        print 'LAST mtime[0]+self._Tcp', self._mtime[0]+self._Tcp
         self._mtime = np.linspace(self._mtime[0], self._mtime[0]+self._est_dtime, self._N_s)
 
         self._plan_section()
         self._log('i', 'R{}: Finished motion planning'.format(self.eyed))
         self._log('i', 'R{}: --------------------------'.format(self.eyed))
+#        print 'LAST mtime[-1]', self._mtime[-1]
 
         self.sol[self.eyed] = self._all_dz
         self.rtime[self.eyed] = self._all_times
@@ -1845,7 +1853,7 @@ class WorldSim(object):
         self._sn = sim_id_str
         self._robs = robots
         self._obsts = obstacles
-        self._Tc = robots[0]._Tc
+        self._Tcp = robots[0]._Tcp
         self._ph_bound = phy_boundary
         self._plot = plot
         self._direc = path
@@ -1969,14 +1977,14 @@ class WorldSim(object):
                 logging.info('R{rid}: MAX: {d}'.format(rid=i, d=max(ctime[i][1:-1])))
                 logging.info('R{rid}: MIN: {d}'.format(rid=i, d=min(ctime[i][1:-1])))
                 logging.info('R{rid}: AVG: {d}'.format(rid=i, d=np.mean(ctime[i][1:-1])))
-                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tc))
-                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][1:])/self._Tc))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=max(ctime[i][1:-1])/self._Tcp))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=max(ctime[i][1:])/self._Tcp))
             else:
                 logging.info('R{rid}: MAX: {d}'.format(rid=i, d=ctime[i][-1]))
                 logging.info('R{rid}: MIN: {d}'.format(rid=i, d=ctime[i][-1]))
                 logging.info('R{rid}: AVG: {d}'.format(rid=i, d=ctime[i][-1]))
-                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=ctime[i][-1]/self._Tc))
-                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=ctime[i][-1]/self._Tc))
+                logging.info('R{rid}: RMP: {d}'.format(rid=i, d=ctime[i][-1]/self._Tcp))
+                logging.info('R{rid}: RMG: {d}'.format(rid=i, d=ctime[i][-1]/self._Tcp))
 
         # PLOT/SAVE ###########################################################
 
@@ -2151,13 +2159,6 @@ class WorldSim(object):
 # Script
 ###############################################################################
 
-def _isobstok(obsts, c, r):
-    if len(obsts) > 0:
-        for obst in obsts:
-            if (c[0]-obst[0][0])**2 + (c[1]-obst[0][1])**2 < (r+obst[1])**2:
-                return False
-    return True
-
 def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
     """ Generate random values for creating :class:`RoundObstacle` objects.
     Obstacles will have a random radius between *min_radius* and *max_radius*
@@ -2176,10 +2177,37 @@ def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
     Return
         List containing the information to initialize a :class:`RoundObstacle` object.
     """
-    N = 1/0.0001
-    radius_range = np.linspace(min_radius, max_radius, N)
-    x_range =np.linspace(boundary.x_min+max_radius, boundary.x_max-max_radius, N)
-    y_range =np.linspace(boundary.y_min+max_radius, boundary.y_max-max_radius, N)
+    arb_max_no = int(round((boundary.x_max-boundary.x_min)*\
+            (boundary.y_max-boundary.y_min)/((min_radius*2)**2)/10.))
+    if no > arb_max_no:
+        logging.info('Too many obstacles for the given boundary.')
+        logging.info('Using {:.0f} obstacles instead of {:.0f}.'.format(arb_max_no, no))
+        no = arb_max_no
+
+    def _isobstok(obsts, c, r):
+        """ Vefify if random generated obstacle is ok (not touching another obstacle)
+        """
+        if len(obsts) > 0:
+            for obst in obsts:
+                if (c[0]-obst[0][0])**2 + (c[1]-obst[0][1])**2 < (r+obst[1])**2:
+                    return False
+        return True
+
+    def _frange(initial, final, step):
+        """ Float point range function with round at the int(round(1./step))+4 decimal position
+        """
+        _range = []
+        n = 0
+        while n*step+initial < final:
+            _range += [round(n*step+initial, 4+int(round(1./step)))]
+            n+=1
+        return _range
+
+    resol = 0.0001 # meters
+
+    radius_range = _frange(min_radius, max_radius, resol)
+    x_range = _frange(boundary.x_min+max_radius, boundary.x_max-max_radius, resol)
+    y_range = _frange(boundary.y_min+max_radius, boundary.y_max-max_radius, resol)
 
     obsts = []
     i=0
@@ -2195,6 +2223,11 @@ def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
 # MAIN ########################################################################
 
 if __name__ == '__main__':
+    mpc.freeze_support() # windows freeze bug fix TODO verify if it works
+
+    #################################
+    # python planning_sim.py --help #
+    #################################
 
     ls_time_opt_scale = 1.0
 
@@ -2316,14 +2349,14 @@ if __name__ == '__main__':
     kine_models = [UnicycleKineModel(
             [-0.05, 0., np.pi/2.], # q_initial
             [0.1,  7.0, np.pi/2.], # q_final
-            [1.0,  0.0],          # u_initial
-            [1.0,  0.0],          # u_final
+            [0.0,  0.0],          # u_initial
+            [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max
             UnicycleKineModel(
             [0.4,  0., np.pi/2.], # q_initial
             [-0.4, 5.0, np.pi/2.], # q_final
-            [1.0,  0.0],          # u_initial
-            [1.0,  0.0],          # u_final
+            [0.0,  0.0],          # u_initial
+            [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max
 
     robots = []

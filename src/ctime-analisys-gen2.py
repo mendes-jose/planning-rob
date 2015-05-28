@@ -4,6 +4,16 @@ import csv
 import time
 import sys
 
+def _frange(initial, final, step):
+    """ Float point range function with round at the int(round(1./step))+4 decimal position
+    """
+    _range = []
+    n = 0
+    while n*step+initial < final:
+        _range += [round(n*step+initial, 4+int(round(1./step)))]
+        n+=1
+    return _range
+
 # output directory
 direc = sys.argv[1]
 
@@ -31,13 +41,13 @@ init_time = time.strftime("%H:%M:%S")
 # parameters definition
 #stepTp = 0.1
 #stepTc = 0.1
-acc = 1e-3; maxit = 15; ls_maxit = 15; fs_maxit = 40;
-deps = 5.0; seps = 0.1; drho = 6.0; ls_min_dist = 0.5; ls_time_opt = 1.0;
+acc = 1e-3; maxit = 15; ls_maxit = 25; fs_maxit = 40;
+deps = 5.0; seps = 0.1; drho = 4.0; ls_min_dist = 0.5; ls_time_opt = 1.0;
 dist_opt = 1e1 # param deprecated TODO
-for n_obsts in [3]:
-    for n_knots in [5]:
+for n_obsts in [0, 3, 6]:
+    for n_knots in [5, 6]:
 #        for N_s in range(n_knots+3+1, (n_knots+3+1)+3, 1):
-        for N_s in [14]:
+        for N_s in [10, 11, 12]:
 #            for tp in np.linspace(2.0, 6.0, 10, endpoint=False):
             tp_i = .8
             tp_f = 5.0
@@ -45,12 +55,7 @@ for n_obsts in [3]:
             for tp in np.linspace(tp_i, tp_f, (tp_f-tp_i)/tp_s+1, endpoint=True):
                 tc_i = 0.2
                 tc_s = 0.1
-                tcv = []
-                n = 0
-                while n*tc_s+tc_i < tp:
-                    tcv += [round(n*tc_s+tc_i, 4)]
-                    n+=1
-                for tc in tcv:
+                for tc in _frange(tc_i, tp, tc_s):
                     cmmd = "python planning_sim.py"+\
                             " -b1 -L"\
                             " -P"+direc+\

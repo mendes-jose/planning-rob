@@ -14,6 +14,12 @@ Contents:
 
    Multi-robot motion planner
 
+Depedencies:
+
+- Python 2.7.9
+- Numpy 1.9.2
+- Matlibplot 1.4.3
+- Scipy 0.15.1
 
 Indices and tables
 ==================
