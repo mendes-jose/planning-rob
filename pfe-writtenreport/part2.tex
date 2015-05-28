@@ -314,7 +314,9 @@ accuracy & $10^{-3}$\\
 \end{center}
 \end{table}
 
-\subsubsection{No obstacles scenario}
+\subsection{Computation time analysis}
+
+\paragraph{No obstacles scenario}
 %INFO:R0: TOT: 7.16220241525
 %INFO:R0: NSE: 14
 %INFO:R0: FIR: 0.888309001923
@@ -400,7 +402,7 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
         \caption{No obstacle scenario simulation example where the \textit{maximum computational time} was about 78\% of $T_c$ and the mission total time equals to $7.16\ s$.}\label{fig:sim0}
 \end{figure}
 
-\subsubsection{Three obstacles scenario}
+\paragraph{Three obstacles scenario}
 %INFO:R0: TOT: 7.57429378065
 %INFO:R0: NSE: 15
 %INFO:R0: FIR: 1.07032418251
@@ -493,7 +495,7 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 84\% of $T_c$ and the mission total time equals to $7.57\ s$.}\label{fig:uni3}
 \end{figure}
 
-\subsubsection{Six obstacles scenario}
+\paragraph{Six obstacles scenario}
 
 %INFO:R0: TOT: 7.76460065867
 %INFO:R0: NSE: 7
@@ -505,6 +507,8 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
 %INFO:R0: AVG: 0.802022314072
 %INFO:R0: RMP: 0.901065580547
 %INFO:R0: RMG: 0.901065580547
+
+As for the scenario with six obstacles we realize that the observations for the latest scenario are accentuated.
 
 \begin{figure}
         \centering
@@ -588,6 +592,20 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
         \end{subfigure}
         \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
 \end{figure}
+
+\subsubsection{Total time analysis}
+
+The time spend for finding the solution for a given set of
+parameters values does not impact the solution it self.
+Let's analyse than how the solution behaves for different scenarios.
+
+Intuitively we can say that the greater the number 
+
+\begin{itemize}
+ \item Distance inter robots
+ \item Min dist to obstacles
+\end{itemize}
+
 
 %A planning horizon can make the optimization problem more expensive and since more obstacles will be taken into account within one planning section. This may explain the fact that for a given optimization solver configuration (same accuracy and same maximum number of iterations) and a given computing horizon the total time to complete the mission is greater then for some smaller planning horizons.
 %

@@ -6,7 +6,7 @@ ls_time_opt_scale = 1.0
 
 options = {'acc': 0.001, 'no_obsts': 3, 'no_robots': 2, 'time_p': 2.0, 'time_c': 0.5,
         'plot': False, 'no_s': 14, 'max_it': 15, 'ls_min_dist': 0.5, 'drho': 3.0,
-        'direc': "./simout", 'savelog': False, 'deps': 5.0, 'f_max_it': 40, 'l_max_it': 20,
+        'direc': "./simout", 'savelog': False, 'deps': 5.0, 'f_max_it': 40, 'l_max_it': 25,
         'seps': 0.1, 'no_knots': 5}
 scriptname = sys.argv[0]
 
