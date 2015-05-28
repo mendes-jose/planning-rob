@@ -679,11 +679,13 @@ class Robot(object):
         tp_step = (self._Tp-self._t_init)/(self._N_s-1)
         # finding the index of the discrete value in the...
         # ... planning horizon that is closest to the computing horizon value
-        self._Tcd_idx = int(round(self._Tc/td_step))
-        self._Tcp_idx = int(round(self._Tc/tp_step))
+        self._Tcd_idx = max(1, int(round(self._Tc/td_step)))
+        self._Tcp_idx = max(1, int(round(self._Tc/tp_step)))
         # find the actual computing horizons
         self._Tcd = self._Tcd_idx*td_step
         self._Tcp = self._Tcp_idx*tp_step
+        self._log('d', 'R{}: Using Tc_p = {}'.format(self.eyed, self._Tcp))
+        self._log('d', 'R{}: Using Tc_d = {}'.format(self.eyed, self._Tcd))
 
         # optimization parameters
         self._maxit = 100
