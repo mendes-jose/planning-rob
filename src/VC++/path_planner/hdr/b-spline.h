@@ -12,4 +12,4 @@ public:
 	~Bspline();
 };
 
-#endif
+#endif // BSPLINE_H
