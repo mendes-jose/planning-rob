@@ -1,0 +1,50 @@
+﻿Build started 29/05/2015 14:26:16.
+     1>Project "C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\path_planner.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\path_planner.unsuccessfulbuild".
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\main.cpp
+         main.cpp
+     1>c:\users\jm246044\dev\planning-rob\src\c++\path_planner\src\main.cpp(53): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
+     1>c:\users\jm246044\dev\planning-rob\src\c++\path_planner\src\main.cpp(54): warning C4244: 'initializing' : conversion from 'double' to 'const int', possible loss of data
+     1>c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(294): warning C4996: 'std::_Partial_sum1': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(278) : see declaration of 'std::_Partial_sum1'
+                 c:\users\jm246044\dev\planning-rob\dependencies\unsupported\eigen\src\splines\splinefitting.h(74) : see reference to function template instantiation '_OutIt std::partial_sum<double*,double*>(_InIt,_InIt,_OutIt)' being compiled
+                 with
+                 [
+                     _OutIt=double *,
+                     _InIt=double *
+                 ]
+                 c:\users\jm246044\dev\planning-rob\dependencies\unsupported\eigen\src\splines\splinefitting.h(151) : see reference to function template instantiation 'void Eigen::ChordLengths<PointArrayType,Eigen::Array<_Scalar,_Rows,_Cols>>(const PointArrayType &,KnotVectorType &)' being compiled
+                 with
+                 [
+                     PointArrayType=Eigen::Array<double,2,8>,
+                     _Scalar=double,
+                     _Rows=1,
+                     _Cols=-1,
+                     KnotVectorType=Eigen::Array<double,1,-1>
+                 ]
+                 c:\users\jm246044\dev\planning-rob\src\c++\path_planner\src\main.cpp(68) : see reference to function template instantiation 'SplineType Eigen::SplineFitting<SplineType>::Interpolate<Eigen::Array<_Scalar,_Rows,_Cols>>(const PointArrayType &,Eigen::DenseIndex)' being compiled
+                 with
+                 [
+                     SplineType=Eigen::Spline<double,2,3>,
+                     _Scalar=double,
+                     _Rows=2,
+                     _Cols=8,
+                     PointArrayType=Eigen::Array<double,2,8>
+                 ]
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\path_planner.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.lib" /MACHINE:X86 "Debug\b-spline.obj"
+         Debug\main.obj
+         LINK : C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe not found or not built by the last incremental link; performing full link
+         path_planner.vcxproj -> C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe;#1" /manifest Debug\path_planner.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Debug\path_planner.unsuccessfulbuild".
+         Touching "Debug\path_planner.lastbuildstate".
+     1>Done Building Project "C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\path_planner.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:09.26
