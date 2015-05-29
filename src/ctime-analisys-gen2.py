@@ -69,9 +69,6 @@ for n_obsts in [3, 6]:
                     elif tp < 3.8:
                         print '----------------------------'
                         continue
-                    elif tc < 1.0:
-                        print '----------------------------'
-                        continue
                     cmmd = "python planning_sim.py"+\
                             " -b1 -L"\
                             " -P"+direc+\
