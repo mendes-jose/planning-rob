@@ -44,7 +44,7 @@ init_time = time.strftime("%H:%M:%S")
 acc = 1e-3; maxit = 15; ls_maxit = 25; fs_maxit = 40;
 deps = 5.0; seps = 0.1; drho = 4.0; ls_min_dist = 0.5; ls_time_opt = 1.0;
 dist_opt = 1e1 # param deprecated TODO
-for n_obsts in [0, 3, 6]:
+for n_obsts in [3, 6]:
     for n_knots in [5, 6]:
 #        for N_s in range(n_knots+3+1, (n_knots+3+1)+3, 1):
         for N_s in [10, 11, 12]:
@@ -55,7 +55,23 @@ for n_obsts in [0, 3, 6]:
             for tp in np.linspace(tp_i, tp_f, (tp_f-tp_i)/tp_s+1, endpoint=True):
                 tc_i = 0.2
                 tc_s = 0.1
-                for tc in _frange(tc_i, tp, tc_s):
+                for tc in _frange(tc_i, tp-0.3, tc_s):
+#planning_sim.py -b1 -L -P../traces/rt-tcfix -o3 -c1.0 -p3.8 -s10 -k6 -a0.001 -m15 -i40 -I25 -d5.0 -f0.1 -r4.0 -l0.5
+                    if n_obsts < 3:
+                        print '----------------------------'
+                        continue
+                    elif n_knots < 6:
+                        print '----------------------------'
+                        continue
+                    elif N_s < 10:
+                        print '----------------------------'
+                        continue
+                    elif tp < 3.8:
+                        print '----------------------------'
+                        continue
+                    elif tc < 1.0:
+                        print '----------------------------'
+                        continue
                     cmmd = "python planning_sim.py"+\
                             " -b1 -L"\
                             " -P"+direc+\
