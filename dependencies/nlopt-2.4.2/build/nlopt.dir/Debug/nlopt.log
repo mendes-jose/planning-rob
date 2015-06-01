@@ -1,0 +1,116 @@
+﻿Build started 01/06/2015 19:02:06.
+     1>Project "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\nlopt.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Création de "nlopt.dir\Debug\nlopt.unsuccessfulbuild", car "AlwaysCreate" a été spécifié.
+       CustomBuild:
+         Building Custom Rule C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/CMakeLists.txt
+         CMake does not need to re-run because C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\stogo" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\util" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\direct" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\cdirect" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\praxis" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\luksan" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\crs" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\mlsl" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\mma" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\cobyla" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\newuoa" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\neldermead" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\auglag" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\bobyqa" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\isres" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\slsqp" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\esch" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\api" /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"nlopt.dir\Debug\\" /Fd"nlopt.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt ..\direct\DIRect.c ..\direct\direct_wrap.c ..\direct\DIRserial.c ..\direct\DIRsubrout.c ..\cdirect\cdirect.c ..\cdirect\hybrid.c ..\praxis\praxis.c ..\luksan\plis.c ..\luksan\plip.c ..\luksan\pnet.c ..\luksan\mssubs.c ..\luksan\pssubs.c ..\crs\crs.c ..\mlsl\mlsl.c ..\mma\mma.c ..\mma\ccsa_quadratic.c ..\cobyla\cobyla.c ..\newuoa\newuoa.c ..\neldermead\nldrmd.c ..\neldermead\sbplx.c ..\auglag\auglag.c ..\bobyqa\bobyqa.c ..\isres\isres.c ..\slsqp\slsqp.c ..\esch\esch.c ..\api\general.c ..\api\options.c ..\api\optimize.c ..\api\deprecated.c ..\api\f77api.c ..\util\mt19937ar.c ..\util\sobolseq.c ..\util\timer.c ..\util\stop.c ..\util\redblack.c ..\util\qsort_r.c ..\util\rescale.c
+         DIRect.c
+         direct_wrap.c
+         DIRserial.c
+         DIRsubrout.c
+         cdirect.c
+         hybrid.c
+         praxis.c
+         plis.c
+         plip.c
+         pnet.c
+         mssubs.c
+         pssubs.c
+         crs.c
+         mlsl.c
+         mma.c
+         ccsa_quadratic.c
+         cobyla.c
+         newuoa.c
+         nldrmd.c
+         sbplx.c
+         Generating Code...
+         Compiling...
+         auglag.c
+     1>..\auglag\auglag.c(155): warning C4018: '<' : signed/unsigned mismatch
+     1>..\auglag\auglag.c(166): warning C4018: '<' : signed/unsigned mismatch
+     1>..\auglag\auglag.c(214): warning C4018: '<' : signed/unsigned mismatch
+     1>..\auglag\auglag.c(227): warning C4018: '<' : signed/unsigned mismatch
+         bobyqa.c
+         isres.c
+     1>..\isres\isres.c(90): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+         slsqp.c
+         esch.c
+         general.c
+         options.c
+         optimize.c
+         deprecated.c
+         f77api.c
+         mt19937ar.c
+         sobolseq.c
+     1>..\util\sobolseq.c(96): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+         timer.c
+     1>..\util\timer.c(54): warning C4244: 'return' : conversion from 'time_t' to 'double', possible loss of data
+     1>..\util\timer.c(85): warning C4244: 'return' : conversion from 'time_t' to 'unsigned long', possible loss of data
+         stop.c
+         redblack.c
+         qsort_r.c
+         rescale.c
+         Generating Code...
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\stogo" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\util" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\direct" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\cdirect" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\praxis" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\luksan" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\crs" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\mlsl" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\mma" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\cobyla" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\newuoa" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\neldermead" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\auglag" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\bobyqa" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\isres" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\slsqp" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\esch" /I"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\api" /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"nlopt.dir\Debug\\" /Fd"nlopt.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\stogo\global.cc ..\stogo\linalg.cc ..\stogo\local.cc ..\stogo\stogo.cc ..\stogo\tools.cc
+         global.cc
+         linalg.cc
+         local.cc
+         stogo.cc
+         tools.cc
+         Generating Code...
+       Lib:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\Debug\nlopt-0.dll" /NOLOGO nlopt.dir\Debug\DIRect.obj
+         nlopt.dir\Debug\direct_wrap.obj
+         nlopt.dir\Debug\DIRserial.obj
+         nlopt.dir\Debug\DIRsubrout.obj
+         nlopt.dir\Debug\cdirect.obj
+         nlopt.dir\Debug\hybrid.obj
+         nlopt.dir\Debug\praxis.obj
+         nlopt.dir\Debug\plis.obj
+         nlopt.dir\Debug\plip.obj
+         nlopt.dir\Debug\pnet.obj
+         nlopt.dir\Debug\mssubs.obj
+         nlopt.dir\Debug\pssubs.obj
+         nlopt.dir\Debug\crs.obj
+         nlopt.dir\Debug\mlsl.obj
+         nlopt.dir\Debug\mma.obj
+         nlopt.dir\Debug\ccsa_quadratic.obj
+         nlopt.dir\Debug\cobyla.obj
+         nlopt.dir\Debug\newuoa.obj
+         nlopt.dir\Debug\nldrmd.obj
+         nlopt.dir\Debug\sbplx.obj
+         nlopt.dir\Debug\auglag.obj
+         nlopt.dir\Debug\bobyqa.obj
+         nlopt.dir\Debug\isres.obj
+         nlopt.dir\Debug\slsqp.obj
+         nlopt.dir\Debug\esch.obj
+         nlopt.dir\Debug\general.obj
+         nlopt.dir\Debug\options.obj
+         nlopt.dir\Debug\optimize.obj
+         nlopt.dir\Debug\deprecated.obj
+         nlopt.dir\Debug\f77api.obj
+         nlopt.dir\Debug\mt19937ar.obj
+         nlopt.dir\Debug\sobolseq.obj
+         nlopt.dir\Debug\timer.obj
+         nlopt.dir\Debug\stop.obj
+         nlopt.dir\Debug\redblack.obj
+         nlopt.dir\Debug\qsort_r.obj
+         nlopt.dir\Debug\rescale.obj
+         nlopt.dir\Debug\global.obj
+         nlopt.dir\Debug\linalg.obj
+         nlopt.dir\Debug\local.obj
+         nlopt.dir\Debug\stogo.obj
+         nlopt.dir\Debug\tools.obj
+         nlopt.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\Debug\nlopt-0.dll
+       FinalizeBuildStatus:
+         Suppression du fichier "nlopt.dir\Debug\nlopt.unsuccessfulbuild".
+         Mise à jour de l'horodatage "nlopt.dir\Debug\nlopt.lastbuildstate".
+     1>Done Building Project "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\nlopt.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:09.03

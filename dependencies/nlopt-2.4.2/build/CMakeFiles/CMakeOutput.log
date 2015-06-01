@@ -1,0 +1,805 @@
+The system is: Windows - 6.1 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler:  
+Build flags: 
+Id flags: 
+
+The output was:
+0
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:11.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdC\CompilerIdC.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "Debug\CompilerIdC.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /nologo /W0 /WX- /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CMakeCCompilerId.c
+  CMakeCCompilerId.c
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\CompilerIdC.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdC\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdC.lib" /MACHINE:X86 Debug\CMakeCCompilerId.obj
+  CompilerIdC.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdC\.\CompilerIdC.exe
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:".\CompilerIdC.exe;#1" /manifest Debug\CompilerIdC.exe.intermediate.manifest
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_C_COMPILER=c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe
+FinalizeBuildStatus:
+  Suppression du fichier "Debug\CompilerIdC.unsuccessfulbuild".
+  Mise … jour de l'horodatage "Debug\CompilerIdC.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdC\CompilerIdC.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:00.85
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+
+The C compiler identification is MSVC, found in "C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/3.2.2/CompilerIdC/CompilerIdC.exe"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler:  
+Build flags: 
+Id flags: 
+
+The output was:
+0
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:12.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdCXX\CompilerIdCXX.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "Debug\CompilerIdCXX.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /nologo /W0 /WX- /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue CMakeCXXCompilerId.cpp
+  CMakeCXXCompilerId.cpp
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\CompilerIdCXX.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdCXX\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdCXX.lib" /MACHINE:X86 Debug\CMakeCXXCompilerId.obj
+  CompilerIdCXX.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdCXX\.\CompilerIdCXX.exe
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:".\CompilerIdCXX.exe;#1" /manifest Debug\CompilerIdCXX.exe.intermediate.manifest
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_CXX_COMPILER=c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe
+FinalizeBuildStatus:
+  Suppression du fichier "Debug\CompilerIdCXX.unsuccessfulbuild".
+  Mise … jour de l'horodatage "Debug\CompilerIdCXX.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\3.2.2\CompilerIdCXX\CompilerIdCXX.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:00.74
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+
+The CXX compiler identification is MSVC, found in "C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/3.2.2/CompilerIdCXX/CompilerIdCXX.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec1405961108.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:13.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1405961108.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec1405961108.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1405961108.dir\Debug\\" /Fd"cmTryCompileExec1405961108.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue testCCompiler.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1405961108.dir\Debug\\" /Fd"cmTryCompileExec1405961108.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue testCCompiler.c
+  
+  testCCompiler.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.embed.manifest.res" cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1405961108.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1405961108.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1405961108.lib" /MACHINE:X86 cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.embed.manifest.res
+  cmTryCompileExec1405961108.dir\Debug\testCCompiler.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.embed.manifest" /manifest cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.embed.manifest.res" cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1405961108.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1405961108.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1405961108.lib" /MACHINE:X86 cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.exe.embed.manifest.res
+  cmTryCompileExec1405961108.dir\Debug\testCCompiler.obj  /machine:X86 /debug 
+  cmTryCompileExec1405961108.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1405961108.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec1405961108.dir\Debug\cmTryCompileExec1405961108.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1405961108.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.39
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec3713797574.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:15.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3713797574.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec3713797574.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3713797574.dir\Debug\\" /Fd"cmTryCompileExec3713797574.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCCompilerABI.c"
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3713797574.dir\Debug\\" /Fd"cmTryCompileExec3713797574.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCCompilerABI.c"
+  
+  CMakeCCompilerABI.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.embed.manifest.res" cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3713797574.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3713797574.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3713797574.lib" /MACHINE:X86 cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.embed.manifest.res
+  cmTryCompileExec3713797574.dir\Debug\CMakeCCompilerABI.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.embed.manifest" /manifest cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.embed.manifest.res" cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3713797574.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3713797574.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3713797574.lib" /MACHINE:X86 cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.exe.embed.manifest.res
+  cmTryCompileExec3713797574.dir\Debug\CMakeCCompilerABI.obj  /machine:X86 /debug 
+  cmTryCompileExec3713797574.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3713797574.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec3713797574.dir\Debug\cmTryCompileExec3713797574.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3713797574.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.08
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec4116174195.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:17.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec4116174195.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec4116174195.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec4116174195.dir\Debug\\" /Fd"cmTryCompileExec4116174195.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue testCXXCompiler.cxx
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec4116174195.dir\Debug\\" /Fd"cmTryCompileExec4116174195.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue testCXXCompiler.cxx
+  
+  testCXXCompiler.cxx
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.embed.manifest.res" cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4116174195.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4116174195.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4116174195.lib" /MACHINE:X86 cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.embed.manifest.res
+  cmTryCompileExec4116174195.dir\Debug\testCXXCompiler.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.embed.manifest" /manifest cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.embed.manifest.res" cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4116174195.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4116174195.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4116174195.lib" /MACHINE:X86 cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.exe.embed.manifest.res
+  cmTryCompileExec4116174195.dir\Debug\testCXXCompiler.obj  /machine:X86 /debug 
+  cmTryCompileExec4116174195.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4116174195.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec4116174195.dir\Debug\cmTryCompileExec4116174195.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec4116174195.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.89
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec3372574777.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:20.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3372574777.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec3372574777.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec3372574777.dir\Debug\\" /Fd"cmTryCompileExec3372574777.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXCompilerABI.cpp"
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec3372574777.dir\Debug\\" /Fd"cmTryCompileExec3372574777.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CMakeCXXCompilerABI.cpp"
+  
+  CMakeCXXCompilerABI.cpp
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.embed.manifest.res" cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3372574777.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3372574777.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3372574777.lib" /MACHINE:X86 cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.embed.manifest.res
+  cmTryCompileExec3372574777.dir\Debug\CMakeCXXCompilerABI.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.embed.manifest" /manifest cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.embed.manifest.res" cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3372574777.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3372574777.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3372574777.lib" /MACHINE:X86 cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.exe.embed.manifest.res
+  cmTryCompileExec3372574777.dir\Debug\CMakeCXXCompilerABI.obj  /machine:X86 /debug 
+  cmTryCompileExec3372574777.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3372574777.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec3372574777.dir\Debug\cmTryCompileExec3372574777.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3372574777.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.30
+
+
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec2900640245.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:22.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec2900640245.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec2900640245.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec2900640245.dir\Debug\\" /Fd"cmTryCompileExec2900640245.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue ..\feature_tests.cxx
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"cmTryCompileExec2900640245.dir\Debug\\" /Fd"cmTryCompileExec2900640245.dir\Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:queue ..\feature_tests.cxx
+  
+  feature_tests.cxx
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.embed.manifest.res" cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec2900640245.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec2900640245.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec2900640245.lib" /MACHINE:X86 cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.embed.manifest.res
+  cmTryCompileExec2900640245.dir\Debug\feature_tests.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.embed.manifest" /manifest cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.embed.manifest.res" cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec2900640245.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec2900640245.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec2900640245.lib" /MACHINE:X86 cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.exe.embed.manifest.res
+  cmTryCompileExec2900640245.dir\Debug\feature_tests.obj  /machine:X86 /debug 
+  cmTryCompileExec2900640245.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec2900640245.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec2900640245.dir\Debug\cmTryCompileExec2900640245.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec2900640245.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.88
+
+
+    Feature record: CXX_FEATURE:0cxx_alias_templates
+    Feature record: CXX_FEATURE:0cxx_alignas
+    Feature record: CXX_FEATURE:0cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:0cxx_binary_literals
+    Feature record: CXX_FEATURE:0cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:0cxx_decltype_auto
+    Feature record: CXX_FEATURE:0cxx_default_function_template_args
+    Feature record: CXX_FEATURE:0cxx_defaulted_functions
+    Feature record: CXX_FEATURE:0cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:0cxx_delegating_constructors
+    Feature record: CXX_FEATURE:0cxx_deleted_functions
+    Feature record: CXX_FEATURE:0cxx_digit_separators
+    Feature record: CXX_FEATURE:0cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:0cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:0cxx_final
+    Feature record: CXX_FEATURE:0cxx_func_identifier
+    Feature record: CXX_FEATURE:0cxx_generalized_initializers
+    Feature record: CXX_FEATURE:0cxx_generic_lambdas
+    Feature record: CXX_FEATURE:0cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:0cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:0cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:0cxx_noexcept
+    Feature record: CXX_FEATURE:0cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:0cxx_range_for
+    Feature record: CXX_FEATURE:0cxx_raw_string_literals
+    Feature record: CXX_FEATURE:0cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:0cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:0cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:0cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:0cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:0cxx_unicode_literals
+    Feature record: CXX_FEATURE:0cxx_uniform_initialization
+    Feature record: CXX_FEATURE:0cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:0cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:0cxx_variadic_templates
+Determining if files string.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec1478349989.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:25.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1478349989.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec1478349989.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1478349989.dir\Debug\\" /Fd"cmTryCompileExec1478349989.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1478349989.dir\Debug\\" /Fd"cmTryCompileExec1478349989.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.embed.manifest.res" cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1478349989.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1478349989.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1478349989.lib" /MACHINE:X86 cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.embed.manifest.res
+  cmTryCompileExec1478349989.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.embed.manifest" /manifest cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.embed.manifest.res" cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1478349989.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1478349989.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1478349989.lib" /MACHINE:X86 cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.exe.embed.manifest.res
+  cmTryCompileExec1478349989.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec1478349989.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1478349989.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec1478349989.dir\Debug\cmTryCompileExec1478349989.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1478349989.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.19
+
+
+Determining if files sys/stat.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec1138706874.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:27.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1138706874.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec1138706874.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1138706874.dir\Debug\\" /Fd"cmTryCompileExec1138706874.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1138706874.dir\Debug\\" /Fd"cmTryCompileExec1138706874.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.embed.manifest.res" cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1138706874.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1138706874.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1138706874.lib" /MACHINE:X86 cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.embed.manifest.res
+  cmTryCompileExec1138706874.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.embed.manifest" /manifest cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.embed.manifest.res" cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1138706874.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1138706874.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1138706874.lib" /MACHINE:X86 cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.exe.embed.manifest.res
+  cmTryCompileExec1138706874.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec1138706874.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1138706874.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec1138706874.dir\Debug\cmTryCompileExec1138706874.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1138706874.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.45
+
+
+Determining if files memory.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec354092108.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:30.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec354092108.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec354092108.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec354092108.dir\Debug\\" /Fd"cmTryCompileExec354092108.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec354092108.dir\Debug\\" /Fd"cmTryCompileExec354092108.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.embed.manifest.res" cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec354092108.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec354092108.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec354092108.lib" /MACHINE:X86 cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.embed.manifest.res
+  cmTryCompileExec354092108.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.embed.manifest" /manifest cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.embed.manifest.res" cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec354092108.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec354092108.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec354092108.lib" /MACHINE:X86 cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.exe.embed.manifest.res
+  cmTryCompileExec354092108.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec354092108.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec354092108.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec354092108.dir\Debug\cmTryCompileExec354092108.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec354092108.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.09
+
+
+Determining if files stdlib.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec141216237.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:32.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec141216237.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec141216237.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec141216237.dir\Debug\\" /Fd"cmTryCompileExec141216237.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec141216237.dir\Debug\\" /Fd"cmTryCompileExec141216237.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.embed.manifest.res" cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec141216237.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec141216237.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec141216237.lib" /MACHINE:X86 cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.embed.manifest.res
+  cmTryCompileExec141216237.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.embed.manifest" /manifest cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.embed.manifest.res" cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec141216237.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec141216237.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec141216237.lib" /MACHINE:X86 cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.exe.embed.manifest.res
+  cmTryCompileExec141216237.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec141216237.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec141216237.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec141216237.dir\Debug\cmTryCompileExec141216237.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec141216237.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.13
+
+
+Determining if files stdint.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec1100060041.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:33.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1100060041.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec1100060041.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1100060041.dir\Debug\\" /Fd"cmTryCompileExec1100060041.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec1100060041.dir\Debug\\" /Fd"cmTryCompileExec1100060041.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.embed.manifest.res" cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1100060041.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1100060041.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1100060041.lib" /MACHINE:X86 cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.embed.manifest.res
+  cmTryCompileExec1100060041.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.embed.manifest" /manifest cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.embed.manifest.res" cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1100060041.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1100060041.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec1100060041.lib" /MACHINE:X86 cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.exe.embed.manifest.res
+  cmTryCompileExec1100060041.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec1100060041.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec1100060041.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec1100060041.dir\Debug\cmTryCompileExec1100060041.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec1100060041.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.03
+
+
+Determining if files sys/types.h exist passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec4094864949.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:35.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec4094864949.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec4094864949.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec4094864949.dir\Debug\\" /Fd"cmTryCompileExec4094864949.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec4094864949.dir\Debug\\" /Fd"cmTryCompileExec4094864949.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFiles.c
+  
+  CheckIncludeFiles.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.embed.manifest.res" cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4094864949.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4094864949.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4094864949.lib" /MACHINE:X86 cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.embed.manifest.res
+  cmTryCompileExec4094864949.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.embed.manifest" /manifest cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.embed.manifest.res" cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4094864949.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4094864949.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec4094864949.lib" /MACHINE:X86 cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.exe.embed.manifest.res
+  cmTryCompileExec4094864949.dir\Debug\CheckIncludeFiles.obj  /machine:X86 /debug 
+  cmTryCompileExec4094864949.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec4094864949.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec4094864949.dir\Debug\cmTryCompileExec4094864949.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec4094864949.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:00.99
+
+
+Determining if the function time exists passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec3750787509.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:42.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3750787509.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec3750787509.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=time /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3750787509.dir\Debug\\" /Fd"cmTryCompileExec3750787509.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CheckFunctionExists.c"
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=time /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3750787509.dir\Debug\\" /Fd"cmTryCompileExec3750787509.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue "..\..\..\..\..\..\..\..\..\Program Files (x86)\CMake\share\cmake-3.2\Modules\CheckFunctionExists.c"
+  
+  CheckFunctionExists.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.embed.manifest.res" cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3750787509.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3750787509.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3750787509.lib" /MACHINE:X86 cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.embed.manifest.res
+  cmTryCompileExec3750787509.dir\Debug\CheckFunctionExists.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.embed.manifest" /manifest cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.embed.manifest.res" cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3750787509.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3750787509.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3750787509.lib" /MACHINE:X86 cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.exe.embed.manifest.res
+  cmTryCompileExec3750787509.dir\Debug\CheckFunctionExists.obj  /machine:X86 /debug 
+  cmTryCompileExec3750787509.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3750787509.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec3750787509.dir\Debug\cmTryCompileExec3750787509.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3750787509.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.00
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec3736042907.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:44.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3736042907.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec3736042907.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3736042907.dir\Debug\\" /Fd"cmTryCompileExec3736042907.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFile.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3736042907.dir\Debug\\" /Fd"cmTryCompileExec3736042907.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue CheckIncludeFile.c
+  
+  CheckIncludeFile.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.embed.manifest.res" cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3736042907.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3736042907.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3736042907.lib" /MACHINE:X86 cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.embed.manifest.res
+  cmTryCompileExec3736042907.dir\Debug\CheckIncludeFile.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.embed.manifest" /manifest cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.embed.manifest.res" cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3736042907.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3736042907.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3736042907.lib" /MACHINE:X86 cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.exe.embed.manifest.res
+  cmTryCompileExec3736042907.dir\Debug\CheckIncludeFile.obj  /machine:X86 /debug 
+  cmTryCompileExec3736042907.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3736042907.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec3736042907.dir\Debug\cmTryCompileExec3736042907.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3736042907.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.05
+
+
+Determining size of uint32_t passed with the following output:
+Change Dir: C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" "cmTryCompileExec3683822274.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=10.0"
+Microsoft (R) Build Engine, version 4.0.30319.34209
+[Microsoft .NET Framework, Version 4.0.30319.34209]
+Copyright (C) Microsoft Corporation. Tous droits r‚serv‚s.
+
+La g‚n‚ration a d‚marr‚ 01/06/2015 18:52:45.
+Projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3683822274.vcxproj" sur le noud 1 (cibles par d‚faut).
+PrepareForBuild:
+  Cr‚ation du r‚pertoire "cmTryCompileExec3683822274.dir\Debug\".
+  Cr‚ation du r‚pertoire "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\".
+InitializeBuildStatus:
+  Cr‚ation de "cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.unsuccessfulbuild", car "AlwaysCreate" a ‚t‚ sp‚cifi‚.
+ClCompile:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3683822274.dir\Debug\\" /Fd"cmTryCompileExec3683822274.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue ..\CheckTypeSize\UINT32_T.c
+  Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"cmTryCompileExec3683822274.dir\Debug\\" /Fd"cmTryCompileExec3683822274.dir\Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:queue ..\CheckTypeSize\UINT32_T.c
+  
+  UINT32_T.c
+ManifestResourceCompile:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.embed.manifest.res" cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274_manifest.rc 
+Link:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3683822274.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3683822274.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3683822274.lib" /MACHINE:X86 cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.embed.manifest.res
+  cmTryCompileExec3683822274.dir\Debug\UINT32_T.obj  /machine:X86 /debug 
+Manifest:
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.embed.manifest" /manifest cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.intermediate.manifest
+  C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.embed.manifest.res" cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274_manifest.rc 
+LinkEmbedManifest:
+  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3683822274.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /ManifestFile:"cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3683822274.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/JM246044/Dev/planning-rob/dependencies/nlopt-2.4.2/build/CMakeFiles/CMakeTmp/Debug/cmTryCompileExec3683822274.lib" /MACHINE:X86 cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.exe.embed.manifest.res
+  cmTryCompileExec3683822274.dir\Debug\UINT32_T.obj  /machine:X86 /debug 
+  cmTryCompileExec3683822274.vcxproj -> C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\Debug\cmTryCompileExec3683822274.exe
+FinalizeBuildStatus:
+  Suppression du fichier "cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.unsuccessfulbuild".
+  Mise … jour de l'horodatage "cmTryCompileExec3683822274.dir\Debug\cmTryCompileExec3683822274.lastbuildstate".
+G‚n‚ration du projet "C:\Users\JM246044\Dev\planning-rob\dependencies\nlopt-2.4.2\build\CMakeFiles\CMakeTmp\cmTryCompileExec3683822274.vcxproj" termin‚e (cibles par d‚faut).
+
+La g‚n‚ration a r‚ussi.
+    0 Avertissement(s)
+    0 Erreur(s)
+
+Temps ‚coul‚ 00:00:01.47
+
+

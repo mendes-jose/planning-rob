@@ -11,10 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hdr\b-spline.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\b-spline.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
