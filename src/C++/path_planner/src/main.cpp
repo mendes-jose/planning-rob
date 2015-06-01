@@ -66,13 +66,15 @@ int main(int argc, char** argv)
 
     b = SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
             points, spline_degree); // should add knots?
+    c = SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
+            points, spline_degree, gen_knots(t_init, t_final, spline_degree, 3, true)); // should add knots?
     //std::cout << SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
     //    points, spline_degree,  gen_knots(t_init, t_final, spline_degree, no_interv_nn)).ctrls() << std::endl; // should add knots?
     //std::cout << SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
     //    points, spline_degree).ctrls() << std::endl; // should add knots?
 
     //std::cout << "Control points: " << std::endl << b.ctrls() << std::endl;
-    std::cout << "Knots gen: " << std::endl << gen_knots(t_init, t_final, spline_degree, 0, true).transpose() << std::endl;
+    std::cout << "Knots gen sdfd: " << std::endl << gen_knots(t_init, t_final, spline_degree, 3, true).transpose() << std::endl;
     std::cout << "Knots eigen: " << std::endl << b.knots() << std::endl;
     //std::cout << "inter: " << std::endl << VectorXd::LinSpaced(no_interv_nn+1, t_init, t_final) << std::endl;
 
