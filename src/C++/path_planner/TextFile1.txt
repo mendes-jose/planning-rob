@@ -1,7 +1,11 @@
 #include <unsupported/Eigen/Splines>
 #include <Eigen/Dense> //3.2.4
 #include <iostream>
-#include "b-spline.h"
+#include <math.h>
+#include <nlopt.hpp>
+#include <fstream>
+
+#pragma comment(lib, "libnlopt-0.lib")
 
 #ifdef _WIN32
 #define ON_WINDOWS 1
@@ -12,6 +16,7 @@
 Eigen::Array< double, 1, Eigen::Dynamic > gen_knots(const double t_init, const double t_final, const int spl_degree, const int no_interv_nn, bool nonuniform)
 {
     // TODO no_interv_nn < 2 => error
+
     double d = (t_final-t_init)/(4+(no_interv_nn-2));
     // d is the nonuniform interval base value (spacing produce intervals like this: 2*d, d,... , d, 2*d)
 
@@ -42,66 +47,129 @@ Eigen::Array< double, 1, Eigen::Dynamic > gen_knots(const double t_init, const d
     return knots;
 }
 
-typedef Eigen::Spline<double, 3> Spline3d;
 
 int main(int argc, char** argv)
 {
+    /*nlopt::opt opt(nlopt::LD_MMA, 2);
+    std::vector<double> lb(2);
+    lb[0] = -HUGE_VAL; lb[1] = 0;
+    opt.set_lower_bounds(lb);*/
     const int flatoutput_dim = 2;
+    const int flatoutput_deriv_needed = 2;
+    const int defoort_degree = flatoutput_deriv_needed+2;
     const int spline_dim = flatoutput_dim+1;
-    const int flatoutput_deriv = 2;
-    const int defoort_degree = flatoutput_deriv+2;
     const int spline_degree = defoort_degree - 1;
-    const int no_interv_nn = 5;
-    const int Ns = 12; //spl_degree*2 + no_interv_nn+1
+    const int no_interv_nn = 4;
+    const int no_ctrlpts = no_interv_nn + spline_degree;
+    const int Ns = 50;
     const double t_init = 0.0;
-    const double t_final = 2.0;
-	
-    Eigen::Array< double, spline_dim, Ns > points;
+    const double t_final = 10.0;
 
-    for(auto i = 0; i < flatoutput_dim; ++i)
+    // Spline typedefs
+    typedef Eigen::Spline< double, spline_dim, spline_degree > MySpline;
+    typedef MySpline::PointType PointType;
+    typedef MySpline::KnotVectorType KnotVectorType;
+    typedef MySpline::ControlPointVectorType ControlPointVectorType;
+
+    // Real time and interpolation time
+    Eigen::RowVectorXd m_time(Eigen::RowVectorXd::LinSpaced(Ns, t_init, t_final));
+    Eigen::RowVectorXd interp_time(Eigen::RowVectorXd::LinSpaced(no_ctrlpts, t_init, t_final));
+
+    // Interpolation points (no_ctrlpts points)
+    ControlPointVectorType points = ControlPointVectorType::Random(spline_dim, no_ctrlpts);
+    points.topRows(1) = interp_time;
+    
+    // Get chords lengths from interpolation time
+    KnotVectorType chord_lengths;
+    Eigen::ChordLengths(interp_time, chord_lengths);
+
+    // Create three splines:
+    // one by interpolation
+    // and two other by using the control points from the first spline (and the knots for one of them)
+    MySpline spline = Eigen::SplineFitting<MySpline>::Interpolate(points, spline_degree, chord_lengths);
+    MySpline spline_ctrl(gen_knots(t_init, t_final, spline_degree, no_interv_nn, true), spline.ctrls());
+    MySpline spline_ctrl_knots(spline.knots(), spline.ctrls());
+
+    std::cout << "Ctrl points size " << std::endl << spline.ctrls().cols() << std::endl << spline.ctrls().rows() << std::endl;
+    std::cout << "Ctrl points " << std::endl << spline.ctrls() << std::endl;
+    std::cout << "knots size " << std::endl << spline.knots().cols() << std::endl << spline.knots().rows() << std::endl;
+    std::cout << "knots " << std::endl << spline.knots() << std::endl;
+    std::cout << "gen_knots " << gen_knots(t_init, t_final, spline_degree, no_interv_nn, true) << std::endl;
+    std::cout << "chords " << std::endl << chord_lengths << std::endl;
+    std::cout << "points " << std::endl << points << std::endl;
+
+    // Verifying that the three splines are equivalent
+
+    // get chords lengths for the more sampled time vector
+    KnotVectorType new_chord_lengths; // knot parameters
+    Eigen::ChordLengths(m_time, new_chord_lengths);
+
+    std::ofstream points_ts;
+    points_ts.open ("points_ts.csv");
+    std::ofstream points_ts_excel;
+    points_ts_excel.open ("points_ts_excel.csv");
+    points_ts_excel << "sep=," << std::endl;
+    for (auto i=0; i < Ns; ++i)
     {
-        points.row(i) = Eigen::RowVectorXd::LinSpaced(Ns, 0.0, 5.0);
+        points_ts << m_time(i) << ",";
+        points_ts_excel << m_time(i) << ",";
     }
-    std::cout << "Adding time" << std::endl;
-    points.bottomRows(1) = Eigen::RowVectorXd::LinSpaced(Ns, t_init, t_final);
-    std::cout << "Time added" << std::endl;
+    points_ts << std::endl;
+    points_ts_excel << std::endl;
 
-    Spline3d aux;
-    std::cout << "Aux spline created" << std::endl;
-    //Eigen::Spline< double, flatoutput_dim+1, spline_degree > aux2;
-    //Eigen::Spline< double, flatoutput_dim+1, spline_degree > final_spline;
-    // attention to degree in the thesis and elsewhere
-    // underlying type, curve dim, degree (by default is Dynamic)
-    std::cout << "final_spline spline created" << std::endl;
+    int pt1pt2_counter=0;
+    int ptpt2_counter=0;
+    for (Eigen::DenseIndex i=0; i<m_time.cols(); ++i)
+    {
+        PointType pt_1 = spline_ctrl( m_time(i) );
+        PointType pt_2 = spline_ctrl_knots( new_chord_lengths(i) );
+        PointType pt = spline( new_chord_lengths(i) );
+        if( (pt_1 - pt_2).matrix().norm() < 1e-6 )
+        {
+            pt1pt2_counter++;
+        }
+        if( (pt - pt_2).matrix().norm() < 1e-6 )
+        {
+            ptpt2_counter++;
+        }
+        /*std::cout << pt_1 << std::endl;
+        std::cout << pt_2 << std::endl;
+        std::cout << pt << std::endl;
+        std::cout << std::endl;*/
+        points_ts << pt(1) << ",";
+        points_ts_excel << pt(1) << ",";
+    }
+    points_ts << std::endl;
+    points_ts_excel << std::endl;
+    points_ts.close();
+    points_ts_excel.close();
 
-    //std::cout << "Knots created by eigen before fitting: " << std::endl << final_spline.knots() << std::endl;
+    std::cout << "N pt1pt2 " << std::endl << pt1pt2_counter << std::endl;
+    std::cout << "N ptpt2 " << std::endl << ptpt2_counter << std::endl;
+    std::cout << "Ns " << std::endl << Ns << std::endl;
 
-    std::cout << "Fitting without konts param" << std::endl;
-    //aux = Eigen::SplineFitting< Eigen::Spline< double, flatoutput_dim+1, spline_degree > >::Interpolate(
-    //        points, spline_degree);
-
-    //std::cout << "Knots created by eigen by default after fitting all points: " << std::endl << aux.knots() << std::endl;
-
-    //aux2 = Eigen::SplineFitting<Eigen::Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
-    //        points, spline_degree); // should add knots?
-    //std::cout << "Knots created by eigen after fitting part of the points: " << std::endl << aux.knots() << std::endl;
-    //std::cout << "Knots created by eigen after fitting all points: " << std::endl << aux2.knots() << std::endl;
-    //std::cout << "Internal Knots: " << std::endl << aux.knots().segment(spline_degree,no_interv_nn+1) << std::endl;
-    std::cout << "Fitting with aux.konts() param" << std::endl;
-    /*final_spline = Eigen::SplineFitting< Eigen::Spline< double, flatoutput_dim+1, spline_degree > >::Interpolate(
-        points, spline_degree, aux.knots());*/
-    //std::cout << SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
-    //    points, spline_degree,  gen_knots(t_init, t_final, spline_degree, no_interv_nn)).ctrls() << std::endl; // should add knots?
-    //std::cout << SplineFitting<Spline<double, flatoutput_dim, spline_degree>>::Interpolate(
-    //    points, spline_degree).ctrls() << std::endl; // should add knots?
-
-    //std::cout << "Control points: " << std::endl << b.ctrls() << std::endl;
-    /*std::cout << "Knots of final_spline: " << std::endl << final_spline.knots() << std::endl;
-    std::cout << "Ctrl pts create by eigen with default knots: " << std::endl << aux.ctrls() << std::endl;
-    std::cout << "Ctrl pts create by eigen with specific knots: " << std::endl << final_spline.ctrls() << std::endl;*/
-    //std::cout << "Knots gen by 'me' (nonuniform): " << std::endl << gen_knots(t_init, t_final, spline_degree, no_interv_nn, true).transpose() << std::endl;
-    //std::cout << "Knots gen by 'me' (uniform): " << std::endl << gen_knots(t_init, t_final, spline_degree, no_interv_nn, false).transpose() << std::endl;
-    //std::cout << "inter: " << std::endl << VectorXd::LinSpaced(no_interv_nn+1, t_init, t_final) << std::endl;
+    // internpolation data
+    std::ofstream interpdata_ts;
+    interpdata_ts.open ("interpdata_ts.csv");
+    std::ofstream interpdata_ts_excel;
+    interpdata_ts_excel.open ("interpdata_ts_excel.csv");
+    interpdata_ts_excel << "sep=," << std::endl;
+    for (auto i=0; i < no_ctrlpts; ++i)
+    {
+        interpdata_ts << interp_time(i) << ",";
+        interpdata_ts_excel << interp_time(i) << ",";
+    }
+    interpdata_ts << std::endl;
+    interpdata_ts_excel << std::endl;
+    for (auto i=0; i < no_ctrlpts; ++i)
+    {
+        interpdata_ts << points(1,i) << ",";
+        interpdata_ts_excel << points(1,i) << ",";
+    }
+    interpdata_ts << std::endl;
+    interpdata_ts_excel << std::endl;
+    interpdata_ts.close();
+    interpdata_ts_excel.close();
 
     if(ON_WINDOWS) system("pause");
     return 0;

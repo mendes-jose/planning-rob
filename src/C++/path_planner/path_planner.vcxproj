@@ -11,7 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\bspline.cpp" />
+    <ClCompile Include="src\kineticmodel.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mpl.cpp" />
+    <ClCompile Include="src\obstacle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="hdr\bspline.h" />
+    <ClInclude Include="hdr\kineticmodel.h" />
+    <ClInclude Include="hdr\mpl.h" />
+    <ClInclude Include="hdr\obstacle.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}</ProjectGuid>
@@ -40,15 +50,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;$(ProjectDir)\..\..\..\dependencies;$(ProjectDir)\hdr</IncludePath>
+    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib;$(ProjectDir)\..\..\..\dependencies\nlopt\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\dependencies;$(ProjectDir)\..\..\..\dependencies\nlopt\include;$(ProjectDir)\hdr</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

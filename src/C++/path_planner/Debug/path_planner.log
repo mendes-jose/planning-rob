@@ -1,27 +1,16 @@
-﻿Build started 01/06/2015 18:34:33.
+﻿Build started 02/06/2015 18:03:19.
      1>Project "C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\path_planner.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\path_planner.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\main.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies\nlopt\include" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\hdr" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\main.cpp
          main.cpp
-     1>c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(294): warning C4996: 'std::_Partial_sum1': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(278) : see declaration of 'std::_Partial_sum1'
-                 c:\users\jm246044\dev\planning-rob\dependencies\unsupported\eigen\src\splines\splinefitting.h(74) : see reference to function template instantiation '_OutIt std::partial_sum<double*,double*>(_InIt,_InIt,_OutIt)' being compiled
-                 with
-                 [
-                     _OutIt=double *,
-                     _InIt=double *
-                 ]
-                 c:\users\jm246044\dev\planning-rob\src\c++\path_planner\src\main.cpp(75) : see reference to function template instantiation 'void Eigen::ChordLengths<Eigen::RowVectorXd,KnotVectorType>(const PointArrayType &,KnotVectorType &)' being compiled
-                 with
-                 [
-                     PointArrayType=Eigen::RowVectorXd,
-                     KnotVectorType=KnotVectorType
-                 ]
        Link:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\path_planner.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.lib" /MACHINE:X86 "Debug\b-spline.obj"
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\path_planner.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.lib" /MACHINE:X86 Debug\bspline.obj
+         Debug\kineticmodel.obj
          Debug\main.obj
+         Debug\mpl.obj
+         Debug\obstacle.obj
          LINK : C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe not found or not built by the last incremental link; performing full link
          path_planner.vcxproj -> C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe
        Manifest:
@@ -33,4 +22,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:09.72
+Time Elapsed 00:00:02.21
