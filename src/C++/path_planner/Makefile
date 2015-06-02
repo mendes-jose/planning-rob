@@ -2,17 +2,16 @@
 BIN = build/test
 
 # Define source files
-CPP_SRCS =  src/main.cpp\
-		src/b-spline.cpp
+CPP_SRCS =  src/main.cpp
 
 # Define header file paths
-INCPATH = -I./ -Ihdr/ -I../../../dependencies/
+INCPATH = -I./ -Ihdr/ -I../../../dependencies/ -I../../../dependencies/nlopt/include/
 
 # Define the -L library path(s)
-LDFLAGS =
+LDFLAGS = -L../../../dependencies/nlopt/lib/
 
 # Define the -l library name(s)
-LIBS =
+LIBS = -lnlopt -lm
 
 # Only in special cases should anything be edited below this line
 OBJS      = $(CPP_SRCS:.cpp=.o)

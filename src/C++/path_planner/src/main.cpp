@@ -1,6 +1,9 @@
 #include <unsupported/Eigen/Splines>
 #include <Eigen/Dense> //3.2.4
 #include <iostream>
+#include <math.h>
+#include <nlopt.hpp>
+#include <fstream>
 
 #ifdef _WIN32
 #define ON_WINDOWS 1
@@ -45,6 +48,10 @@ Eigen::Array< double, 1, Eigen::Dynamic > gen_knots(const double t_init, const d
 
 int main(int argc, char** argv)
 {
+    nlopt::opt opt(nlopt::LD_MMA, 2);
+    std::vector<double> lb(2);
+    lb[0] = -HUGE_VAL; lb[1] = 0;
+    opt.set_lower_bounds(lb);
     const int flatoutput_dim = 2;
     const int flatoutput_deriv_needed = 2;
     const int defoort_degree = flatoutput_deriv_needed+2;
@@ -94,6 +101,14 @@ int main(int argc, char** argv)
     KnotVectorType new_chord_lengths; // knot parameters
     Eigen::ChordLengths(m_time, new_chord_lengths);
 
+    std::ofstream points_ts;
+    points_ts.open ("points_ts.csv");
+    for (auto i=0; i < Ns; ++i)
+    {
+        points_ts << m_time(i) << ",";
+    }
+    points_ts << std::endl;
+
     int pt1pt2_counter=0;
     int ptpt2_counter=0;
     for (Eigen::DenseIndex i=0; i<m_time.cols(); ++i)
@@ -109,10 +124,26 @@ int main(int argc, char** argv)
         {
             ptpt2_counter++;
         }
+        points_ts << pt(1,i) << ",";
     }
+    points_ts << std::endl;
+
     std::cout << "N pt1pt2 " << std::endl << pt1pt2_counter << std::endl;
     std::cout << "N ptpt2 " << std::endl << ptpt2_counter << std::endl;
     std::cout << "Ns " << std::endl << Ns << std::endl;
+
+    std::ofstream intervdata_ts;
+    intervdata_ts.open ("intervdata_ts.csv");
+    for (auto i=0; i < no_ctrlpts; ++i)
+    {
+        intervdata_ts << interp_time(i) << ",";
+    }
+    intervdata_ts << std::endl;
+    for (auto i=0; i < no_ctrlpts; ++i)
+    {
+        intervdata_ts << points(1,i) << ",";
+    }
+    intervdata_ts << std::endl;
 
     if(ON_WINDOWS) system("pause");
     return 0;
