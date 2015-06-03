@@ -24,10 +24,13 @@
     <ClCompile Include="src\bspline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\kineticmodel.cpp">
+    <ClCompile Include="src\unicyclekm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\obstacle.cpp">
+    <ClCompile Include="src\circleobstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polygonobstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +41,16 @@
     <ClInclude Include="hdr\bspline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hdr\kineticmodel.h">
+    <ClInclude Include="hdr\obstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hdr\obstacle.h">
+    <ClInclude Include="hdr\unicyclekm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\circleobstacle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr\polygonobstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

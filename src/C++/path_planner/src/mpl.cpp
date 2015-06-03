@@ -14,7 +14,7 @@ MPL::~MPL(){}
 
 void MPL::set_init_state ( const VectorXd & q_init )
 {
-    std::cout << q_init << std::endl;
+    //std::cout << q_init << std::endl;
     this->q_init = q_init;
     return;
 }
@@ -28,7 +28,7 @@ void MPL::set_init_state ( const std::vector< double > & q_init )
 }
 void MPL::set_final_state ( const VectorXd & q_final)
 {
-    std::cout << q_final << std::endl;
+    //std::cout << q_final << std::endl;
     this->q_init = q_final;
     return;
 }
@@ -36,10 +36,10 @@ void MPL::set_final_state ( const std::vector< double > & q_final )
 {
     return;
 }
-void MPL::set_kine_model ( UnicycleKineModel )
-{
-    return;
-}
+//void MPL::set_kine_model ( UnicycleKM )
+//{
+//    return;
+//}
 void MPL::set_obstacles ( std::vector< Obstacle > & obstacles_list )
 {
     return;

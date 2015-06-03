@@ -1,16 +1,22 @@
-﻿Build started 02/06/2015 18:03:19.
+﻿Build started 03/06/2015 17:08:36.
      1>Project "C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\path_planner.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\path_planner.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies\nlopt\include" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\hdr" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\main.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\..\..\..\dependencies\nlopt\include" /I"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\\hdr" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt src\circleobstacle.cpp src\main.cpp src\mpl.cpp src\polygonobstacle.cpp
+         circleobstacle.cpp
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         polygonobstacle.cpp
+         mpl.cpp
          main.cpp
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\path_planner.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.lib" /MACHINE:X86 Debug\bspline.obj
-         Debug\kineticmodel.obj
+         Debug\circleobstacle.obj
          Debug\main.obj
          Debug\mpl.obj
-         Debug\obstacle.obj
+         Debug\polygonobstacle.obj
+         Debug\unicyclekm.obj
          LINK : C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe not found or not built by the last incremental link; performing full link
          path_planner.vcxproj -> C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\path_planner.exe
        Manifest:
@@ -22,4 +28,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.21
+Time Elapsed 00:00:02.18

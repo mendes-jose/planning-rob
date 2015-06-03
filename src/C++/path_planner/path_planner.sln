@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "path_planner", "path_planner.vcxproj", "{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spline_test", "..\spline_test\spline_test.vcxproj", "{FE990F81-5025-4E50-895E-1A6D969B53D8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "polymorphism_test", "..\polymorphism_test\polymorphism_test.vcxproj", "{3895897A-05EB-4B53-8941-363C52B638A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +17,14 @@ Global
 		{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}.Debug|Win32.Build.0 = Debug|Win32
 		{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}.Release|Win32.ActiveCfg = Release|Win32
 		{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}.Release|Win32.Build.0 = Release|Win32
+		{FE990F81-5025-4E50-895E-1A6D969B53D8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FE990F81-5025-4E50-895E-1A6D969B53D8}.Debug|Win32.Build.0 = Debug|Win32
+		{FE990F81-5025-4E50-895E-1A6D969B53D8}.Release|Win32.ActiveCfg = Release|Win32
+		{FE990F81-5025-4E50-895E-1A6D969B53D8}.Release|Win32.Build.0 = Release|Win32
+		{3895897A-05EB-4B53-8941-363C52B638A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3895897A-05EB-4B53-8941-363C52B638A1}.Debug|Win32.Build.0 = Debug|Win32
+		{3895897A-05EB-4B53-8941-363C52B638A1}.Release|Win32.ActiveCfg = Release|Win32
+		{3895897A-05EB-4B53-8941-363C52B638A1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

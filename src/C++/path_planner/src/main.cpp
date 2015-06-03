@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "mpl.h"
+#include "unicyclekm.h"
+#include "circleobstacle.h"
 
 #include <Eigen/Dense> //3.2.4
 #include <unsupported/Eigen/Splines>
@@ -24,8 +26,15 @@ int main(int argc, char** argv)
     const double t_init = 0.0;
     const double t_final = 10.0;
     MPL mpl;
-    mpl.set_init_state(VectorXd::Random(flatoutput_dim));
-    mpl.set_final_state(VectorXd::Random(flatoutput_dim));
+    UnicycleKM km;
+    //Obstacle obst(VectorXd::Random(2));
+    CircleObst cobst(VectorXd::Random(2), 2.0);
+
+    mpl.set_init_state(VectorXd::Random(3));
+    mpl.set_final_state(VectorXd::Random(3));
+    std::cout << km.phi0(mpl.get_init_state()) << std::endl;
+    std::cout << km.q_dim << std::endl;
+    std::cout << cobst.get_radius() << std::endl;
     
     //mpl.set_kine_model();
     //mpl.set_obstacles();

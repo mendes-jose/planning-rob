@@ -12,16 +12,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\bspline.cpp" />
-    <ClCompile Include="src\kineticmodel.cpp" />
+    <ClCompile Include="src\circleobstacle.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mpl.cpp" />
-    <ClCompile Include="src\obstacle.cpp" />
+    <ClCompile Include="src\polygonobstacle.cpp" />
+    <ClCompile Include="src\unicyclekm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hdr\bspline.h" />
-    <ClInclude Include="hdr\kineticmodel.h" />
+    <ClInclude Include="hdr\circleobstacle.h" />
     <ClInclude Include="hdr\mpl.h" />
     <ClInclude Include="hdr\obstacle.h" />
+    <ClInclude Include="hdr\polygonobstacle.h" />
+    <ClInclude Include="hdr\unicyclekm.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7489BE8D-BEB8-4CF0-9E9A-58B89DCD8BD9}</ProjectGuid>
