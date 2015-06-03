@@ -3,7 +3,7 @@ BIN = build/test
 
 # Define source files
 CPP_SRCS =  src/main.cpp\
-            src/unicyclekinemodel.cpp\
+            src/unicyclekm.cpp\
             src/bspline.cpp\
             src/mpl.cpp
 
@@ -18,7 +18,7 @@ LIBS = -lnlopt -lm
 
 # Only in special cases should anything be edited below this line
 OBJS      = $(CPP_SRCS:.cpp=.o)
-CXXFLAGS  = -c -Wall -ansi -std=c++0x
+CXXFLAGS  = -c -Wall -ansi -std=c++0x -Wno-unused-variable
 DEP_FILE  = .depend
 
 
