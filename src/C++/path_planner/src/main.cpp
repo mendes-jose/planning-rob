@@ -26,6 +26,7 @@ int main(int argc, char** argv)
     MPL mpl;
     mpl.set_init_state(VectorXd::Random(flatoutput_dim));
     mpl.set_final_state(VectorXd::Random(flatoutput_dim));
+    
     //mpl.set_kine_model();
     //mpl.set_obstacles();
     mpl.plan();

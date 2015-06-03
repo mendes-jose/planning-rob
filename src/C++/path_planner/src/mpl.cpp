@@ -36,11 +36,11 @@ void MPL::set_final_state ( const std::vector< double > & q_final )
 {
     return;
 }
-void MPL::set_kine_model ( KineticModel )
+void MPL::set_kine_model ( UnicycleKineModel )
 {
     return;
 }
-void MPL::set_obstacles ( std::vector< Obstacle > & obstacles_list)
+void MPL::set_obstacles ( std::vector< Obstacle > & obstacles_list )
 {
     return;
 }

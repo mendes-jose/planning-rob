@@ -2,7 +2,10 @@
 BIN = build/test
 
 # Define source files
-CPP_SRCS =  src/main.cpp
+CPP_SRCS =  src/main.cpp\
+            src/unicyclekinemodel.cpp\
+            src/bspline.cpp\
+            src/mpl.cpp
 
 # Define header file paths
 INCPATH = -I./ -Ihdr/ -I../../../dependencies/ -I../../../dependencies/nlopt/include/
