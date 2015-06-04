@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 2.25
+DEBUG:R0: Using Tc_d = 2.25
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 1.46692085266
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 4
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.2500: Time to solve stand alone optimization problem: 0.454867124557
+INFO:R0@tkref=2.2500: N of unsatisfied eq: 2
+INFO:R0@tkref=2.2500: N of unsatisfied ieq: 7
+INFO:R0@tkref=2.2500: Summary: Optimization terminated successfully. after 11 it.
+DEBUG:R0@tkref=2.2500: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.5000: Time to solve stand alone optimization problem: 0.277083873749
+INFO:R0@tkref=4.5000: N of unsatisfied eq: 3
+INFO:R0@tkref=4.5000: N of unsatisfied ieq: 6
+INFO:R0@tkref=4.5000: Summary: Optimization terminated successfully. after 7 it.
+DEBUG:R0@tkref=4.5000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.638383820958
+DEBUG:R0: Usual approx plan dist: 2.5
+DEBUG:R0: Approx gain in dist: 1.86161617904
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.255353528383 Ns 7 Nk 3
+INFO:R0@tkref=6.7500: Time to solve stand alone optimization problem: 0.52180314064
+INFO:R0@tkref=6.7500: N of unsatisfied eq: 10
+INFO:R0@tkref=6.7500: N of unsatisfied ieq: 3
+INFO:R0@tkref=6.7500: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.7500: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.46806521631
+INFO:R0: NSE: 4
+INFO:R0: FIR: 1.46860480309
+INFO:R0: LAS: 0.522639989853
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.455697059631
+INFO:R0: MIN: 0.277917146683
+INFO:R0: AVG: 0.366807103157
+INFO:R0: RMP: 0.202532026503
+INFO:R0: RMG: 0.232284439935

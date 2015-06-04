@@ -1,0 +1,206 @@
+DEBUG:R0: Using Tc_p = 0.222222222222
+DEBUG:R0: Using Tc_d = 0.222222222222
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 1.4447081089
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=0.2222: Time to solve stand alone optimization problem: 0.107504844666
+INFO:R0@tkref=0.2222: N of unsatisfied eq: 3
+INFO:R0@tkref=0.2222: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.2222: Summary: Optimization terminated successfully. after 3 it.
+DEBUG:R0@tkref=0.2222: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=0.4444: Time to solve stand alone optimization problem: 0.0732860565186
+INFO:R0@tkref=0.4444: N of unsatisfied eq: 3
+INFO:R0@tkref=0.4444: N of unsatisfied ieq: 7
+INFO:R0@tkref=0.4444: Summary: Optimization terminated successfully. after 2 it.
+DEBUG:R0@tkref=0.4444: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=0.6667: Time to solve stand alone optimization problem: 0.212736129761
+INFO:R0@tkref=0.6667: N of unsatisfied eq: 3
+INFO:R0@tkref=0.6667: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.6667: Summary: Optimization terminated successfully. after 6 it.
+DEBUG:R0@tkref=0.6667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=0.8889: Time to solve stand alone optimization problem: 0.0830938816071
+INFO:R0@tkref=0.8889: N of unsatisfied eq: 3
+INFO:R0@tkref=0.8889: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.8889: Summary: Optimization terminated successfully. after 2 it.
+DEBUG:R0@tkref=0.8889: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.1111: Time to solve stand alone optimization problem: 0.0425469875336
+INFO:R0@tkref=1.1111: N of unsatisfied eq: 3
+INFO:R0@tkref=1.1111: N of unsatisfied ieq: 8
+INFO:R0@tkref=1.1111: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=1.1111: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.3333: Time to solve stand alone optimization problem: 0.320363998413
+INFO:R0@tkref=1.3333: N of unsatisfied eq: 2
+INFO:R0@tkref=1.3333: N of unsatisfied ieq: 7
+INFO:R0@tkref=1.3333: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=1.3333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.5556: Time to solve stand alone optimization problem: 0.401350975037
+INFO:R0@tkref=1.5556: N of unsatisfied eq: 1
+INFO:R0@tkref=1.5556: N of unsatisfied ieq: 7
+INFO:R0@tkref=1.5556: Summary: Optimization terminated successfully. after 10 it.
+DEBUG:R0@tkref=1.5556: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.7778: Time to solve stand alone optimization problem: 0.441655874252
+INFO:R0@tkref=1.7778: N of unsatisfied eq: 3
+INFO:R0@tkref=1.7778: N of unsatisfied ieq: 8
+INFO:R0@tkref=1.7778: Summary: Optimization terminated successfully. after 11 it.
+DEBUG:R0@tkref=1.7778: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.0000: Time to solve stand alone optimization problem: 0.664483070374
+INFO:R0@tkref=2.0000: N of unsatisfied eq: 3
+INFO:R0@tkref=2.0000: N of unsatisfied ieq: 8
+INFO:R0@tkref=2.0000: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=2.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.2222: Time to solve stand alone optimization problem: 0.64367890358
+INFO:R0@tkref=2.2222: N of unsatisfied eq: 3
+INFO:R0@tkref=2.2222: N of unsatisfied ieq: 7
+INFO:R0@tkref=2.2222: Summary: Iteration limit exceeded after 16 it.
+DEBUG:R0@tkref=2.2222: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.4444: Time to solve stand alone optimization problem: 0.526129007339
+INFO:R0@tkref=2.4444: N of unsatisfied eq: 3
+INFO:R0@tkref=2.4444: N of unsatisfied ieq: 7
+INFO:R0@tkref=2.4444: Summary: Optimization terminated successfully. after 13 it.
+DEBUG:R0@tkref=2.4444: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.6667: Time to solve stand alone optimization problem: 0.600308179855
+INFO:R0@tkref=2.6667: N of unsatisfied eq: 3
+INFO:R0@tkref=2.6667: N of unsatisfied ieq: 8
+INFO:R0@tkref=2.6667: Summary: Optimization terminated successfully. after 15 it.
+DEBUG:R0@tkref=2.6667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.8889: Time to solve stand alone optimization problem: 0.395992994308
+INFO:R0@tkref=2.8889: N of unsatisfied eq: 3
+INFO:R0@tkref=2.8889: N of unsatisfied ieq: 8
+INFO:R0@tkref=2.8889: Summary: Optimization terminated successfully. after 10 it.
+DEBUG:R0@tkref=2.8889: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.1111: Time to solve stand alone optimization problem: 0.394749879837
+INFO:R0@tkref=3.1111: N of unsatisfied eq: 3
+INFO:R0@tkref=3.1111: N of unsatisfied ieq: 7
+INFO:R0@tkref=3.1111: Summary: Optimization terminated successfully. after 10 it.
+DEBUG:R0@tkref=3.1111: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.3333: Time to solve stand alone optimization problem: 0.286867856979
+INFO:R0@tkref=3.3333: N of unsatisfied eq: 3
+INFO:R0@tkref=3.3333: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.3333: Summary: Optimization terminated successfully. after 7 it.
+DEBUG:R0@tkref=3.3333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.5556: Time to solve stand alone optimization problem: 0.358653068542
+INFO:R0@tkref=3.5556: N of unsatisfied eq: 3
+INFO:R0@tkref=3.5556: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.5556: Summary: Optimization terminated successfully. after 9 it.
+DEBUG:R0@tkref=3.5556: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.7778: Time to solve stand alone optimization problem: 0.400680780411
+INFO:R0@tkref=3.7778: N of unsatisfied eq: 2
+INFO:R0@tkref=3.7778: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.7778: Summary: Optimization terminated successfully. after 10 it.
+DEBUG:R0@tkref=3.7778: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.0000: Time to solve stand alone optimization problem: 0.324099063873
+INFO:R0@tkref=4.0000: N of unsatisfied eq: 3
+INFO:R0@tkref=4.0000: N of unsatisfied ieq: 8
+INFO:R0@tkref=4.0000: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=4.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.2222: Time to solve stand alone optimization problem: 0.356083869934
+INFO:R0@tkref=4.2222: N of unsatisfied eq: 3
+INFO:R0@tkref=4.2222: N of unsatisfied ieq: 7
+INFO:R0@tkref=4.2222: Summary: Optimization terminated successfully. after 9 it.
+DEBUG:R0@tkref=4.2222: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.4444: Time to solve stand alone optimization problem: 0.317063808441
+INFO:R0@tkref=4.4444: N of unsatisfied eq: 3
+INFO:R0@tkref=4.4444: N of unsatisfied ieq: 8
+INFO:R0@tkref=4.4444: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=4.4444: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.6667: Time to solve stand alone optimization problem: 0.319371938705
+INFO:R0@tkref=4.6667: N of unsatisfied eq: 3
+INFO:R0@tkref=4.6667: N of unsatisfied ieq: 9
+INFO:R0@tkref=4.6667: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=4.6667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.8889: Time to solve stand alone optimization problem: 0.118647098541
+INFO:R0@tkref=4.8889: N of unsatisfied eq: 3
+INFO:R0@tkref=4.8889: N of unsatisfied ieq: 8
+INFO:R0@tkref=4.8889: Summary: Optimization terminated successfully. after 3 it.
+DEBUG:R0@tkref=4.8889: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.1111: Time to solve stand alone optimization problem: 0.0805389881134
+INFO:R0@tkref=5.1111: N of unsatisfied eq: 3
+INFO:R0@tkref=5.1111: N of unsatisfied ieq: 8
+INFO:R0@tkref=5.1111: Summary: Optimization terminated successfully. after 2 it.
+DEBUG:R0@tkref=5.1111: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.3333: Time to solve stand alone optimization problem: 0.0435879230499
+INFO:R0@tkref=5.3333: N of unsatisfied eq: 3
+INFO:R0@tkref=5.3333: N of unsatisfied ieq: 5
+INFO:R0@tkref=5.3333: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=5.3333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.5556: Time to solve stand alone optimization problem: 0.0422880649567
+INFO:R0@tkref=5.5556: N of unsatisfied eq: 3
+INFO:R0@tkref=5.5556: N of unsatisfied ieq: 5
+INFO:R0@tkref=5.5556: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=5.5556: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=5.7778: Time to solve stand alone optimization problem: 0.0444660186768
+INFO:R0@tkref=5.7778: N of unsatisfied eq: 3
+INFO:R0@tkref=5.7778: N of unsatisfied ieq: 8
+INFO:R0@tkref=5.7778: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=5.7778: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=6.0000: Time to solve stand alone optimization problem: 0.0425441265106
+INFO:R0@tkref=6.0000: N of unsatisfied eq: 3
+INFO:R0@tkref=6.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=6.0000: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=6.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=6.2222: Time to solve stand alone optimization problem: 0.0370972156525
+INFO:R0@tkref=6.2222: N of unsatisfied eq: 3
+INFO:R0@tkref=6.2222: N of unsatisfied ieq: 3
+INFO:R0@tkref=6.2222: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=6.2222: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=6.4444: Time to solve stand alone optimization problem: 0.0363240242004
+INFO:R0@tkref=6.4444: N of unsatisfied eq: 3
+INFO:R0@tkref=6.4444: N of unsatisfied ieq: 6
+INFO:R0@tkref=6.4444: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=6.4444: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.581806604418
+DEBUG:R0: Usual approx plan dist: 2.0
+DEBUG:R0: Approx gain in dist: 1.41819339558
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.290903302209 Ns 7 Nk 3
+INFO:R0@tkref=6.6667: Time to solve stand alone optimization problem: 0.497471809387
+INFO:R0@tkref=6.6667: N of unsatisfied eq: 10
+INFO:R0@tkref=6.6667: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.6667: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.6667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.32051473128
+INFO:R0: NSE: 31
+INFO:R0: FIR: 1.44605493546
+INFO:R0: LAS: 0.49830698967
+INFO:R0: LMA: 0
+INFO:R0: MAX: 0.665302038193
+INFO:R0: MIN: 0.037034034729
+INFO:R0: AVG: 0.266877700543
+INFO:R0: RMP: 2.99385917187
+INFO:R0: RMG: 2.99385917187

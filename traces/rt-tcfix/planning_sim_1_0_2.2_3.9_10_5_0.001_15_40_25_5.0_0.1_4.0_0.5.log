@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 2.16666666667
+DEBUG:R0: Using Tc_d = 2.16666666667
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 0.881420135498
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 5
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.1667: Time to solve stand alone optimization problem: 0.0222630500793
+INFO:R0@tkref=2.1667: N of unsatisfied eq: 3
+INFO:R0@tkref=2.1667: N of unsatisfied ieq: 4
+INFO:R0@tkref=2.1667: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=2.1667: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.3333: Time to solve stand alone optimization problem: 0.0211429595947
+INFO:R0@tkref=4.3333: N of unsatisfied eq: 4
+INFO:R0@tkref=4.3333: N of unsatisfied ieq: 5
+INFO:R0@tkref=4.3333: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=4.3333: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.751298753833
+DEBUG:R0: Usual approx plan dist: 3.9
+DEBUG:R0: Approx gain in dist: 3.14870124617
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.192640706111 Ns 7 Nk 3
+INFO:R0@tkref=6.5000: Time to solve stand alone optimization problem: 0.368126153946
+INFO:R0@tkref=6.5000: N of unsatisfied eq: 10
+INFO:R0@tkref=6.5000: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.5000: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.5000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.34433015768
+INFO:R0: NSE: 4
+INFO:R0: FIR: 0.88253903389
+INFO:R0: LAS: 0.368863105774
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.0229368209839
+INFO:R0: MIN: 0.0217909812927
+INFO:R0: AVG: 0.0223639011383
+INFO:R0: RMP: 0.0105862250695
+INFO:R0: RMG: 0.170244510357

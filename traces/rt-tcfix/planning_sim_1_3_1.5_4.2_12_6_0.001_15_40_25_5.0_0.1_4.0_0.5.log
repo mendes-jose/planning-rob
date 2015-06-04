@@ -1,0 +1,50 @@
+DEBUG:R0: Using Tc_p = 1.52727272727
+DEBUG:R0: Using Tc_d = 1.52727272727
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 1.66430997849
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.5273: Time to solve stand alone optimization problem: 0.371372938156
+INFO:R0@tkref=1.5273: N of unsatisfied eq: 3
+INFO:R0@tkref=1.5273: N of unsatisfied ieq: 7
+INFO:R0@tkref=1.5273: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=1.5273: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.0545: Time to solve stand alone optimization problem: 0.229616880417
+INFO:R0@tkref=3.0545: N of unsatisfied eq: 3
+INFO:R0@tkref=3.0545: N of unsatisfied ieq: 7
+INFO:R0@tkref=3.0545: Summary: Optimization terminated successfully. after 5 it.
+DEBUG:R0@tkref=3.0545: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.5818: Time to solve stand alone optimization problem: 0.140002012253
+INFO:R0@tkref=4.5818: N of unsatisfied eq: 3
+INFO:R0@tkref=4.5818: N of unsatisfied ieq: 8
+INFO:R0@tkref=4.5818: Summary: Optimization terminated successfully. after 3 it.
+DEBUG:R0@tkref=4.5818: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 1.33990798215
+DEBUG:R0: Usual approx plan dist: 4.2
+DEBUG:R0: Approx gain in dist: 2.86009201785
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.319025710037 Ns 7 Nk 3
+INFO:R0@tkref=6.1091: Time to solve stand alone optimization problem: 0.559901952744
+INFO:R0@tkref=6.1091: N of unsatisfied eq: 10
+INFO:R0@tkref=6.1091: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.1091: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.1091: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.61524049513
+INFO:R0: NSE: 5
+INFO:R0: FIR: 1.66608691216
+INFO:R0: LAS: 0.560734987259
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.372174024582
+INFO:R0: MIN: 0.140748023987
+INFO:R0: AVG: 0.24778898557
+INFO:R0: RMP: 0.243685373238
+INFO:R0: RMG: 0.367147908324

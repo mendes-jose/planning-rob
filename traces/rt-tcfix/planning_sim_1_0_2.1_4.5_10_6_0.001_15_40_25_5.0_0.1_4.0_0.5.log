@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 2.0
+DEBUG:R0: Using Tc_d = 2.0
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 0.975335121155
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 4
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.0000: Time to solve stand alone optimization problem: 0.0301461219788
+INFO:R0@tkref=2.0000: N of unsatisfied eq: 3
+INFO:R0@tkref=2.0000: N of unsatisfied ieq: 3
+INFO:R0@tkref=2.0000: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=2.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.0000: Time to solve stand alone optimization problem: 0.0238130092621
+INFO:R0@tkref=4.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=4.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=4.0000: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=4.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 1.19771401167
+DEBUG:R0: Usual approx plan dist: 4.5
+DEBUG:R0: Approx gain in dist: 3.30228598833
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.266158669259 Ns 7 Nk 3
+INFO:R0@tkref=6.0000: Time to solve stand alone optimization problem: 0.376042127609
+INFO:R0@tkref=6.0000: N of unsatisfied eq: 10
+INFO:R0@tkref=6.0000: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.0000: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.34607049766
+INFO:R0: NSE: 4
+INFO:R0: FIR: 0.977569103241
+INFO:R0: LAS: 0.376791000366
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.0310020446777
+INFO:R0: MIN: 0.0244750976562
+INFO:R0: AVG: 0.027738571167
+INFO:R0: RMP: 0.0155010223389
+INFO:R0: RMG: 0.188395500183

@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 2.24
+DEBUG:R0: Using Tc_d = 2.24
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 0.908545970917
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 9
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=2.2400: Time to solve stand alone optimization problem: 0.0233521461487
+INFO:R0@tkref=2.2400: N of unsatisfied eq: 3
+INFO:R0@tkref=2.2400: N of unsatisfied ieq: 3
+INFO:R0@tkref=2.2400: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=2.2400: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=4.4800: Time to solve stand alone optimization problem: 0.0220830440521
+INFO:R0@tkref=4.4800: N of unsatisfied eq: 5
+INFO:R0@tkref=4.4800: N of unsatisfied ieq: 7
+INFO:R0@tkref=4.4800: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=4.4800: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 0.492440439557
+DEBUG:R0: Usual approx plan dist: 3.2
+DEBUG:R0: Approx gain in dist: 2.70755956044
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.153887637362 Ns 7 Nk 3
+INFO:R0@tkref=6.7200: Time to solve stand alone optimization problem: 0.360743999481
+INFO:R0@tkref=6.7200: N of unsatisfied eq: 10
+INFO:R0@tkref=6.7200: N of unsatisfied ieq: 4
+INFO:R0@tkref=6.7200: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=6.7200: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.27340666376
+INFO:R0: NSE: 4
+INFO:R0: FIR: 0.909898996353
+INFO:R0: LAS: 0.361472129822
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.0240139961243
+INFO:R0: MIN: 0.0227251052856
+INFO:R0: AVG: 0.023369550705
+INFO:R0: RMP: 0.010720533984
+INFO:R0: RMG: 0.161371486528

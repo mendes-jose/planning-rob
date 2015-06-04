@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 1.72
+DEBUG:R0: Using Tc_d = 1.72
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 1.553139925
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 5
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 8
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.7200: Time to solve stand alone optimization problem: 0.340044021606
+INFO:R0@tkref=1.7200: N of unsatisfied eq: 2
+INFO:R0@tkref=1.7200: N of unsatisfied ieq: 7
+INFO:R0@tkref=1.7200: Summary: Optimization terminated successfully. after 8 it.
+DEBUG:R0@tkref=1.7200: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.4400: Time to solve stand alone optimization problem: 0.172131061554
+INFO:R0@tkref=3.4400: N of unsatisfied eq: 3
+INFO:R0@tkref=3.4400: N of unsatisfied ieq: 7
+INFO:R0@tkref=3.4400: Summary: Optimization terminated successfully. after 4 it.
+DEBUG:R0@tkref=3.4400: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 2.21514666668
+DEBUG:R0: Usual approx plan dist: 4.3
+DEBUG:R0: Approx gain in dist: 2.08485333332
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.515150387601 Ns 7 Nk 3
+INFO:R0@tkref=5.1600: Time to solve stand alone optimization problem: 0.558374881744
+INFO:R0@tkref=5.1600: N of unsatisfied eq: 10
+INFO:R0@tkref=5.1600: N of unsatisfied ieq: 3
+INFO:R0@tkref=5.1600: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=5.1600: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.65943761614
+INFO:R0: NSE: 4
+INFO:R0: FIR: 1.55454397202
+INFO:R0: LAS: 0.559181928635
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.340835094452
+INFO:R0: MIN: 0.172892093658
+INFO:R0: AVG: 0.256863594055
+INFO:R0: RMP: 0.198159938635
+INFO:R0: RMG: 0.325105772462

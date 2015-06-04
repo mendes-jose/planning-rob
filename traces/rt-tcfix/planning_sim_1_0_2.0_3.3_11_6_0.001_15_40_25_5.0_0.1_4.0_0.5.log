@@ -1,0 +1,44 @@
+DEBUG:R0: Using Tc_p = 1.98
+DEBUG:R0: Using Tc_d = 1.98
+INFO:R0: Init motion planning
+INFO:R0@tkref=0.0000: Time to solve stand alone optimization problem: 1.00209283829
+INFO:R0@tkref=0.0000: N of unsatisfied eq: 4
+INFO:R0@tkref=0.0000: N of unsatisfied ieq: 6
+INFO:R0@tkref=0.0000: Summary: Iteration limit exceeded after 41 it.
+DEBUG:R0@tkref=0.0000: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=1.9800: Time to solve stand alone optimization problem: 0.0476779937744
+INFO:R0@tkref=1.9800: N of unsatisfied eq: 3
+INFO:R0@tkref=1.9800: N of unsatisfied ieq: 6
+INFO:R0@tkref=1.9800: Summary: Optimization terminated successfully. after 2 it.
+DEBUG:R0@tkref=1.9800: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+INFO:R0@tkref=3.9600: Time to solve stand alone optimization problem: 0.024364233017
+INFO:R0@tkref=3.9600: N of unsatisfied eq: 5
+INFO:R0@tkref=3.9600: N of unsatisfied ieq: 8
+INFO:R0@tkref=3.9600: Summary: Optimization terminated successfully. after 1 it.
+DEBUG:R0@tkref=3.9600: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: --------------------------
+DEBUG:R0: LAST STEP
+DEBUG:R0: Approx remaining dist: 1.21110025714
+DEBUG:R0: Usual approx plan dist: 3.3
+DEBUG:R0: Approx gain in dist: 2.08889974286
+DEBUG:R0: Last step min dist: 0.5
+INFO:R0: scale 0.367000077922 Ns 7 Nk 3
+INFO:R0@tkref=5.9400: Time to solve stand alone optimization problem: 0.361759901047
+INFO:R0@tkref=5.9400: N of unsatisfied eq: 10
+INFO:R0@tkref=5.9400: N of unsatisfied ieq: 4
+INFO:R0@tkref=5.9400: Summary: Iteration limit exceeded after 26 it.
+DEBUG:R0@tkref=5.9400: $$$$$$$$ CONFLICT LIST $$$$$$$$: []
+INFO:R0: Finished motion planning
+INFO:R0: --------------------------
+INFO:R0: TOT: 7.30111688413
+INFO:R0: NSE: 4
+INFO:R0: FIR: 1.00324892998
+INFO:R0: LAS: 0.362498044968
+INFO:R0: LMA: 1
+INFO:R0: MAX: 0.0483350753784
+INFO:R0: MIN: 0.0250091552734
+INFO:R0: AVG: 0.0366721153259
+INFO:R0: RMP: 0.0244116542315
+INFO:R0: RMG: 0.183079820691
