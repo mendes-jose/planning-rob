@@ -235,8 +235,8 @@ point/.style={very thick,black}]
 \draw[axis,red] (5.,2.25,0) -- (-1.,.75,0) node[anchor=east,color=red]{$s_3$};
 %\draw[axis,red] (-0.5,1.5,0) -- (1.5,-.5,0) node[anchor=east,color=red]{$s_4$};
 
-\draw[point] (2.0,3.2,0) node[anchor=east]{\textbullet $A$};
-\draw[point] (-1.5,2.5,0) node[anchor=east]{\textbullet $B$};
+\draw[point] (2.0,3.2,0) node[anchor=east]{\textbullet $B$};
+\draw[point] (-1.5,2.5,0) node[anchor=east]{\textbullet $A$};
 %\draw[axis] (2.0,1.0,0) -- (-0.5,-1.5,0) node[anchor=west,color=blue]{$r_{1,0}$};
 
 \draw[polygon,fill=gray!100] (0,1,0) -- (1,0,0) -- (3,0,0) -- (4,2,0) -- cycle;
@@ -264,7 +264,7 @@ Besides, the probability of finding points inside regions that are "far" from th
 This heuristic can be used to speed up the planning process by having a smarter initialization of point-to-obstacle distance computation when using a convex polygon representation.
 
 Finally, when dealing with more complex obstacles representations and/or with a more complex representation of the mobile robot geometry the Enhanced Gilbert-Johnson-Keerthi distance algorithm~\cite{ericson2004real} is a more suitable and efficient approach.
-\todo[inline]{some code is available on the internet, Google code written in D language and/or the other one on stackverflow, see bookmarks}
+\todo[inline]{some code is available on the internet, Google code written in D language and/or the other one on stackoverflow, see bookmarks}
 
 
 %\begin{figure}[!h]
@@ -320,7 +320,7 @@ After this analysis we shall be able to identify sets of parameters' values that
 
 \subsection{Computation time analysis}
 
-\paragraph{No obstacles scenario}
+\paragraph{No obstacles scenario} \hspace{0pt} \\
 %INFO:R0: TOT: 7.16220241525
 %INFO:R0: NSE: 14
 %INFO:R0: FIR: 0.888309001923
@@ -340,20 +340,20 @@ We can see that for a "no obstacles" scenario the overall performance with respe
         \centering
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_4/mcttc-tctp.eps}
-                \caption{Four internal knots. Average variance between lines is $0.098\times 10^{-2}$}\label{fig:uni04}
+                \caption{Four internal knots. Average variance between lines is $0.062\times 10^{-2}$}\label{fig:uni04}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_5/mcttc-tctp.eps}
-                \caption{Five internal knots. Average variance between lines is $0.205\times 10^{-2}$}\label{fig:uni05}
+                \caption{Five internal knots. Average variance between lines is $0.115\times 10^{-2}$}\label{fig:uni05}
         \end{subfigure}%
         
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_6/mcttc-tctp.eps}
-                \caption{Six internal knots. Average variance between lines is $0.295\times 10^{-2}$}\label{fig:uni06}
+                \caption{Six internal knots. Average variance between lines is $ 0.182\times 10^{-2}$}\label{fig:uni06}
         \end{subfigure}%
         \caption{Zero obstacles scenario.}\label{fig:uni0}
 \end{figure}
@@ -406,7 +406,7 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
         \caption{No obstacle scenario simulation example where the \textit{maximum computational time} was about 78\% of $T_c$ and the mission total time equals to $7.16\ s$.}\label{fig:sim0}
 \end{figure}
 
-\paragraph{Three obstacles scenario}
+\paragraph{Three obstacles scenario} \hspace{0pt} \\
 %INFO:R0: TOT: 7.57429378065
 %INFO:R0: NSE: 15
 %INFO:R0: FIR: 1.07032418251
@@ -427,20 +427,20 @@ For this new scenario, a greater impact of the number of samples ($N_s$) and num
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps}
-                \caption{Four internal knots. Average variance between lines is $1.65\times 10^{-2}$}\label{fig:uni34}
+                \caption{Four internal knots. Average variance between lines is $1.047\times 10^{-2}$}\label{fig:uni34}
         \end{subfigure}
         
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_5/mcttc-tctp.eps}
-                \caption{Five internal knots. Average variance between lines is $2.40\times 10^{-2}$}\label{fig:uni35}
+                \caption{Five internal knots. Average variance between lines is $0.972\times 10^{-2}$}\label{fig:uni35}
         \end{subfigure}
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps}
-                \caption{Six internal knots. Average variance between lines is $2.74\times 10^{-2}$}\label{fig:uni36}
+                \caption{Six internal knots. Average variance between lines is $0.587\times 10^{-2}$}\label{fig:uni36}
         \end{subfigure}
         \caption{Three obstacles scenario.}\label{fig:uni3}
 \end{figure}
@@ -499,7 +499,7 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 84\% of $T_c$ and the mission total time equals to $7.57\ s$.}\label{fig:uni3}
 \end{figure}
 
-\paragraph{Six obstacles scenario}
+\paragraph{Six obstacles scenario} \hspace{0pt} \\
 
 %INFO:R0: TOT: 7.76460065867
 %INFO:R0: NSE: 7
@@ -520,27 +520,27 @@ As for the scenario with six obstacles we realize that the observations for the 
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_4/mcttc-tctp.eps}
-                \caption{Four internal knots.  Average variance between lines is $2.92\times 10^{-2}$}\label{fig:uni64}
+                \caption{Four internal knots.  Average variance between lines is $2.272\times 10^{-2}$}\label{fig:uni64}
         \end{subfigure}
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_5/mcttc-tctp.eps}
-                \caption{Five internal knots.  Average variance between lines is $5.78\times 10^{-2}$}\label{fig:uni65}
+                \caption{Five internal knots.  Average variance between lines is $2.635\times 10^{-2}$}\label{fig:uni65}
         \end{subfigure}
         
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_6__N_knots_6/mcttc-tctp.eps}
-                \caption{Six internal knots.  Average variance between lines is $5.89\times 10^{-2}$}\label{fig:uni66}
+                \caption{Six internal knots.  Average variance between lines is $1.526\times 10^{-2}$}\label{fig:uni66}
         \end{subfigure}
         \caption{Six obstacles scenario.}\label{fig:uni6}
 \end{figure}
+
+
 \begin{table}[!h]
 \caption {Motion planner main parameters} \label{tab:s3param}
-
-
 \begin{center}
 \begin{tabular}{|c|c|}
 \hline
@@ -601,9 +601,36 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
 
 The time spend for finding the solution for a given set of
 parameters values does not impact the solution it self.
-Let's analyse than how the solution behaves for different scenarios.
+Let's analyze than how the solution behaves for different scenarios.
+Two important notions when trying to quantify a solution fitness are the total time spend for completing the mission and the robot-to-obstacle distance.
+
+
 
 Intuitively we can say that the greater the number 
+
+\begin{figure}
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot10.eps}
+                \caption{Four internal knots.  Average variance between lines is $2.92\times 10^{-2}$}\label{fig:uni64}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot11.eps}
+                \caption{Five internal knots.  Average variance between lines is $5.78\times 10^{-2}$}\label{fig:uni65}
+        \end{subfigure}
+        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot12.eps}
+                \caption{Six internal knots.  Average variance between lines is $5.89\times 10^{-2}$}\label{fig:uni66}
+        \end{subfigure}
+        \caption{Six obstacles scenario.}\label{fig:uni6}
+\end{figure}
 
 \begin{itemize}
  \item Distance inter robots
