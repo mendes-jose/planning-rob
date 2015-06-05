@@ -2026,8 +2026,8 @@ class WorldSim(object):
                         penetr[i] += v
                         cpenetr[i] += 1
                         penetr_v[i] += [v]
-        print no_obst[0]
-        print cno_obst
+#        print no_obst[0]
+#        print cno_obst
 
         # Logging simulation summary
         for i in range(len(self._robs)):
@@ -2040,6 +2040,7 @@ class WorldSim(object):
                 logging.info('R{rid}: PEN: {d}'.format(rid=i, d=-1.0*penetr[i]*self._robs[i]._Tp/self._robs[i]._N_ssol))
             else:
                 logging.info('R{rid}: PEN: {d}'.format(rid=i, d=0.0))
+            logging.info('R{rid}: MOB: {d}'.format(rid=i, d=max(no_obst[i])))
             logging.info('R{rid}: TOT: {d}'.format(rid=i, d=rtime[i][-1]))
             logging.info('R{rid}: NSE: {d}'.format(rid=i, d=ctime_len))
             logging.info('R{rid}: FIR: {d}'.format(rid=i, d=ctime[i][0]))
@@ -2088,11 +2089,11 @@ class WorldSim(object):
         if self._plot:
             plt.ion()
 
-        fig3 = plt.figure()
-        ax3 = fig3.gca()
-        ax3.plot(or_dist[0][0])
-        ax3.plot(or_dist[0][1])
-        ax3.plot(or_dist[0][2])
+        fig_obst_dist = plt.figure()
+        ax_obst_dist= fig_obst_dist.gca()
+        for i in range(len(self._robs)):
+            for j in range(len(self._obsts)):
+                ax_obst_dist.plot(or_dist[i][j])
 
         try:
             os.mkdir(self._direc+'/images/')
@@ -2377,6 +2378,7 @@ if __name__ == '__main__':
             '_'+str(options.time_c)+\
             '_'+str(options.time_p)+\
             '_'+str(options.no_sopt)+\
+            '_'+str(options.no_ssol)+\
             '_'+str(options.no_knots)+\
             '_'+str(options.acc)+\
             '_'+str(options.max_it)+\
@@ -2420,19 +2422,14 @@ if __name__ == '__main__':
                 ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
                 ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
     # 12 obsts
-    elif options.no_obsts == 12:
+    elif options.no_obsts == 7:
         obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
-                ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583),
-                ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166),
-                ([0.098239823982398278, 3.975877587758776], 0.31376637663766377),
-                ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
-                ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223),
-                ([-0.35104510451045101, 7.3555355535553557], 0.38704870487048704),
-                ([0.21441144114411448, 8.5279927992799281], 0.32584258425842583),
-                ([-0.3232123212321232, 12.8615661566156621], 0.23165816581658166),
-                ([0.098239823982398278, 9.975877587758776], 0.31376637663766377),
-                ([0.62277227722772288, 7.247884788478848], 0.1802030203020302),
-                ([1.16985698569856988, 9.6557155715571559], 0.25223522352235223)]
+                ([0.35104510451045101, 3.3555355535553557], 0.38704870487048704),
+                ([-0.35104510451045101, 5.3555355535553557], 0.38704870487048704),
+                ([0.35104510451045101, 7.3555355535553557], 0.38704870487048704),
+                ([-0.35104510451045101, 9.3555355535553557], 0.38704870487048704),
+                ([0.35104510451045101, 11.3555355535553557], 0.28704870487048704),
+                ([-0.35104510451045101, 13.0555355535553557], 0.38704870487048704)]
     else:
         logging.info("Using 3 obstacles configuration")
         obst_info = [([0.0, 1.6], 0.3),

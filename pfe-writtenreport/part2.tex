@@ -7,9 +7,8 @@
 \chapter{Algorithmic Approach}
 \lipsum[1]
 \newpage
-\section{Representation of the optimization problem}
 
-\subsection{Optimizers}
+\section{Optimizers}
 
 There is a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}. Each of them may have their own way of defining the optimization problem and may or may not support specific kinds of constraints (equations, inequations or boundaries).
 
@@ -177,15 +176,15 @@ https://pypi.python.org/pypi/scipy
 
 sudo python setup.py install
 
-\subsection{The mobile robot}
+\section{The mobile robot}
 
 For representing the mobile robot geometry in the planning plane a bounding circle was chosen.
 
-\subsubsection{Unicycle kinetic model}
+\subsection{Unicycle kinetic model}
 
-\subsubsection{Flat output formulation}
+\subsection{Flat output formulation}
 \pagebreak
-\subsection{The obstacles}
+\section{The obstacles}
 
 % \begin{figure}
 % 	\centering
@@ -203,7 +202,7 @@ Thus the need of a polygon representation.
 
 %\subsubsection{Convex Polygon Obstacles}
 
-\subsubsection{Robot-to-obstacle distance calculation for the convex polygon representation}
+\subsection{Robot-to-obstacle distance calculation for the convex polygon representation}
 
 As sad before the robot's geometric form is represented by a circle.
 When calculating the robot-to-obstacle distance this simplified representation is quite useful. 
@@ -278,7 +277,7 @@ Finally, when dealing with more complex obstacles representations and/or with a 
 %Symmetry problem \todo[inline, size=\tiny]{Tc too high no time to avoid another robot involved}
 %Gilbert-Johnson-Keerthi distance algorithm
 
-\subsection{Analysis of real-time planning feasibility and total time performance}
+\section{Analysis of real-time planning feasibility and total time performance}
 
 The performance of the motion planning algorithm previously presented depends on several parameters. For starters these parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group the most important ones are: the number of sample for time discretization ($N_s$), the number of internal knots for the B-splines curves ($n_{knots}$), and the planning and computation time horizons ($T_p$ and $T_c$ respectively). The latter kind depends on the optimization solver adopted but since most of them are iterative methods is common to have at least a "maximum number of iterations" and a "stop condition" parameters.
 
@@ -320,7 +319,7 @@ After this analysis we shall be able to identify sets of parameters' values that
 
 \subsection{Computation time analysis}
 
-\paragraph{No obstacles scenario} \hspace{0pt} \\
+\subsubsection{No obstacles scenario}
 %INFO:R0: TOT: 7.16220241525
 %INFO:R0: NSE: 14
 %INFO:R0: FIR: 0.888309001923
@@ -405,8 +404,8 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
         \end{subfigure}
         \caption{No obstacle scenario simulation example where the \textit{maximum computational time} was about 78\% of $T_c$ and the mission total time equals to $7.16\ s$.}\label{fig:sim0}
 \end{figure}
-
-\paragraph{Three obstacles scenario} \hspace{0pt} \\
+\clearpage
+\subsubsection{Three obstacles scenario}
 %INFO:R0: TOT: 7.57429378065
 %INFO:R0: NSE: 15
 %INFO:R0: FIR: 1.07032418251
@@ -498,8 +497,8 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \end{subfigure}
         \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 84\% of $T_c$ and the mission total time equals to $7.57\ s$.}\label{fig:uni3}
 \end{figure}
-
-\paragraph{Six obstacles scenario} \hspace{0pt} \\
+\clearpage
+\subsubsection{Six obstacles scenario}
 
 %INFO:R0: TOT: 7.76460065867
 %INFO:R0: NSE: 7
@@ -514,7 +513,7 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
 
 As for the scenario with six obstacles we realize that the observations for the latest scenario are accentuated.
 
-\begin{figure}
+\begin{figure}[!h]
         \centering
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
@@ -597,40 +596,56 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
         \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
 \end{figure}
 
-\subsubsection{Total time analysis}
+\todo[inline]{add compt time X max number of detected obsts}
+
+\clearpage
+\subsection{Total time analysis} \hspace{0pt} 
 
 The time spend for finding the solution for a given set of
 parameters values does not impact the solution it self.
-Let's analyze than how the solution behaves for different scenarios.
+Let's analyze then how the solution behaves for different scenarios.
+
 Two important notions when trying to quantify a solution fitness are the total time spend for completing the mission and the robot-to-obstacle distance.
 
+Figure~\ref{fig:ttot} show how the time spend for completing the mission behaves with respect to three parameters: $T_c$, $T_p$, $N_s$.
 
-
-Intuitively we can say that the greater the number 
-
-\begin{figure}
+\begin{figure}[!h]
         \centering
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot10.eps}
-                \caption{Four internal knots.  Average variance between lines is $2.92\times 10^{-2}$}\label{fig:uni64}
+                \caption{$N_s = 10$}\label{fig:ttot1}
         \end{subfigure}
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot11.eps}
-                \caption{Five internal knots.  Average variance between lines is $5.78\times 10^{-2}$}\label{fig:uni65}
+                \caption{$N_s = 11$}\label{fig:ttot2}
         \end{subfigure}
         
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./img/realtime/Scenario_3__N_knots_6/tot12.eps}
-                \caption{Six internal knots.  Average variance between lines is $5.89\times 10^{-2}$}\label{fig:uni66}
+                \caption{$N_s = 12$}\label{fig:ttot3}
         \end{subfigure}
-        \caption{Six obstacles scenario.}\label{fig:uni6}
+        \caption{Variation of total mission time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and $N_s$ and three obstacles.}\label{fig:ttot}
 \end{figure}
+
+%Due to the discretization and 
+We observe an overall tendency that for a given number of internal knots and $N_s$ the total mission decreases as the planning horizon decreases. This can be explained by the fact that the trajectory quality is increased and is closer to an optimal solution for a greater density of knots within a planning horizon.
+
+One may notice as well that the total mission time is invariant with respect to $T_c$ in the sense that no pattern can be observed besides oscillations of the total time due to the scenario specific configuration.
+
+\todo[inline]{Get no obstacles information too}
+
+\subsubsection{Robot to obstacle distance}
+
+The second parameter to measure the solution fitness is the robot-to-obstacles distance.
+
+In order to simplify this measure we introduce the notion mean penetration of the robot during its mission.
+We take 
 
 \begin{itemize}
  \item Distance inter robots
