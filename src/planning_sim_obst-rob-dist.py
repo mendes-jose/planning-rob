@@ -616,6 +616,7 @@ class Robot(object):
             neigh,                  # neighbors to whom this robot shall talk...
                                     # ...(used for conflict only, not communic)
             N_s=20,
+            N_ssol=100,
             n_knots=6,
             t_init=0.0,
             t_sup=1e10,
@@ -654,6 +655,7 @@ class Robot(object):
         """
         self._neigh = neigh
         self._N_s = N_s # no of samples for discretization of time
+        self._N_ssol = N_ssol # no of samples for discretization of time
         self._n_knots = n_knots
         self._t_init = t_init
         self._t_sup = t_sup # superior limit of time
@@ -675,8 +677,12 @@ class Robot(object):
         self._n_robots = None
 
         # index for sliding windows
-        td_step = (self._Td-self._t_init)/(self._N_s-1)
-        tp_step = (self._Tp-self._t_init)/(self._N_s-1)
+        discrit_factor = max(1, np.ceil((self._N_ssol-1)*1./(self._N_s-1)))
+        self._N_ssol = (self._N_s-1)*discrit_factor + 1
+        td_step = (self._Td)/(self._N_s-1)
+        tp_step = (self._Tp)/(self._N_s-1)
+        td_step_sol = (self._Td)/(self._N_ssol-1)
+        tp_step_sol = (self._Tp)/(self._N_ssol-1)
         # finding the index of the discrete value in the...
         # ... planning horizon that is closest to the computing horizon value
         self._Tcd_idx = max(1, int(round(self._Tc/td_step)))
@@ -684,10 +690,18 @@ class Robot(object):
         # find the actual computing horizons
         self._Tcd = self._Tcd_idx*td_step
         self._Tcp = self._Tcp_idx*tp_step
-        self._log('d', 'R{}: Using Tc_p = {}'.format(self.eyed, self._Tcp))
-        self._log('d', 'R{}: Using Tc_d = {}'.format(self.eyed, self._Tcd))
+        self._Tcd_idx_sol = max(1, int(round(self._Tcd/td_step_sol)))
+        self._Tcp_idx_sol = max(1, int(round(self._Tcp/tp_step_sol)))
+        self._Tcd_sol = self._Tcd_idx_sol*td_step_sol
+        self._Tcp_sol = self._Tcp_idx_sol*tp_step_sol
+        self._log('d', 'R{}: Using Tc_p = {} for optimization'.format(self.eyed, self._Tcp))
+        self._log('d', 'R{}: Using Tc_d = {} for optimization'.format(self.eyed, self._Tcd))
+        self._log('d', 'R{}: Using Tc_p = {} for solution'.format(self.eyed, self._Tcp_sol))
+        self._log('d', 'R{}: Using Tc_d = {} for solution'.format(self.eyed, self._Tcd_sol))
+        self._log('d', 'R{}: Using N_ssol = {:.0f}'.format(self.eyed, self._N_ssol))
+        #print self._mtime[self._Tcp_idx]
 
-        # optimization parameters
+        # optimization solver parameters
         self._maxit = 100
         self._fs_maxit = 100
         self._ls_maxit = 100
@@ -1664,13 +1678,19 @@ class Robot(object):
         if self._plan_state == 'ls':
             self._knots = self._gen_knots(self._mtime[0], self._t_final)
             self._mtime = np.linspace(self._mtime[0], self._t_final, self._N_s)
+            self._soltime = np.linspace(self._soltime[0], self._t_final, self._N_ssol)
 
         time_idx = None if self._plan_state == 'ls' else self._Tcd_idx+1
+        time_idx_sol = None if self._plan_state == 'ls' else self._Tcd_idx_sol+1
 
         dz = self._comb_bsp(self._mtime, self._C[0:self._n_ctrlpts,:], 0).T
         for dev in range(1, self.k_mod.l+1):
             dz = np.append(dz, self._comb_bsp(
                     self._mtime, self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
+        dz_sol = self._comb_bsp(self._soltime, self._C[0:self._n_ctrlpts,:], 0).T
+        for dev in range(1, self.k_mod.l+1):
+            dz_sol = np.append(dz_sol, self._comb_bsp(
+                    self._soltime, self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
 
 #        TODO verify process safety
         for i in range(dz.shape[1]):
@@ -1720,28 +1740,35 @@ class Robot(object):
             if self._plan_state == 'ls':
                 self._knots = self._gen_knots(self._mtime[0], self._t_final)
                 self._mtime = np.linspace(self._mtime[0], self._t_final, self._N_s)
+                self._soltime = np.linspace(self._soltime[0], self._t_final, self._N_ssol)
 
             time_idx = None if self._plan_state == 'ls' else self._Tcp_idx+1
+            time_idx_sol = None if self._plan_state == 'ls' else self._Tcp_idx_sol+1
 
             dz = self._comb_bsp(self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], 0).T
             for dev in range(1, self.k_mod.l+1):
                 dz = np.append(dz, self._comb_bsp(
                         self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
+            dz_sol = self._comb_bsp(self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], 0).T
+            for dev in range(1, self.k_mod.l+1):
+                dz_sol = np.append(dz_sol, self._comb_bsp(
+                        self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
 
         # Storing
 #        self._all_C[0:self._n_ctrlpts,:] += [self._C[0:self._n_ctrlpts,:]]
 
         if self._plan_state == 'fs':
-            self._all_dz.append(dz[:, 0:time_idx])
-            self._all_times.extend(self._mtime[0:time_idx])
+            self._all_dz.append(dz_sol[:, 0:time_idx_sol])
+#            self._all_dz.append(dz[:, 0:time_idx])
+            self._all_times.extend(self._soltime[0:time_idx_sol])
         else:
-            self._all_dz.append(dz[:, 1:time_idx])
-            self._all_times.extend(self._mtime[1:time_idx])
+            self._all_dz.append(dz_sol[:, 1:time_idx_sol])
+            self._all_times.extend(self._soltime[1:time_idx_sol])
         # TODO rejected path
 
         # Updating
 
-        latest_z = self._all_dz[-1][0:self.k_mod.u_dim, -1].reshape(
+        latest_z = dz[0:self.k_mod.u_dim, int(time_idx or 0)-1].reshape(
                 self.k_mod.u_dim, 1)
 
         # Sync robots here so no robot computing conflict get the wrong latest_z of some robot
@@ -1765,13 +1792,15 @@ class Robot(object):
             if self._std_alone == False:
                 self._knots = self._knots + self._Tcp
                 self._mtime = [tk+self._Tcp for tk in self._mtime]
+                self._soltime = [tk+self._Tcp_sol for tk in self._soltime]
             else:
                 self._knots = self._knots + self._Tcd
                 self._mtime = [tk+self._Tcd for tk in self._mtime]
+                self._soltime = [tk+self._Tcd_sol for tk in self._soltime]
             self._latest_z = latest_z
-            self._latest_q = self.k_mod.phi_1(self._all_dz[-1][:, -1].reshape(
+            self._latest_q = self.k_mod.phi_1(dz[:, int(time_idx or 0) -1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
-            self._latest_u = self.k_mod.phi_2(self._all_dz[-1][:, -1].reshape(
+            self._latest_u = self.k_mod.phi_2(dz[:, int(time_idx or 0) -1].reshape(
                     self.k_mod.l+1, self.k_mod.u_dim).T)
             if self._plan_state == 'fs':
                 self._plan_state = 'ms'
@@ -1793,6 +1822,7 @@ class Robot(object):
 
         self._knots = self._gen_knots(self._t_init, self._Td)
         self._mtime = np.linspace(self._t_init, self._Td, self._N_s)
+        self._soltime = np.linspace(self._t_init, self._Td, self._N_ssol)
 
         # while the remaining dist is greater than the max dist during Tp
 #        while LA.norm(self._latest_z - self._final_z) > self._D:
@@ -1812,6 +1842,7 @@ class Robot(object):
                 self._n_knots = max(int(round(self._n_knots*scale_factor)), self._d-1)
                 self._n_ctrlpts = self._n_knots + self._d - 1 # nb of ctrl points
                 self._N_s = max(int(round(self._N_s*scale_factor)), self._n_ctrlpts+1)
+                self._N_ssol = max(int(round(self._N_ssol*scale_factor)), self._n_ctrlpts+1)
                 self._log('i', 'R{0}: scale {1} Ns {2:d} Nk {3:d}'.format(self.eyed,
                         scale_factor, self._N_s, self._n_knots))
                 break
@@ -1967,16 +1998,36 @@ class WorldSim(object):
 
         # Calculate the obstacles-robots dists (only works while we consider static obstcacles)
         or_dist = []
+        no_obst = []
+        penetr = []
+        cpenetr = []
+        penetr_v = []
 #        aux = np.empty((len(self._robs),len(self._obsts)))
         for i in range(len(self._robs)):
             or_dist += [[]]
+            no_obst += [[]]
+            no_obst[i] = len(seg_pts_idx[i])*[0]
+            penetr_v += [[]]
+            penetr += [0]
+            cpenetr += [0]
             for j, obst in zip(range(len(self._obsts)), self._obsts):
                 or_dist[i] += [[]]
-                for q in qt[i]:
-                    v = obst.pt_2_obst(q, self._robs[i].rho)
+                cno_obst = 0
+                for k, q in zip(range(len(qt[i])), qt[i]):
+                    v = obst.pt_2_obst(np.squeeze(np.asarray(q[0:2, 0].T)), self._robs[i].rho)
+                    #print v
                     or_dist[i][j] += [v]
-
-        min
+                    if k in seg_pts_idx[i]:
+                        d = obst.detected_dist(np.squeeze(np.asarray(q[0:2, 0].T)))
+                        if d < self._robs[i]._d_rho:
+                            no_obst[i][cno_obst] += 1
+                        cno_obst += 1
+                    if v < 0.0:
+                        penetr[i] += v
+                        cpenetr[i] += 1
+                        penetr_v[i] += [v]
+        print no_obst[0]
+        print cno_obst
 
         # Logging simulation summary
         for i in range(len(self._robs)):
@@ -1985,6 +2036,10 @@ class WorldSim(object):
                 g_max_idx = np.argmax(ctime[i][1:]) + 1
             else:
                 g_max_idx = 0
+            if cpenetr[i] > 0:
+                logging.info('R{rid}: PEN: {d}'.format(rid=i, d=-1.0*penetr[i]*self._robs[i]._Tp/self._robs[i]._N_ssol))
+            else:
+                logging.info('R{rid}: PEN: {d}'.format(rid=i, d=0.0))
             logging.info('R{rid}: TOT: {d}'.format(rid=i, d=rtime[i][-1]))
             logging.info('R{rid}: NSE: {d}'.format(rid=i, d=ctime_len))
             logging.info('R{rid}: FIR: {d}'.format(rid=i, d=ctime[i][0]))
@@ -2032,6 +2087,12 @@ class WorldSim(object):
         # Interactive plot
         if self._plot:
             plt.ion()
+
+        fig3 = plt.figure()
+        ax3 = fig3.gca()
+        ax3.plot(or_dist[0][0])
+        ax3.plot(or_dist[0][1])
+        ax3.plot(or_dist[0][2])
 
         try:
             os.mkdir(self._direc+'/images/')
@@ -2268,8 +2329,10 @@ if __name__ == '__main__':
                 action='store', type='float', help='computation time horizon', default=0.5)
         parser.add_option('-p', '--planhorizon', dest='time_p', default=2.0,
                 action='store', type='float', help='planning time horizon')
-        parser.add_option('-s', '--timesampling', dest='no_s', default=14,
-                action='store', type='int', help='number of time samples')
+        parser.add_option('-S', '--timesamplingsol', dest='no_ssol', default=14,
+                action='store', type='int', help='number of time samples used for creating the solution')
+        parser.add_option('-s', '--timesamplingopt', dest='no_sopt', default=14,
+                action='store', type='int', help='number of time samples used for optimization')
         parser.add_option('-k', '--knots', dest='no_knots', default=5,
                 action='store', type='int', help='number of internal knots')
         parser.add_option('-a', '--accuracy', dest='acc', default=1E-3,
@@ -2313,7 +2376,7 @@ if __name__ == '__main__':
             '_'+str(options.no_obsts)+\
             '_'+str(options.time_c)+\
             '_'+str(options.time_p)+\
-            '_'+str(options.no_s)+\
+            '_'+str(options.no_sopt)+\
             '_'+str(options.no_knots)+\
             '_'+str(options.acc)+\
             '_'+str(options.max_it)+\
@@ -2356,6 +2419,20 @@ if __name__ == '__main__':
                 ([0.098239823982398278, 3.975877587758776], 0.31376637663766377),
                 ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
                 ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
+    # 12 obsts
+    elif options.no_obsts == 12:
+        obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
+                ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583),
+                ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166),
+                ([0.098239823982398278, 3.975877587758776], 0.31376637663766377),
+                ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
+                ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223),
+                ([-0.35104510451045101, 7.3555355535553557], 0.38704870487048704),
+                ([0.21441144114411448, 8.5279927992799281], 0.32584258425842583),
+                ([-0.3232123212321232, 12.8615661566156621], 0.23165816581658166),
+                ([0.098239823982398278, 9.975877587758776], 0.31376637663766377),
+                ([0.62277227722772288, 7.247884788478848], 0.1802030203020302),
+                ([1.16985698569856988, 9.6557155715571559], 0.25223522352235223)]
     else:
         logging.info("Using 3 obstacles configuration")
         obst_info = [([0.0, 1.6], 0.3),
@@ -2368,13 +2445,13 @@ if __name__ == '__main__':
 
     kine_models = [UnicycleKineModel(
             [-0.05, 0., np.pi/2.], # q_initial
-            [0.1,  7.0, np.pi/2.], # q_final
+            [0.1,  14.0, np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max
             UnicycleKineModel(
             [0.4,  0., np.pi/2.], # q_initial
-            [-0.4, 5.0, np.pi/2.], # q_final
+            [-0.4, 14.0, np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max
@@ -2394,7 +2471,8 @@ if __name__ == '__main__':
             boundary,               # planning plane boundary
             neigh,                  # neighbors to whom this robot shall talk ...
                                     #...(used for conflict only, not for real comm between process)
-            N_s=options.no_s,                # numbers samplings for each planning interval
+            N_s=options.no_sopt,                # numbers samplings for each planning interval
+            N_ssol=options.no_ssol,
             n_knots=options.no_knots,# number of knots for b-spline interpolation
             Tc=options.time_c,       # computation time
             Tp=options.time_p,       # planning horizon
