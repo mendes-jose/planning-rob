@@ -1,0 +1,56 @@
+C++ Libraries for Numerical Computing (Optimization)? (self.numerical)
+submitted 1 ano atrás by koohi
+Hey,
+I'm starting my masters thesis where I have to program a piece of software in C++ involving nonlinear numerical optimization (at first unconstrained, could be that I'll have to look at constrained problems too).
+I was asked to find suitable C++ libraries, with the focus on open source or at least free to distribute, as the completed program should be distributable to and usable by third parties free of charge.
+I looked at the NLopt library which has an implementation of BFGS (just what I need for now) but I would like to get more input on different alternatives with focus on usability and the extent of the numerical implementations.
+Thanks
+7 comentárioscompartilhar
+all 7 comments
+exibir primeiro: melhores
+[–]Overunderrated 3 pontos 1 ano atrás 
+DAKOTA is by far the most sophisticated optimization tool you can find. It has a huge range of algorithms, and switching between them is as easy as it gets. It's not a library, but a tool where you provide the program to evaluate a function and it does the rest.
+permalink
+[–]Rostin 2 pontos 1 ano atrás 
+I second this suggestion.
+http://dakota.sandia.gov/
+Dakota actually can be used as a library, but it's a little tricky to get working that way. It's easier to use it as standalone software. It treats your simulation code as a "black box." For every function evaluation it needs to do, it writes out a text file with parameters. You provide an interface script to translate the parameters file to the input format needed by your code. (Or, since it's your code, you could modify it directly to read the file.) After your code finishes running, Dakota runs a post-processing script you provide to translate the output into the response format that Dakota understands.
+Overunderrated mentioned probably the biggest advantages.. access to a really wide range of optimization algorithms and ease of use. I'll add that it does a lot of other stuff besides optimization like parameter studies and sensitivity analysis, and it can also do some fancy stuff like construct data-driven surrogate models for your simulation code, which it optimizes in its place, or hybrid or multistart optimization. It can also run multiple instances of your code simultaneously if you have access to a workstation with lots of cores or a cluster. And it's open source.
+The main disadvantage is that since it has to invoke your code "from scratch" for every function evaluation and also performs I/O with your code via text files, it's almost certainly going to be slower than a library. If each run of your code is long relative to the amount of time that stuff takes, this might not be a big deal.
+permalinkpai
+[–]Overunderrated 1 ponto 1 ano atrás 
+The main disadvantage is that since it has to invoke your code "from scratch" for every function evaluation and also performs I/O with your code via text files,
+I personally use it in this black-box way as my function evaluations take several hours, but the "direct" interface allows directly calling functions you link to the dakota executable and doesn't incur any I/O (system interface) or process creation (fork interface) penalties. This direct method is the way to go if you're doing lots of low-cost, relatively simple evaluation functions, or you don't have a lot of complex pre- and post-processing that has to happen.
+The wide range of optimization algorithms really is great. Lately I've been using it to first do parameter studies to identify potential global minima / uncertainty quantification, then flipping a few lines and doing constrained local optimization.
+permalinkpai
+[–]notlinear 2 pontos 1 ano atrás 
+I like the GSL: http://www.gnu.org/software/gsl/
+It has various one and multi dimensional algorithms: http://www.gnu.org/software/gsl/manual/html_node/Simulated-Annealing.html#Simulated-Annealing http://www.gnu.org/software/gsl/manual/html_node/One-dimensional-Minimization.html#One-dimensional-Minimization http://www.gnu.org/software/gsl/manual/html_node/Multidimensional-Minimization.html#Multidimensional-Minimization
+permalink
+[–]bigstumpy 2 pontos 1 ano atrás 
+IPOPT is the most advanced open source NLP solver I know of. There are many closed-source ones. For C++ linear algebra you should check out Eigen.
+permalink
+[–]k3ithk 2 pontos 1 ano atrás 
+Hmm I think Trilinos contains some nonlinear optimization packages.
+I've not used the optimization packages, but their stuff is fantastic if you need MPI support. It makes parallel programming as simple as possible.
+permalink
+[–]mttd 1 ponto 1 ano atrás 
+Alphabetically:
+ALGLIB: http://alglib.net/optimization/
+Boost [univariate optimization]: http://boost.org/doc/libs/release/libs/math/doc/html/math_toolkit/internals1.html
+Ceres Solver: https://code.google.com/p/ceres-solver/
+See also: http://google-opensource.blogspot.com/2012/05/introducing-ceres-solver-nonlinear.html
+dlib: http://dlib.net/optimization.html
+NLopt: http://ab-initio.mit.edu/wiki/index.php/NLopt_C-plus-plus_Reference
+QuantLib: http://quantlib.org/reference/group__math.html
+Tutorial [PDF]: http://quantlib.org/slides/dima-ql-intro-2.pdf#page=48
+List: http://quantlib.sourcearchive.com/documentation/1.1-2build1/classQuantLib_1_1OptimizationMethod.html
+See also:
+https://en.wikipedia.org/wiki/List_of_numerical_analysis_software#Language-oriented
+https://en.wikipedia.org/wiki/List_of_numerical_libraries#C.2B.2B
+https://en.wikipedia.org/wiki/List_of_optimization_software
+One note: avoid libraries that are using pointers (especially void * to pass the data to the function) and/or that seem to go out of their way to avoid using templates (including but not limited to requiring an objective function with only one, prespecified signature -- or introducing complex class hierarchies and gratuitous imposed (ab)use of inheritance) -- they were probably written by C-with-Classes programmers (rather distinct from C++) and will only lead to frustration from the users expecting clean, modern C++ code.
+Note that, for instance, dlib doesn't require you to derive your objective function from anything and gives you flexibility in how you decide to supply extra information to your objective function: http://dlib.net/least_squares_ex.cpp.html
+I'd be somewhat suspicious of a library requiring you to use one, rigid interface for your objective function (with the related implications, as in C-style passing-anything-extra via a single void *) -- rigid interface requirements requiring inheritance suggest that authors possibly mistaken C++ for Smalltalk (or Java), while limitation to optimizing functions with one, predefined signature suggest possible confusion with C. Neither one of these fighting-the-language-syndrom symptoms will benefit productivity or contribute to good overall design.
+Sometimes it's unavoidable, but it pays to be suspicious about this ;] As someone who had to deal with low-quality libraries like this, I hope I had at least provided you with a sufficient warning :-)
+permalink
