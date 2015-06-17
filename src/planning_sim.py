@@ -498,7 +498,7 @@ class UnicycleKineModel(object):
             \left[\\begin{array}{c}
             x\\\\
             y\\\\
-            \omega
+            \\theta
             \end{array}\\right]
             \left[\\begin{array}{c}
             z_1\\\\

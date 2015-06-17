@@ -74,6 +74,10 @@ int main(int argc, char** argv)
     // Interpolation points (no_ctrlpts points)
     ControlPointVectorType points = ControlPointVectorType::Random(spline_dim, no_ctrlpts);
     points.topRows(1) = interp_time;
+//    for ( auto i = 1; i < spline_dim; ++i )
+//    {
+//        points.row(i) = Eigen::RowVectorXd::LinSpaced(no_ctrlpts, 0, 5);
+//    }
     
     // Get chords lengths from interpolation time
     KnotVectorType chord_lengths;
@@ -115,6 +119,13 @@ int main(int argc, char** argv)
 
     int pt1pt2_counter=0;
     int ptpt2_counter=0;
+    std::cout  << "__________________________________"<< std::endl;
+
+    std::cout << new_chord_lengths(m_time.cols()-1) << std::endl;
+
+    std::cout << "__________________________________"<< std::endl;
+    std::cout << m_time(m_time.cols()-1) << std::endl;
+    std::cout << "__________________________________"<< std::endl;
     for (Eigen::DenseIndex i=0; i<m_time.cols(); ++i)
     {
         PointType pt_1 = spline_ctrl( m_time(i) );

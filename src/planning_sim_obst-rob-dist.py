@@ -498,7 +498,7 @@ class UnicycleKineModel(object):
             \left[\\begin{array}{c}
             x\\\\
             y\\\\
-            \omega
+            \\theta
             \end{array}\\right]
             \left[\\begin{array}{c}
             z_1\\\\
@@ -1558,7 +1558,7 @@ class Robot(object):
         # update detected obstacles list
         self._detect_obst()
 
-        def gen_ctrlpts_from_curve(last_ctrl_pt, curve):
+        def gen_ctrlpts_from_curve(curve):
             """ Interpolate a given curve by Bezier splines defined by its control points.
             """
 
@@ -1589,7 +1589,7 @@ class Robot(object):
             for i in range(self.k_mod.z_dim):
                 curve += [np.linspace(self._latest_z[i,0], last_ctrl_pt[i,0], self._n_ctrlpts)]
 
-            gen_ctrlpts_from_curve(last_ctrl_pt, curve)
+            gen_ctrlpts_from_curve(curve)
 
         elif self._plan_state == 'ls':
             # final state
@@ -1612,7 +1612,7 @@ class Robot(object):
             curve = [
                     [(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
 #            curve = curve1
-            gen_ctrlpts_from_curve(last_ctrl_pt, curve)
+            gen_ctrlpts_from_curve(curve)
 
 #            eps = self.k_mod.u_final[0,0]*self._est_dtime/(self._n_ctrlpts-1) + np.finfo(float).eps
 
@@ -1647,7 +1647,7 @@ class Robot(object):
                         self._n_ctrlpts)]
             curve = [[(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
 #            curve = curve1
-            gen_ctrlpts_from_curve(last_ctrl_pt, curve)
+            gen_ctrlpts_from_curve(curve)
 
             # correcting the [2]th ctrl pt so it take in account the initial state orientation and speed
 #            eps = self.k_mod.u_init[0,0]*self._Td/(self._n_ctrlpts-1) + 1e-6

@@ -1,11 +1,27 @@
-﻿Build started 03/06/2015 16:02:31.
+﻿Build started 08/06/2015 17:29:03.
      1>Project "C:\Users\JM246044\Dev\planning-rob\src\C++\spline_test\spline_test.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\spline_test.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\spline_test.unsuccessfulbuild".
        ClCompile:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\..\..\dependencies\ /I..\..\..\dependencies\nlopt\include /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(294): warning C4996: 'std::_Partial_sum1': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\numeric(278) : see declaration of 'std::_Partial_sum1'
+                 c:\users\jm246044\dev\planning-rob\dependencies\unsupported\eigen\src\splines\splinefitting.h(74) : see reference to function template instantiation '_OutIt std::partial_sum<double*,double*>(_InIt,_InIt,_OutIt)' being compiled
+                 with
+                 [
+                     _OutIt=double *,
+                     _InIt=double *
+                 ]
+                 c:\users\jm246044\dev\planning-rob\src\c++\spline_test\main.cpp(84) : see reference to function template instantiation 'void Eigen::ChordLengths<Eigen::RowVectorXd,KnotVectorType>(const PointArrayType &,KnotVectorType &)' being compiled
+                 with
+                 [
+                     PointArrayType=Eigen::RowVectorXd,
+                     KnotVectorType=KnotVectorType
+                 ]
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.exe" /NOLOGO "libnlopt-0.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\spline_test.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.lib" /MACHINE:X86 Debug\main.obj
+         LINK : C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.exe not found or not built by the last incremental link; performing full link
          spline_test.vcxproj -> C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.exe
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\JM246044\Dev\planning-rob\src\C++\path_planner\Debug\spline_test.exe;#1" /manifest Debug\spline_test.exe.intermediate.manifest
@@ -16,4 +32,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.66
+Time Elapsed 00:00:10.06
