@@ -198,25 +198,37 @@ David \textsc{Filliat} % Tuteur ENSTA
 
 % \todo[inline, color=green!40]{quel est le problème ? dans quel contexte le trouve t'on ? quel est  l'utilité de savoir le résoudre ?}
 
-The main objective of this internship is to implement, test, evaluate and improve an experimental path planning algorithm for mobile robots with respect to its applicability to a scenario where autonomous forklift trucks and humans share the same environment.
+This document is meant to describe the work done until now as well as the partial results and the perspectives for my final year internship as an engineering student at ENSTA ParisTech and UPMC - Paris VI.
 
-The base planning algorithm is presented in details in~\cite{Defoort2007a}.
-It consists in planning the mobile robot's path by solving a direct trajectory optimization problem~\cite{betts1998survey} using B-splines for representing the system flat output~\cite{milam2003real}.
+The first two months of this internship toke place at the "Unité Informatique et Ingénierie des Systèmes" at ENSTA under the supervision of David Filliat. After that, from May to the present I have been working at CEA LIST Digiteo Moulon under the supervision of Eric Lucet.
 
-This approach have presented good results for multirobots systems evolving in an uncertain environment with static obstacles.
+\subsection{Internship context}
 
-The main challenge that may be confronted during this work is how to generalize the algorithm in order to account for humans, i.e. dynamic obstacles.
+The work developed during this internship falls within the context of an applied research project on the automation of a forklift truck for the effective supply of assembly lines.
+
+Thus, the mobile robot has to be able to evolve in a partially known, shared with humans environment while being efficient with respect to time and energy spend on its tasks and preserving the workers safety.
+
+\subsection{Objectives}
+
+The main objective of this internship is to implement, test, evaluate and improve an experimental path planning algorithm presented in details in~\cite{Defoort2007a} with respect to its applicability to a scenario where autonomous forklift trucks and humans share the same environment.
+
+The base planning algorithm consists in planning the mobile robot's path by solving a direct trajectory optimization problem~\cite{betts1998survey} using B-splines for representing the system flat output~\cite{milam2003real}. This approach have presented good results for multi-robots systems evolving in an uncertain environment with static obstacles and compared with TODO STATE OF ART HERE.
+
+The two main challenges that may be confronted during this work is how to guarantee its real-time property for our specific application and how to generalize the algorithm in order to account for humans, i.e. dynamic obstacles.
+
 %\clearpage
 \section{Initial achievements}
 \label{sec:etatdelart}
 
 % \todo[inline, color=green!40]{présentation rapide des techniques des articles étudiés, de leur points communs et de leur différences....}
 
-During the first two months of this work we focused in understanding and reproducing the trajectory generation algorithm presented in~\cite{Defoort2007a} going from a single robot global planning method to a multirobot local real-time planning. During the third month we focused in the analysis of the impact of different parameters in the method performance and feasibility.
+During the first two months of this work we focused in understanding and reproducing the trajectory generation algorithm presented in~\cite{Defoort2007a} going from a single robot global planning method to a multi-robot local real-time planning. During the third month we focused in the analysis of the impact of different parameters in the method performance and feasibility.
 
 \subsection{Nonlinear programming problem (NLP)}
 
-Firstly we studied how the path planning problem could be translated in a nonlinear programming problem by intelligently using the mobile robot's model flatness property and representing the trajectory by B-splines.
+Firstly we studied how the path planning problem could be translated into a nonlinear programming problem by intelligently using the mobile robot's model flatness property and representing the trajectory by B-splines.
+
+\subsubsection{Problem Formulation}
 
 Let us briefly and without mathematical rigor present how the problem of finding a collision-free, optimized path for a mobile robot represented by a unicycle model can be written.
 
@@ -307,6 +319,8 @@ under the following constraints $\forall k \in \{0,\dotsc,N_s -1\}$ and $\forall
 \end{array}\right.
 \end{equation}
 
+\subsubsection{Implementation of the solution}
+
 Once we were able to write the problem as above the subsequent step was to implement this planning method using some programming language. We kept in mind that a high level language provided with some NLP solver package would be preferable.
 
 We decided to use Python language and the Scipy package. Within the Scipy module many minimization methods can be found. For this specific optimization problem, only the method SLSPQ was appropriate. It was the only one to handle constrained minimization where the constraints could be equations as well as inequations.
@@ -318,25 +332,27 @@ Besides the bad first guess we notice another problem that could cause the Scipy
 \begin{figure}[!h]
 	\centering
 	\includegraphics[width=0.7\textwidth]{./images/planning-sim-trajc.png}
-	\caption{Bad first guess.\label{fig:planning-sim-trajc}}
+	\caption{Path resulting from a bad initialisation.\label{fig:planning-sim-trajc}}
 \end{figure}
 
-A initialization algorithm was then proposed along some changes in the objective function evaluation so better solutions could be achieved quicker.
+An initialization algorithm was then proposed along some changes in the objective function evaluation so better solutions could be achieved quicker.
 
 The initialization algorithm is a simple one that interactively changes the positions of the B-splines control points in order to prevent the initial trajectory guess to pass between two obstacles that are too close together (distance inter-obstacle smaller than the robot diameter).
 
-\subsection{Evolving from the previous NLP to the sliding window multirobot decentralized approach}
+\subsection{Evolving from the previous NLP to the sliding window multi-robot decentralized approach}
 
 Solving the problem as stated in the previous subsection is only worth considering as a base initial solution to our problem.
-%We are interested here in a real-time local planner that evolves in a %partially known environment suited for a multirobot fleet.
+%We are interested here in a real-time local planner that evolves in a %partially known environment suited for a multi-robot fleet.
 
-Following the work done in~\cite{Defoort2007a} we built over the first implementation so to have a strongly decentralized planner for multirobot fleet that is collision-free with respect to the robots in the fleet as well as to static obstacles as before. This new approach was suitable for real-time implementation as well.
+Following the work done in~\cite{Defoort2007a} we built over the first implementation so to have a strongly decentralized planner for multi-robot fleet that is collision-free with respect to the robots in the fleet as well as to static obstacles as before. This new approach was suitable for real-time implementation as well.
+
+A clear advantage of TODO CENTRALIZED
 
 Using a sliding window in time the new planner produced a "per robot" intended trajectory meant to be valid within a planning horizon that was locally optimal with respect to a new objective function and collision-free only with respected to the static obstacles.
 
 The presence of other robots is taken into account in a second moment: the intended trajectory is updated after the robots involved in a possible future conflict exchange their intended trajectories so no conflict (collision or lost of communication) occur for the corrected new trajectory.
 
-Figures \ref{fig:wc} and \ref{fig:nc} show two multirobot local planning without and with collision handling.
+Figures \ref{fig:wc} and \ref{fig:nc} show two multi-robot local planning without and with collision handling.
 
 \begin{figure}[!h]
         \centering
@@ -352,7 +368,7 @@ Figures \ref{fig:wc} and \ref{fig:nc} show two multirobot local planning without
                 \includegraphics[width=\textwidth]{./images/vwc.png}
                 \caption{Velocities}\label{fig:vwc}
         \end{subfigure}
-        \caption{multirobot path generation without conflict handling.}\label{fig:wc}
+        \caption{multi-robot path generation without conflict handling.}\label{fig:wc}
 \end{figure}
 
 \begin{figure}[!h]
@@ -361,7 +377,7 @@ Figures \ref{fig:wc} and \ref{fig:nc} show two multirobot local planning without
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./images/pnc.png}
-                \caption{Generate paths}\label{fig:pnc}
+                \caption{Generated paths}\label{fig:pnc}
         \end{subfigure}
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
@@ -369,13 +385,13 @@ Figures \ref{fig:wc} and \ref{fig:nc} show two multirobot local planning without
                 \includegraphics[width=\textwidth]{./images/vnc.png}
                 \caption{Velocities}\label{fig:vnc}
         \end{subfigure}
-        \caption{multirobot path generation with conflict handling.}\label{fig:nc}
+        \caption{multi-robot path generation with conflict handling.}\label{fig:nc}
 \end{figure}
 
 %\clearpage
 \subsection{Analyzing the parameters impact on real-time feasibility and solution fitness}
 
-The performance of the motion planning algorithm previously presented depends on several parameters. For starters these parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group the most important ones are: the number of sample for time discretization ($N_s$), the number of internal knots for the B-splines curves ($n_{knots}$), and the planning and computation time horizons for the sliding windows ($T_p$ and $T_c$ respectively). The latter kind depends on the optimization solver adopted but since most of them are iterative methods is common to have at least a "maximum number of iterations" and a "stop condition" parameters.
+The performance of the motion planning algorithm previously presented depends on several parameters. For starters these parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group the most important ones are: the number of sample for time discretization ($N_s$), the number of internal knots for the B-splines curves ($n_{knots}$), and the planning and computation time horizons for the sliding windows ($T_p$ and $T_c$ respectively). The latter kind depends on the optimization solver adopted but since most of them are iterative methods it is common to have at least "maximum number of iterations" and "stop condition" parameters.
 
 The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the mission) is quite laborious.
 
@@ -478,7 +494,7 @@ Finally we proposed some metric to characterize the fitness of a found solution 
 \end{figure}
 
 %\clearpage
-\subsection{From Python to C++ using the XDE simulator}
+\subsection{From Python to XDE simulator}
 
 XDE is a physics simulation software environment fully developed by CEA-LIST that can handle a variety of physical aspects such as deformable bodies, multibody systems with kinematic constraints and contacts, and fluids.
 

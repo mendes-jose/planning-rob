@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  17 JUN 2015 17:24
+This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  18 JUN 2015 17:30
 entering extended mode
 **title_page_1.tex
 (title_page_1.tex
@@ -847,6 +847,7 @@ less on input line 182.
 Package Fancyhdr Warning: \fancyfoot's `E' option without twoside option is use
 less on input line 185.
 
+Requested font "ecbx1200" at 12.0pt
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -864,10 +865,6 @@ Requested font "msam5" at 5.0pt
 Requested font "msbm10" at 10.0pt
 Requested font "msbm7" at 7.0pt
 Requested font "msbm5" at 5.0pt
-File: ./images/planning-sim-trajc.png Graphic file (type QTm)
- <use  "./images/planning-sim-trajc.png" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -876,22 +873,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [2]
-File: ./images/pwc.png Graphic file (type QTm)
- <use  "./images/pwc.png" >
-Requested font "ecrm1095" at 10.95pt
-File: ./images/vwc.png Graphic file (type QTm)
- <use  "./images/vwc.png" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-File: ./images/pnc.png Graphic file (type QTm)
-<use  "./images/pnc.png" >
-File: ./images/vnc.png Graphic file (type QTm)
- <use  "./images/vnc.png" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-Requested font "ecbx1200" at 12.0pt
+File: ./images/planning-sim-trajc.png Graphic file (type QTm)
+ <use  "./images/planning-sim-trajc.png" >
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -899,8 +882,16 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [3]
-Requested font "ecti1200" at 12.0pt
+File: ./images/pwc.png Graphic file (type QTm)
+ <use  "./images/pwc.png" >
+Requested font "ecrm1095" at 10.95pt
+File: ./images/vwc.png Graphic file (type QTm)
+ <use  "./images/vwc.png" >
+File: ./images/pnc.png Graphic file (type QTm)
 
+<use  "./images/pnc.png" >
+File: ./images/vnc.png Graphic file (type QTm)
+ <use  "./images/vnc.png" >
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -908,6 +899,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [4]
+Requested font "ecti1200" at 12.0pt
 File: ./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps Graphic file (type
  eps)
  <./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps>
@@ -925,6 +917,9 @@ File: ./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps Graphic file (type
  eps)
 
 <./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
 File: ./images/realtime/sim_results/p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.
 0_0.5_1.0_10.0/multirobot-path.png Graphic file (type QTm)
 
@@ -944,14 +939,17 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[5] (title_page_1.bbl
+[5]
+Overfull \vbox (8.93996pt too high) has occurred while \output is active []
+
+
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[6])
+[6] (title_page_1.bbl)
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -966,10 +964,10 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  16260 strings out of 428760
  295167 string characters out of 3164296
- 459810 words of memory out of 3000000
+ 461810 words of memory out of 3000000
  19228 multiletter control sequences out of 15000+200000
  29713 words of font info for 83 fonts, out of 3000000 for 9000
  1096 hyphenation exceptions out of 8191
- 55i,17n,75p,764b,591s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,17n,75p,763b,591s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on title_page_1.pdf (8 pages).
