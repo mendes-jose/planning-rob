@@ -652,6 +652,31 @@ We take
  \item Min dist to obstacles
 \end{itemize}
 
+\clearpage
+\subsection{Obstacle penetration} \hspace{0pt}
+
+The total obstacle penetration area ($\mathrm{P}$) can be calculated as the some of the penetration area for a planning section ($\mathrm{P}_w$), that is the plan followed within a computation horizon. $P_w$ can be estimated as follows:
+
+\[
+\mathrm{P}_w \simeq \frac{T_c}{N_{Tc}} \sum _{o=0}^{M-1} \sum_{k=0}^{N_{Tc}} \frac{r_op_k - \frac{p_k^2}{2}}{r_o-p_k} v_k
+\]
+where $r_o$ is the radius of the o\textit{th} obstacle, $p_k$ is the length of the penetration and $v_k$ is the linear velocity for a given time instant $k$ within the computing horizon $w$.
+
+As expected, the greater the $N_{ssol}$ (which in turn increases $N_{Tc}$) the more accurate is the area found. We show in Figure \ref{fig:pen-conv} that the area value converges to the precise area as $N_{ssol}$ increases.
+
+ \begin{figure}[!h]
+ 	\centering
+ 	\includegraphics[width=.6\textwidth]{./img/penetration/pen-nssol.eps}
+ 	\caption{Convergence of the area computation.\label{fig:pen-conv}}
+ \end{figure}
+
+After some tests we saw that a good estimate for the penetration area can be found using $N_{ssol} > 10N_s$.
+
+Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$).
+
+\subsubsection{Influence of $N_s$ on penetration area}
+
+As state before in subsection or section TODO the sampling was the most sensible parameter regarding the computation time. The greater the number of samples the greater the number of inquations constraints and consequently the computation time for solving the NLP. Now, analyzing the impact of the sampling on the penetration area we see that the greater the number of samples the smaller is the penetration area (as expected). In Figure \ref{fig:ns-pen} we see that we have a linear relation between this two variables.
 
 %A planning horizon can make the optimization problem more expensive and since more obstacles will be taken into account within one planning section. This may explain the fact that for a given optimization solver configuration (same accuracy and same maximum number of iterations) and a given computing horizon the total time to complete the mission is greater then for some smaller planning horizons.
 %

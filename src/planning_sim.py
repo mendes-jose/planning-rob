@@ -2014,7 +2014,7 @@ class WorldSim(object):
             for j, obst in zip(range(len(self._obsts)), self._obsts):
                 or_dist[i] += [[]]
                 cno_obst = 0
-                for k, q in zip(range(len(qt[i])), qt[i]):
+                for k, q, u in zip(range(len(qt[i])), qt[i], ut[i]):
                     v = obst.pt_2_obst(np.squeeze(np.asarray(q[0:2, 0].T)), self._robs[i].rho)
                     #print v
                     or_dist[i][j] += [v]
@@ -2024,9 +2024,10 @@ class WorldSim(object):
                             no_obst[i][cno_obst] += 1
                         cno_obst += 1
                     if v < 0.0:
-                        penetr[i] += v
+
+                        penetr[i] += (-1.0*obst.radius*v - v**2/2)/(obst.radius-v)*u[0,0]
                         cpenetr[i] += 1
-                        penetr_v[i] += [v]
+                        penetr_v[i] += [(-1.0*obst.radius*v - v**2/2)/(obst.radius-v)*u[0,0]]
 #        print no_obst[0]
 #        print cno_obst
 
@@ -2038,7 +2039,7 @@ class WorldSim(object):
             else:
                 g_max_idx = 0
             if cpenetr[i] > 0:
-                logging.info('R{rid}: PEN: {d}'.format(rid=i, d=-1.0*penetr[i]*self._robs[i]._Tp/self._robs[i]._N_ssol))
+                logging.info('R{rid}: PEN: {d}'.format(rid=i, d=penetr[i]*self._robs[i]._Tp/self._robs[i]._N_ssol))
             else:
                 logging.info('R{rid}: PEN: {d}'.format(rid=i, d=0.0))
             logging.info('R{rid}: MOB: {d}'.format(rid=i, d=max(no_obst[i])))
@@ -2453,8 +2454,8 @@ if __name__ == '__main__':
 #    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
     kine_models = [UnicycleKineModel(
-            [-2.7, 0.5, .0], # q_initial
-            [2.4,  -0.5, .0], # q_final
+            [0.0, -0.5, np.pi/2.], # q_initial
+            [0.2,  15.0, np.pi/2.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max
