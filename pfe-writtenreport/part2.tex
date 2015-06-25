@@ -598,6 +598,8 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
 
 \todo[inline]{add compt time X max number of detected obsts}
 
+According to TODO REF TO NLOPT SLSQP requires $O(n^3)$, $O(n^3)$ time $n$ being the parameters dimension
+
 \clearpage
 \subsection{Total time analysis} \hspace{0pt} 
 
@@ -655,7 +657,7 @@ We take
 \clearpage
 \subsection{Obstacle penetration} \hspace{0pt}
 
-The total obstacle penetration area ($\mathrm{P}$) can be calculated as the some of the penetration area for a planning section ($\mathrm{P}_w$), that is the plan followed within a computation horizon. $P_w$ can be estimated as follows:
+The total obstacle penetration area ($\mathrm{P}$) can be calculated as the some of the penetration area for a planning section ($\mathrm{P}_w$), that is the plan followed within a computation horizon. $P_w$ for a round obstacle can be estimated as follows:
 
 \[
 \mathrm{P}_w \simeq \frac{T_c}{N_{Tc}} \sum _{o=0}^{M-1} \sum_{k=0}^{N_{Tc}} \frac{r_op_k - \frac{p_k^2}{2}}{r_o-p_k} v_k
@@ -672,11 +674,17 @@ As expected, the greater the $N_{ssol}$ (which in turn increases $N_{Tc}$) the m
 
 After some tests we saw that a good estimate for the penetration area can be found using $N_{ssol} > 10N_s$.
 
-Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$).
+Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$). This approach presents a 
 
 \subsubsection{Influence of $N_s$ on penetration area}
 
 As state before in subsection or section TODO the sampling was the most sensible parameter regarding the computation time. The greater the number of samples the greater the number of inquations constraints and consequently the computation time for solving the NLP. Now, analyzing the impact of the sampling on the penetration area we see that the greater the number of samples the smaller is the penetration area (as expected). In Figure \ref{fig:ns-pen} we see that we have a linear relation between this two variables.
+
+ \begin{figure}[!h]
+ 	\centering
+ 	\includegraphics[width=.6\textwidth]{./img/penetration/pen-nsi.eps}
+ 	\caption{Penetration area varying with $N_s$.\label{fig:ns-pen}}
+ \end{figure}
 
 %A planning horizon can make the optimization problem more expensive and since more obstacles will be taken into account within one planning section. This may explain the fact that for a given optimization solver configuration (same accuracy and same maximum number of iterations) and a given computing horizon the total time to complete the mission is greater then for some smaller planning horizons.
 %

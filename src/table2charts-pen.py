@@ -23,8 +23,15 @@ with open(direc+'/table.csv', 'rb') as csvfile:
     tlist = list(treader)
     header = tlist[0]
     table = np.array(tlist[1:])
+with open(direc+'/table2.csv', 'rb') as csvfile:
+    treader = csv.reader(csvfile, delimiter=',',quotechar='|',quoting=csv.QUOTE_NONNUMERIC)
+    tlist = list(treader)
+    header = tlist[0]
+    print tlist[0]
+    print tlist[-1]
+    table = np.append(table, np.array(tlist[1:]), axis=0)
 
-
+print table[-1]
 nkni = header.index('Nkn')
 nobsti = header.index('Nobsts')
 nsi = header.index('Ns')
@@ -88,6 +95,13 @@ for scnt in scenarios_tables:
         nsinf = min(knt[:, nsi]) if nsinf < min(knt[:, nsi]) else nsinf
         nssup = max(knt[:, nsi]) if nssup > max(knt[:, nsi]) else nssup
 
+    all_Ns = []
+    for v in knots_tables[0][:, nsi]:
+        if v not in all_Ns and (v >= nsinf and v <= nssup):
+            all_Ns += [v]
+    n_Ns = len(all_Ns)
+    all_pen = np.zeros(n_Ns)
+
     # iterate on knots tables
     for knt in knots_tables:
 
@@ -95,13 +109,6 @@ for scnt in scenarios_tables:
         fig += [plt.figure()]
         fidx = len(fig) - 1
         ax = fig[fidx].gca()
-
-        # Get how many different Ns there are and their values
-        all_Ns = []
-        for v in knt[:, nsi]:
-            if v not in all_Ns and (v >= nsinf and v <= nssup):
-                all_Ns += [v]
-        n_Ns = len(all_Ns)
 
         print('N Ns for scn {0} knot {1}: {2}'.format(scnt[0, nobsti], knt[0, nkni], n_Ns))
         print('Ns for scn {0} knot {1}: {2}'.format(scnt[0, nobsti], knt[0, nkni], all_Ns))
@@ -119,45 +126,40 @@ for scnt in scenarios_tables:
         except OSError:
             print('Probably the output directory already exists, going to overwrite content')
 
-        direc_scen = direc_charts+'/Scenario_{a:.0f}__N_knots_{b:.0f}'.format(b=knt[0,nkni], a=scnt[0,nobsti])
-        try:
-            os.mkdir(direc_scen)
-        except OSError:
-            print('Probably the output directory already exists, going to overwrite content')
-
-
         # create lines colors
         colors_ns = plt.get_cmap('jet')([int(round(rgb)) for rgb in np.linspace(0, 255, n_Ns)])
 
         all_y_init = False
 
         # iterate over ns_tables
-        #for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
+#        for nst, nsidx in zip(ns_tables, range(len(ns_tables))):
 
-            #if nst[0, nsi] < nsinf or nst[0, nsi] > nssup:
-                #continue
+#            if nst[0, nsi] < nsinf or nst[0, nsi] > nssup:
+#                continue
             
 #            all_pen = nst[0:15, peni]
-#            all_nssol = nst[0:15, nssoli]/nst[0, nsi]
+#            all_ns = nst[:, nssoli]/nst[:, nsi]
 #
 #            ax.plot(all_nssol, all_pen, label='P(N_ssol) with N_s = 10'.format(nst[0,nsi]),linewidth=1,\
 #                    color=colors_ns[nsidx],marker='.')
 #
 #            ax.plot([0.0, all_nssol[-1]], [0.0031515750838]*2, ls='--',color='k', label='P(N_ssol>>N_s)')
 
-        all_pen = knt[:, peni]
+        all_pen += knt[:, peni]
 
-        ax.plot(all_Ns, all_pen, label='P(N_s)', marker='.')
+    all_pen /= n_knots
+
+    ax.plot(all_Ns, all_pen, label='P(N_s)', marker='.')
 
 
-        ax.set_xlabel('N_s')
-        ax.set_ylabel('P (m2)')
-        handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles, labels, loc=1)
-        #ax.set_xlim(0.0,all_Ns[-1])
-        fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-        fig[fidx].savefig(direc_scen+'/pen-nsi.eps', bbox_inches='tight', dpi=100)
-        fig[fidx].savefig(direc_scen+'/pen-nsi.png', bbox_inches='tight', dpi=100)
+    ax.set_xlabel('N_s')
+    ax.set_ylabel('P (m2)')
+    handles, labels = ax.get_legend_handles_labels()
+    #ax.legend(handles, labels, loc=1)
+    #ax.set_xlim(0.0,all_Ns[-1])
+    fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
+    fig[fidx].savefig(direc_charts+'/pen-nsi.eps', bbox_inches='tight', dpi=100)
+    fig[fidx].savefig(direc_charts+'/pen-nsi.png', bbox_inches='tight', dpi=100)
 
 #plt.show()
 

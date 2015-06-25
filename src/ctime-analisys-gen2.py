@@ -51,8 +51,8 @@ dist_opt = 1e1 # param deprecated TODO
 #for N_ssol in range(10*10, 200*10, 5):
     #for drho in _frange(1.2, 15.0, 0.5):
 for drho in [15.0]:
-    for n_obsts in [3 , 7]:
-        for n_knots in [4, 5, 6]:
+    for n_obsts in [7]:
+        for n_knots in [9, 10]:
         #        for N_s in range(n_knots+3+1, (n_knots+3+1)+3, 1):
             for N_s in range(10, 27, 1):
                 for N_ssol in [15*N_s]:
