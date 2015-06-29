@@ -278,7 +278,7 @@ Finally, when dealing with more complex obstacles representations and/or with a 
 %Symmetry problem \todo[inline, size=\tiny]{Tc too high no time to avoid another robot involved}
 %Gilbert-Johnson-Keerthi distance algorithm
 
-\section{Analysis of real-time planning feasibility and total time performance}
+\section{Analysis of the parameters impact on real-time feasibility and solution adequacy}
 
 The performance and solution quality of the motion planning algorithm previously presented depends on several parameters. These parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group, the most important ones are:
 \begin{itemize}
@@ -301,22 +301,30 @@ This high number of parameters having influence on the solution and/or on the ti
 We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution and its computation time based on several simulations run with different parameters configurations.
 The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
 
-%At first we were interest in finding how variations in $$ tc tp ns nknots impart the computation time for finding a solution.
-%
+After these analyses we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints
+and minimizing the \textit{maximum computation time}/$T_c$ ratio.
+
+\subsection{Computation time analysis}
+
+At first we were interest in finding how variations in $T_c$ ns nknots impart the computation time for finding a solution.
+
 Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle
 to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second
 only with six instead of three obstacles.
 
 In addition, to reduce the problem's size, a unique optimization solver with fixed parameters was used for all simulations.
-The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process. This is possible because of two aspects of the problem addressed:
+The used parameters can be seen in table~\ref{tab:optparam}. The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first
+optimization problem solving, for all intermediaries ones and for the last one.
+Different maximum numbers of iterations are used for different stages of the planning process. This is possible because of two aspects of the problem addressed:
 \begin{itemize}
-\item[$\bullet$] We assume that the initial configuration at time $t_0$ is static and thus the planning of the first section of the plan does not have to be done within the computation horizon ($T_c$). We choose then to increase the maximum number of iterations for the first planning section in order to eventually achieve better results;
-\item[$\bullet$] According to the change in the algorithm for solving the NPL associated with the last section of the plan we know that usually\footnote{explain usually TODO} the last step uses a smaller number of internal knots ($N_{knots}$) than the other steps. In the other hand, this final NPL has more constraints than the others NPLs solved before. Since the SLSPQ method requires $O(n^3)$ time where $n$, the dimension of the parameter vector, is directly proportional to the number of internal knots.  we intuitively 
+\item[$\bullet$] We assume that the initial configuration at time $t_0$ is static and thus the planning of the first section of the plan does not have to be done within the computation horizon ($T_c$). We choose then to increase the maximum number of iterations for the first planning section in order to achieve better results;
+\item[$\bullet$] According to the change in the algorithm for solving the NPL associated with the last section of the plan we know that the last step uses a number of internal knots
+($N_{knots}$) smaller than or equal to the number used by the other steps. In the other hand, this final NPL has more constraints than the others NPLs solved before for a given $N_s$.
+Since the SLSPQ method requires $O(n^3)$ time to find a solution, where $n$, the dimension of the parameter vector, is directly proportional to the number of internal knots we assume
+that the number of maximum iterations for the last step can be increased.
 
 %The NPL solved for last planning section has more constraints then the others NPLs. This alone does not justify giving it a greater maximum number of iterations since the solution still must be found within a $T_c$ horizon. The other factor that allow us to decrease it is that 
 \end{itemize}
-The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first
-optimization problem solving, for all intermediaries ones and for the last one.
 
 %\todo[inline]{talk about accuracy}
 
@@ -339,17 +347,11 @@ accuracy & $10^{-3}$\\
 \end{center}
 \end{table}
 
-Real-time feasibility in this context can be considered as having the \textit{maximum computational time} spend for planning the path sections
-\footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$) .
-%Here though we are only interest in understanding the variation of \textit{maximum computational time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
+Real-time feasibility in this context can be considered as having the \textit{maximum computation time} spend for planning the path sections
+\footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$).
+%Here though we are only interest in understanding the variation of \textit{maximum computation time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
 
-Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
-
-After this analysis we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints
-and minimizing the \textit{maximum computational time}/$T_c$ ratio.
-
-
-\subsection{Computation time analysis}
+%Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
 
 \subsubsection{No obstacles scenario}
 %INFO:R0: TOT: 7.16220241525
@@ -363,9 +365,12 @@ and minimizing the \textit{maximum computational time}/$T_c$ ratio.
 %INFO:R0: RMP: 0.125865340233
 %INFO:R0: RMG: 0.77944278717
 
-The images in the Figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computational time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computational time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ values in order to be $T_p$ invariant.
+The images in the Figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computation time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computation time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ values in order to be $T_p$ invariant.
 
-We can see that for a "no obstacles" scenario the overall performance with respect to the \textit{maximum computational time}/$T_c$ ratio is only slightly impacted by variations in the number of samples ($N_s$) and in the number of internal knots ($N_{knots}$). Within a given image the lines are close together showing that variations in $N_s$ have weak impact. In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence.
+We can see that for a "no obstacles" scenario the overall performance with respect to the \textit{maximum computation time}/$T_c$ ratio is only slightly impacted by
+variations in the number of samples ($N_s$) and in the number of internal knots ($N_{knots}$).
+Within a given image the lines are close together showing that variations in $N_s$ have weak impact.
+In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence for this scenario.
 
 \begin{figure}[!h]
         \centering
@@ -434,7 +439,7 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
 		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_0_0.4_2.0_9_5_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
                 \caption{Robot's input.}\label{fig:sim0rinput}
         \end{subfigure}
-        \caption{No obstacle scenario simulation example where the \textit{maximum computational time} was about 78\% of $T_c$ and the mission total time equals to $7.16\ s$.}\label{fig:sim0}
+        \caption{No obstacle scenario simulation example where the \textit{maximum computation time} was about 78\% of $T_c$ and the mission total time equals to $7.16\ s$.}\label{fig:sim0}
 \end{figure}
 \clearpage
 \subsubsection{Three obstacles scenario}
@@ -450,7 +455,7 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
 %INFO:R0: RMG: 0.83921700716
 %p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0
 
-For this new scenario, a greater impact of the number of samples ($N_s$) and number of non-null internal knots ($N_{knots}$) is observed. The greater the $N_{knots}$ or the $N_s$ the greater is the \textit{maximum computational time}/$T_c$. This behavior is the one expected since the number of constraints and the number of arguments for the cost function to be minimized depend on these two parameters respectively.
+For this new scenario, a greater impact of the number of samples ($N_s$) and number of non-null internal knots ($N_{knots}$) is observed. The greater the $N_{knots}$ or the $N_s$ the greater is the \textit{maximum computation time}/$T_c$. This behavior is the one expected since the number of constraints and the number of arguments for the cost function to be minimized depend on these two parameters respectively.
 
 \begin{figure}[!h]
         \centering
@@ -527,7 +532,7 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
 		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
                 \caption{Robot's input.}\label{fig:rinput}
         \end{subfigure}
-        \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 84\% of $T_c$ and the mission total time equals to $7.57\ s$.}\label{fig:uni3}
+        \caption{Three obstacle scenario simulation example where the \textit{maximum computation time} was about 84\% of $T_c$ and the mission total time equals to $7.57\ s$.}\label{fig:uni3}
 \end{figure}
 \clearpage
 \subsubsection{Six obstacles scenario}
@@ -625,7 +630,7 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
 		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_6_1.28_3.2_12_6_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
                 \caption{Robot's input.}\label{fig:rinput}
         \end{subfigure}
-        \caption{Three obstacle scenario simulation example where the \textit{maximum computational time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
+        \caption{Three obstacle scenario simulation example where the \textit{maximum computation time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
 \end{figure}
 
 \todo[inline]{add compt time X max number of detected obsts}
