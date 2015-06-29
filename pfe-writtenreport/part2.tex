@@ -208,7 +208,7 @@ As sad before the robot's geometric form is represented by a circle.
 When calculating the robot-to-obstacle distance this simplified representation is quite useful. 
 The first approach to calculate the distance between a point and an obstacle represented by a convex polygon
 was to separate the problem in three cases with a different expression for the distance computation each.
-We see in the figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ are placed in three different
+We see in the Figure~\ref{fig:convexpolygon} that the points $A$, $B$ and $C$ are placed in three different
 regions with respect to the obstacle. $A$ is "between" the two lines ($r_{0,1}$ and $r_{0,3}$) that pass through
 the vertex $0$ and are orthogonal to the the two adjacent edges. $B$ is "between" the edge $s_{3}$, and the
 orthogonal lines $r_{0,3}$ and $r_{3,2}$. $C$ is in the interior of the obstacle representation, i.e., surrounded by the four edges.
@@ -279,17 +279,37 @@ Finally, when dealing with more complex obstacles representations and/or with a 
 
 \section{Analysis of real-time planning feasibility and total time performance}
 
-The performance of the motion planning algorithm previously presented depends on several parameters. For starters these parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group the most important ones are: the number of sample for time discretization ($N_s$), the number of internal knots for the B-splines curves ($n_{knots}$), and the planning and computation time horizons ($T_p$ and $T_c$ respectively). The latter kind depends on the optimization solver adopted but since most of them are iterative methods is common to have at least a "maximum number of iterations" and a "stop condition" parameters.
+The performance and solution quality of the motion planning algorithm previously presented depends on several parameters. These parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones. Among the former group, the most important ones are:
+\begin{itemize}
+\item[$\bullet$] The number of sample for time discretization ($N_s$);
+\item[$\bullet$] The number of internal knots for the B-splines curves ($n_{knots}$);
+\item[$\bullet$] The planning horizon for the sliding window ($T_p$);
+\item[$\bullet$] The computation horizon ($T_c$).
+\end{itemize}
 
-The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the mission) is quite laborious.
+The latter kind depends on the optimization solver adopted. However, since most of them are iterative methods, it is common to have at least the two following parameters:
+\begin{itemize}
+\item[$\bullet$] Maximum number of iterations;
+\item[$\bullet$] Stop condition.
+\end{itemize}
 
-We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution based on several simulations run with different parameters configurations. The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
+%The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the miss1ion) is quite laborious.
 
-Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second only with six instead of three obstacles.
+This high number of parameters having influence on the solution and/or on the time for finding a solution makes the search for a satisfactory set of parameters' values a laborious task.
 
-In the other hand, to reduce the problem's size, a unique optimization solver with fixed parameters was used for all simulations. The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process. The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first optimization problem solving, for all intermediaries ones and for the last one.
+We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution based on several simulations run with different parameters configurations.
+The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
 
-\todo[inline]{talk about accuracy}
+Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle
+to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second
+only with six instead of three obstacles.
+
+In addition, to reduce the problem's size, a unique optimization solver with fixed parameters was used for all simulations.
+The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process.
+The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first
+optimization problem solving, for all intermediaries ones and for the last one.
+
+%\todo[inline]{talk about accuracy}
 
 \begin{table}[!h]
 \caption {Optimization solver parameters} \label{tab:optparam}
@@ -310,11 +330,14 @@ accuracy & $10^{-3}$\\
 \end{center}
 \end{table}
 
-Real-time feasibility in this context can be considered as having the \textit{maximum computational time} spend for planning the path sections \footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$) . Here though we are only interest in understanding the variation of \textit{maximum computational time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
+Real-time feasibility in this context can be considered as having the \textit{maximum computational time} spend for planning the path sections
+\footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$) .
+%Here though we are only interest in understanding the variation of \textit{maximum computational time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
 
 Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
 
-After this analysis we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints and minimizing the \textit{maximum computational time}/$T_c$ ratio.
+After this analysis we shall be able to identify sets of parameters' values that minimize the total time spend to complete the mission, respecting the problem constraints
+and minimizing the \textit{maximum computational time}/$T_c$ ratio.
 
 
 \subsection{Computation time analysis}
@@ -331,7 +354,7 @@ After this analysis we shall be able to identify sets of parameters' values that
 %INFO:R0: RMP: 0.125865340233
 %INFO:R0: RMG: 0.77944278717
 
-The images in the figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computational time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computational time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ values in order to be $T_p$ invariant.
+The images in the Figure~\ref{fig:uni0} try to make prominent the effect of changes in the in the number of samples ($N_s$) and number of internal knots ($N_{knots}$). In the ordinate axis we have the \textit{maximum computational time}/$T_c$ ratio and in the abscissa we have the $T_c/T_p$. For each $N_s$ we took the average of the \textit{maximum computational time}/$T_c$ ratio for a give $T_c/T_p$ among different $T_p$ values in order to be $T_p$ invariant.
 
 We can see that for a "no obstacles" scenario the overall performance with respect to the \textit{maximum computational time}/$T_c$ ratio is only slightly impacted by variations in the number of samples ($N_s$) and in the number of internal knots ($N_{knots}$). Within a given image the lines are close together showing that variations in $N_s$ have weak impact. In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence.
 
@@ -357,7 +380,7 @@ We can see that for a "no obstacles" scenario the overall performance with respe
         \caption{Zero obstacles scenario.}\label{fig:uni0}
 \end{figure}
 
-For the sake of an example we present a simulation result in the figure~\ref{fig:sim0} run with the parameters presented in the table~\ref{tab:s0param} for a "no obstacles" scenario.
+For the sake of an example we present a simulation result in the Figure~\ref{fig:sim0} run with the parameters presented in the table~\ref{tab:s0param} for a "no obstacles" scenario.
 
 \begin{table}[!h]
 \caption {Motion planner main parameters} \label{tab:s0param}
@@ -444,7 +467,7 @@ For this new scenario, a greater impact of the number of samples ($N_s$) and num
         \caption{Three obstacles scenario.}\label{fig:uni3}
 \end{figure}
 
-Again, in the figure~\ref{fig:sim0} we show a simulation example run with the parameters' values presented in table~\ref{tab:s3param}.
+Again, in the Figure~\ref{fig:sim0} we show a simulation example run with the parameters' values presented in table~\ref{tab:s3param}.
 
 \begin{table}[!h]
 \caption {Motion planner main parameters} \label{tab:s3param}

@@ -49,13 +49,14 @@ deps = 5.0; seps = 0.1;
 N_ssol = 50;
 dist_opt = 1e1 # param deprecated TODO
 #for N_ssol in range(10*10, 200*10, 5):
-    #for drho in _frange(1.2, 15.0, 0.5):
-for drho in [15.0]:
+for drho in _frange(1.2, 7.0, 0.4):
+#for drho in [15.0]:
     for n_obsts in [7]:
-        for n_knots in [9, 10]:
+        for n_knots in [5]:
         #        for N_s in range(n_knots+3+1, (n_knots+3+1)+3, 1):
-            for N_s in range(10, 27, 1):
-                for N_ssol in [15*N_s]:
+            #for N_s in range(10, 27, 1):
+            for N_s in [12]:
+                for N_ssol in [2*N_s]:
         #            for tp in np.linspace(2.0, 6.0, 10, endpoint=False):
                     tp_i = .8
                     tp_f = 5.0

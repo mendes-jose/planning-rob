@@ -1,4 +1,4 @@
-        """
+"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -25,6 +25,7 @@ import os
 import logging
 from scipy.optimize import fmin_slsqp
 from optparse import OptionParser
+import pyOpt
 
 __version__ = '1.0.0'
 
@@ -1398,14 +1399,14 @@ class Robot(object):
         qtTp = map(self.k_mod.phi_1, dztTp)
 
         ## Obstacles constraints
-        # N_s*nb_obst_detected
+        # (N_s-1)*nb_obst_detected
         obst_cons = []
         for m in self._detected_obst_idxs:
             obst_cons += [self._obst[m].pt_2_obst(np.squeeze(np.asarray(qt[0:2, 0].T)), self.rho)\
                     for qt in qtTp]
 
         ## Max speed constraints
-        # N_s*u_dim inequations
+        # (N_s-1)*u_dim inequations
         max_speed_cons = list(itertools.chain.from_iterable(
                 [[self.k_mod.u_max[i, 0]-abs(ut[i, 0]) for i in range(self.k_mod.u_dim)]\
                 for ut in utTp]))
@@ -1491,60 +1492,156 @@ class Robot(object):
         and :attr:`_t_final` attributes.
         """
 
-        if self._plan_state != 'ls':
-            if self._std_alone:
-                p_criterion = self._sa_criterion
-                p_eqcons = self._sa_feqcons
-                p_ieqcons = self._sa_fieqcons
-            else:
-                p_criterion = self._co_criterion
-                p_eqcons = self._co_feqcons
-                p_ieqcons = self._co_fieqcons
+        if True:
+            if self._plan_state != 'ls':
+                if self._std_alone:
+                    p_objfunc = self._sa_objfunc
+                    p_constr = self._sa_constr
+                    eq_constr_len = self.k_mod.q_dim + self.k_mod.u_dim
+                    iq_constr_len = (self.N_s-1)*self.mrob.u_dim +
+                            (self.N_s-1)*len(self._detected_obst_idxs)
+                else:
+                    p_objfunc = self._co_objfunc
+                    p_constr = self._co_constr
+                    eq_constr_len = self.k_mod.q_dim + self.k_mod.u_dim
 
-            init_guess = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
-            acc = self._acc
-            maxit = self._maxit if self._plan_state == 'ms' else self._fs_maxit
+                    iq_constr_len = (self.N_s-1)*self.mrob.u_dim +
+                            (self.N_s-1)*len(self._detected_obst_idxs)+
+                            len(self._collision_robs_idx)* self._sa_dz.shape[1]+
+                            len(self._com_robs_idx)* self._sa_dz.shape[1]+
+                            len(self._sa_dz.shape[1]
+    
+                init_guess = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+                acc = self._acc
+                maxit = self._maxit if self._plan_state == 'ms' else self._fs_maxit
+    
+            else:
+                if self._std_alone:
+                    p_objfunc = self._ls_sa_objfunc
+                    p_constr = self._ls_sa_constr
+                    eq_constr_len = 2*(self.k_mod.q_dim + self.k_mod.u_dim)
+                    iq_constr_len = (self.N_s-2)*self.mrob.u_dim +
+                            (self.N_s-2)*len(self._detected_obst_idxs), # dimenstion
+                else:
+                    p_objfunc = self._ls_co_objfunc
+                    p_constr = self._ls_co_constr
+                    eq_constr_len = self.k_mod.q_dim + self.k_mod.u_dim
+                    iq_constr_len = (self.N_s-1)*self.mrob.u_dim +
+                            (self.N_s-1)*len(self._detected_obst_idxs), # dimenstion
+    
+                eq_constr_len = self.k_mod.q_dim + self.k_mod.u_dim
+                iq_constr_len = (self.N_s-1)*self.mrob.u_dim +
+                            (self.N_s-1)*len(self._detected_obst_idxs), # dimenstion
+                init_guess = np.append(np.asarray([self._est_dtime]),
+                        self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
+                acc = self._acc
+                maxit = self._ls_maxit
+
+            # Define the optimization problem
+            self.opt_prob = pyOpt.Optimization(
+                    'Faster path with obstacles', # name of the problem
+                    p_objfunc) # object function (criterium, eq. and ineq.)
+    
+            self.opt_prob.addObj('J')
+    
+            self.opt_prob.addVarGroup( # minimization arguments
+                    'C',
+                    len(init_guees), # dimension
+                    'c', # continous
+#                    lower=list(C_lower),
+                    value=list(init_guess),
+ #                   upper=list(C_upper))
+    
+            self.opt_prob.addConGroup( # equations constraints
+                    'ec',
+                    self.k_mod.q_dim + self.k_mod.u_dim, # dimension
+                    'e') # equations
+    
+            self.opt_prob.addConGroup( # inequations constraints
+                    'ic',
+                    self.N_s*self.mrob.u_dim +
+                            self.N_s*len(self.detected_obst_idxs), # dimenstion
+                    'i') # inequations
+    
+            # solve constrained optmization
+#            solver = pyOpt.SLSQP(pll_type='POA')
+#            solver.setOption('ACC', 1e-6)
+#            solver.setOption('MAXIT', 30)
+            solver = pyOpt.ALGENCAN(pll_type='POA')
+            solver.setOption('epsfeas', 1e-1)
+            solver.setOption('epsopt', 9e-1)
+    
+            [J, C_aux, information] = solver(self.opt_prob) 
+            C_aux = np.array(C_aux)
+
+            if self._plan_state == 'ls':
+                self._C[0:self._n_ctrlpts,:] = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+                self._dt_final = output[0][0]
+                self._t_final = self._mtime[0] + self._dt_final
+            else:
+                self._C[0:self._n_ctrlpts,:] = output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+    #            #imode = output[3]
+    #            # TODO handle optimization exit mode
+    
+            self._n_it = output[2]
+            self._exit_mode = output[4]
+
 
         else:
-            if self._std_alone:
-                p_criterion = self._ls_sa_criterion
-                p_eqcons = self._ls_sa_feqcons
-                p_ieqcons = self._ls_sa_fieqcons
+            if self._plan_state != 'ls':
+                if self._std_alone:
+                    p_criterion = self._sa_criterion
+                    p_eqcons = self._sa_feqcons
+                    p_ieqcons = self._sa_fieqcons
+                else:
+                    p_criterion = self._co_criterion
+                    p_eqcons = self._co_feqcons
+                    p_ieqcons = self._co_fieqcons
+    
+                init_guess = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+                acc = self._acc
+                maxit = self._maxit if self._plan_state == 'ms' else self._fs_maxit
+    
             else:
-                p_criterion = self._ls_co_criterion
-                p_eqcons = self._ls_co_feqcons
-                p_ieqcons = self._ls_co_fieqcons
-
-            init_guess = np.append(np.asarray([self._est_dtime]),
-                    self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
-            acc = self._acc
-            maxit = self._ls_maxit
-
-        output = fmin_slsqp(
-            p_criterion,
-            init_guess,
-            eqcons=(),
-            f_eqcons=p_eqcons,
-            ieqcons=(),
-            f_ieqcons=p_ieqcons,
-            iprint=0,
-            iter=maxit,
-            acc=acc,
-            full_output=True)
-
-            #imode = output[3]
-            # TODO handle optimization exit mode
-        if self._plan_state == 'ls':
-            self._C[0:self._n_ctrlpts,:] = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
-            self._dt_final = output[0][0]
-            self._t_final = self._mtime[0] + self._dt_final
-        else:
-            self._C[0:self._n_ctrlpts,:] = output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)
-#            #imode = output[3]
-#            # TODO handle optimization exit mode
-
-        self._n_it = output[2]
-        self._exit_mode = output[4]
+                if self._std_alone:
+                    p_criterion = self._ls_sa_criterion
+                    p_eqcons = self._ls_sa_feqcons
+                    p_ieqcons = self._ls_sa_fieqcons
+                else:
+                    p_criterion = self._ls_co_criterion
+                    p_eqcons = self._ls_co_feqcons
+                    p_ieqcons = self._ls_co_fieqcons
+    
+                init_guess = np.append(np.asarray([self._est_dtime]),
+                        self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
+                acc = self._acc
+                maxit = self._ls_maxit
+    
+            output = fmin_slsqp(
+                p_criterion,
+                init_guess,
+                eqcons=(),
+                f_eqcons=p_eqcons,
+                ieqcons=(),
+                f_ieqcons=p_ieqcons,
+                iprint=0,
+                iter=maxit,
+                acc=acc,
+                full_output=True)
+    
+                #imode = output[3]
+                # TODO handle optimization exit mode
+            if self._plan_state == 'ls':
+                self._C[0:self._n_ctrlpts,:] = output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+                self._dt_final = output[0][0]
+                self._t_final = self._mtime[0] + self._dt_final
+            else:
+                self._C[0:self._n_ctrlpts,:] = output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)
+    #            #imode = output[3]
+    #            # TODO handle optimization exit mode
+    
+            self._n_it = output[2]
+            self._exit_mode = output[4]
 
     def _plan_section(self):
         """ This method takes care of planning a section of the final path over a :math:`T_{d/p}`
