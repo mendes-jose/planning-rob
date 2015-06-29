@@ -1,3 +1,4 @@
+\selectlanguage{english}
 \part{Internship Contribution}
 
 \chapter{Global Near-optimal Solution for Path Planning}
@@ -297,15 +298,23 @@ The latter kind depends on the optimization solver adopted. However, since most 
 
 This high number of parameters having influence on the solution and/or on the time for finding a solution makes the search for a satisfactory set of parameters' values a laborious task.
 
-We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution based on several simulations run with different parameters configurations.
+We attempt nevertheless to extract some quantitative knowledge about how these parameters impact the generated solution and its computation time based on several simulations run with different parameters configurations.
 The main objective here is to be able to support the feasibility of a real-time motion planner based on this algorithm.
 
+%At first we were interest in finding how variations in $$ tc tp ns nknots impart the computation time for finding a solution.
+%
 Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle
 to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second
 only with six instead of three obstacles.
 
 In addition, to reduce the problem's size, a unique optimization solver with fixed parameters was used for all simulations.
-The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process.
+The used parameters can be seen in table~\ref{tab:optparam}. Different maximum numbers of iterations are used for different stages of the planning process. This is possible because of two aspects of the problem addressed:
+\begin{itemize}
+\item[$\bullet$] We assume that the initial configuration at time $t_0$ is static and thus the planning of the first section of the plan does not have to be done within the computation horizon ($T_c$). We choose then to increase the maximum number of iterations for the first planning section in order to eventually achieve better results;
+\item[$\bullet$] According to the change in the algorithm for solving the NPL associated with the last section of the plan we know that usually\footnote{explain usually TODO} the last step uses a smaller number of internal knots ($N_{knots}$) than the other steps. In the other hand, this final NPL has more constraints than the others NPLs solved before. Since the SLSPQ method requires $O(n^3)$ time where $n$, the dimension of the parameter vector, is directly proportional to the number of internal knots.  we intuitively 
+
+%The NPL solved for last planning section has more constraints then the others NPLs. This alone does not justify giving it a greater maximum number of iterations since the solution still must be found within a $T_c$ horizon. The other factor that allow us to decrease it is that 
+\end{itemize}
 The subscribed words \textit{first}, \textit{inter} and \textit{last} indicate that the respective maximum numbers of iteration are used for the first
 optimization problem solving, for all intermediaries ones and for the last one.
 
