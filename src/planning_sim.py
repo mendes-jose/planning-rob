@@ -1,4 +1,4 @@
-        """
+"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -1714,8 +1714,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 

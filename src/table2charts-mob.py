@@ -87,6 +87,8 @@ for m, idx in zip(table[:, mobi], range(len(table[:, mobi]))):
 #ax.set_xlabel('mob')
 ax.set_ylabel('Mission time (s)')
 ax2.set_ylabel('MCT/Tc (s)')
+ax.set_xlabel('Drho (m)')
+ax2.set_xlabel('Drho (m)')
 handles, labels = ax.get_legend_handles_labels()
 #ax.legend(handles, labels, loc=1)
 #ax.set_xlim(0.0,all_Ns[-1])
@@ -102,7 +104,6 @@ fig2.savefig(direc_charts+'/drho-rmp.eps', bbox_inches='tight', dpi=100)
 fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight', dpi=100)
 
 exit()
-raw_input()
 
 # split table on n_scenarios tables
 scenarios_tables = []

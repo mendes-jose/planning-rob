@@ -306,7 +306,7 @@ and minimizing the \textit{maximum computation time}/$T_c$ ratio.
 
 \subsection{Computation time analysis}
 
-At first we were interest in finding how variations in $T_c$ ns nknots impart the computation time for finding a solution.
+At first we were interest in finding how variations in $N_s$ and $N_{knots}$ impart the computation time for finding a solution.
 
 Aiming for a scenario invariant understanding of the impact of these parameters three different scenarios were studied. A first scenario where the robot did not had to avoid any obstacle
 to complete its mission, a second one where three round obstacles were randomly generated in a region where the robot was probably going to pass through and a third similar to the second
@@ -349,7 +349,7 @@ accuracy & $10^{-3}$\\
 
 Real-time feasibility in this context can be considered as having the \textit{maximum computation time} spend for planning the path sections
 \footnote{All computational times spend for planning all sections are considered for finding the maximum value but the first one} less than or equal to the computation horizon ($T_c$).
-%Here though we are only interest in understanding the variation of \textit{maximum computation time}/$T_c$ with changes on $T_c$, $T_p$, $N_s$, $N_{knots}$.
+Here though we are only interest in understanding the variation of \textit{maximum computation time}/$T_c$ with changes in $N_s$ and $N_{knots}$.
 
 %Another natural performance metric that should be kept in mind is the total time spend to complete the mission (going from the initial configuration to the final).
 
@@ -455,7 +455,10 @@ $u_{final}$ & $[0.00\ 0.00]^T$\\
 %INFO:R0: RMG: 0.83921700716
 %p_3_0.48_2.4_11_4_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0
 
-For this new scenario, a greater impact of the number of samples ($N_s$) and number of non-null internal knots ($N_{knots}$) is observed. The greater the $N_{knots}$ or the $N_s$ the greater is the \textit{maximum computation time}/$T_c$. This behavior is the one expected since the number of constraints and the number of arguments for the cost function to be minimized depend on these two parameters respectively.
+For this new scenario, a greater impact of the number of samples ($N_s$) and number of non-null internal knots ($N_{knots}$) is observed.
+The greater the $N_{knots}$ or the $N_s$ the greater is the \textit{maximum computation time}/$T_c$.
+This behavior is the one expected since the number of constraints and the number of arguments for the cost function
+to be minimized depend on these two parameters respectively.
 
 \begin{figure}[!h]
         \centering
@@ -630,21 +633,44 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
 		\includegraphics[width=\textwidth]{./img/realtime/sim_results/p_6_1.28_3.2_12_6_0.001_15_40_20_5.0_0.1_3.0_0.5_1.0_10.0/multirobot-vw.png}
                 \caption{Robot's input.}\label{fig:rinput}
         \end{subfigure}
-        \caption{Three obstacle scenario simulation example where the \textit{maximum computation time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
+        \caption{Six obstacle scenario simulation example where the \textit{maximum computation time} was about 90\% of $T_c$ and the mission total time equals to $7.76\ s$.}\label{fig:uni3}
 \end{figure}
 
 \todo[inline]{add compt time X max number of detected obsts}
 
-According to TODO REF TO NLOPT SLSQP requires $O(n^3)$, $O(n^3)$ time $n$ being the parameters dimension
+A deeper analysis showed us that the SLSQP solver requires $O(n^3)$ time for finding the NPL solution, $n$ being the parameters dimension which is directly
+proportional to $N_{knots}$. However the solver require $O(N)$ time, $N$ being the constraints dimension which is directly proportional to $N_s$.
+
+Worth noticing though that the complexy orders just presented are specific for this optimization solver. Other solvers presenting different stategies for
+solving the NPL will
+behave differently. In addition, the number of internal knots tends to be quite small (less than 10) for usual scenarios (TODO: specify what is a usual scenario,
+mobile robot linear speed, concentration of obstacles). Finally, increasing $N_{knots}$ indefitalely does not mean an improvement of the solution adequacy (TODO: develop
+why, saying that more control points than needed does help).
+While an increasing in the sampling number $N_s$ always improve solution adequacy with respect to obstacle penetration as shown in the next section.
+
+\subsection{Detection radius impact}
+
+As the detection radius of the robot increases more obstacles are seen at a time which linearly increases the number of constraints in the NPL.
+Figure~\ref{fig:drho-rmg} gives a example of how the ratio varies as the detection radius progressively increases. The numbers that can be seen
+over the blue curve are the maximum number of obstacles seen at once during the whole mission.
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=.6\textwidth]{./img/penetration/drho-rmp.eps}
+	\caption{$MCT/T_c$ ratio varying with $\rho_d$.\label{fig:drho-rmg}}
+\end{figure}
 
 \clearpage
-\subsection{Total time analysis} \hspace{0pt} 
+\subsection{Solution adequacy}
 
 The time spend for finding the solution for a given set of
-parameters values does not impact the solution it self.
-Let's analyze then how the solution behaves for different scenarios.
+parameters values does not impact the solution itself.
+Let's analyze then how the solution behaves according to some parameters.
 
-Two important notions when trying to quantify a solution fitness are the total time spend for completing the mission and the robot-to-obstacle distance.
+Two important notions when trying to quantify the adequacy of the solution are the total time spend for completing the mission and some metric about how
+much the planned path avoids obstacles.
+
+\subsubsection{Total mission time}
 
 Figure~\ref{fig:ttot} show how the time spend for completing the mission behaves with respect to three parameters: $T_c$, $T_p$, $N_s$.
 
@@ -673,28 +699,36 @@ Figure~\ref{fig:ttot} show how the time spend for completing the mission behaves
 \end{figure}
 
 %Due to the discretization and 
-We observe an overall tendency that for a given number of internal knots and $N_s$ the total mission decreases as the planning horizon decreases. This can be explained by the fact that the trajectory quality is increased and is closer to an optimal solution for a greater density of knots within a planning horizon.
+We observe an overall tendency that for a given number of internal knots and $N_s$ the total mission decreases as the planning horizon decreases.
+This can be explained by the fact that the trajectory quality (optimality) is degradated as the density of internal knots $N_{knots}$ within a $T_p$ decreases
+too much.
 
-One may notice as well that the total mission time is invariant with respect to $T_c$ in the sense that no pattern can be observed besides oscillations of the total time due to the scenario specific configuration.
+One may notice as well that the total mission time is invariant with respect to $T_c$ in the sense that no pattern can be observed besides
+oscillations of the total time due to the scenario specific configuration.
+
+Another relevant observation is that the overall time for completing the mission decreases as the sampling number $N_s$ decreases.
+This misleading improvement in the solution adequacy hides the fact that the fewer the samples the greater will be the obstacle penetration as shwon later in this section.
+
+\paragraph{Detection radius} 
+We can also be interest in considering how the total mission time changes as the detection radius of the robot increases. In Figure~\ref{fig:drho-tot} we see the
+rapidly decrease of the the mission time as the $\rho_d$ increases showing that a more optimal trajectory can be found when a better knologde of the environment is
+possible.
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=.6\textwidth]{./img/penetration/drho-tot.eps}
+	\caption{Total mission time varying with $\rho_d$.\label{fig:drho-tot}}
+\end{figure}
 
 \todo[inline]{Get no obstacles information too}
 
-\subsubsection{Robot to obstacle distance}
-
-The second parameter to measure the solution fitness is the robot-to-obstacles distance.
-
-In order to simplify this measure we introduce the notion mean penetration of the robot during its mission.
-We take 
-
-\begin{itemize}
- \item Distance inter robots
- \item Min dist to obstacles
-\end{itemize}
-
 \clearpage
-\subsection{Obstacle penetration} \hspace{0pt}
+\subsubsection{Obstacle penetration}
 
-The total obstacle penetration area ($\mathrm{P}$) can be calculated as the some of the penetration area for a planning section ($\mathrm{P}_w$), that is the plan followed within a computation horizon. $P_w$ for a round obstacle can be estimated as follows:
+Rather than using a metric for obstacle avoidance we used its conterpart called here obstacle penetration.
+The total obstacle penetration area ($\mathrm{P}$) can be calculated as the some of all the penetration areas ($\mathrm{P}_w$), each one 
+being the penetration area found for a given planning section $w$.
+$\mathrm{P}_w$ for a round obstacle can be estimated as follows:
 
 \[
 \mathrm{P}_w \simeq \frac{T_c}{N_{Tc}} \sum _{o=0}^{M-1} \sum_{k=0}^{N_{Tc}} \frac{r_op_k - \frac{p_k^2}{2}}{r_o-p_k} v_k
@@ -711,11 +745,16 @@ As expected, the greater the $N_{ssol}$ (which in turn increases $N_{Tc}$) the m
 
 After some tests we saw that a good estimate for the penetration area can be found using $N_{ssol} > 10N_s$.
 
-Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$). This approach presents a 
+Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception
+system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$). However simple, this approach
+represents a loss of optimality and will not be considered in this work.
 
-\subsubsection{Influence of $N_s$ on penetration area}
+\paragraph{Influence of $N_s$ on penetration area} \mbox{}\\
 
-As state before in subsection or section TODO the sampling was the most sensible parameter regarding the computation time. The greater the number of samples the greater the number of inquations constraints and consequently the computation time for solving the NLP. Now, analyzing the impact of the sampling on the penetration area we see that the greater the number of samples the smaller is the penetration area (as expected). In Figure \ref{fig:ns-pen} we see that we have a linear relation between this two variables.
+As state before in subsection or section TODO the sampling was a sensible parameter regarding the computation time.
+The greater the number of samples the greater the number of inquations constraints and consequently the computation time for solving the NLP.
+Now, analyzing the impact of the sampling on the penetration area we see that the greater the number of samples the smaller is the penetration area (as expected).
+In Figure \ref{fig:ns-pen} we see that the penetration total area rapidly decreases as $N_s$ increases.
 
  \begin{figure}[!h]
  	\centering
@@ -723,6 +762,36 @@ As state before in subsection or section TODO the sampling was the most sensible
  	\caption{Penetration area varying with $N_s$.\label{fig:ns-pen}}
  \end{figure}
 
+ 
+\subsection{Conclusions}
+
+Valid for SLSQP-based sovler:
+
+\begin{itemize}
+ \item [$\bullet$] $MCT/T_c$ is $O(n^3)$ where $n$ is directly proportional to $N_{knots}$;
+ \item [$\bullet$] $MCT/T_c$ is $O(n)$ where $n$ is directly proportional to $N_s$;
+ \item [$\bullet$] $MCT/T_c$ increases as the detection radius of the robot increases;
+ \item [$\bullet$] $T_{tot}$ decreases as $N_s$ decreases (up to a minimum value);
+ \item [$\bullet$] $T_{tot}$ is not influenced by $T_c$ in a observable way;
+ \item [$\bullet$] $T_{tot}$ decreases as the $N_{knots}$ increases (but not indefitalely);
+ \item [$\bullet$] $P$ increases as $N_s$ decreases (up to a maximum value);
+\end{itemize}
+
+"Semantic" interpretation/analysis of the obstacles can speedup NPL solving by reducing the number of contraints.
+
+"Calibration" of the parameters can be done once knowing the real application conditions:
+\begin{itemize}
+ \item [$\bullet$] Approx. obstacles "density";
+ \item [$\bullet$] Robots max speed;
+ \item [$\bullet$] Approx. distance;
+ \item [$\bullet$] etc.
+ \end{itemize}
+by simulating before and pay attention to the behavior of important values such as $MCT/T$, $T_{tot}$, $P$.
+ 
+
+
+
 %A planning horizon can make the optimization problem more expensive and since more obstacles will be taken into account within one planning section. This may explain the fact that for a given optimization solver configuration (same accuracy and same maximum number of iterations) and a given computing horizon the total time to complete the mission is greater then for some smaller planning horizons.
 %
 %Besides, since no acceleration constraints were take into account really small.
+
