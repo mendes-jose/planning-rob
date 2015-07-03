@@ -2418,7 +2418,7 @@ if __name__ == '__main__':
     # 2 obsts
     elif options.no_obsts == 2:
         obst_info = [#([0.0, 1.6], 0.3),
-                ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
+                ([-0.2, 0.4], 0.4), ([0.7, -0.8], 0.3)]
     # 3 obsts
     elif options.no_obsts == 3:
         obst_info = [([1.16, 0.0], 0.4),
@@ -2454,14 +2454,20 @@ if __name__ == '__main__':
 #    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
     kine_models = [UnicycleKineModel(
-            [0.0, -0.5, np.pi/2.], # q_initial
-            [0.2,  15.0, np.pi/2.], # q_final
+            [-2.5, -0.6, 0], # q_initial
+            [2.5,  0.5, np.pi/16.], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max
             UnicycleKineModel(
-            [-2.64,  -0.53, .0], # q_initial
-            [2.39, 0.48, .0], # q_final
+            [-2.64,  0.04, .0], # q_initial
+            [2.39, -1.5, .0], # q_final
+            [0.0,  0.0],          # u_initial
+            [0.0,  0.0],          # u_final
+            [1.0,  5.0]),          # u_max
+            UnicycleKineModel(
+            [-2.2,  1.4, .0], # q_initial
+            [2.4, -0.48, .0], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0])]          # u_max

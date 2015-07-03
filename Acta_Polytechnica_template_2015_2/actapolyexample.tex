@@ -1,0 +1,444 @@
+\documentclass[eprint]{actapoly}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{draftwatermark}
+\SetWatermarkText{DRAFT}
+\SetWatermarkScale{1}
+\SetWatermarkLightness{0.9}
+
+\begin{document}
+
+%\title[Example of an Article with a Long Title]
+%{Example of an Article with a Long Title, the Title Should Be Capitalised Properly in the Code Long Long}
+\title[Trajectory Generation Approach]
+{Trajectory Optimization}
+
+\correspondingauthor[E. Lucet]{Eric Lucet}{my}{eric.lucet@cea.fr}
+\author[J. M. Mendes Filho]{Jos\'{e} Magno Mendes Filho}{my,their}
+
+\institution{my}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, F-91191, France}
+\institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ing\'{e}nierie des Syst\'{e}me, 828 boulevard des Marechaux, 91762, France}
+%\institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ingénierie des Système, 828 boulevard des Marechaux, F-91762, France}
+%\institution{their}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, F-91191, France}
+
+\begin{abstract}
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Nullam mauris turpis, sagittis sed mattis vel, pulvinar eu nisi.
+\end{abstract}
+
+\keywords{keyword one, another keyword, yet another keyword}
+
+\maketitle
+
+
+
+
+\section{Introduction}
+
+
+
+
+All mobile robots consisting of a solid block in motion are flat systems~\cite{Defoort2007a}.
+
+A flat system presents the property that states and inputs can be written in terms of the flat outputs $z$ and its derivatives.
+Thus, all system behavior can be expressed by the flat outputs and a finite number of its derivatives ($l$).
+
+TODO reference Veeraklaew et al. in [106] firstly combines the concepts of differential flatness and sequential quadratic programming.
+
+TODO discussion about how to find the mapping $(q, u) \rightarrow z$ (look up Millan 2003).
+
+The approach proposed by Defoort/Milam (and others) takes advantage of the flatness property and search a solution for
+the nonholonomic motion planning problem in the flat space rather than in the configuration space of the mobile robot.
+
+In addition, their approach use B-splines for representing the solution in the flat space. This provide a small local support (TODO verify and elaborate) able to represent
+complex trajectories.
+
+Finally a trajectory optimization routine is done that accounts for all constraints (nonholonomic, geometric and bounded-input) finding an appropriate
+solution.
+
+This approach such as just described assume full knowledge of the environment where the mobile robot is to execute its motion. Defoort adapts this
+method to a sliding window architecture where the motion planning problem is devised throughout time as the mobile robot evolves in its environment.
+By relaxing the final state constraints, changing the objective function of the NLP and planning for a fixed timespan $T_p$ his new planner
+dynamically generates the trajectory as the robot moves.
+
+Furthermore, an adaptation of this method is done in \cite{Defoort2007a} for multi robot systems. Thanks to the exchange of information
+among the different robots they can adapt theirs trajectories to avoid robot-to-robot collisions and loss of communication in a decentralized fashion.
+
+
+\section{Mono-robot sliding window planning algorithm}
+
+
+The basis algorithm for planning for a mono robot is based on the optimization problem shown in equation~\ref{eq:}
+Two aspects of the implementation of this algorithm are neglected in~\cite{Defoort2007a}: the initial values for
+the control points and the procedure for reaching a desired final state.
+
+\begin{align}
+	\underset{(C_{(0,\tau_k)},\dotsc,C_{(d+n_{knot}-2,\tau_k)})}{\mathrm{min}} J_{\tau_k} =
+\nonumber\\
+	\|\varphi_1(z(\tau_k+T_p,\tau_k),\dotsc,z^{(l-1)}(\tau_k+T_p,\tau_k))-q_{final}\|^2
+\end{align}
+
+under the following constraints $\forall t \in [\tau_k, \tau_k+T_p]$:
+\begin{equation}%\label{eq:sysr4}
+\left\lbrace\begin{array}{lcl}
+	\varphi_1(z(\tau_{k},\tau_{k}),\dotsc,z^{(l-1)}(\tau_k,\tau_k)) & = & q_{ref}(\tau_k,\tau_{k-1})\\
+    \varphi_2(z(\tau_{k},\tau_{k}),\dotsc,z^{(l)}(\tau_k,\tau_k)) & = & u_{ref}(\tau_k,\tau_{k-1})\\
+    \varphi_2(z(t,\tau_k),\dotsc,z^{(l)}(t,\tau_k)) &\in& \mathcal{U}\\
+    d_{O_m}(t,\tau_k) &\geq& \rho + r_m,\quad \forall O_m \in \mathcal{O}(\tau_k)
+\end{array}\right.
+\end{equation}
+
+
+
+%The following pseudo code explains the planning process. Procedures PlanSec and PlanLastSec formulate the NLP and
+%call the an optimization method that can handles equations and inequations constraints.
+
+
+%A flat system has the important property that the states and the inputs
+%can be written in terms of the outputs $z$ and their derivatives. Thus, the behavior
+%of the system is determined by the flat outputs. Note that the map w is bijective(simple unicycle and simple car models for instance)
+%have what is called flatness property~\ref{TODO}. 
+
+%This property means that TODO.
+
+%TODO system flatness
+
+%TODO put image of the rejected trajectory??
+
+%\begin{algorithm}[h]
+%\begin{algorithmic}
+%%\While{$d_{rem} \geq d_{min} + T_c \times v_{max}$}
+%%\State \Call{{\scshape plan_sec}}{a}
+%%\EndWhile
+%%\Stae \Call{{\scshape rescale_pbl}}{a}
+%%\State \Call{{\scshape plan_last_sec}}{a}
+%\Function {{\scshape hpn}}{$currentState, goal , operators, absLevel , world$}
+%	\If {holds(goal , currentState)}
+%		\State \Return {\scshape True}
+%	\Else
+%    	\State $p \gets ${\scshape plan}$(currentState, goal , operators, absLevel)$
+%		\For {$(o_i , g_i ) \in p$}
+%			\If {{\scshape prim}$(o_i)$}
+%				\State $currentState \gets world.${\scshape execute}$(o_i)$
+%			\Else
+%            	\State \Call{{\scshape hpn}}{$currentState, g_i , operators, ${\scshape nextLevel}$(absLevel, o_i), world$}
+%    		\EndIf
+%        \EndFor
+%    \EndIf
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+
+\subsection{Initilization}
+
+
+%\subsection{Solving NLP}
+The initialization of the solution paths used for each NLP solving is important for two reasons. A good initialization allows the
+optimization solver to find a better solution for a given timespan. When using a local optimization method the initialization
+impacts the final trajectory.
+
+The simplest of initializations was performed in our studies. Linear spacing from current flat output value to the estimate final flat output.
+The estimate final output is simply the flat output computed from final states and inputs assuming a displacement of the maximum linear speed
+of the mobile robot times the planning horizon and assuming direction equals to the (final postion - current pos direction).
+
+
+\subsection{Stop condition and last NLP}
+
+
+As the robot evolves its state approximates to the final state since the distance between current and final state is what is to be minimized.
+At some point the constraints associated to the final state shall be integrated into the NLP and the timespan for performing this last
+step shall not be fixed and must be one of the values calculated.
+%The fixed planning horizon has to be made variable in order to get to the final state.
+
+The criterion used to pass from the NLP used during for the initial and intermediates steps to the last step NLP 
+is define below in the equation~\ref{eq:stopcond}:
+
+\begin{align}
+  d_{rem} \geq d_{min} + T_c \cdot v_{max}
+\end{align}
+
+This way we insure that the last planning section will be done for at least a $d_{min}$ distance from the robot's final position.
+This minimal distance is assumed to be sufficient for the robot to reach the final state.q
+
+\begin{algorithm}
+    \caption{Sliding window planning algorithm}
+    \label{swpa}
+    \begin{algorithmic}[1] % The number tells where the line numbering should start
+        \Procedure{Plan}{} %\Comment{The g.c.d. of a and b}
+	    \State $knots \gets $\Call{GenKnots}{$t_p,d_{spl},n_{knots}$}
+	    \State $time \gets $\Call{LineSpacing}{$0,t_p,n_{s}$}
+	    %\State $z_{latest} \gets $\Call{$\varphi_0$}{$q_{initial}$}
+	    \State $q_{latest} \gets q_{initial}$
+	    %\State $ctrlpts \gets $\Call {InitCtrlPts}{$q_{initial},q_{final},T_p,u_{max}$}
+	    %\State \Call{Init}{}
+	    \State $d_{rem} \gets |${\scshape Pos}$(q_{final}) - ${\scshape Pos}$(q_{latest})|$
+	    \While{$d_{rem} \geq d_{min} + T_c \cdot v_{max}$}	
+		\State $q_{latest} \gets $\Call{PlanSec}{}
+		\State $d_{rem} \gets |${\scshape Pos}$(q_{final}) - ${\scshape Pos}$(q_{latest})|$
+		
+	    \EndWhile\label{planningwhile}
+	    %\State \Call{RescalePbl}{}
+	    \State $s \gets $\Call {Min}{$\tfrac{d_{rem}}{v_{max}\cdot t_p}, 1.0$}
+	    \State $n_{knots} \gets $\Call{Max}{\Call{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
+	    \State $n_{s} \gets $\Call {Max}{\Call{Round}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
+	    \State $\Delta t \gets $\Call{PlanLastSec}{}
+	    
+%            \State $r\gets a \bmod b$
+%            \While{$r\not=0$} %\Comment{We have the answer if r is 0
+%                \State $a \gets b$
+%                \State $b \gets r$
+%                \State $r \gets a \bmod b$
+%            \EndWhile\label{euclidendwhile}
+%            \State \textbf{return} $b$%\Comment{The gcd is b}
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+
+\section{Decentralized multi robot sliding window planning algorithm}
+
+
+A straight forward extension of the previous algorithm can be done in order to
+support a multi robot system. The sliding window algorithm presented before remains
+virtually the same. The changes are done within the {\scshape PlanSec} {\scshape PlanLastSec} routine.
+
+After solving the NLP stated before each robot will have generated an intended trajectory that would be valid
+if we were dealing with a mono robot system.
+For the multi robot system some exchange of information among the robots and possibly some replanning has to be done.
+
+Right after solving the standalone NLP a given robot represented by the index $i$ computes a conflict list that is based on 
+all robots' positions as of when they started to plan their intended trajectories. This conflict list contains the indexes of
+the robots in the fleet that can possibly cause some conflict. Conflict here is understood as a collision or a loss of communication
+between robots in the fleet.
+
+Notice that the $i$ robot can compute its conflict list as soon as it finishes its planning even though other robots may still be doing so.
+
+For the next step of replanning all robots involved in a conflict have to be done computing the first standalone planning. This is needed simply because
+all intended trajectories will be taken into account on the replanning part.
+
+Using the intended trajectory as the initialization of the optimization parameters a new NLP is solved where collision avoidance between robots
+and keeping communication are translated into constraints.
+
+After solving this second NLP, the trajectories are updated and the planning goes on to the next section.
+
+
+\subsection{Conflict detection}
+
+Conflict detection is computed TODO
+
+\subsection{Aditional constraints}
+
+The additional constraints associated to the multi robot system TODO
+
+
+\begin{figure}Conflict detection is computed TODOThe additional constraints associated to the multi robot system TODO  \centering
+  \includegraphics[width=\linewidth]{./images/multirobot-path-224.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \\[3mm]
+  \includegraphics[width=\linewidth]{./images/multirobot-vw.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Our results: black box (top) and black box (bottom).}
+\label{fig:res}
+\end{figure}
+
+\section{Parameters' impact analyses}
+
+
+
+
+
+\subsection{Maximum computation time over computation horizon $MCT/T_c$}
+
+
+
+\subsection{Obstacle penetration $P$}
+
+
+
+\subsection{Mission total time $T_{tot}$}
+
+
+
+%\begin{table*}
+%\centering
+%\begin{tabular}{ll}
+%\toprule
+%\bfseries The first column of this very wide table & \bfseries The second column of this very wide table
+%\\\Midrule
+%Foo & Bar
+%\\\midrule
+%Bar & Baz
+%\\\bottomrule
+%\end{tabular}
+%\caption{Wide table.}
+%\label{tab:wide}
+%\end{table*}
+%
+%
+%
+%
+%\begin{figure*}
+%\centering
+%%\includegraphics[width=0.8\linewidth]{fig_a} % <-- use this for your graphics
+%\rule{10cm}{5cm} % <-- this is just a black box substitute for graphics
+%\caption{Wide figure~\cite{TeXbook:D,booktabs}.}
+%\label{fig:gr_a}
+%\end{figure*}
+
+
+
+
+%In this section, we show that
+%\begin{align}
+%	300 &= 1+2+3+4+5+6+7+8+9+10
+%\nonumber\\
+%	& +11+12+13+14+15+16+17
+%\nonumber\\
+%	& +18+19+20+21+22+23+24,
+%\end{align}
+%which can be written as
+%\begin{multline}
+%	300 = 1+2+3+4+5+6+7+8+9
+%\\
+%	+10+11+12+13+14+15+16+17
+%\\
+%	+18+19+20+21+22+23+24.
+%\end{multline}
+%
+%More details can be found in Section~\ref{sect:Pha}.
+%Ut quis lorem nisi.
+%Maecenas blandit pharetra odio vitae facilisis.
+%Suspendisse egestas porta ligula non blandit.
+%Morbi posuere leo scelerisque nunc tempor dignissim.
+%Vivamus tristique sagittis faucibus.
+%Nullam placerat, dolor ut rhoncus pellentesque, nisl neque aliquam sem, ut aliquam enim est vel risus.
+%Maecenas congue molestie sem in consectetur.
+%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+% Mauris enim massa, lobortis sit amet convallis id, sollicitudin a neque.
+%Aliquam erat volutpat.
+%Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+%Aenean hendrerit dictum lectus, vel dictum lacus iaculis non.
+%Nullam ornare, arcu vehicula tempor hendrerit, dui neque consectetur eros, vitae adipiscing ipsum metus a enim.
+%Nullam risus erat, eleifend ut volutpat at, varius quis eros.
+%Integer magna nisl, sodales a auctor mollis, luctus accumsan dolor.
+%
+%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+% Duis nec libero magna.
+%Praesent ut interdum purus.
+%Fusce auctor dolor id ligula congue sed tempor lectus pharetra.
+%Etiam tellus leo, vestibulum at venenatis et, condimentum vel dui.
+%In felis nulla, bibendum eget blandit nec, scelerisque eu arcu.
+%Etiam nisi nisl, pellentesque sed aliquet sit amet, ullamcorper accumsan nulla.
+%Nam lobortis nulla at enim iaculis sed condimentum justo vulputate.
+%Donec cursus, velit at congue vehicula, enim erat faucibus elit, sed porttitor erat sem id odio.
+%
+%
+%
+%
+%
+%Aliquam scelerisque leo sit amet ipsum interdum eu tempus tellus facilisis.
+%\begin{enumerate}
+%
+%\item
+%Quisque sollicitudin luctus nisl, eget lacinia orci ullamcorper vitae.
+%Donec volutpat ante sed purus sodales quis vulputate ante pretium.
+%In congue, metus placerat scelerisque lacinia, ante erat eleifend eros, id malesuada libero dolor et magna.
+%Phasellus quis est nec justo tempor faucibus eu ac massa.
+%Ut ut elit elit, et ullamcorper nulla.
+%
+%\item
+%Sed luctus, turpis at consectetur tristique, felis nunc dapibus lectus, non pellentesque dui sapien vulputate urna.
+%Phasellus quis justo enim.
+%Donec in nisi sit amet elit hendrerit sollicitudin id ut mi.
+%Nunc elit sapien, ultricies vitae placerat volutpat, fringilla sit amet dolor.
+%Curabitur posuere dolor id erat vulputate sit amet aliquet sem pellentesque.
+%
+%Nam lectus quam, tincidunt sed tincidunt sed, venenatis quis felis.
+%Vestibulum aliquet ullamcorper sem eget porttitor.
+%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+% Integer sagittis ligula ut orci iaculis ultrices.
+%
+%\item
+%Nunc facilisis posuere erat, nec dictum erat luctus quis.
+%Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+%Cras a enim neque:
+% \begin{itemize}
+% \item Vivamus est urna, consequat sed dapibus fringilla, semper facilisis tellus.
+% Quisque suscipit facilisis ante eu venenatis.
+% \item Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+% Sed laoreet, lorem facilisis pharetra accumsan, sem mi dictum orci, ac vulputate augue risus eu felis.
+% Donec feugiat condimentum ultricies.
+% \end{itemize}
+%
+%\item
+%Donec in nisi eu risus sagittis sollicitudin sed sit amet magna.
+%Maecenas in leo mauris, id commodo quam.
+%Donec tristique arcu ut dolor posuere varius.
+%Mauris molestie ante sed ipsum pulvinar nec vehicula turpis fringilla.
+%
+%\end{enumerate}
+%Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+%Vivamus magna libero, mattis id faucibus vitae, volutpat hendrerit ante.
+%Fusce gravida mattis accumsan.
+%
+%Sed rhoncus ullamcorper nibh, eget pretium arcu iaculis nec.
+%Nulla facilisi.
+%Cras varius augue non nulla hendrerit vestibulum non quis quam.
+%
+%Ut in vulputate dolor.
+%Vestibulum suscipit leo in ligula pulvinar semper.
+%Sed et orci ipsum, ac sodales sapien.
+%Maecenas a dui vel risus aliquet interdum.
+%Donec pharetra neque quis nulla feugiat mattis vitae ultricies mauris.
+%Praesent nisi justo, venenatis sed fermentum quis, volutpat sit amet arcu.
+%Donec id sapien ac metus dignissim porttitor.
+%Integer congue tristique nisi ac posuere.
+%
+%Table~\ref{tab:wide} and Figure~\ref{fig:gr_a} show that integer faucibus lobortis varius.
+%Nullam sed quam eget metus tempor eleifend.
+%Vivamus at malesuada ligula.
+%Sed a odio massa, at adipiscing nisi.
+%Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+%Nullam eros metus, ornare vel semper in, congue nec lorem.
+%Maecenas dictum, magna at ornare suscipit, lacus tellus eleifend felis, nec porta enim mauris egestas mi.
+%Sed eu iaculis nibh.
+%Nullam arcu dolor, egestas eu posuere sit amet, dignissim et libero.
+
+
+
+
+\section{Conclusions}
+
+
+
+%Nulla volutpat aliquet augue laoreet accumsan.
+%Duis velit nisl, ultrices ac sagittis a, ultricies et elit.
+%In feugiat, dui sed pellentesque posuere, turpis elit pulvinar elit, in luctus diam tellus non elit.
+%Nullam id enim id metus interdum volutpat id vitae ipsum.
+%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
+% Vestibulum placerat, massa ut gravida interdum, augue lacus gravida orci, vel rhoncus nibh eros a nisi.
+%Nullam ultricies nisi odio, quis malesuada neque, as you can see in Figure~\ref{fig:res}~\cite{doi}.
+
+
+
+%\begin{nomenclature}
+%\item[kg\,m^-3]{\varrho}{Liquid density}
+%\item[Pa]{p}{Liquid pressure}
+%\medskip
+%\item{\mathit{Re}}{Reynold's number}
+%\end{nomenclature}
+
+
+
+%\begin{acknowledgements}
+%G.~Surname was supported by grant 1234567890.
+%\end{acknowledgements}
+
+
+
+\bibliographystyle{actapoly}
+\bibliography{biblio}
+
+\end{document}
