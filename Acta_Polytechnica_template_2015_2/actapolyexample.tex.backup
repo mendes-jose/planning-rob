@@ -23,11 +23,9 @@
 %\institution{their}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, F-91191, France}
 
 \begin{abstract}
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-Nullam mauris turpis, sagittis sed mattis vel, pulvinar eu nisi.
 \end{abstract}
 
-\keywords{keyword one, another keyword, yet another keyword}
+\keywords{}
 
 \maketitle
 
@@ -51,23 +49,50 @@ TODO discussion about how to find the mapping $(q, u) \rightarrow z$ (look up Mi
 The approach proposed by Defoort/Milam (and others) takes advantage of the flatness property and search a solution for
 the nonholonomic motion planning problem in the flat space rather than in the configuration space of the mobile robot.
 
-In addition, their approach use B-splines for representing the solution in the flat space. This provide a small local support (TODO verify) able to represent
+In addition, their approach use B-splines for representing the solution in the flat space. This provide a small local support (TODO verify and elaborate) able to represent
 complex trajectories.
 
 Finally a trajectory optimization routine is done that accounts for all constraints (nonholonomic, geometric and bounded-input) finding an appropriate
 solution.
 
 This approach such as just described assume full knowledge of the environment where the mobile robot is to execute its motion. Defoort adapts this
-method to a sliding window architecture where the motion planning problem is devised throughout time as the mobile robot evolves in its environment.
-By relaxing the final state constraints, changing the objective function of the NLP and planning for a fixed timespan $T_p$ the new sliding window
-nonholonomic motion planner dynamically generates the trajectory as the robot moves.
+method to a sliding window architecture where the motion planning problem is devised throughout time as the mobile robot evolves in its environment and
+discover it.
+%By relaxing the final state constraints, changing the objective function of the NLP and planning for a fixed timespan $T_p$ his new planner
+%dynamically generates the trajectory as the robot moves.
+
+Furthermore, another adaptation of this method is done in \cite{Defoort2007a} for multi robot systems. Thanks to an exchange of information
+among the different robots they can adapt theirs trajectories to avoid robot-to-robot collisions and loss of communication in a decentralized fashion.
 
 
 \section{Mono-robot sliding window planning algorithm}
 
+%Defoort give in \cite{Defoort2007a} an example showing how a unicycle model can be written using the flatness property.
+%The basis algorithm for planning for a mono robot is based on the optimization problem shown in equations~\ref{eq:} and~\ref{eq:}.
+TODO present method or make reference to Defoort introducing $T_c$, $T_p$ etc.
 
+However, two aspects of the implementation of this algorithm are neglected in~\cite{Defoort2007a}: the initial values for
+the control points and the procedure for reaching a desired final state.
 
-The basis algorithm 
+%\begin{align}
+%	\underset{(C_{(0,\tau_k)},\dotsc,C_{(d+n_{knot}-2,\tau_k)})}{\mathrm{min}} J_{\tau_k} =
+%\nonumber\\
+%	\|\varphi_1(z(\tau_k+T_p,\tau_k),\dotsc,z^{(l-1)}(\tau_k+T_p,\tau_k))-q_{final}\|^2
+%\end{align}
+%
+%under the following constraints $\forall t \in [\tau_k, \tau_k+T_p]$:
+%\begin{equation}%\label{eq:sysr4}
+%\left\lbrace\begin{array}{lcl}
+%	\varphi_1(z(\tau_{k},\tau_{k}),\dotsc,z^{(l-1)}(\tau_k,\tau_k)) & = & q_{ref}(\tau_k,\tau_{k-1})\\
+%    \varphi_2(z(\tau_{k},\tau_{k}),\dotsc,z^{(l)}(\tau_k,\tau_k)) & = & u_{ref}(\tau_k,\tau_{k-1})\\
+%    \varphi_2(z(t,\tau_k),\dotsc,z^{(l)}(t,\tau_k)) &\in& \mathcal{U}\\
+%    d_{O_m}(t,\tau_k) &\geq& \rho + r_m,\quad \forall O_m \in \mathcal{O}(\tau_k)
+%\end{array}\right.
+%\end{equation}
+%
+
+%The following pseudo code explains the planning process. Procedures PlanSec and PlanLastSec formulate the NLP and
+%call the an optimization method that can handles equations and inequations constraints.
 
 
 %A flat system has the important property that the states and the inputs
@@ -106,23 +131,32 @@ The basis algorithm
 %\end{algorithm}
 
 
-\subsection{Initilization}
+\subsection{Initialization}
 
 
 %\subsection{Solving NLP}
-The initialization of the solution paths used for each NLP solving is important for two reasons. A good initialization allows the
-optimization solver to find a better solution for a given timespan. When using a local optimization method the initialization
-impacts the final solution time put aside.
+The initialization of the solution paths used for each NLP solving is important for two reasons:
+\begin{itmeze}
+ \item
+A good initialization allows the
+optimization solver to find a better solution for a given timespan.
+ \item
+When using a local optimization method the initialization
+can drag the final solution to one or other local minima.
+\end{itmeze}
 
-The simplest of initializations was performed in our studies. Linear spacing from current flat output value to the estimate final flat output.
-The estimate final output is simply the flat output computed from final states and inputs assuming a displacement of the maximum linear speed
-of the mobile robot times the planning horizon and assuming direction equals to the (final postion - current pos direction).
+The simplest of initializations was performed in ours studies. Linear spacing from current flat output value to the estimate final flat output.
+The estimate final output is simply the flat output computed from the estimate final states and inputs. The estimate final states and inputs
+are computed assuming a displacement from the current position of the maximum linear speed
+of the robot times the planning horizon, and assuming that the direction of the movement is equal to (final position - current pos) vector.
 
+TODO talk about the too close obstacles problem and the dumb solution.
 
 \subsection{Stop condition and last NLP}
 
 
-As the robot evolves its state approximates to the final state since the distance between current and final state is what is to be minimized.
+As the robot evolves its state approximates to the final state. 
+%That is the  since the distance between current and final state is what is to be minimized.
 At some point the constraints associated to the final state shall be integrated into the NLP and the timespan for performing this last
 step shall not be fixed and must be one of the values calculated.
 %The fixed planning horizon has to be made variable in order to get to the final state.
@@ -135,28 +169,15 @@ is define below in the equation~\ref{eq:stopcond}:
 \end{align}
 
 This way we insure that the last planning section will be done for at least a $d_{min}$ distance from the robot's final position.
+This minimal distance is assumed to be sufficient for the robot to reach the final state.
 
-%\begin{align}
-%	\underset{(C_{(0,\tau_k)},\dotsc,C_{(d+n_{knot}-2,\tau_k)})}{\mathrm{min}} J_{\tau_k} =
-%\nonumber\\
-%	\|\varphi_1(z(\tau_k+T_p,\tau_k),\dotsc,z^{(l-1)}(\tau_k+T_p,\tau_k))-q_{final}\|^2
-%\end{align}
-%
-%under the following constraints $\forall t \in [\tau_k, \tau_k+T_p]$:
-%\begin{equation}%\label{eq:sysr4}
-%\left\lbrace\begin{array}{lcl}
-%	\varphi_1(z(\tau_{k},\tau_{k}),\dotsc,z^{(l-1)}(\tau_k,\tau_k)) & = & q_{ref}(\tau_k,\tau_{k-1})\\
-%    \varphi_2(z(\tau_{k},\tau_{k}),\dotsc,z^{(l)}(\tau_k,\tau_k)) & = & u_{ref}(\tau_k,\tau_{k-1})\\
-%    \varphi_2(z(t,\tau_k),\dotsc,z^{(l)}(t,\tau_k)) &\in& \mathcal{U}\\
-%    d_{O_m}(t,\tau_k) &\geq& \rho + r_m,\quad \forall O_m \in \mathcal{O}(\tau_k)
-%\end{array}\right.
-%\end{equation}
+After stopping the sliding window algorithm we calculate new parameters for the solution representation and computation taking into
+account the estimate remaining distance.
 
-The following pseudo code explains the planning process. Procedures PlanSec and PlanLastSec formulate the NLP and
-call the an optimization method that can handles equations and inequations constraints.
+The following pseudo code summarizes the algorithm: 
 
 \begin{algorithm}
-    \caption{Sliding window planning algorithm}
+    \caption{Sliding window planning algorithm\label{cod:algo}}
     \label{swpa}
     \begin{algorithmic}[1] % The number tells where the line numbering should start
         \Procedure{Plan}{} %\Comment{The g.c.d. of a and b}
@@ -190,7 +211,9 @@ call the an optimization method that can handles equations and inequations const
 \end{algorithm}
 
 
+
 \section{Decentralized multi robot sliding window planning algorithm}
+
 
 
 A straight forward extension of the previous algorithm can be done in order to
@@ -202,8 +225,9 @@ if we were dealing with a mono robot system.
 For the multi robot system some exchange of information among the robots and possibly some replanning has to be done.
 
 Right after solving the standalone NLP a given robot represented by the index $i$ computes a conflict list that is based on 
-all robots' positions as of when they started to plan their intended trajectories. This conflict list contains the indexes of
-the robots in the fleet that can possibly cause some conflict. Conflict here is understood as a collision or a loss of communication
+all robots' positions as of when they started planning their intended trajectories (solving the latest standalone NLP).
+This conflict list contains the indexes of
+the robots in the fleet that can possibly cause some conflict. The word conflict here is understood as a collision or a loss of communication
 between robots in the fleet.
 
 Notice that the $i$ robot can compute its conflict list as soon as it finishes its planning even though other robots may still be doing so.
@@ -216,6 +240,34 @@ and keeping communication are translated into constraints.
 
 After solving this second NLP, the trajectories are updated and the planning goes on to the next section.
 
+In Figures~\ref{fig:collision} and \ref{fig:nocollision} the results of the decentralized multi robot algorithm can be seen.
+In Figure~\ref{fig:collision} no conflict handling is done and two collisions zones can be identified.
+For trajectory showed in the Figure~\ref{fig:nocollision} the robots optimize their trajectories using the multi robot
+adaptation of the algorithm. No conflict occurs and we can observe a change in the robots velocities and total execution time.
+
+
+%Conflict detection is computed TODOThe additional constraints associated to the multi robot system TODO  \centering
+
+\begin{figure}[!h]\centering
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-path.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \\[1mm]
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Our results: black box (top) and black box (bottom).\label{fig:collision}}
+\label{fig:res}
+\end{figure}
+
+\begin{figure}\centering
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \\[1mm]
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Our results: black box (top) and black box (bottom).\label{fig:nocollision}}
+\label{fig:res}
+\end{figure}
+
 
 \subsection{Conflict detection}
 
@@ -226,193 +278,74 @@ Conflict detection is computed TODO
 The additional constraints associated to the multi robot system TODO
 
 
-\begin{figure}Conflict detection is computed TODOThe additional constraints associated to the multi robot system TODO  \centering
-  \includegraphics[width=\linewidth]{./images/multirobot-path-224.png} % <-- use this for your graphics
-  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \\[3mm]
-  \includegraphics[width=\linewidth]{./images/multirobot-vw.png} % <-- use this for your graphics
-  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \caption{Our results: black box (top) and black box (bottom).}
-\label{fig:res}
-\end{figure}
 
 \section{Parameters' impact analyses}
 
+Four criteria considered important for the validation of this method were studied.
+We tested different parameters configuration and scenario in order to understand how they influence
+those criteria.
+The four criteria were:
 
+\begin{itemize}
 
+\item
+\textit{Maximum computation time} over the computation horizon ($MCT/T_c$ ratio);
 
+\item
+Obstacle penetration area ($P$).
+
+\item
+The total execution time ($T_{tot}$);
+
+%\item
+%Distance inter robots???;
+
+\item
+Additional time for conflict handling???.
+
+\end{itemize}
 
 \subsection{Maximum computation time over computation horizon $MCT/T_c$}
 
+The significance of this criterion lays in the need of quarantining the real-time property of this algorithm.
+In a real implementation of this approach the computation horizon would have always to be superior than the
+maximum time took for computing a planning section (robot-to-robot conflict taken into account).
 
+Based on several simulations with different scenarios we were able to TODO
+
+\begin{itemize}
+ \item 
+ 
+\end{itemize}
+
+\begin{figure}[!h]\centering
+  \includegraphics[width=\linewidth]{./images/drho/drho-rmp.png} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Increasing of detection radius and impact on a $MTC/T_c$ ration\label{fig:drho}}
+\label{fig:res}
+\end{figure}
 
 \subsection{Obstacle penetration $P$}
 
+\ref{fig:pen}
+TODO rescale images
 
-
-\subsection{Mission total time $T_{tot}$}
-
-
-
-%\begin{table*}
-%\centering
-%\begin{tabular}{ll}
-%\toprule
-%\bfseries The first column of this very wide table & \bfseries The second column of this very wide table
-%\\\Midrule
-%Foo & Bar
-%\\\midrule
-%Bar & Baz
-%\\\bottomrule
-%\end{tabular}
-%\caption{Wide table.}
-%\label{tab:wide}
-%\end{table*}
-%
-%
-%
-%
-%\begin{figure*}
-%\centering
-%%\includegraphics[width=0.8\linewidth]{fig_a} % <-- use this for your graphics
-%\rule{10cm}{5cm} % <-- this is just a black box substitute for graphics
-%\caption{Wide figure~\cite{TeXbook:D,booktabs}.}
-%\label{fig:gr_a}
-%\end{figure*}
+\begin{figure}[!h]\centering
+  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} % <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Obstacle penetration decreasing as sampling increases\label{fig:pen}}
+\label{fig:res}
+\end{figure}
 
 
 
 
-%In this section, we show that
-%\begin{align}
-%	300 &= 1+2+3+4+5+6+7+8+9+10
-%\nonumber\\
-%	& +11+12+13+14+15+16+17
-%\nonumber\\
-%	& +18+19+20+21+22+23+24,
-%\end{align}
-%which can be written as
-%\begin{multline}
-%	300 = 1+2+3+4+5+6+7+8+9
-%\\
-%	+10+11+12+13+14+15+16+17
-%\\
-%	+18+19+20+21+22+23+24.
-%\end{multline}
-%
-%More details can be found in Section~\ref{sect:Pha}.
-%Ut quis lorem nisi.
-%Maecenas blandit pharetra odio vitae facilisis.
-%Suspendisse egestas porta ligula non blandit.
-%Morbi posuere leo scelerisque nunc tempor dignissim.
-%Vivamus tristique sagittis faucibus.
-%Nullam placerat, dolor ut rhoncus pellentesque, nisl neque aliquam sem, ut aliquam enim est vel risus.
-%Maecenas congue molestie sem in consectetur.
-%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-% Mauris enim massa, lobortis sit amet convallis id, sollicitudin a neque.
-%Aliquam erat volutpat.
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-%Aenean hendrerit dictum lectus, vel dictum lacus iaculis non.
-%Nullam ornare, arcu vehicula tempor hendrerit, dui neque consectetur eros, vitae adipiscing ipsum metus a enim.
-%Nullam risus erat, eleifend ut volutpat at, varius quis eros.
-%Integer magna nisl, sodales a auctor mollis, luctus accumsan dolor.
-%
-%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-% Duis nec libero magna.
-%Praesent ut interdum purus.
-%Fusce auctor dolor id ligula congue sed tempor lectus pharetra.
-%Etiam tellus leo, vestibulum at venenatis et, condimentum vel dui.
-%In felis nulla, bibendum eget blandit nec, scelerisque eu arcu.
-%Etiam nisi nisl, pellentesque sed aliquet sit amet, ullamcorper accumsan nulla.
-%Nam lobortis nulla at enim iaculis sed condimentum justo vulputate.
-%Donec cursus, velit at congue vehicula, enim erat faucibus elit, sed porttitor erat sem id odio.
-%
-%
-%
-%
-%
-%Aliquam scelerisque leo sit amet ipsum interdum eu tempus tellus facilisis.
-%\begin{enumerate}
-%
-%\item
-%Quisque sollicitudin luctus nisl, eget lacinia orci ullamcorper vitae.
-%Donec volutpat ante sed purus sodales quis vulputate ante pretium.
-%In congue, metus placerat scelerisque lacinia, ante erat eleifend eros, id malesuada libero dolor et magna.
-%Phasellus quis est nec justo tempor faucibus eu ac massa.
-%Ut ut elit elit, et ullamcorper nulla.
-%
-%\item
-%Sed luctus, turpis at consectetur tristique, felis nunc dapibus lectus, non pellentesque dui sapien vulputate urna.
-%Phasellus quis justo enim.
-%Donec in nisi sit amet elit hendrerit sollicitudin id ut mi.
-%Nunc elit sapien, ultricies vitae placerat volutpat, fringilla sit amet dolor.
-%Curabitur posuere dolor id erat vulputate sit amet aliquet sem pellentesque.
-%
-%Nam lectus quam, tincidunt sed tincidunt sed, venenatis quis felis.
-%Vestibulum aliquet ullamcorper sem eget porttitor.
-%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-% Integer sagittis ligula ut orci iaculis ultrices.
-%
-%\item
-%Nunc facilisis posuere erat, nec dictum erat luctus quis.
-%Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-%Cras a enim neque:
-% \begin{itemize}
-% \item Vivamus est urna, consequat sed dapibus fringilla, semper facilisis tellus.
-% Quisque suscipit facilisis ante eu venenatis.
-% \item Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-% Sed laoreet, lorem facilisis pharetra accumsan, sem mi dictum orci, ac vulputate augue risus eu felis.
-% Donec feugiat condimentum ultricies.
-% \end{itemize}
-%
-%\item
-%Donec in nisi eu risus sagittis sollicitudin sed sit amet magna.
-%Maecenas in leo mauris, id commodo quam.
-%Donec tristique arcu ut dolor posuere varius.
-%Mauris molestie ante sed ipsum pulvinar nec vehicula turpis fringilla.
-%
-%\end{enumerate}
-%Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-%Vivamus magna libero, mattis id faucibus vitae, volutpat hendrerit ante.
-%Fusce gravida mattis accumsan.
-%
-%Sed rhoncus ullamcorper nibh, eget pretium arcu iaculis nec.
-%Nulla facilisi.
-%Cras varius augue non nulla hendrerit vestibulum non quis quam.
-%
-%Ut in vulputate dolor.
-%Vestibulum suscipit leo in ligula pulvinar semper.
-%Sed et orci ipsum, ac sodales sapien.
-%Maecenas a dui vel risus aliquet interdum.
-%Donec pharetra neque quis nulla feugiat mattis vitae ultricies mauris.
-%Praesent nisi justo, venenatis sed fermentum quis, volutpat sit amet arcu.
-%Donec id sapien ac metus dignissim porttitor.
-%Integer congue tristique nisi ac posuere.
-%
-%Table~\ref{tab:wide} and Figure~\ref{fig:gr_a} show that integer faucibus lobortis varius.
-%Nullam sed quam eget metus tempor eleifend.
-%Vivamus at malesuada ligula.
-%Sed a odio massa, at adipiscing nisi.
-%Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-%Nullam eros metus, ornare vel semper in, congue nec lorem.
-%Maecenas dictum, magna at ornare suscipit, lacus tellus eleifend felis, nec porta enim mauris egestas mi.
-%Sed eu iaculis nibh.
-%Nullam arcu dolor, egestas eu posuere sit amet, dignissim et libero.
+\subsection{Total execution time $T_{tot}$}
 
-
-
+TODO Comparison with the other method;
+TODO Before concluding do comparison with other approach and make sure to have multi-robot stuff
 
 \section{Conclusions}
-
-
-
-%Nulla volutpat aliquet augue laoreet accumsan.
-%Duis velit nisl, ultrices ac sagittis a, ultricies et elit.
-%In feugiat, dui sed pellentesque posuere, turpis elit pulvinar elit, in luctus diam tellus non elit.
-%Nullam id enim id metus interdum volutpat id vitae ipsum.
-%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-% Vestibulum placerat, massa ut gravida interdum, augue lacus gravida orci, vel rhoncus nibh eros a nisi.
-%Nullam ultricies nisi odio, quis malesuada neque, as you can see in Figure~\ref{fig:res}~\cite{doi}.
 
 
 
@@ -421,15 +354,13 @@ The additional constraints associated to the multi robot system TODO
 %\item[Pa]{p}{Liquid pressure}
 %\medskip
 %\item{\mathit{Re}}{Reynold's number}
-%\end{nomenclature}
-
-
 
 %\begin{acknowledgements}
 %G.~Surname was supported by grant 1234567890.
 %\end{acknowledgements}
 
-
+TODO perspectives
+Analise influence of dynamics of system, sensors, communication latency;
 
 \bibliographystyle{actapoly}
 \bibliography{biblio}

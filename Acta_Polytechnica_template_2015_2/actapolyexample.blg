@@ -3,44 +3,50 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: actapolyexample.aux
 The style file: actapoly.bst
 Database file #1: biblio.bib
-You've used 2 entries,
+You're missing a field name---line 40 of file biblio.bib
+ : 
+ : # author = {Donald E. Knuth},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You've used 1 entry,
             2933 wiz_defined-function locations,
-            632 strings with 4787 characters,
-and the built_in function-call counts, 870 in all, are:
-= -- 88
-> -- 5
+            627 strings with 4710 characters,
+and the built_in function-call counts, 630 in all, are:
+= -- 67
+> -- 4
 < -- 0
-+ -- 3
++ -- 2
 - -- 1
-* -- 48
-:= -- 85
-add.period$ -- 6
-call.type$ -- 2
-change.case$ -- 2
+* -- 35
+:= -- 66
+add.period$ -- 3
+call.type$ -- 1
+change.case$ -- 1
 chr.to.int$ -- 0
-cite$ -- 2
-duplicate$ -- 111
-empty$ -- 83
+cite$ -- 1
+duplicate$ -- 80
+empty$ -- 55
 format.name$ -- 1
-if$ -- 185
+if$ -- 130
 int.to.chr$ -- 0
-int.to.str$ -- 2
-missing$ -- 11
-newline$ -- 20
+int.to.str$ -- 1
+missing$ -- 6
+newline$ -- 15
 num.names$ -- 1
-pop$ -- 51
+pop$ -- 39
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 8
+skip$ -- 4
 stack$ -- 0
-substring$ -- 95
-swap$ -- 22
+substring$ -- 81
+swap$ -- 11
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 4
-width$ -- 3
-write$ -- 30
+while$ -- 3
+width$ -- 2
+write$ -- 19
+(There was 1 error message)

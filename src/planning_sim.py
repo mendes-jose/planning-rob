@@ -1714,8 +1714,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-#        if False:
-        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+        if False:
+#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2187,6 +2187,8 @@ class WorldSim(object):
                 if self._plot:
                     ax.relim()
                     ax.autoscale_view(True, True, True)
+                    ax.add_artist(plt.Circle((-1.23, -.4), .7, ls = 'dashed', color = 'k', fill=False, alpha=1.0))
+                    ax.add_artist(plt.Circle((1.33, .15), .7, ls = 'dashed', color = 'k', fill=False, alpha=1.0))
                     fig.canvas.draw()
                     fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
                             bbox_inches='tight')
@@ -2194,8 +2196,10 @@ class WorldSim(object):
 
             ax.relim()
             ax.autoscale_view(True, True, True)
+            
             fig.canvas.draw()
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
+            
 
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]

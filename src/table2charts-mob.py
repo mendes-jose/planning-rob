@@ -15,7 +15,7 @@ mpl.rc('font', **font)
 
 direc = "../traces/rt-full-table"
 direc = "./rob-obst-dist"
-direc = "./drho_var2"
+direc = "./drho_var3"
 
 table = []
 header = []
@@ -79,9 +79,9 @@ all_rmp = table[:, rmpi]
 ax.plot (all_drho, all_tot, label='Mission time', marker='.')
 ax2.plot (all_drho, all_rmp, label='MCT/Tc', marker='.')
 
-for m, idx in zip(table[:, mobi], range(len(table[:, mobi]))):
-    ax.text(all_drho[idx], all_tot[idx], '{}'.format(m))
-    ax2.text(all_drho[idx], all_rmp[idx], '{}'.format(m))
+#for m, idx in zip(table[:, mobi], range(len(table[:, mobi]))):
+#    ax.text(all_drho[idx], all_tot[idx], '{}'.format(m))
+#    ax2.text(all_drho[idx], all_rmp[idx], '{}'.format(m))
 
 #ax.plot (all_drho, all_tot, marker='.')
 #ax.set_xlabel('mob')
