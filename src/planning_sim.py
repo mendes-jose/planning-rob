@@ -1714,8 +1714,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2135,7 +2135,7 @@ class WorldSim(object):
             plt_robots_c = range(len(self._robs))
             plt_robots_t = range(len(self._robs))
             for i in range(len(self._robs)):
-                plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i])
+                plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label='robot{}'.format(i))
                 plt_seg_pts[i], = ax.plot(path[i][0, seg_pts_idx[i][0]], \
                         path[i][1, seg_pts_idx[i][0]], color=colors[i], ls='None', marker='o', markersize=5)
                 plt_robots_c[i] = plt.Circle(
@@ -2156,6 +2156,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
+#            ax.add_artist(plt.Circle((-1.23, -.4), .5, color = 'r', fill=True, alpha=0.5))
+#            ax.add_artist(plt.Circle((1.33, .15), .5, color = 'r', fill=True, alpha=0.5))
+#            ax.text(-1.43, -.12, 'collision')
+#            ax.text(1.13, .43, 'collision')
             
             ctr = 0
             while True:
@@ -2187,9 +2191,11 @@ class WorldSim(object):
                 if self._plot:
                     ax.relim()
                     ax.autoscale_view(True, True, True)
-                    ax.add_artist(plt.Circle((-1.23, -.4), .7, ls = 'dashed', color = 'k', fill=False, alpha=1.0))
-                    ax.add_artist(plt.Circle((1.33, .15), .7, ls = 'dashed', color = 'k', fill=False, alpha=1.0))
                     fig.canvas.draw()
+
+                    handles, labels = ax.get_legend_handles_labels()
+                    ax.legend(handles, labels, loc=1)
+
                     fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
                             bbox_inches='tight')
             #end
@@ -2198,19 +2204,29 @@ class WorldSim(object):
             ax.autoscale_view(True, True, True)
             
             fig.canvas.draw()
+
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles, labels, loc=1)
+
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
             
 
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]
                 angspeed = [x[1, 0] for x in ut[i]]
-                axarray[0].plot(rtime[i], linspeed, color=colors[i])
-                axarray[1].plot(rtime[i], angspeed, color=colors[i])
+                axarray[0].plot(rtime[i], linspeed, color=colors[i], label = 'robot{}'.format(i))
+                axarray[1].plot(rtime[i], angspeed, color=colors[i], label = 'robot{}'.format(i))
             axarray[0].grid()
             axarray[1].grid()
             axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-            axarray[1].set_ylim([-5.5, 5.5])
+            axarray[1].set_ylim([-6.1, 6.1])
             fig_s.canvas.draw()
+
+            handles1, labels1 = axarray[0].get_legend_handles_labels()
+            #axarray[0].legend(handles1, labels1, loc=1)
+            handles2, labels2 = axarray[1].get_legend_handles_labels()
+            #axarray[1].legend(handles2, labels2, loc=1)
+
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight')
 
             if self._plot:

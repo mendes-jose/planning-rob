@@ -14,8 +14,8 @@
 \title[Trajectory Generation Approach]
 {Multi Robot Optimal Trajectory Generation}
 
-\correspondingauthor[E. Lucet]{Eric Lucet}{my}{eric.lucet@cea.fr}
 \author[J. M. Mendes Filho]{Jos\'{e} Magno Mendes Filho}{my,their}
+\correspondingauthor[E. Lucet]{Eric Lucet}{my}{eric.lucet@cea.fr}
 
 \institution{my}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, F-91191, France}
 \institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ing\'{e}nierie des Syst\'{e}me, 828 boulevard des Marechaux, 91762, France}
@@ -38,32 +38,92 @@
 
 
 
-All mobile robots consisting of a solid block in motion are flat systems~\cite{Defoort2007a}.
+%General Contex
+The command and control of mobile robots is a long-standing subject of research in the iterative robotics domain.
+As many modern companies started to adopt mobile robot systems such as fleets of autonomous forklift trucks
+to improve their commercial performance,
+this subject becomes increasingly important and complex. Especially when those robots are executing theirs tasks in human-occupied environment.
 
-A flat system presents the property that states and inputs can be written in terms of the flat outputs $z$ and its derivatives.
-Thus, all system behavior can be expressed by the flat outputs and a finite number of its derivatives ($l$).
+%The increasing use of autonomous mobile robots in human-occupied environments turns this subject ever more important and complex.
 
-TODO reference Veeraklaew et al. in [106] firstly combines the concepts of differential flatness and sequential quadratic programming.
+%Many modern companies adopted fleet of autonomous forklift trucks to improve their
+%commercial performance these last years~\ref{}.
 
-TODO discussion about how to find the mapping $(q, u) \rightarrow z$ (look up Millan 2003).
+%Problematique
+One basic requirement for such robotic systems is the capacity of generating a trajectory that connects two
+arbitrary configurations. For that, different constraints must be taken into account, in particular:
 
-The approach proposed by Defoort/Milam (and others) takes advantage of the flatness property and search a solution for
-the nonholonomic motion planning problem in the flat space rather than in the configuration space of the mobile robot.
+\begin{itemize}
 
-In addition, their approach use B-splines for representing the solution in the flat space. This provide a small local support (TODO verify and elaborate) able to represent
-complex trajectories.
+ \item kinematic and dynamic constraints;
+ 
+ \item geometric constraints;
+ 
+ \item and constraints associated with the uncertainties in the robot's "belief" in the world state.
+ 
+\end{itemize}
 
-Finally a trajectory optimization routine is done that accounts for all constraints (nonholonomic, geometric and bounded-input) finding an appropriate
-solution.
+The first constraints derive directly from the mobile robot architecture implying in nonholonomic constraints for many types of mobile robots.
+Geometric constraints come from an impossibility for the robots to assume some particular configuration due to the presence of obstacles or bounds
+in the habited environment.
+Uncertainties constraints come from the impossibility for the robot to have an absolutely perfect perception of the world (including its own state).
 
-This approach such as just described assume full knowledge of the environment where the mobile robot is to execute its motion. Defoort adapts this
-method to a sliding window architecture where the motion planning problem is devised throughout time as the mobile robot evolves in its environment and
-discover it.
-%By relaxing the final state constraints, changing the objective function of the NLP and planning for a fixed timespan $T_p$ his new planner
-%dynamically generates the trajectory as the robot moves.
+%Thus, the capacity of planning in a partially known environment, replanning as the perception of the world
+%changes 
 
-Furthermore, another adaptation of this method is done in \cite{Defoort2007a} for multi robot systems. Thanks to an exchange of information
-among the different robots they can adapt theirs trajectories to avoid robot-to-robot collisions and loss of communication in a decentralized fashion.
+%State of Art
+In recent years, a great amount of work towards collision-free trajectory planning has been done.
+TODO STATE OF ART.
+
+%What do we propose
+In this paper, we focus on the development of a trajectory planning algorithm. This algorithm finds collision-free trajectories for
+a multi robot system in presence of static obstacles which are perceived by the robots as they evolve in the environment.
+The dynamic trajectories found are near optimal with respect to the total time spend going from the initial configuration to the final one.
+Besides, this algorithm uses a decentralized approach making the system more robust to communication outages and individual robot failure than compared
+to a centralized approach.
+Another advantage of this method is its real-time performance.
+Identified drawbacks are the dependence on several parameters for achieving real-time performance and good solution quality and not being able to handle
+dynamic obstacles as it is.
+This algorithm is based on the work done in~\ref{Defoort2007a} and we propose some changes especially for reaching the final configuration and about how
+to set some parameters for solving NLP (nonlinear problem).
+
+%Finding a safe and effective solution to this problem is an increasingly important matter as autonomous robots
+%realize theirs tasks in human-occupied environments. 
+
+%One basic requirement for such robots are is the capacity of move beteween two configurations 
+%Special problems/constraints arise when dealing with multi robot systems. Chosing 
+
+%The increasing use of autonomous mobile robots in humam environment %in a supply chain
+% is notorious.
+%Specially importance are being given to robot systems that are consisted of muliple robots working in colaboration.
+%In this context...
+
+%All mobile robots consisting of a solid block in motion are flat systems~\cite{Defoort2007a}.
+%
+%A flat system presents the property that states and inputs can be written in terms of the flat outputs $z$ and its derivatives.
+%Thus, all system behavior can be expressed by the flat outputs and a finite number of its derivatives ($l$).
+%
+%TODO reference Veeraklaew et al. in [106] firstly combines the concepts of differential flatness and sequential quadratic programming.
+%
+%TODO discussion about how to find the mapping $(q, u) \rightarrow z$ (look up Millan 2003).
+%
+%The approach proposed by Defoort/Milam (and others) takes advantage of the flatness property and search a solution for
+%the nonholonomic motion planning problem in the flat space rather than in the configuration space of the mobile robot.
+%
+%In addition, their approach use B-splines for representing the solution in the flat space. This provide a small local support (TODO verify and elaborate) able to represent
+%complex trajectories.
+%
+%Finally a trajectory optimization routine is done that accounts for all constraints (nonholonomic, geometric and bounded-input) finding an appropriate
+%solution.
+%
+%This approach such as just described assume full knowledge of the environment where the mobile robot is to execute its motion. Defoort adapts this
+%method to a sliding window architecture where the motion planning problem is devised throughout time as the mobile robot evolves in its environment and
+%discover it.
+%%By relaxing the final state constraints, changing the objective function of the NLP and planning for a fixed timespan $T_p$ his new planner
+%%dynamically generates the trajectory as the robot moves.
+%
+%Furthermore, another adaptation of this method is done in \cite{Defoort2007a} for multi robot systems. Thanks to an exchange of information
+%among the different robots they can adapt theirs trajectories to avoid robot-to-robot collisions and loss of communication in a decentralized fashion.
 
 
 \section{Mono-robot sliding window planning algorithm}

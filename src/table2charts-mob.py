@@ -6,12 +6,13 @@ import os
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.interpolate import interp1d
+from scipy.optimize import curve_fit
 
-font = {'family' : 'sans-serif',
-        'weight' : 'normal',
-        'size'   : 10}
-
-mpl.rc('font', **font)
+#font = {'family' : 'sans-serif',
+#        'weight' : 'normal',
+#        'size'   : 10}
+#
+#mpl.rc('font', **font)
 
 direc = "../traces/rt-full-table"
 direc = "./rob-obst-dist"
@@ -77,7 +78,21 @@ all_tot = table[:, toti]
 all_rmp = table[:, rmpi]
 
 ax.plot (all_drho, all_tot, label='Mission time', marker='.')
-ax2.plot (all_drho, all_rmp, label='MCT/Tc', marker='.')
+
+def interp_exp(x, a, b, c):
+    return -a*np.exp(-b*x) + c
+
+popt, pcov = curve_fit(interp_exp, all_drho[1:], all_rmp[1:])
+print popt
+print all_drho
+#print interp_exp(all_drho, *popt 0.19504695  62.58511978   2.75724604)
+#ax2.plot(all_drho, -0.19504695*np.exp(-2.5851*all_drho)+2.7572, 'r-', label='Fitted Curve')
+ax2.plot(all_drho, interp_exp(all_drho, *popt), 'r--', label=r'Fitted Curve ($-5.29\,\exp(-0.50\,\rho_d)+3.23$)')
+#ax2.plot(np.append(np.array([0]), all_drho), (1+len(all_drho))*[popt[2]], 'k--', label='Asymtote')
+ax2.plot(all_drho, all_rmp, marker='.', label='Original Data')
+ax2.set_title(r'$MCT/T_c$ and $\rho_d$ relationship')
+hand, lab = ax2.get_legend_handles_labels()
+ax2.legend(hand, lab, loc=4)
 
 #for m, idx in zip(table[:, mobi], range(len(table[:, mobi]))):
 #    ax.text(all_drho[idx], all_tot[idx], '{}'.format(m))
@@ -86,9 +101,10 @@ ax2.plot (all_drho, all_rmp, label='MCT/Tc', marker='.')
 #ax.plot (all_drho, all_tot, marker='.')
 #ax.set_xlabel('mob')
 ax.set_ylabel('Mission time (s)')
-ax2.set_ylabel('MCT/Tc (s)')
-ax.set_xlabel('Drho (m)')
-ax2.set_xlabel('Drho (m)')
+ax2.set_ylabel(r'$MCT/T_c$')
+ax.set_xlabel(r'$\rho_d$ (m)')
+ax2.set_xlabel(r'$\rho_d$ (m)')
+ax2.set_title(r'Mission time and $\rho_d$ relationship')
 handles, labels = ax.get_legend_handles_labels()
 #ax.legend(handles, labels, loc=1)
 #ax.set_xlim(0.0,all_Ns[-1])
@@ -97,14 +113,15 @@ try:
     os.mkdir(direc_charts)
 except OSError:
     print('Probably the output directory already exists, going to overwrite content')
-#fig.set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-fig.savefig(direc_charts+'/drho-tot.eps', bbox_inches='tight', dpi=100)
-fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight', dpi=100)
-fig2.savefig(direc_charts+'/drho-rmp.eps', bbox_inches='tight', dpi=100)
-fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight', dpi=100)
+fig.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+fig2.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+fig.savefig(direc_charts+'/drho-tot.eps', bbox_inches='tight')
+fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight')
+fig2.savefig(direc_charts+'/drho-rmp.eps', bbox_inches='tight')
+fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight')
 
 exit()
-
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # split table on n_scenarios tables
 scenarios_tables = []
 for nobst in all_nobsts:
