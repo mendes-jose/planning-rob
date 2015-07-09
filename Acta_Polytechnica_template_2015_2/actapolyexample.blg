@@ -8,45 +8,50 @@ You're missing a field name---line 40 of file biblio.bib
  : # author = {Donald E. Knuth},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-You've used 1 entry,
+I was expecting a `,' or a `}'---line 96 of file biblio.bib
+ :   
+ :   author = {Stu Robarts}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+You've used 2 entries,
             2933 wiz_defined-function locations,
-            627 strings with 4710 characters,
-and the built_in function-call counts, 630 in all, are:
-= -- 67
-> -- 4
+            632 strings with 4863 characters,
+and the built_in function-call counts, 801 in all, are:
+= -- 79
+> -- 5
 < -- 0
-+ -- 2
++ -- 3
 - -- 1
-* -- 35
-:= -- 66
-add.period$ -- 3
-call.type$ -- 1
-change.case$ -- 1
+* -- 38
+:= -- 78
+add.period$ -- 6
+call.type$ -- 2
+change.case$ -- 3
 chr.to.int$ -- 0
-cite$ -- 1
-duplicate$ -- 80
-empty$ -- 55
+cite$ -- 2
+duplicate$ -- 98
+empty$ -- 80
 format.name$ -- 1
-if$ -- 130
+if$ -- 172
 int.to.chr$ -- 0
-int.to.str$ -- 1
-missing$ -- 6
-newline$ -- 15
+int.to.str$ -- 2
+missing$ -- 10
+newline$ -- 20
 num.names$ -- 1
-pop$ -- 39
+pop$ -- 53
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 4
+skip$ -- 9
 stack$ -- 0
-substring$ -- 81
-swap$ -- 11
+substring$ -- 83
+swap$ -- 20
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
 while$ -- 3
-width$ -- 2
-write$ -- 19
-(There was 1 error message)
+width$ -- 3
+write$ -- 28
+(There were 2 error messages)

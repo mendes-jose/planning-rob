@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.6.30)  6 JUL 2015 17:47
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.6.30)  8 JUL 2015 13:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -790,35 +790,35 @@ LaTeX Info: Redefining \nameref on input line 10.
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/12'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 31.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 36.
 
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 31.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 36.
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 31.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 36.
 
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 31.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 36.
 
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 31.
+(Font)              <12> on input line 36.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 31.
+(Font)              <8> on input line 36.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 31.
-LaTeX Font Info:    Try loading font information for U+msa on input line 31.
+(Font)              <6> on input line 36.
+LaTeX Font Info:    Try loading font information for U+msa on input line 36.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -826,7 +826,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 31.
+LaTeX Font Info:    Try loading font information for U+msb on input line 36.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -840,7 +840,7 @@ Package microtype Info: Character `029' is missing
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/6'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 31.
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 36.
 
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -857,85 +857,39 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/13'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 58.
+(Font)              <9> on input line 64.
 
 
-LaTeX Warning: Reference `Defoort2007a' on page 1 undefined on input line 87.
-
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 133.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 133.
-Package microtype Info: Character `029' is missing
-(microtype)             in font `T1/lmr/m/sc/11'.
-(microtype)             Ignoring protrusion settings for this character.
-
-! LaTeX Error: Environment itmeze undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.200 \begin{itmeze}
-                    
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+Package natbib Warning: Citation `schwartz1988survey' on page 1 undefined on in
+put line 98.
 
 
-! LaTeX Error: Lonely \item--perhaps a missing list environment.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.202 A
-        good initialization allows the
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+Package natbib Warning: Citation `latombe2012robot' on page 1 undefined on inpu
+t line 104.
 
 
-Underfull \hbox (badness 10000) detected at line 202
-[][]
- []
+Package natbib Warning: Citation `Khatib1986' on page 1 undefined on input line
+ 111.
 
 
-! LaTeX Error: Lonely \item--perhaps a missing list environment.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.205 W
-       hen using a local optimization method the initialization
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+Package natbib Warning: Citation `Quinlan1994' on page 1 undefined on input lin
+e 118.
 
 
-Underfull \hbox (badness 10000) detected at line 205
-[][]
- []
+Package natbib Warning: Citation `Brock et Khatib' on page 1 undefined on input
+ line 119.
 
 
-! LaTeX Error: \begin{document} ended by \end{itmeze}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.207 \end{itmeze}
-                  
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
+Package natbib Warning: Citation `1998' on page 1 undefined on input line 119.
 
 
-LaTeX Warning: Reference `eq:stopcond' on page 1 undefined on input line 226.
+Package natbib Warning: Citation `fox1997dynamic' on page 1 undefined on input 
+line 126.
 
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/9'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 227.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 166.
 
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -948,13 +902,102 @@ Package microtype Info: Loading generic settings for font family
 
 
 ]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 231.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 231.
+Package microtype Info: Character `029' is missing
+(microtype)             in font `T1/lmr/m/sc/11'.
+(microtype)             Ignoring protrusion settings for this character.
+
+
+LaTeX Warning: Reference `fig:flatness' on page 2 undefined on input line 251.
+
+
+Package natbib Warning: Citation `milam2003' on page 2 undefined on input line 
+256.
+
+
+LaTeX Warning: Reference `eq:objfunc' on page 2 undefined on input line 287.
+
+
+LaTeX Warning: Reference `eq:lastconst' on page 2 undefined on input line 287.
+
+
+LaTeX Warning: Reference `eq:npl' on page 2 undefined on input line 290.
+
+
+LaTeX Warning: Reference `' on page 2 undefined on input line 290.
+
+
+! LaTeX Error: Environment itmeze undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.369 \begin{itmeze}
+                    
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.371 A
+        good initialization allows the
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) detected at line 371
+[][]
+ []
+
+
+! LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.374 W
+       hen using a local optimization method the initialization
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) detected at line 374
+[][]
+ []
+
+
+! LaTeX Error: \begin{document} ended by \end{itmeze}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.376 \end{itmeze}
+                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+LaTeX Warning: Reference `eq:stopcond' on page 2 undefined on input line 403.
+
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 241.
-
+put line 421.
 ! Missing \endcsname inserted.
 <to be read again> 
                    \let 
-l.259 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
+l.439 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
                                                   
 The control sequence marked <to be read again> should
 not appear between \csname and \endcsname.
@@ -962,7 +1005,7 @@ not appear between \csname and \endcsname.
 ! Argument of \rc@extract@page has an extra }.
 <inserted text> 
                 \par 
-l.259 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
+l.439 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
                                                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -977,7 +1020,7 @@ Runaway argument?
 ! Paragraph ended before \rc@extract@page was complete.
 <to be read again> 
                    \par 
-l.259 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
+l.439 ...ll{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
@@ -986,7 +1029,7 @@ My plan is to forget the whole thing and hope for the best.
 ! Missing \endcsname inserted.
 <to be read again> 
                    \let 
-l.260 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
+l.440 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
                                                   
 The control sequence marked <to be read again> should
 not appear between \csname and \endcsname.
@@ -994,7 +1037,7 @@ not appear between \csname and \endcsname.
 ! Argument of \rc@extract@page has an extra }.
 <inserted text> 
                 \par 
-l.260 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
+l.440 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
                                                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -1009,82 +1052,82 @@ Runaway argument?
 ! Paragraph ended before \rc@extract@page was complete.
 <to be read again> 
                    \par 
-l.260 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
+l.440 ...}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
-<./images/collision/multirobot-path.png, id=91, 516.0078pt x 414.8298pt>
+[2] <./images/collision/multirobot-path.png, id=115, 516.0078pt x 414.8298pt>
 File: ./images/collision/multirobot-path.png Graphic file (type png)
 
 <use ./images/collision/multirobot-path.png>
 Package pdftex.def Info: ./images/collision/multirobot-path.png used on input l
-ine 313.
+ine 509.
 (pdftex.def)             Requested size: 230.09766pt x 184.98163pt.
 
-<./images/collision/multirobot-vw.png, id=93, 509.5035pt x 414.8298pt>
+<./images/collision/multirobot-vw.png, id=117, 509.5035pt x 414.8298pt>
 File: ./images/collision/multirobot-vw.png Graphic file (type png)
 
 <use ./images/collision/multirobot-vw.png>
 Package pdftex.def Info: ./images/collision/multirobot-vw.png used on input lin
-e 316.
+e 513.
 (pdftex.def)             Requested size: 230.09766pt x 187.34264pt.
 
-<./images/no_collision/multirobot-path.png, id=94, 516.0078pt x 414.8298pt>
+<./images/no_collision/multirobot-path.png, id=118, 516.0078pt x 414.8298pt>
 File: ./images/no_collision/multirobot-path.png Graphic file (type png)
 
 <use ./images/no_collision/multirobot-path.png>
 Package pdftex.def Info: ./images/no_collision/multirobot-path.png used on inpu
-t line 323.
+t line 522.
 (pdftex.def)             Requested size: 230.09766pt x 184.98163pt.
 
-<./images/no_collision/multirobot-vw.png, id=95, 509.5035pt x 414.8298pt>
+<./images/no_collision/multirobot-vw.png, id=119, 509.5035pt x 414.8298pt>
 File: ./images/no_collision/multirobot-vw.png Graphic file (type png)
 
 <use ./images/no_collision/multirobot-vw.png>
 Package pdftex.def Info: ./images/no_collision/multirobot-vw.png used on input 
-line 326.
+line 526.
 (pdftex.def)             Requested size: 230.09766pt x 187.34264pt.
-
-Underfull \vbox (badness 1062) has occurred while \output is active []
-
- [2 <./images/collision/multirobot-path.png> <./images/collision/multirobot-vw.
+ [3 <./images/collision/multirobot-path.png> <./images/collision/multirobot-vw.
 png>]
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 369.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 574.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <11> on input line 369.
+(Font)              <11> on input line 574.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.69997> on input line 369.
+(Font)              <7.69997> on input line 574.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.5> on input line 369.
+(Font)              <5.5> on input line 574.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 369.
+(hyperref)                removing `math shift' on input line 574.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 369.
+(hyperref)                removing `subscript' on input line 574.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 369.
+(hyperref)                removing `math shift' on input line 574.
 
-<./images/drho/drho-rmp.png, id=111, 480.5955pt x 259.4493pt>
+<./images/drho/drho-rmp.png, id=133, 480.5955pt x 259.4493pt>
 File: ./images/drho/drho-rmp.png Graphic file (type png)
 
 <use ./images/drho/drho-rmp.png>
-Package pdftex.def Info: ./images/drho/drho-rmp.png used on input line 383.
+Package pdftex.def Info: ./images/drho/drho-rmp.png used on input line 591.
 (pdftex.def)             Requested size: 230.09766pt x 124.21751pt.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 389.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 389.
+(hyperref)                removing `math shift' on input line 599.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 599.
 
 Package epstopdf Info: Source file: <./images/penetration/pen-nsi.eps>
 (epstopdf)                    date: 2015-06-30 00:42:12
@@ -1095,52 +1138,56 @@ Package epstopdf Info: Source file: <./images/penetration/pen-nsi.eps>
 (epstopdf)                    size: 14945 bytes
 (epstopdf)             Command: <repstopdf --outfile=./images/penetration/pen-n
 si-eps-converted-to.pdf ./images/penetration/pen-nsi.eps>
-(epstopdf)             \includegraphics on input line 395.
+(epstopdf)             \includegraphics on input line 605.
 Package epstopdf Info: Output file is already uptodate.
 
-<./images/penetration/pen-nsi-eps-converted-to.pdf, id=113, 555.07375pt x 334.2
+<./images/penetration/pen-nsi-eps-converted-to.pdf, id=135, 555.07375pt x 334.2
 4875pt>
 File: ./images/penetration/pen-nsi-eps-converted-to.pdf Graphic file (type pdf)
 
  <use ./images/penetration/pen-nsi-eps-converted-to.pdf>
 Package pdftex.def Info: ./images/penetration/pen-nsi-eps-converted-to.pdf used
- on input line 395.
+ on input line 605.
 (pdftex.def)             Requested size: 230.09766pt x 138.55763pt.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 404.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 404.
+(hyperref)                removing `math shift' on input line 615.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 404.
+(hyperref)                removing `subscript' on input line 615.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 408.
+(hyperref)                removing `math shift' on input line 615.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 408.
+(hyperref)                removing `math shift' on input line 619.
 
-(./actapolyexample.bbl [3 <./images/no_collision/multirobot-path.png> <./images
-/no_collision/multirobot-vw.png> <./images/drho/drho-rmp.png> <./images/penetra
-tion/pen-nsi-eps-converted-to.pdf>]) 
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 619.
+
+(./actapolyexample.bbl) 
 AED: lastpage setting LastPage
-[4
+[4 <./images/no_collision/multirobot-path.png> <./images/no_collision/multirobo
+t-vw.png> <./images/drho/drho-rmp.png> <./images/penetration/pen-nsi-eps-conver
+ted-to.pdf>]
 
-]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 436.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 436.
- (./actapolyexample.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 436.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 436.
+Package natbib Warning: There were undefined citations.
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 648.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 648.
+(./actapolyexample.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 648.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 648.
 Package rerunfilecheck Info: File `actapolyexample.out' has not changed.
-(rerunfilecheck)             Checksum: B8368A47A1F8A69699F4EFAC27674642;1117.
+(rerunfilecheck)             Checksum: E70A74100CA705D0D4BE4C0A8DFB547A;1385.
 
 
 LaTeX Warning: There were undefined references.
@@ -1148,20 +1195,20 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 436.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 648.
  ) 
 Here is how much of TeX's memory you used:
- 13573 strings out of 493304
- 206128 string characters out of 6139871
- 353277 words of memory out of 5000000
- 16587 multiletter control sequences out of 15000+600000
- 146998 words of font info for 169 fonts, out of 8000000 for 9000
+ 13608 strings out of 493304
+ 206568 string characters out of 6139871
+ 357297 words of memory out of 5000000
+ 16604 multiletter control sequences out of 15000+600000
+ 147579 words of font info for 176 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 43i,14n,47p,261b,532s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,14n,45p,261b,461s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share
-/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ma
-thsy.enc}</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/f
+c/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/s
+hare/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm
+-ts1.enc}</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx9.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/
 type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb><
@@ -1178,10 +1225,10 @@ c/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share
 /lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/
 fonts/type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.p
 fb>
-Output written on actapolyexample.pdf (4 pages, 575008 bytes).
+Output written on actapolyexample.pdf (4 pages, 585006 bytes).
 PDF statistics:
- 251 PDF objects out of 1000 (max. 8388607)
- 188 compressed objects within 2 object streams
- 27 named destinations out of 1000 (max. 500000)
- 49815 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 271 PDF objects out of 1000 (max. 8388607)
+ 207 compressed objects within 3 object streams
+ 31 named destinations out of 1000 (max. 500000)
+ 49839 words of extra memory for PDF output out of 51595 (max. 10000000)
 

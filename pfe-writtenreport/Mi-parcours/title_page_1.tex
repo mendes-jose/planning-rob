@@ -221,7 +221,12 @@ Thus, the mobile robots have to be able to evolve in an environment that is part
 
 The main objective of this internship is to implement, test, evaluate and improve an optimal path planning algorithm presented in details in~\cite{Defoort2007a} with respect to its applicability to a scenario where autonomous forklift trucks and humans share the same environment.
 
-This planning algorithm consists in planning the mobile robot's path by solving a direct trajectory optimization problem~\cite{betts1998survey} using B-splines for representing the system flat output~\cite{milam2003real}. As stated in~\cite{Defoort2007a} compared with other solutions this approach presents good advantages for multi-robots systems evolving in an uncertain environment with static obstacles. For instance, analytic methods  are inapplicable for nonholonomic systems in presence of obstacles \cite{schwartz1988survey}. Cell decomposition methods \cite{latombe2012robot} have the downside of requiring an \textit{a priori} space modeling. The dynamic window approach \cite{fox1997dynamic} is not flexible enough to be extended to a multi-robot system.
+This planning algorithm consists in planning the mobile robot's path by solving a direct trajectory optimization problem~\cite{betts1998survey}
+using B-splines for representing the system flat output~\cite{milam2003real}. As stated in~\cite{Defoort2007a} compared with other solutions
+this approach presents good advantages for multi-robots systems evolving in an uncertain environment with static obstacles. For instance,
+analytic methods  are inapplicable for nonholonomic systems in presence of obstacles \cite{schwartz1988survey}. Cell decomposition methods
+\cite{latombe2012robot} have the downside of requiring an \textit{a priori} space modeling.
+The dynamic window approach \cite{fox1997dynamic} is not flexible enough to be extended to a multi-robot system.
 
 The two main challenges that may be confronted during this work are how to guarantee real-time performance for our specific application and how to generalize the algorithm in order to account for dynamic obstacles (including humans).
 

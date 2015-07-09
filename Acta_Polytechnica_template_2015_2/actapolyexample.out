@@ -1,15 +1,18 @@
 \BOOKMARK [1][-]{bkmk:mkttl.1}{Acta Polytechnica 00\(0\):1\2054, 0000}{}% 1
 \BOOKMARK [1][-]{section.1}{1 Introduction}{}% 2
-\BOOKMARK [1][-]{section.2}{2 Mono-robot sliding window planning algorithm}{}% 3
-\BOOKMARK [2][-]{subsection.2.1}{2.1 Initialization}{section.2}% 4
-\BOOKMARK [2][-]{subsection.2.2}{2.2 Stop condition and last NLP}{section.2}% 5
-\BOOKMARK [1][-]{section.3}{3 Decentralized multi robot sliding window planning algorithm}{}% 6
-\BOOKMARK [2][-]{subsection.3.1}{3.1 Conflict detection}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.2}{3.2 Aditional constraints}{section.3}% 8
-\BOOKMARK [1][-]{section.4}{4 Parameters' impact analyses}{}% 9
-\BOOKMARK [2][-]{subsection.4.1}{4.1 Maximum computation time over computation horizon MCT/Tc}{section.4}% 10
-\BOOKMARK [2][-]{subsection.4.2}{4.2 Obstacle penetration P}{section.4}% 11
-\BOOKMARK [2][-]{subsection.4.3}{4.3 Total execution time Ttot}{section.4}% 12
-\BOOKMARK [2][-]{subsection.4.4}{4.4 Additional time for conflic handlingP}{section.4}% 13
-\BOOKMARK [1][-]{section.5}{5 Conclusions}{}% 14
-\BOOKMARK [1][-]{bkmk:references.1}{References}{}% 15
+\BOOKMARK [1][-]{section.2}{2 Sliding window approach}{}% 3
+\BOOKMARK [2][-]{subsection.2.1}{2.1 Flatness property}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.2}{2.2 Parametrization of the flat output}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.3}{2.3 Planning for sliding time horizon by solving NLPs}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.4}{2.4 NLP initialization and objective function}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.5}{2.5 Stop condition and last NLP}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{3 Decentralized multi robot sliding window planning algorithm}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{3.1 Conflict detection}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.2}{3.2 Aditional constraints}{section.3}% 11
+\BOOKMARK [1][-]{section.4}{4 Parameters' impact analyses}{}% 12
+\BOOKMARK [2][-]{subsection.4.1}{4.1 Maximum computation time over computation horizon MCT/Tc}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.2}{4.2 Obstacle penetration P}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.3}{4.3 Total execution time Ttot}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.4}{4.4 Additional time for conflic handlingP}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{5 Conclusions}{}% 17
+\BOOKMARK [1][-]{bkmk:references.1}{References}{}% 18
