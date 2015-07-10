@@ -222,6 +222,9 @@ section six we present our conclusions and perspectives.
 %robot-to-robot collisions and loss of communication in a decentralized fashion.
 
 
+\section{}
+
+
 \section{Sliding window approach}
 
 %As said before we are interest in solving the problem of planning a trajectory 
@@ -513,12 +516,10 @@ the robots velocities and total execution time.
 the multi robot system TODO  \centering
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-path.png} % 
-<-- use this for your graphics
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-path.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw.png} % 
-<-- use this for your graphics
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw.pdf} % 
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Our results: black box (top) and black box 
 (bottom).\label{fig:collision}}
@@ -526,12 +527,11 @@ the multi robot system TODO  \centering
 \end{figure}
 
 \begin{figure}\centering
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path.png} 
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path.pdf} 
 % <-- use this for your graphics
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw.png} % 
-<-- use this for your graphics
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Our results: black box (top) and black box 
 (bottom).\label{fig:nocollision}}
@@ -595,8 +595,7 @@ Based on several simulations with different scenarios we were able to TODO
 \end{itemize}
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/drho/drho-rmp.png} % <-- use this 
-for your graphics
+  \includegraphics[width=\linewidth]{./images/drho/drho-rmp.pdf} % <-- use this
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Increasing of detection radius and impact on a $MTC/T_c$ 
 ratio\label{fig:drho}}
@@ -609,8 +608,7 @@ ratio\label{fig:drho}}
 TODO rescale images
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} % <-- 
-use this for your graphics
+  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Obstacle penetration decreasing as sampling increases\label{fig:pen}}
 \label{fig:res}
@@ -623,7 +621,7 @@ use this for your graphics
 
 
 
-\subsection{Additional time for conflic handling$P$}
+\subsection{Additional time for conflict handling$P$}
 
 
 TODO Comparison with the other method;

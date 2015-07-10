@@ -99,7 +99,7 @@ class RoundObstacle(Obstacle):
         ax = fig.gca()
         ax.add_artist(self._plt_circle(filled=True, alpha=0.3))
         ax.add_artist(self._plt_circle(linestyle='dashed', offset=offset))
-        ax.plot(self.x, self.y, 'k.')
+#        ax.plot(self.x, self.y, 'k.')
 
     def pt_2_obst(self, pt, offset=0.0):
         """ Return the point-to-obstacle distance less the offset value
@@ -1714,8 +1714,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-#        if False:
-        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+        if False:
+#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2110,16 +2110,16 @@ class WorldSim(object):
                     '/images/'+self._sn+' already exists, going to overwrite content')
 
         fig_s, axarray = plt.subplots(2)
-        axarray[0].set_ylabel('v(m/s)')
+        axarray[0].set_ylabel(r'$v(m/s)$')
         axarray[0].set_title('Linear speed')
         axarray[1].set_xlabel('time(s)')
-        axarray[1].set_ylabel('w(rad/s)')
+        axarray[1].set_ylabel(r'$\omega(rad/s)$')
         axarray[1].set_title('Angular speed')
 
         fig = plt.figure()
         ax = fig.gca()
-        ax.set_xlabel('x(m)')
-        ax.set_ylabel('y(m)')
+        ax.set_xlabel(r'$x(m)$')
+        ax.set_ylabel(r'$y(m)$')
         ax.set_title('Generated trajectory')
         ax.axis('equal')
 
@@ -2135,7 +2135,7 @@ class WorldSim(object):
             plt_robots_c = range(len(self._robs))
             plt_robots_t = range(len(self._robs))
             for i in range(len(self._robs)):
-                plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label='robot{}'.format(i))
+                plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label=r'$R_{}$'.format(i))
                 plt_seg_pts[i], = ax.plot(path[i][0, seg_pts_idx[i][0]], \
                         path[i][1, seg_pts_idx[i][0]], color=colors[i], ls='None', marker='o', markersize=5)
                 plt_robots_c[i] = plt.Circle(
@@ -2156,10 +2156,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-#            ax.add_artist(plt.Circle((-1.23, -.4), .5, color = 'r', fill=True, alpha=0.5))
-#            ax.add_artist(plt.Circle((1.33, .15), .5, color = 'r', fill=True, alpha=0.5))
-#            ax.text(-1.43, -.12, 'collision')
-#            ax.text(1.13, .43, 'collision')
+            ax.add_artist(plt.Circle((-1.23, -.4), .5, color = 'r', fill=True, alpha=0.5))
+            ax.add_artist(plt.Circle((1.33, .15), .5, color = 'r', fill=True, alpha=0.5))
+            ax.text(-1.43, -.12, 'collision')
+            ax.text(1.13, .43, 'collision')
             
             ctr = 0
             while True:
@@ -2194,9 +2194,11 @@ class WorldSim(object):
                     fig.canvas.draw()
 
                     handles, labels = ax.get_legend_handles_labels()
-                    ax.legend(handles, labels, loc=1)
+                    ax.legend(handles, labels, loc=1, ncol=3)
 
                     fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
+                            bbox_inches='tight')
+                    fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.pdf',\
                             bbox_inches='tight')
             #end
 
@@ -2206,28 +2208,30 @@ class WorldSim(object):
             fig.canvas.draw()
 
             handles, labels = ax.get_legend_handles_labels()
-            ax.legend(handles, labels, loc=1)
+            ax.legend(handles, labels, loc=1, ncol=3)
 
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
+            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.pdf', bbox_inches='tight')
             
 
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]
                 angspeed = [x[1, 0] for x in ut[i]]
-                axarray[0].plot(rtime[i], linspeed, color=colors[i], label = 'robot{}'.format(i))
-                axarray[1].plot(rtime[i], angspeed, color=colors[i], label = 'robot{}'.format(i))
+                axarray[0].plot(rtime[i], linspeed, color=colors[i], label = r'$R_{}$'.format(i))
+                axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i))
             axarray[0].grid()
             axarray[1].grid()
             axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-            axarray[1].set_ylim([-6.1, 6.1])
+            axarray[1].set_ylim([-5.5, 5.5])
             fig_s.canvas.draw()
 
             handles1, labels1 = axarray[0].get_legend_handles_labels()
-            #axarray[0].legend(handles1, labels1, loc=1)
+            axarray[0].legend(handles1, labels1, ncol=3, loc=3)
             handles2, labels2 = axarray[1].get_legend_handles_labels()
-            #axarray[1].legend(handles2, labels2, loc=1)
+            axarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight')
+            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight')
 
             if self._plot:
                 while True:
@@ -2256,14 +2260,14 @@ class WorldSim(object):
             axarray[0].cla()
             axarray[1].cla()
             ax.cla()
-            ax.set_xlabel('x(m)')
-            ax.set_ylabel('y(m)')
+            ax.set_xlabel(r'$x(m)$')
+            ax.set_ylabel(r'$y(m)$')
             ax.set_title('Generated trajectory')
             ax.axis('equal')
-            axarray[0].set_ylabel('v(m/s)')
+            axarray[0].set_ylabel(r'$v(m/s)$')
             axarray[0].set_title('Linear speed')
             axarray[1].set_xlabel('time(s)')
-            axarray[1].set_ylabel('w(rad/s)')
+            axarray[1].set_ylabel(r'$\omega(rad/s)$')
             axarray[1].set_title('Angular speed')
         #end
     #end
@@ -2475,7 +2479,7 @@ if __name__ == '__main__':
 
     kine_models = [UnicycleKineModel(
             [-2.5, -0.6, 0], # q_initial
-            [2.5,  0.5, np.pi/16.], # q_final
+            [2.5,  0.5, .0], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
             [1.0,  5.0]),          # u_max

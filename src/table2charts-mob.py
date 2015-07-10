@@ -115,9 +115,9 @@ except OSError:
     print('Probably the output directory already exists, going to overwrite content')
 fig.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
 fig2.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
-fig.savefig(direc_charts+'/drho-tot.eps', bbox_inches='tight')
+fig.savefig(direc_charts+'/drho-tot.pdf', bbox_inches='tight')
 fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight')
-fig2.savefig(direc_charts+'/drho-rmp.eps', bbox_inches='tight')
+fig2.savefig(direc_charts+'/drho-rmp.pdf', bbox_inches='tight')
 fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight')
 
 exit()
