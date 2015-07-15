@@ -4,6 +4,9 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{tikz}
+
 %\usepackage{draftwatermark}
 %\SetWatermarkText{DRAFT}
 %\SetWatermarkScale{1}
@@ -22,8 +25,8 @@
 
 \institution{my}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, 
 F-91191, France}
-\institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ing\'{e}nierie 
-des Syst\'{e}me, 828 boulevard des Marechaux, 91762, France}
+\institution{their}{ENSTA Paristech, Unit\'{e} d'Informatique et d'Ing\'{e}nierie 
+des Syst\`{e}mes, 828 bd des Marechaux, 91762, France}
 %\institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ingénierie des 
 %Système, 828 boulevard des Marechaux, F-91762, France}
 %\institution{their}{CEA, LIST, Interactive Robotics Laboratory, 
@@ -47,7 +50,8 @@ des Syst\'{e}me, 828 boulevard des Marechaux, 91762, France}
 
 %General Context
 
-The command and control of mobile robots is a long-standing subject of research 
+The %command and
+control of mobile robots is a long-standing subject of research 
 in the iterative robotics domain. As many modern companies started to adopt 
 mobile robot systems such as teams of autonomous forklift trucks~\cite{Gizmag} 
 to improve their commercial performance, this subject becomes increasingly 
@@ -78,25 +82,25 @@ constraints result from the impossibility of the robots to assume some specific
 configurations due to the presence of obstacles or environment bounds. In turn, 
 uncertainty constraints come from the impossibility of the robots to have an 
 absolute and complete perception of the world (including theirs own states) as 
-well as the outcome of non stochastic events.
+well as the outcome of non-stochastic events.
 
  
 
 We are particularly interest in solving the problem of dynamic planning a 
 trajectory for a team of nonholonomic mobile robots in an partially known 
 environment occupied by static obstacles being near optimal with respect to the 
-execution time (time spend from going from initial to final configurations).
+execution time (time spent from going from initial to final configurations).
 
  
 
 %State of Art
 
 In recent years, a great amount of work towards collision-free trajectory 
-planning has been done.
+planning has been proposed.
 
  
 
-Some work has being done towards analytic methods for solving the problem for 
+Some work has been done towards analytic methods for solving the problem for 
 certain classes of systems (~\cite{}). However~\cite{schwartz1988survey} shows 
 that analytic methods  are inapplicable for nonholonomic systems in presence of 
 obstacles.
@@ -105,12 +109,12 @@ obstacles.
 
 Cell decomposition methods as presented in~\cite{latombe2012robot} have the 
 downside of requiring a structured configuration space and an \textit{a priori} 
-model of its connectivity. Besides, the cell decomposition constrains the space 
+model of its connectivity. Besides, the cell decomposition reduces the space 
 of admissible solutions. TODO verify/understand.
 
  
 
-Initially proposed in~\cite{Khatib1986} the vector field obstacle avoidance 
+Initially proposed in~\cite{Khatib1986}, the vector field obstacle avoidance 
 method was improve along time for treating problems such as oscillation of the 
 solution for narrow passages. This method does not present a near optimal 
 generated trajectory.
@@ -174,34 +178,46 @@ In the development of this approach the following assumptions were made:
 
 \begin{enumerate}
 
-    \item The multi robot system is composed of $B$ nonholonomic robots;
+    \item The team of robots consists of a set $\mathcal{R}$ of $B$
+    nonholonomic mobile robots;
     
-    \item A robot (denoted $\mathcal{R}_b$, with $n \in \{0,\dots,B-1\}$) is 
-    geometrically represented by a circle of radius $\rho_n$;
+    \item A robot (denoted $R_b,\ R_b \in \mathcal{R},\ b \in \{0,\dots,B-1\}$) is 
+    geometrically represented by a circle of radius $\rho_b$;
         
-    \item An obstacle (denoted $\mathcal{O}_m$, with \mbox{$m \in \{0, \dots, M-1\}$}) are 
-    static and are represented either as circles or as convex polygons;
+    \item All obstacles in the environment are considered static. They can be
+    represented by a set $\mathcal{O}$ of $M$ static obstacles;
     
-    \item For a given instant $t_k \in [t_{init}, t_{final}]$ any obstacle
-    having its geometric center within a distance equal to $\rho_{d,n}$ to
-    the robot $\mathcal{R}_n$ is considered detected by the robot
-    $\mathcal{R}_n$.
+    \item An obstacle (denoted $O_m,\ $\mbox{$O_m \in \mathcal{O}$}$,\ $
+    \mbox{$m \in \{0,\ \dots, M-1\}$}) is geometrically represented either as
+    circle or as a convex polygon;
     
-    \item A robot $\mathcal{R}_b$ can access 
+    \item For a given instant $t_k \in [t_{init},\ t_{final}]$, any obstacle
+    $O_m$ closer to the geometric center of the robot $R_b$ to the having its
+    geometric center within the detection radius $d_{b,sen}$ from
+    the geometric center of the robot $R_b$ is considered detected by the robot
+    $R_b$. Thus, this obstacle is part of the set $\mathcal{D}$
+    ($\mathcal{D} \subset \mathcal{O}$) of detected obstacles;
+    
+    \item A robot has precise knowledge of the position and geometric representation of
+    a detected obstacle;
+    
+    \item A robot can access 
     information about any robot in the team using 
-    some kind of wireless communication link.
+    a wireless communication link.
     
     \item Latency, communication outages and other problems associated
     to the communication between robots in the team are neglected;
         
     \item Dynamics was neglected.
-
-%    \item The motion planner in a robot $R_n$ (with $n \in {0,\dots,B-1}$) has
+    
+    \item The input of a mobile robot $R_b$ is limited.
+    
+%    \item The motion planner in a robot $R_b$ (with $n \in {0,\dots,B-1}$) has
 %    access to the following information:
 %    \begin{enumerate}
-%        \item current and past configuration of the robot $R_n$;
-%        \item $R_n$'s goal configuration;
-%        \item $R_n$'s input limits;
+%        \item current and past configuration of the robot $R_b$;
+%        \item $R_b$'s goal configuration;
+%        \item $R_b$'s input limits;
 %        \item The map function to pass from flat space to state and input space and
 %        its inverse;
 %        \item  
@@ -220,34 +236,157 @@ In the development of this approach the following assumptions were made:
 
 \subsection{Constraints and cost functions}
 
+After loosely defining what is the motion planning problem in
+Section~\ref{sec:intro} and presenting the assumptions in the previous Subsection
+we can identify and define what are the constraints and the cost function for the
+multi robot navigation.
+
 \begin{enumerate}
 
-    \item System model:
+    \item The system kinetic model must hold for a computed solution to the
+    motion planning problem problem:
     \begin{equation}
-        \mathrm{\dot{q}_n = f(q_n,u_n)}
+        \dot{q}_b = f(q_b,u_b)
     \end{equation}
-    with limited input:
+	with $q_b\,:\,\mathbb{R}^{+}\rightarrow \mathbb{R}^n$ the robot's configuration
+	vector,
+	$u_b\,:\,\mathbb{R}^{+}\rightarrow \mathbb{R}^p$ the robot's input vector and
+	\mbox{$f\,:\,\mathbb{R}^{n}\times \mathbb{R}^{p}\rightarrow \mathbb{R}^n$} the
+	vector field.
+    
+    \item The practical limitations of the input can be taken into account by the
+    following constraint:
     \begin{equation}
-        \mathrm{|u_{n,i}| \leq u_{n,i,max}}\quad \forall i \in [1, p]
+        |u_{b,i}| \leq u_{b,i,max}\quad \forall i \in [1, p]
     \end{equation}
-    with $p$ equals to the input dimension.
+    
     \item The cost for the multi robot system is defined as:
     \begin{equation}
-        L(q,u) = \sum_{b=0}^{B-1}L_b(q_n, u_n, q_{n,final})
+        L(q,u) = \sum_{b=0}^{B-1}L_b(q_b, u_b, q_{b,final})
     \end{equation}
-    where $L_b(q_n, u_n, q_{n,final})$ is the integrated cost for one robot
+    where $L_b(q_b, u_b, q_{b,final})$ is the integrated cost for one robot
     stabilisation (see~\cite{Deffort2009});
-    \item TODO define the functions "distance" robot-to-obstacle:
+    
+    
+    \item 
+    %TODO define the functions "distance" robot-to-obstacle:
+    To ensure collision avoidance with obstacles the euclidean 
+    distance between
+    a robot and an obstacle (denoted $\mathrm{d}(R_b, O_m)\ |\ O_m
+    \in \mathcal{O}_b, R_b \in \mathcal{B} $) has to satisfy:
     \begin{equation}
-        \sqrt{()^2 + ()^2}
+    	\mathrm{d}(R_b, O_m) > 0
     \end{equation}
-    for circle and
+    For the circle representation of an obstacle the distance
+    $\mathrm{d}(R_b, O_m)$ is defined as:
+    \begin{equation*}
+        \sqrt{(x_{b} - x_{O_m})^2 + (y_{b} - y_{\mathrm{O}_m})^2}  - \rho_b - r_{O_m}
+    \end{equation*}
+    with $r_{O_m}$ being the obstacle radius.
+    
+    For the polygon representation, the distance was calculated using three different
+    definitions according to the Voronoi region~\cite{ericson2004real}
+    within which
+    $R_b$ is located. Figure~\ref{fig:convexpolygon} shows an example of the thee kind
+    of regions for a quadrilateral $ABCD$ representation. The regions are defined by
+    the lines containing the sides ($s$ lines) and by the lines passing
+    through the vertices that are orthogonal to the sides ($r$ lines).    
+    
+	The region in which the robot $R_b$ is located
+	can be computed by evaluating the line
+ 	equations 
+ 	$s_{AB}$, $s_{BC}$, $s_{CD}$, $s_{DA}$, $r_{AB}$, $r_{AD}$, $r_{BA}$, $r_{BA}$,
+ 	$r_{BC}$, $r_{BA}$, $r_{BC}$, $r_{CB}$, $r_{CD}$, $r_{DC}$ and $r_{DA}$ for 
+ 	the position associated with the configuration $q_b$.
+ 	
+%    The region which the position associated with a given configuration $q_b$
+%    is in can be computed as follows.
+    
+    For the example in the Figure~\ref{fig:convexpolygon} the distance
+    robot-to-quadrilateral could be found as follows:
+    \begin{enumerate}
+    
+	   	\item If robot in region $1$:
+   	   	\begin{equation*}
+    	    \sqrt{(x_{b} - x_{A})^2 + (y_{b} - y_{A})^2} - \rho_b
+	    \end{equation*}
+	    which is simply the distance of the robot to the vertex $A$.
+	    
+	    \item If robot in region $2$:
+%	    
+		\begin{equation*}
+			\mathrm{d}(s_{DA}, (x_{b}, y_{b})) - \rho_b
+		\end{equation*}
+		where
+   	   	\begin{equation*}
+    	    \mathrm{d}(s_{DA}, (x_{b}, y_{b})) =\\ \frac{|a_{s_{DA}}x_{b} + b_{s_{DA}}y_{b}
+    	    + c_{s_{DA}}|}{\sqrt{a_{s_{DA}}^2 + b_{s_{DA}}^2}}
+	    \end{equation*}
+	    The distance $\mathrm{d}(s_{DA}, (x_{b}, y_{b}))$ represents from the robot to the side $DA$.
+	    
+	    \item If robot in region $3$:
+   	   	\begin{equation*}
+    	    -\min\left(\mathrm{d}(s_{AB}, (x_{b}, y_{b})), \cdots, \mathrm{d}(s_{DA}, (x_{b}, y_{b}))\right) - \rho_b
+	    \end{equation*}
+	    which represents the amount of penetration of the robot in the obstacle.
+	    
+    \end{enumerate}
+    \begin{figure}[!h]
+	\centering
+	{
+    \begin{tikzpicture}
+	[cube/.style={very thick,black}, 			
+	grid/.style={very thin,gray},
+	cube_hidden/.style={very thick,dashed},
+	polygon/.style={very thick, black},
+	axis/.style={-,blue,thick},
+	point/.style={very thick,black},
+	afill/.style = {fill=blue!20,fill opacity=0.5},
+	bfill/.style = {fill=green!20,fill opacity=0.5}]
+	\fill[afill] (0,1,0) -- (-0.5,3,0) -- (-1.5,3,0) -- (-1.5,-.5,0) --cycle;
+	\fill[bfill] (0,1,0) -- (4,2,0) -- (3.75,3.,0) -- (-0.5,3,0) --cycle;
+	\draw[axis] (-.25,2.,0) -- (.5,-1.,0) node[anchor=west,color=blue]{$r_{AD}$}; % y = 1. - 4.x
+	\draw[axis] (1.,2.,0) -- (-1.,0.,0) node[anchor=west,color=blue]{$r_{AB}$};%y = x+1
+	\draw[axis] (3.75,3.,0) -- (4.375,0.5,0) node[anchor=west,color=blue]{$r_{DA}$}; %y = 18.-4. x
+	%\draw[axis,red] (0.,0.,0) -- (4.25,0.,0) node[anchor=west,color=red]{$s_1$};
+	%\draw[axis,red] (2.75,-.5,0) -- (4.5,3.,0) node[anchor=west,color=red]{$s_2$};
+	\draw[axis,red] (-1.,.75,0) -- (5.,2.25,0) node[anchor=north,color=red]{$s_{DA}$};
+	%\draw[axis,red] (-0.5,1.5,0) -- (1.5,-.5,0) node[anchor=east,color=red]{$s_4$};
+	
+	\draw[point] (2.0,2.4,0) node[anchor=east]{\textbullet $2$};
+	\draw[point] (-0.5,1.5,0) node[anchor=east]{\textbullet $1$};
+	%\draw[axis] (2.0,1.0,0) -- (-0.5,-1.5,0) node[anchor=west,color=blue]{$r_{1,0}$};
+	
+	\draw[polygon,fill=gray!50] (0,1,0)  -- (1,0,0) node[below] {$B$} -- (3,0,0) node[below] {$C$} -- (4,2,0) -- cycle;
+	\draw[point] (2.6,0.5,0) node[anchor=east]{\textbullet $3$};
+%node[above] {$A$} node[above] {$D$}
+	\node[text width=0cm] at (-0.4,1.2,0) {$A$};
+	\node[text width=0cm] at (4.1,2.3,0) {$D$};
+	\end{tikzpicture}}
+	\caption{Voronoi regions used for case differentiation. \label{fig:convexpolygon}}
+	\end{figure}
+
+    \item 
+    In order to prevent inter-robot collision the following constraint must be respected:
+    $\forall\ (R_b, R_c) \in \mathcal{R} \times \mathcal{R}, b\neq c$,
+    %o a robot $R_b$ avoid collision with other robots the following
+    %relation must be satisfied. 
+%    In order to avoid inter-robot collision the following constraint
+%    must be respect by the robots $R_b$ and $R_b$:
     \begin{equation}
-        \mathrm{distance\_func}
+	    \mathrm{d}(R_b,R_c) - \rho_b -\rho_c > 0
     \end{equation}
-    for polygon.
-    \item Min distance inter robot.
-    \item Comm distance.
+    where $\mathrm{d}(R_b,R_c) = \sqrt{(x_{b} - x_{c})^2 + (y_{b} - y_{c})^2}$.
+    This constraint justifies the need for a communication link between the robots.
+    
+    \item In order to keep the communication between robots $(R_b, R_c)$ the
+    following equation must be respected: 
+    %In addition, for a given pair of robots $R_b R_c$ that must keep
+    %a communication link between them the following equation 
+    \begin{equation}
+    	\mathrm{d}(R_b,R_c)  - \min(d_{b,com}, d_{c,com}) < 0
+    \end{equation}
+    with $d_{b,com}, d_{c,com}$ being the communication link reach of the robots.
 \end{enumerate}
 
 \section{Distributed motion planning}
@@ -261,7 +400,7 @@ In the development of this approach the following assumptions were made:
 %TODO present method or make reference to Defoort introducing $T_c$, $T_p$ etc.
 
 As said before trying to find the solution from the initial configuration
-until the goal is prohibited. Thus, the planning has to be computed on-line
+until the goal is not feasible. Thus, the planning has to be computed on-line
 as the multi robot system evolves in the environment.
 One way to do so is to use a receding horizon approach~\ref{}.
 
@@ -289,6 +428,9 @@ using the other robots' intended trajectories computed in the first step.
 %a NLP 
 %
 %
+
+\mbox{}
+
 However, two aspects of the implementation of this algorithm are neglected 
 in~\cite{Defoort2007a}: the initial values for
 the control points and the procedure for reaching the goal state.
@@ -429,7 +571,7 @@ the control points and the procedure for reaching the goal state.
 %
 %TODO talk about the too close obstacles problem and the dumb solution.
 
-\subsection{Stop condition and last optimal problem}
+\subsection{Motion planning termination}
 
 
 As the robots evolve theirs states approximate to the goal states.
@@ -482,9 +624,9 @@ The following pseudo code summarizes the algorithm:
 		
 	    \EndWhile\label{planningwhile}
 	    %\State \Call{RescalePbl}{}
-	    \State $s \gets $\Call {Min}{$\tfrac{d_{rem}}{v_{max}\cdot t_p}, 1.0$}
-	    \State $n_{knots} \gets $\Call{Max}{\Call{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
-	    \State $n_{s} \gets $\Call {Max}{\Call{Round}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
+%	    \State $s \gets $\Call {Min}{$\tfrac{d_{rem}}{v_{max}\cdot t_p}, 1.0$}
+%	    \State $n_{knots} \gets $\Call{Max}{\Call{Round}{$s\cdot n_{knots}$}$, d_{spl}$}
+%	    \State $n_{s} \gets $\Call {Max}{\Call{Round}{$s\cdot n_{s}$}$, n_{knots} + d_{spl}$}
 	    \State $\Delta t \gets $\Call{PlanLastSec}{}
 	    
 %            \State $r\gets a \bmod b$
@@ -500,7 +642,7 @@ The following pseudo code summarizes the algorithm:
 
 
 
-\section{Decentralized multi robot sliding window planning algorithm}
+\section{Simulation results}
 
 
 
@@ -645,7 +787,7 @@ ratio\label{fig:drho}}
 TODO rescale images
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} %
+%  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Obstacle penetration decreasing as sampling increases\label{fig:pen}}
 \label{fig:res}

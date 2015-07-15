@@ -288,7 +288,7 @@ class PolygonObstacle(Obstacle):
         ax.add_artist(plt.Polygon(
                 self._orig_vertices, color='k', ls='solid', fill=True, alpha=0.3))
         ax.add_artist(plt.Polygon(self._aug_vertices, color='k', ls='dashed', fill=False))
-        ax.plot(self.x, self.y, 'k.')
+#        ax.plot(self.x, self.y, 'k.')
 
     def pt_2_obst(self, pt, offset=0.0):
         """Calculate distance from point to the obstacle
