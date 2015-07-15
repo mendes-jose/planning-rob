@@ -2157,10 +2157,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-#            ax.add_artist(plt.Circle((-1.23, -.4), .5, color = 'r', fill=True, alpha=0.5))
-#            ax.add_artist(plt.Circle((1.33, .15), .5, color = 'r', fill=True, alpha=0.5))
-#            ax.text(-1.43, -.12, 'collision')
-#            ax.text(1.13, .43, 'collision')
+            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
+            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
+            ax.text(2.95, 2.08, 'collision', fontsize=9)
+            ax.text(6.25, 2.82, 'collision', fontsize=9)
             
             ctr = 0
             while True:

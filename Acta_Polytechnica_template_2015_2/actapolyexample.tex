@@ -33,17 +33,17 @@ des Syst\`{e}mes, 828 bd des Marechaux, 91762, France}
 %Gif-sur-Yvette, F-91191, France}
 
 \begin{abstract}
- Abstract.
+ This paper proposes an method.
 \end{abstract}
 
-\keywords{multi robot path planning, mobile robot}
+\keywords{\mbox{multi robot motion planning}, \mbox{nonholonomic mobile robot}, \mbox{decentralized planning}, \mbox{receding horizon}}
 
 \maketitle
 
 
 
 
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
 
 
@@ -170,32 +170,36 @@ how they are impacted by the algorithm parameters. The fifth section presents
 the comparison of this approach to another one presented in~\cite{}. Finally, in 
 section six we present our conclusions and perspectives.
 
-\section{Problem Formulation}
+\section{Problem Statement}
 
 %We consider the following assumptions for the simulation of our approach:
 \subsection{Assumptions}
-In the development of this approach the following assumptions were made:
+In the development of this approach the following assumptions are made:
 
 \begin{enumerate}
+
+    \item The motion of the multi robot system begins at
+    the instant $t_{init}$ and goes until the instant $t_{final}$;
 
     \item The team of robots consists of a set $\mathcal{R}$ of $B$
     nonholonomic mobile robots;
     
     \item A robot (denoted $R_b,\ R_b \in \mathcal{R},\ b \in \{0,\dots,B-1\}$) is 
-    geometrically represented by a circle of radius $\rho_b$;
+    geometrically represented by a circle of radius $\rho_b$ centered at $(x_b, y_b)$;
         
     \item All obstacles in the environment are considered static. They can be
     represented by a set $\mathcal{O}$ of $M$ static obstacles;
     
     \item An obstacle (denoted $O_m,\ $\mbox{$O_m \in \mathcal{O}$}$,\ $
     \mbox{$m \in \{0,\ \dots, M-1\}$}) is geometrically represented either as
-    circle or as a convex polygon;
+    a circle or as a convex polygon. In the case of a circle its radius is
+    denoted $r_{O_m}$ centered at $(x_{O_m},y_{O_m})$;
     
     \item For a given instant $t_k \in [t_{init},\ t_{final}]$, any obstacle
-    $O_m$ closer to the geometric center of the robot $R_b$ to the having its
-    geometric center within the detection radius $d_{b,sen}$ from
-    the geometric center of the robot $R_b$ is considered detected by the robot
-    $R_b$. Thus, this obstacle is part of the set $\mathcal{D}$
+    $O_m$ having its geometric center apart from the geometric center of the
+    robot $R_b$ of a distance inferior than the detection radius $d_{b,sen}$
+    of the robot $R_b$ is considered detected by this robot.
+    Thus, this obstacle is part of the set $\mathcal{D}$
     ($\mathcal{D} \subset \mathcal{O}$) of detected obstacles;
     
     \item A robot has precise knowledge of the position and geometric representation of
@@ -243,8 +247,31 @@ multi robot navigation.
 
 \begin{enumerate}
 
+    \item The initial configuration and initial input
+    computed from the motion planning solution must
+    be equal to the real configuration and input of a
+    robot $R_b$:
+    \begin{equation}
+        q_{b,t=t_{init}} = q_{b,init},
+    \end{equation}
+    \begin{equation}
+        u_{b,t=t_{init}} = u_{b,init}
+    \end{equation}
+
+    \item The initial configuration and initial input
+    computed from the motion planning solution must
+    be equal to the real configuration and input of a
+    robot $R_b$:
+    \begin{equation}\label{eq:finalconfig}
+        q_{b,t=t_{final}} = q_{b,final},
+    \end{equation}
+    \begin{equation}\label{eq:finalinput}
+        u_{n,t=t_{final}} = u_{b,final}
+    \end{equation}
+
+
     \item The system kinetic model must hold for a computed solution to the
-    motion planning problem problem:
+    motion planning problem:
     \begin{equation}
         \dot{q}_b = f(q_b,u_b)
     \end{equation}
@@ -254,7 +281,7 @@ multi robot navigation.
 	\mbox{$f\,:\,\mathbb{R}^{n}\times \mathbb{R}^{p}\rightarrow \mathbb{R}^n$} the
 	vector field.
     
-    \item The practical limitations of the input can be taken into account by the
+    \item The practical limitations of the input are taken into account by the
     following constraint:
     \begin{equation}
         |u_{b,i}| \leq u_{b,i,max}\quad \forall i \in [1, p]
@@ -275,8 +302,9 @@ multi robot navigation.
     a robot and an obstacle (denoted $\mathrm{d}(R_b, O_m)\ |\ O_m
     \in \mathcal{O}_b, R_b \in \mathcal{B} $) has to satisfy:
     \begin{equation}
-    	\mathrm{d}(R_b, O_m) > 0
+    	\mathrm{d}(R_b, O_m) > 0.
     \end{equation}
+    
     For the circle representation of an obstacle the distance
     $\mathrm{d}(R_b, O_m)$ is defined as:
     \begin{equation*}
@@ -287,12 +315,13 @@ multi robot navigation.
     For the polygon representation, the distance was calculated using three different
     definitions according to the Voronoi region~\cite{ericson2004real}
     within which
-    $R_b$ is located. Figure~\ref{fig:convexpolygon} shows an example of the thee kind
-    of regions for a quadrilateral $ABCD$ representation. The regions are defined by
+    $R_b$ is located. Figure~\ref{fig:convexpolygon} shows an example of the three kinds
+    of regions for a quadrilateral $ABCD$ representation. The Voronoi regions are 
+    defined by
     the lines containing the sides ($s$ lines) and by the lines passing
     through the vertices that are orthogonal to the sides ($r$ lines).    
     
-	The region in which the robot $R_b$ is located
+	In this example, the region in which the robot $R_b$ is located
 	can be computed by evaluating the line
  	equations 
  	$s_{AB}$, $s_{BC}$, $s_{CD}$, $s_{DA}$, $r_{AB}$, $r_{AD}$, $r_{BA}$, $r_{BA}$,
@@ -302,7 +331,7 @@ multi robot navigation.
 %    The region which the position associated with a given configuration $q_b$
 %    is in can be computed as follows.
     
-    For the example in the Figure~\ref{fig:convexpolygon} the distance
+    In addition, the distance
     robot-to-quadrilateral could be found as follows:
     \begin{enumerate}
     
@@ -320,9 +349,10 @@ multi robot navigation.
 		where
    	   	\begin{equation*}
     	    \mathrm{d}(s_{DA}, (x_{b}, y_{b})) =\\ \frac{|a_{s_{DA}}x_{b} + b_{s_{DA}}y_{b}
-    	    + c_{s_{DA}}|}{\sqrt{a_{s_{DA}}^2 + b_{s_{DA}}^2}}
+    	    + c_{s_{DA}}|}{\sqrt{a_{s_{DA}}^2 + b_{s_{DA}}^2}}.
 	    \end{equation*}
-	    The distance $\mathrm{d}(s_{DA}, (x_{b}, y_{b}))$ represents from the robot to the side $DA$.
+	    
+	    The distance $\mathrm{d}(s_{DA}, (x_{b}, y_{b}))$ represents the distance from the robot to the side $DA$.
 	    
 	    \item If robot in region $3$:
    	   	\begin{equation*}
@@ -367,7 +397,7 @@ multi robot navigation.
 	\end{figure}
 
     \item 
-    In order to prevent inter-robot collision the following constraint must be respected:
+    In order to prevent inter-robot collisions the following constraint must be respected:
     $\forall\ (R_b, R_c) \in \mathcal{R} \times \mathcal{R}, b\neq c$,
     %o a robot $R_b$ avoid collision with other robots the following
     %relation must be satisfied. 
@@ -377,10 +407,11 @@ multi robot navigation.
 	    \mathrm{d}(R_b,R_c) - \rho_b -\rho_c > 0
     \end{equation}
     where $\mathrm{d}(R_b,R_c) = \sqrt{(x_{b} - x_{c})^2 + (y_{b} - y_{c})^2}$.
+    
     This constraint justifies the need for a communication link between the robots.
     
     \item In order to keep the communication between robots $(R_b, R_c)$ the
-    following equation must be respected: 
+    following inequation must hold:
     %In addition, for a given pair of robots $R_b R_c$ that must keep
     %a communication link between them the following equation 
     \begin{equation}
@@ -388,8 +419,14 @@ multi robot navigation.
     \end{equation}
     with $d_{b,com}, d_{c,com}$ being the communication link reach of the robots.
 \end{enumerate}
+\newpage
+\mbox{}\newpage
+
+
 
 \section{Distributed motion planning}
+
+
 
 \subsection{Receding horizon approach}
 
@@ -406,14 +443,13 @@ One way to do so is to use a receding horizon approach~\ref{}.
 
 All robots in the team use the same constant planning horizon $T_p$ and update
 horizon $T_c$. $T_p$ is the time horizon for which a solution will be computed,
-$T_c$ is the time horizon during which the plan will be followed (usually this
-is the time needed to solve the planning problem for $T_p$).
+$T_c$ is the time horizon during which the plan will be followed while the plan for the next timespan $T_p$ is being computed.
 
 For each receding horizon planning problem the following is done:
-\paragraph{Step 1.} Compute intended trajectory by ignoring coupling constraints
-\paragraph{Step 2.} Robots involved in a conflict update their trajectories
-by solving another optimal problem that take into account coupling constraints
-using the other robots' intended trajectories computed in the first step.
+\paragraph{Step 1.} Compute an intended trajectory by ignoring coupling constraints, i. e., constraints involving other robots in the team;
+\paragraph{Step 2.} Robots involved in a conflict (collision or lost of communication) update their trajectories
+by solving another constrained optimization problem that take into account coupling constraints. This is done by
+using the other robots' intended trajectories computed in the previous step.
 
 %One way of modelling the motion planning problem would be to write a NPL
 %that accounts for all robots 
@@ -431,9 +467,10 @@ using the other robots' intended trajectories computed in the first step.
 
 \mbox{}
 
-However, two aspects of the implementation of this algorithm are neglected 
-in~\cite{Defoort2007a}: the initial values for
-the control points and the procedure for reaching the goal state.
+This scheme is explained in details in~\ref{Defoort2009} where the receding horizon optimization problems are formulated based on the constraints and cost function defined in Section~\ref{sec:problem}.
+However, one constraint of the motion planning problem is
+neglected in~\cite{Defoort2009}. The constraint~\ref{eq:finalconfig} and~\ref{eq:finalinput} are not considered
+in the receding horizon optimization problems. So we can satisfy those constraints a termination procedure is proposed in the following.
 
 %\begin{align}
 %\underset{(C_{(0,\tau_k)},\dotsc,C_{(d+n_{knot}-2,\tau_k)})}{\mathrm{min}} J_{\tau_k} =
@@ -498,52 +535,6 @@ the control points and the procedure for reaching the goal state.
 %\end{algorithmic}
 %\end{algorithm}
 
-%\subsection{Flatness property}
-%
-%As explained in~\cite{Defoort2007a} all mobile robots consisting of a solid
-%block in motion can be modelled as a flat system. 
-%This means that a change of variables is possible in a way that states and
-%inputs of the kinetic model of the mobile robot can be written in terms
-%of the new variable, called flat output ($z$), and its $l$th first derivatives.
-%Thus, the behaviour of the system can be completely determined by the flat
-%output.
-%
-%TODO put image of flat bijective application.
-%
-%Searching for a solution to our problem in the flat space rather than in
-%the actual configuration space of the system present advantages.
-%It prevents the need for integrating the differential equations
-%of system and reduces the dimension of the problem of finding an optimal
-%admissible solution to the problem.
-%After finding (optimal) trajectories in the flat space it is possible
-%to retrieve back the original state and input trajectories as shown in
-%Figure~\ref{fig:flatness}.
-%
-%\subsection{Parametrization of the flat output}
-%
-%Another important aspect of this approach is the parametrization of 
-%the flat output trajectory. As done done in~\cite{milam2003} the use
-%of B-spline functions present interesting properties:
-%
-%
-%\begin{itemize}
-%
-%
-% \item It is possible to specify a level of continuity $C^k$ when using B-splines without
-% additional constraints.
-% 
-% \item B-spline presents a local support, i.e., changes in parameters values have a local
-% impact on the resulting curve.
-% 
-% 
-%\end{itemize}
-%
-%The first property is very well suited for parametrizing the flat output since
-%its $l$th first derivatives will be needed when computing the system actual state
-%and input trajectories. The second property is important when searching for an
-%admissible solution in the flat space; such parametrization is more efficient
-%and well-conditioned than, for instance, a polynomial parametrization.
-%
 %\subsection{NLP initialization and objective function}
 %
 %
@@ -580,34 +571,34 @@ As the robots evolve theirs states approximate to the goal states.
 But simply stopping the motion planner as the robots are in the neighbourhood of
 their final configuration is not a satisfying approach.
 
-We propose 
-At some point the constraints associated to the final state shall be integrated 
-into the optimal problem and the timespan for performing this last
-step shall not be fixed and must be one of the values calculated.
+The constraints associated to the final configuration and input have to be integrated 
+into the optimization problem. In addition, the timespan for performing this last
+termination plan cannot be constant and must be one of the values to be calculated.
 %The fixed planning horizon has to be made variable in order to get to the 
-final state.
 
-The criterion used to pass from the NLP used during for the initial and 
-intermediates steps to the last step NLP 
+The criterion used to pass from the receding horizon optimization problem to the termination optimization problem
 is define below in the equation~\ref{eq:stopcond}:
 
 \begin{align}
   d_{rem} \geq d_{min} + T_c \cdot v_{max}
 \end{align}
 
-This way we insure that the last planning section will be done for at least a 
+This way we insure that the termination plan will be planned for at least a 
 $d_{min}$ distance from the robot's final position.
 This minimal distance is assumed to be sufficient for the robot to reach the 
-final state.
+final configuration.
 
 After stopping the sliding window algorithm we calculate new parameters for the 
 solution representation and computation taking into
 account the estimate remaining distance.
 
-The following pseudo code summarizes the algorithm: 
+The following pseudo code~\ref{cod:algo} summarizes the algorithm and the Figure~\ref{fig:recedinghor} illustrates
+the planning scheme based on the receding horizon approach.
+
+TODO: change algo, develop, write termination opt problem
 
 \begin{algorithm}
-    \caption{Sliding window planning algorithm\label{cod:algo}}
+    \caption{Motion planning algorithm\label{cod:algo}}
     \label{swpa}
     \begin{algorithmic}[1] % The number tells where the line numbering should start
         \Procedure{Plan}{} %\Comment{The g.c.d. of a and b}
@@ -640,7 +631,83 @@ The following pseudo code summarizes the algorithm:
     \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=\linewidth]{./images/recedinghorizon.png} %
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Receding horizon scheme with termination plan. The timespan $T_f$ represents the duration of the plan for reaching the goal configuration.\label{fig:recedinghor}}
+\end{figure}
 
+
+
+\subsection{Strategies for solving the constrained optimization problems}
+
+
+
+\subsubsection{Flatness property}
+
+As explained in~\cite{Defoort2007a} all mobile robots consisting of a solid
+block in motion can be modeled as a flat system. 
+This means that a change of variables is possible in a way that states and
+inputs of the kinetic model of the mobile robot can be written in terms
+of the new variable, called flat output ($z$), and its $l$th first derivatives.
+Thus, the behavior of the system can be completely determined by the flat
+output.
+
+TODO put image of flat bijective application.
+
+Searching for a solution to our problem in the flat space rather than in
+the actual configuration space of the system present advantages.
+It prevents the need for integrating the differential equations
+of system and reduces the dimension of the problem of finding an optimal
+admissible solution to the problem.
+After finding (optimal) trajectories in the flat space it is possible
+to retrieve back the original state and input trajectories as shown in
+Figure~\ref{fig:flatness}.
+
+\subsubsection{Parameterization of the flat output by B-splines}
+
+Another important aspect of this approach is the parameterization of 
+the flat output trajectory. As done done in~\cite{milam2003} the use
+of B-spline functions present interesting properties:
+
+
+\begin{itemize}
+
+
+ \item It is possible to specify a level of continuity $C^k$ when using B-splines without
+ additional constraints.
+ 
+ \item B-spline presents a local support, i.e., changes in parameters values have a local
+ impact on the resulting curve.
+ 
+ 
+\end{itemize}
+
+The first property is very well suited for parametrizing the flat output since
+its $l$th first derivatives will be needed when computing the system actual state
+and input trajectories. The second property is important when searching for an
+admissible solution in the flat space; such parameterization is more efficient
+and well-conditioned than, for instance, a polynomial parameterization.
+
+\subsubsection{Optimization solver}
+
+There is a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}.
+
+Obviously not all of those implementations are suited for solving
+the particular kind of optimization problems presented before.
+
+As explained in~\ref{Defoort2009} a Feasible Sequential Quadratic Programming is best suited for solving the motion
+planning problem as stated in thins paper. 
+This class of solvers compute at every iteration solution
+that respects the problem constraints.
+
+TODO keep explaining, present SLSQL and ALGENCAN, present reasons why we used SLSQP (i.e. availability in python, free license, and faster then ALGENCAN)
+
+\paragraph{SLSQP numerical stability}
+
+\newpage
+\mbox{}\newpage
 
 \section{Simulation results}
 
@@ -692,28 +759,26 @@ the robots velocities and total execution time.
 
 
 %Conflict detection is computed TODOThe additional constraints associated to 
-the multi robot system TODO  \centering
+%the multi robot system TODO  \centering
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-path.pdf} %
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-path2.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw.pdf} % 
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw2.pdf} % 
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \caption{Our results: black box (top) and black box 
-(bottom).\label{fig:collision}}
+  \caption{Collision\label{fig:collision}}
 \label{fig:res}
 \end{figure}
 
 \begin{figure}\centering
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path.pdf} 
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path2.pdf} 
 % <-- use this for your graphics
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw.pdf} %
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw2.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \caption{Our results: black box (top) and black box 
-(bottom).\label{fig:nocollision}}
+  \caption{No collision\label{fig:nocollision}}
 \label{fig:res}
 \end{figure}
 
@@ -793,8 +858,12 @@ TODO rescale images
 \label{fig:res}
 \end{figure}
 
-
-
+\begin{figure}[!h]\centering
+%  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.eps} %
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Obstacle penetration decreasing as sampling increases\label{fig:pen}}
+\label{fig:res}
+\end{figure}
 
 \subsection{Total execution time $T_{tot}$}
 
