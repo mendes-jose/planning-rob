@@ -1,57 +1,66 @@
 This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: actapolyexample.aux
+White space in argument---line 25 of file actapolyexample.aux
+ : \citation{Brock
+ :                 et Khatib,1998}
+I'm skipping whatever remains of this command
 The style file: actapoly.bst
 Database file #1: biblio.bib
-You're missing a field name---line 40 of file biblio.bib
+You're missing a field name---line 15 of file biblio.bib
  : 
  : # author = {Donald E. Knuth},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 96 of file biblio.bib
+I was expecting a `,' or a `}'---line 71 of file biblio.bib
  :   
  :   author = {Stu Robarts}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-You've used 2 entries,
+Warning--I didn't find a database entry for ""
+Warning--I didn't find a database entry for "Khatib1986"
+Warning--I didn't find a database entry for "Quinlan1994"
+Warning--I didn't find a database entry for "Defoort2007b"
+Warning--I didn't find a database entry for "milam2003"
+You've used 9 entries,
             2933 wiz_defined-function locations,
-            632 strings with 4863 characters,
-and the built_in function-call counts, 801 in all, are:
-= -- 79
-> -- 5
-< -- 0
-+ -- 3
-- -- 1
-* -- 38
-:= -- 78
-add.period$ -- 6
-call.type$ -- 2
-change.case$ -- 3
+            693 strings with 6328 characters,
+and the built_in function-call counts, 5797 in all, are:
+= -- 608
+> -- 77
+< -- 1
++ -- 39
+- -- 19
+* -- 367
+:= -- 551
+add.period$ -- 31
+call.type$ -- 9
+change.case$ -- 8
 chr.to.int$ -- 0
-cite$ -- 2
-duplicate$ -- 98
-empty$ -- 80
-format.name$ -- 1
-if$ -- 172
+cite$ -- 9
+duplicate$ -- 686
+empty$ -- 531
+format.name$ -- 24
+if$ -- 1255
 int.to.chr$ -- 0
-int.to.str$ -- 2
-missing$ -- 10
-newline$ -- 20
-num.names$ -- 1
-pop$ -- 53
+int.to.str$ -- 9
+missing$ -- 75
+newline$ -- 58
+num.names$ -- 8
+pop$ -- 316
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 9
+skip$ -- 52
 stack$ -- 0
-substring$ -- 83
-swap$ -- 20
-text.length$ -- 0
+substring$ -- 733
+swap$ -- 176
+text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 3
-width$ -- 3
-write$ -- 28
-(There were 2 error messages)
+while$ -- 32
+width$ -- 10
+write$ -- 111
+(There were 3 error messages)

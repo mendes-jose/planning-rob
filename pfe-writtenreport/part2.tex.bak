@@ -643,7 +643,7 @@ $O_5$ & $[1.17\ 3.66\ 0.25]$\\
 A deeper analysis showed us that the SLSQP solver requires $O(n^3)$ time for finding the NPL solution, $n$ being the parameters dimension which is directly
 proportional to $N_{knots}$. However the solver require $O(N)$ time, $N$ being the constraints dimension which is directly proportional to $N_s$.
 
-Worth noticing though that the complexy orders just presented are specific for this optimization solver. Other solvers presenting different stategies for
+Worth noticing though that the complexity orders just presented are specific for this optimization solver. Other solvers presenting different stategies for
 solving the NPL will
 behave differently. In addition, the number of internal knots tends to be quite small (less than 10) for usual scenarios (TODO: specify what is a usual scenario,
 mobile robot linear speed, concentration of obstacles). Finally, increasing $N_{knots}$ indefitalely does not mean an improvement of the solution adequacy (TODO: develop
@@ -747,7 +747,7 @@ As expected, the greater the $N_{ssol}$ (which in turn increases $N_{Tc}$) the m
 
 After some tests we saw that a good estimate for the penetration area can be found using $N_{ssol} > 10N_s$.
 
-Ideally we would have $\mathrm{P}_w = 0$. A way of guarantying that would be to increase the obstacles radius computed by the robot's perception
+Ideally we would have $\mathrm{P}_w = 0$. A way of guaranteeing that would be to increase the obstacles radius computed by the robot's perception
 system by the maximum distance that the robot can run within the time spam $T_p/N_s$ (equivalent to $T_c/N_{T_c}$). However simple, this approach
 represents a loss of optimality and will not be considered in this work.
 

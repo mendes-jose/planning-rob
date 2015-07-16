@@ -149,17 +149,19 @@ for scnt in scenarios_tables:
 
     all_pen /= n_knots
 
-    ax.plot(all_Ns, all_pen, label='P(N_s)', marker='.')
+    ax.plot(all_Ns, 10000*all_pen, label='P(N_s)', marker='.')
 
-
-    ax.set_xlabel('N_s')
-    ax.set_ylabel('P (m2)')
+    ax.grid()
+    ax.set_title('Time sampling and obstacle penetration relationship')
+    ax.set_xlabel(r'$N_s$')
+    ax.set_ylabel(r'$P\ (cm^2)$')
     handles, labels = ax.get_legend_handles_labels()
     #ax.legend(handles, labels, loc=1)
     #ax.set_xlim(0.0,all_Ns[-1])
-    fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-    fig[fidx].savefig(direc_charts+'/pen-nsi.eps', bbox_inches='tight', dpi=100)
-    fig[fidx].savefig(direc_charts+'/pen-nsi.png', bbox_inches='tight', dpi=100)
+    fig[fidx].set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+    fig[fidx].savefig(direc_charts+'/pen-nsi.eps', bbox_inches='tight')
+    fig[fidx].savefig(direc_charts+'/pen-nsi.pdf', bbox_inches='tight')
+    fig[fidx].savefig(direc_charts+'/pen-nsi.png', bbox_inches='tight')
 
 #plt.show()
 

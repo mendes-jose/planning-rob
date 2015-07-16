@@ -13,10 +13,55 @@ Autonomous robots are helping to pack your amazon orders.
 \newblock \url{http://www.gizmag.com/amazon-kiva-fulfillment-system/34999/}.
 \newblock Accessed: 2015-07-07.
 
+\bibitem{schwartz1988survey}
+J.~T. Schwartz, M.~Sharir.
+\newblock A survey of motion planning and related geometric algorithms.
+\newblock \textit{Artificial Intelligence} \textbf{37}(1):157--169, 1988.
+
+\bibitem{latombe2012robot}
+J.-C. Latombe.
+\newblock \textit{Robot motion planning}, vol. 124.
+\newblock Springer Science \& Business Media, 2012.
+
+\bibitem{fox1997dynamic}
+D.~Fox, W.~Burgard, S.~Thrun, et~al.
+\newblock The dynamic window approach to collision avoidance.
+\newblock \textit{IEEE Robotics \& Automation Magazine} \textbf{4}(1):23--33,
+  1997.
+
 \bibitem{Defoort2007a}
 M.~Defoort.
 \newblock {Contributions \`{a} la planification et \`{a} la commande pour les
   robots mobiles coop\'{e}ratifs}.
 \newblock \textit{Ecole Centrale de Lille} 2007.
+
+\bibitem{Defoort2009}
+M.~Defoort, A.~Kokosy, T.~Floquet, et~al.
+\newblock {Motion planning for cooperative unicycle-type mobile robots with
+  limited sensing ranges: A distributed receding horizon approach}.
+\newblock \textit{Robotics and Autonomous Systems} \textbf{57}(11):1094--1106,
+  2009.
+\newblock \bibdoi{10.1016/j.robot.2009.07.004}.
+
+\bibitem{ericson2004real}
+C.~Ericson.
+\newblock \textit{Real-Time Collision Detection}.
+\newblock M038/the Morgan Kaufmann Ser. in Interactive 3D Technology Series.
+  Taylor \& Francis, 2004.
+
+\bibitem{Keviczky2006}
+T.~Keviczky, F.~Borrelli, G.~J. Balas.
+\newblock {Decentralized receding horizon control for large scale dynamically
+  decoupled systems}.
+\newblock \textit{Automatica} \textbf{42}(12):2105--2115, 2006.
+\newblock \bibdoi{10.1016/j.automatica.2006.07.008}.
+
+\bibitem{pyopt-paper}
+R.~E. Perez, P.~W. Jansen, J.~R. R.~A. Martins.
+\newblock py{O}pt: A {P}ython-based object-oriented framework for nonlinear
+  constrained optimization.
+\newblock \textit{Structures and Multidisciplinary Optimization}
+  \textbf{45}(1):101--118, 2012.
+\newblock \bibdoi{10.1007/s00158-011-0666-3}.
 
 \end{thebibliography}
