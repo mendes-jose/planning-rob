@@ -117,10 +117,10 @@ except OSError:
     print('Probably the output directory already exists, going to overwrite content')
 fig.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
 fig2.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
-fig.savefig(direc_charts+'/drho-tot.pdf', bbox_inches='tight')
-fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight')
-fig2.savefig(direc_charts+'/drho-rmp.pdf', bbox_inches='tight')
-fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight')
+fig.savefig(direc_charts+'/drho-tot.pdf', bbox_inches='tight', dpi=300)
+fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight', dpi=300)
+fig2.savefig(direc_charts+'/drho-rmp.pdf', bbox_inches='tight', dpi=300)
+fig2.savefig(direc_charts+'/drho-rmp.png', bbox_inches='tight', dpi=300)
 
 exit()
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -220,8 +220,8 @@ for scnt in scenarios_tables:
     #ax.legend(handles, labels, loc=1)
     #ax.set_xlim(0.0,all_Ns[-1])
     fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-    fig[fidx].savefig(direc_charts+'/ttot-mob.eps', bbox_inches='tight', dpi=100)
-    fig[fidx].savefig(direc_charts+'/ttot-mob.png', bbox_inches='tight', dpi=100)
+    fig[fidx].savefig(direc_charts+'/ttot-mob.eps', bbox_inches='tight', dpi=300)
+    fig[fidx].savefig(direc_charts+'/ttot-mob.png', bbox_inches='tight', dpi=300)
 
 #plt.show()
 

@@ -189,8 +189,9 @@ for scnt in scenarios_tables:
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles, labels)
         fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
-        fig[fidx].savefig(direc_scen+'/mcttc-tctp.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
-        fig[fidx].savefig(direc_scen+'/mcttc-tctp.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=100)
+        fig[fidx].savefig(direc_scen+'/mcttc-tctp.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
+        fig[fidx].savefig(direc_scen+'/mcttc-tctp.pdf'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
+        fig[fidx].savefig(direc_scen+'/mcttc-tctp.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
 
 #plt.show()
 
