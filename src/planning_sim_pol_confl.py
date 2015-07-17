@@ -1715,8 +1715,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2032,6 +2032,18 @@ class WorldSim(object):
 #        print no_obst[0]
 #        print cno_obst
 
+        rr_dist = []
+        k = 0
+        robs = []
+        for i in range(len(self._robs)):
+            for j in range(i+1, len(self._robs)):
+                rr_dist += [[]]
+                robs += [(i,j)]
+                for k1, q1, k2, q2 in zip(range(len(qt[i])), qt[i], range(len(qt[j])), qt[j]):
+                    dist = LA.norm(q1[0:-1]-q2[0:-1]) - 2*self._robs[0].rho
+                    rr_dist[k] += [dist]
+                k += 1
+
         # Logging simulation summary
         for i in range(len(self._robs)):
             ctime_len = len(ctime[i])
@@ -2110,6 +2122,28 @@ class WorldSim(object):
             print('Probably the output directory '+self._direc+\
                     '/images/'+self._sn+' already exists, going to overwrite content')
 
+        # PLOT INTERROBOT DIST
+        fig_rr_d = plt.figure()
+        ax_rr_d = fig_rr_d.gca()
+        for rrd, k in zip(rr_dist, range(len(rr_dist))):
+            plttime = rtime[robs[k][0]] if len(rtime[robs[k][0]]) < len(rtime[robs[k][1]]) else rtime[robs[k][1]]
+#            print len(rtime[robs[k][0]]), len(rtime[robs[k][1]]), len(plttime), len(rrd)
+            ax_rr_d.plot(plttime, rrd, label = r'$d(R_{0},R_{1})-\rho_{0}-\rho_{1}$'.format(robs[k][0], robs[k][1]))
+        ax_rr_d.grid()
+        ax_rr_d.set_xlabel('time (s)')
+        ax_rr_d.set_ylabel('Inter-robot distance (m)')
+        ax_rr_d.set_title('Inter-robot distances throughout simulation')
+        ax_rr_d.set_xlim([0,min([x[-1] for x in rtime])])
+        handles, labels = ax_rr_d.get_legend_handles_labels()
+        ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
+
+        fig_rr_d.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+        fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.png',\
+                bbox_inches='tight')
+        fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.pdf',\
+                bbox_inches='tight')
+
+
         fig_s, axarray = plt.subplots(2)
         axarray[0].set_ylabel(r'$v(m/s)$')
         axarray[0].set_title('Linear speed')
@@ -2157,10 +2191,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
-            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
-            ax.text(2.95, 2.08, 'collision', fontsize=9)
-            ax.text(6.25, 2.82, 'collision', fontsize=9)
+            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'b', fill=True, alpha=0.3))
+            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'b', fill=True, alpha=0.3))
+#            ax.text(2.95, 2.08, 'collision', fontsize=9)
+#            ax.text(6.25, 2.82, 'collision', fontsize=9)
             
             ctr = 0
             while True:
