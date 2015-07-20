@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  17 JUL 2015 16:32
+This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  20 JUL 2015 14:08
 entering extended mode
 **actapolyexample.tex
 (actapolyexample.tex
@@ -951,9 +951,6 @@ LaTeX Warning: Label `fig:res' multiply defined.
 
 LaTeX Warning: Label `fig:res' multiply defined.
 
-
-LaTeX Warning: Label `fig:res' multiply defined.
-
 )
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
 LaTeX Font Info:    ... okay on input line 19.
@@ -1276,14 +1273,14 @@ Underfull \hbox (badness 1314) in paragraph at lines 488--492
 Requested font "ts1-lmcsc10" at 10.0pt
 [3]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 574.
-File: ./images/recedinghorizon.png Graphic file (type QTm)
- <use  "./images/recedinghorizon.png" >
+put line 573.
+File: ./images/receding_horizon/motionplanning2.png Graphic file (type QTm)
+ <use  "./images/receding_horizon/motionplanning2.png" >
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Overfull \hbox (2.47456pt too wide) detected at line 631
+Overfull \hbox (2.47456pt too wide) detected at line 630
 [][] []
  []
 
@@ -1291,19 +1288,17 @@ Overfull \hbox (2.47456pt too wide) detected at line 631
 Underfull \vbox (badness 3449) has occurred while \output is active []
 
 
-Overfull \hbox (23.64673pt too wide) detected at line 652
+Overfull \hbox (23.64673pt too wide) detected at line 651
 [][] []
  []
 
 [4]
-File: ./images/flatness.png Graphic file (type QTm)
- <use  "./images/flatness.png" >
-Underfull \hbox (badness 1163) in paragraph at lines 700--702
+Underfull \hbox (badness 1163) in paragraph at lines 699--701
 []\T1/lmr/m/n/10 It is pos-si-ble to spec-ify a level of con-ti-nu-ity
  []
 
 
-LaTeX Warning: Reference `Defoort2009' on page 5 undefined on input line 722.
+LaTeX Warning: Reference `Defoort2009' on page 5 undefined on input line 723.
 
 File: ./images/collision/multirobot-path.pdf Graphic file (type QTm)
 <use  "./images/collision/multirobot-path.pdf" >
@@ -1323,12 +1318,19 @@ File: ./images/no_collision/multirobot-vw.pdf Graphic file (type QTm)
 <use  "./images/no_collision/multirobot-vw.pdf" >
 File: ./images/no_collision/multirobot-interr.pdf Graphic file (type QTm)
 
-<use  "./images/no_collision/multirobot-interr.pdf" > [5] [6]
+<use  "./images/no_collision/multirobot-interr.pdf" > [5]
 File: ./images/drho/drho-rmp.pdf Graphic file (type QTm)
 
 <use  "./images/drho/drho-rmp.pdf" >
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
 File: ./images/drho/drho-tot.pdf Graphic file (type QTm)
- <use  "./images/drho/drho-tot.pdf" >
+<use  "./images/drho/drho-tot.pdf" >
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[6]
 LaTeX Font Info:    Calculating math sizes for size <11> on input line 871.
 Requested font "rm-lmr12" at 11.0pt
 Requested font "rm-lmr8" at 7.69997pt
@@ -1446,12 +1448,12 @@ LaTeX Warning: There were multiply-defined labels.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 957.
  ) 
 Here is how much of TeX's memory you used:
- 25438 strings out of 428760
- 433024 string characters out of 3164296
- 543375 words of memory out of 3000000
- 28312 multiletter control sequences out of 15000+200000
+ 25435 strings out of 428760
+ 433011 string characters out of 3164296
+ 543344 words of memory out of 3000000
+ 28310 multiletter control sequences out of 15000+200000
  141313 words of font info for 103 fonts, out of 3000000 for 9000
  1096 hyphenation exceptions out of 8191
- 55i,14n,54p,448b,883s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,14n,54p,540b,883s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on actapolyexample.pdf (8 pages).

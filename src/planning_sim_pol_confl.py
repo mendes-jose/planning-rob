@@ -1715,8 +1715,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-#        if False:
-        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+        if False:
+#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2139,9 +2139,9 @@ class WorldSim(object):
 
         fig_rr_d.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
         fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.png',\
-                bbox_inches='tight')
+                bbox_inches='tight', dpi=300)
         fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.pdf',\
-                bbox_inches='tight')
+                bbox_inches='tight', dpi=300)
 
 
         fig_s, axarray = plt.subplots(2)
@@ -2191,10 +2191,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'b', fill=True, alpha=0.3))
-            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'b', fill=True, alpha=0.3))
-#            ax.text(2.95, 2.08, 'collision', fontsize=9)
-#            ax.text(6.25, 2.82, 'collision', fontsize=9)
+            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
+            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
+            ax.text(2.95, 2.08, 'collision', fontsize=9)
+            ax.text(6.25, 2.82, 'collision', fontsize=9)
             
             ctr = 0
             while True:
@@ -2232,9 +2232,9 @@ class WorldSim(object):
                     ax.legend(handles, labels, loc=1, ncol=3)
 
                     fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
-                            bbox_inches='tight')
+                            bbox_inches='tight', dpi=300)
                     fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.pdf',\
-                            bbox_inches='tight')
+                            bbox_inches='tight', dpi=300)
             #end
 
             ax.relim()
@@ -2245,8 +2245,8 @@ class WorldSim(object):
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles, labels, loc=3, ncol=3)
 
-            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight')
-            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.pdf', bbox_inches='tight')
+            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight', dpi=300)
+            fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.pdf', bbox_inches='tight', dpi=300)
             
 
             for i in range(len(self._robs)):
@@ -2265,8 +2265,8 @@ class WorldSim(object):
             handles2, labels2 = axarray[1].get_legend_handles_labels()
             axarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
-            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight')
-            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight')
+            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight', dpi=300)
+            fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight', dpi=300)
 
             if self._plot:
                 while True:

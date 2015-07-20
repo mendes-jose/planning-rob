@@ -567,8 +567,7 @@ intended plan (denoted ($\hat{q}_b(t)$, $\hat{u}_b(t)$)). The optimization
 problem associated with the update step is defined in equations 
 \ref{eq:cost} and \ref{eq:const} and produces the final solution ($q^*_b(t)$, $u^*_b(t)$).
 
-Notice that the planning horizon is not a constant as before,
-instead it is a part of the solution to be found.
+In these new optimal problems the planning horizon is not a constant as before, instead it is a part of the solution to be found.
 
 \begin{algorithm}
     \caption{Motion planning algorithm\label{cod:algo}}
@@ -607,7 +606,7 @@ instead it is a part of the solution to be found.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=\linewidth]{./images/recedinghorizon.png} %
+  \includegraphics[width=\linewidth]{./images/receding_horizon/motionplanning2.png} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Receding horizon scheme with termination plan. The timespan $T_f$ represents the duration of the plan for reaching the goal configuration.\label{fig:recedinghor}}
 \end{figure}
@@ -672,11 +671,11 @@ of the new variable, called flat output ($z$), and its $l$th first derivatives.
 Thus, the behaviour of the system can be completely determined by the flat
 output.
 
-\begin{figure}[!h]\centering
-  \includegraphics[width=.7\linewidth]{./images/flatness.png} %
-  \caption{Flatness\label{fig:flatness}}
-\label{fig:res}
-\end{figure}
+%\begin{figure}[!h]\centering
+%  \includegraphics[width=.7\linewidth]{./images/flatness.png} %
+%  \caption{Flatness\label{fig:flatness}}
+%\label{fig:res}
+%\end{figure}
 
 Searching for a solution to our problem in the flat space rather than in
 the actual configuration space of the system present advantages.
@@ -684,8 +683,8 @@ It prevents the need for integrating the differential equations
 of system and reduces the dimension of the problem of finding an optimal
 admissible trajectory.
 After finding (optimal) trajectories in the flat space it is possible
-to retrieve back the original configuration and input trajectories as shown in
-Figure~\ref{fig:flatness}.
+to retrieve back the original configuration and input trajectories.
+%as shown in Figure~\ref{fig:flatness}.
 
 \subsubsection{Parametrization of the flat output by B-splines}
 
@@ -697,8 +696,8 @@ of B-spline functions present interesting properties:
 \begin{itemize}
 
 
- \item It is possible to specify a level of continuity $C^k$ when using B-splines without
- additional constraints.
+ \item It is possible to specify a level of continuity $C^k$ when using
+ B-splines without additional constraints.
  
  \item B-spline presents a local support, i.e., changes in parameters values have a local
  impact on the resulting curve.
@@ -711,6 +710,8 @@ its $l$th first derivatives will be needed when computing the system actual stat
 and input trajectories. The second property is important when searching for an
 admissible solution in the flat space; such parametrization is more efficient
 and well-conditioned than, for instance, a polynomial parametrization.
+
+TODO cite
 
 \subsubsection{Optimization solver}
 
@@ -746,9 +747,10 @@ Each point along the trajectory line of a robot represents the beginning
 of a $Tc$ computation horizon.
 
 In Figure~\ref{fig:collision} we show the resulting plan when coupling constraints
-are ignored (\nameref{step2} is not performed). In Figure~\ref{fig:nocollision}
-we have a collision-free solution. Notice the changes in the trajectories and
-velocities resulting from the solution update.
+are ignored (\nameref{step2} is never performed). In Figure~\ref{fig:nocollision}
+we have a collision-free solution. The blue zones in Figure~\ref{fig:nocollision} are in the same position as the red ones in Figure~\ref{fig:collision}. Specially near these regions a change in the trajectory is present. Complementary, changes in the robots velocities across charts in both figures can be notice. Finally, the bottom charts show that the collisions were indeed avoid: inter-robot distances in Figure~\ref{fig:nocollision} are greater then or equal to zero all along the simulation.
+%The trajectories and
+%velocities resulting from the solution update.
 
 %TODO distance robot-to-robot for the 2 cases
 
@@ -777,8 +779,7 @@ velocities resulting from the solution update.
 \label{fig:res}
 \end{figure}
 
-The performance and solution quality of the motion planning algorithm previously presented depends on several parameters.
-These parameters can be split into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones.
+For performing these two previous simulations a reasonable number of parameters have to be set. These parameters can be categorized into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones.
 Among the former group, the most important ones are:
 \begin{itemize}
 \item[$\bullet$] The number of sample for time discretization ($N_s$);
@@ -787,7 +788,7 @@ Among the former group, the most important ones are:
 \item[$\bullet$] The computation horizon ($T_c$).
 \end{itemize}
 
-The latter kind depends on the optimization solver adopted.
+The latter kind depends on the numeric optimization solver adopted.
 However, since most of them are iterative methods, it is common
 to have at least the two following parameters:
 \begin{itemize}
@@ -797,7 +798,7 @@ to have at least the two following parameters:
 
 %The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the miss1ion) is quite laborious.
 
-This high number of parameters having influence on the solution
+This considerable number of parameters having influence on the solution
 and/or on the time for finding a solution makes the search for a
 satisfactory set of parameters' values a laborious task.
 
@@ -807,8 +808,7 @@ parameters.
 
 \subsection{Parameters' impact analyses}
 
-Three criteria considered important for the validation of this method were 
-studied.
+Three criteria considered important for the validation of this method were studied.
 We tested different parameters configuration and scenario in order to 
 understand how they influence
 those criteria.
@@ -846,9 +846,9 @@ in the environment.
 ratio\label{fig:drhormp}}
 \end{figure}
 
-Furthermore, the Figure~\ref{fig:drhotot} shows how the time total execution time
+Furthermore, the Figure~\ref{fig:drhotot} shows how the total time of execution
 decreases as the radius increases pointing out how a better knowledge of the
-environment produces a better solution in terms of $T_{tot}$ time.
+environment produces a more optimal solution.
 
 %As the detection radius of the robot increases more obstacles are
 %seen at a time which, in turn,
@@ -863,18 +863,18 @@ environment produces a better solution in terms of $T_{tot}$ time.
 ratio\label{fig:drhotot}}
 \end{figure}
 
-These two behaviours point how a compromise between computation time and optimality must be found.
+These two behaviors indicate how a compromise between computation time and optimality must be found.
 
 %The numbers that can be seen
 %over the blue curve are the maximum number of obstacles seen at once during the whole mission.
 
 \subsection{Maximum computation time over computation horizon $MCT/T_c$}
 
-The significance of this criterion lays in the need of quarantining the 
+The significance of this criterion lays in the need of assuring the 
 real-time property of this algorithm.
 In a real implementation of this approach the computation horizon would have 
 always to be superior than the
-maximum time took for computing a planning section (coupling constraints
+maximum time took for computing a plan (coupling constraints
 taken into account).
 
 Based on several simulations with different scenarios we were able to

@@ -7,11 +7,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.interpolate import interp1d
 
-font = {'family' : 'sans-serif',
-        'weight' : 'normal',
-        'size'   : 10}
+#font = {'family' : 'sans-serif',
+#        'weight' : 'normal',
+#        'size'   : 10}
 
-mpl.rc('font', **font)
+#mpl.rc('font', **font)
 
 direc = "../traces/rt-full-table"
 
@@ -174,20 +174,23 @@ for scnt in scenarios_tables:
             else:
                 all_y = np.vstack((all_y,rmg))
 
-            ax.plot(new_tctp_interv, rmg, label='N_s = {}'.format(nst[0,nsi]),linewidth=1,\
+            ax.plot(new_tctp_interv, rmg, label=r'$N_s = {0:.0f}$'.format(nst[0,nsi]),linewidth=1,\
                     color=colors_ns[nsidx],marker='.')
 
         print 'VAR:', np.mean(np.var(all_y, 0))
 
         ax.plot([0.5]*2, [0.0,2.0], ls='--',color='k')
         ax.plot([0.1, 0.9], [1.0]*2, ls='--',color='k')
+        ax.set_ylim(0.2,1.8)
         if scnt[0, nobsti] == 0.0:
             ax.set_ylim(0.0,.5)
-        ax.set_xlim(0.2,0.8)
-        ax.set_xlabel('Tc/Tp')
-        ax.set_ylabel('max_comp_t/Tc')
+        ax.set_xlim(0.2,0.66)
+        ax.set_xlabel(r'$T_c/T_p$')
+        ax.set_ylabel(r'$MCT/T_c$')
+        ax.set_title('Computation cost behavior')
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles, labels)
+#        ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
+        ax.legend(handles, labels, ncol=2)
         fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
         fig[fidx].savefig(direc_scen+'/mcttc-tctp.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
         fig[fidx].savefig(direc_scen+'/mcttc-tctp.pdf'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
