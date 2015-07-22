@@ -64,44 +64,43 @@ des Syst\`{e}mes, 828 bd des Marechaux, 91762, France}
 
 The %command and
 control of mobile robots is a long-standing subject of research 
-in the iterative robotics domain. As many modern companies started to adopt 
-mobile robot systems such as teams of autonomous forklift trucks~\cite{Gizmag} 
-to improve their commercial performance, this subject becomes increasingly 
-important and complex. Especially when those robots are executing theirs tasks 
-in human-occupied environment.
+in the iterative robotics domain. A trending application of mobile robots systems
+is its use in industrial supply-chains for processing orders and optimizing products storage and distribution. Companies such as Amazon and the logistic provider IDEA Groupe employ moble multi-robot systems (Kiva systems, Scallog) for autonomously processing clients orders~\cite{Gizmag,supplychain}.
+%such as teams of autonomous forklift trucks
+%(for instance Kiva robots used by Amazon~\cite{Gizmag},
+%to improve their commercial performance,
+Such logistics tasks became increasingly complex as uncertainties sources, such as human presence, are admitted in the work environment.
 
 %Problem
 
-One basic requirement for such robotic systems is the capacity of generating a 
-trajectory that connects two arbitrary configurations. For that, different 
-constraints must be taken into account to ideally find an appropriated 
-trajectory, in particular:
+One basic requirement for such mobile robot systems is the capacity of motion planning, i.e., generating admissible configuration and input trajectories that connects two arbitrary states. For solving the motion planning problem, different 
+constraints must be taken into account, in particular:
 
 \begin{itemize}
 
- \item kinematic and dynamic constraints;
+ \item robot's kinematic and dynamic constraints;
 
  \item geometric constraints;
 
- \item constraints associated with uncertainties about the current state of 
-world and the outcome of actions.
+% \item constraints associated with uncertainties about the current state of 
+%world and the outcome of actions.
 
 \end{itemize}
 
 The first constraints derive directly from the mobile robot architecture 
 implying in nonholonomic constraints for many types of mobile robots. Geometric 
-constraints result from the impossibility of the robots to assume some specific 
-configurations due to the presence of obstacles or environment bounds. In turn, 
-uncertainty constraints come from the impossibility of the robots to have an 
-absolute and complete perception of the world (including theirs own states) as 
-well as the outcome of non-stochastic events.
+constraints result from need of preventing the robot to assume specific configurations in order to avoid collisions, communication lost, etc.
+% the impossibility of the robots to assume some specific 
+%configurations  due to the presence of obstacles, environment bounds, communication range, etc. 
+%In turn, uncertainty constraints come from the impossibility of the robots to have an 
+%absolute and complete perception of the world (including theirs own states) as 
+%well as the outcome of non-stochastic events.
 
- 
 
-We are particularly interest in solving the problem of dynamic planning a 
+We are particularly interested in solving the problem of planning a 
 trajectory for a team of nonholonomic mobile robots in an partially known 
 environment occupied by static obstacles being near optimal with respect to the 
-execution time (time spent from going from initial to final configurations).
+execution time (time spent from going from initial to goal configurations).
 
  
 
