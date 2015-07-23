@@ -88,8 +88,10 @@ constraints must be taken into account, in particular:
 \end{itemize}
 
 The first constraints derive directly from the mobile robot architecture 
-implying in nonholonomic constraints for many types of mobile robots. Geometric 
-constraints result from need of preventing the robot to assume specific configurations in order to avoid collisions, communication lost, etc.
+implying, for example, in nonholonomic constraints and sliding phenomena.
+Geometric 
+constraints result from need of preventing the robot to assume specific configurations
+in order to avoid collisions, communication lost, etc.
 % the impossibility of the robots to assume some specific 
 %configurations  due to the presence of obstacles, environment bounds, communication range, etc. 
 %In turn, uncertainty constraints come from the impossibility of the robots to have an 
@@ -98,18 +100,15 @@ constraints result from need of preventing the robot to assume specific configur
 
 
 We are particularly interested in solving the problem of planning a 
-trajectory for a team of nonholonomic mobile robots in an partially known 
+trajectory for a team of nonholonomic mobile robots in a partially known 
 environment occupied by static obstacles being near optimal with respect to the 
 execution time (time spent from going from initial to goal configurations).
 
- 
 
 %State of Art
 
 In recent years, a great amount of work towards collision-free trajectory 
 planning has been proposed.
-
- 
 
 Some work has been done towards analytic methods for solving the problem for 
 certain classes of systems (~\cite{})
@@ -118,32 +117,31 @@ TODO cite
 that analytic methods  are inapplicable for nonholonomic systems in presence of 
 obstacles.
 
- 
 
-Cell decomposition methods as presented in~\cite{Latombe1991} have the 
+Cell decomposition methods, as presented in~\cite{Latombe1991}, have the 
 downside of requiring a structured configuration space and an \textit{a priori} 
 model of its connectivity. Besides, the cell decomposition reduces the space 
-of admissible solutions. TODO verify/understand.
+of admissible solutions.
 
  
 
 Initially proposed in~\cite{Khatib1986}, the vector field obstacle avoidance 
-method was improve along time for treating problems such as oscillation of the 
+method was improved along time for treating problems such as oscillation of the 
 solution for narrow passages. This method does not present a near optimal 
 generated trajectory.
 
  
 
-Elastic band approach initially proposed by~\cite{Quinlan1994} and extend to 
+Elastic band approach initially proposed by~\cite{Quinlan1994} and extended to 
 mobile manipulators in~\cite{Brock et Khatib, 1998} uses approximations of the 
 trajectory shape (combinations of arcs and straight lines) limiting the space 
-of solutions and make this method inappropriate for really constrained 
+of solutions and thus making this method inappropriate for really constrained 
 environments.
 
  
 
 The dynamic window approach~\cite{Fox1997} can handle trajectory 
-planning for robots at elevated speeds and in presence of obstacles but is not 
+planning for robots at high speeds and in presence of obstacles. But it is not 
 flexible enough to be extended to a multi-robot system.
 
  
@@ -151,37 +149,47 @@ flexible enough to be extended to a multi-robot system.
 %What do we propose
 
 In this paper, we focus on the development of a motion planning algorithm. 
-This algorithm finds collision-free trajectories for a multi-robot system in 
-presence of static obstacles which are perceived by the robots as they evolve 
-in the environment. The dynamic trajectories found are near optimal with 
-respect to the total time spend going from the initial configuration to the 
+This algorithm finds collision-free trajectories and computes the corresponding
+angular and longitudinal velocities for a multi-robot system in 
+presence of static obstacles perceived by the robots as they evolve 
+in their environment. The dynamic trajectories computed are near optimal with 
+respect to the total time spent going from the initial configuration to the 
 final one. Besides, this algorithm uses a decentralized approach making the 
 system more robust to communication outages and individual robot failure than 
 compared to a centralized approach. Identified drawbacks are the dependence on 
 several parameters for achieving real-time performance and good solution 
-optimality, and not being able to handle dynamic obstacles as it is.
+optimality, and the difficulty of handling dynamic obstacles as it is.
 
  
 
-This algorithm is based mainly on the work done in~\cite{Defoort2007a} but we 
-made changes in particular to respect a precise final configuration for the 
-multi-robot system and about how to set parameters for solving the nonlinear 
-programming problem (NLP).
+This algorithm is an extension of the work done in~\cite{Defoort2007a}. In particular,
+improvements are proposed for the respect of a precise final configuration of the 
+multi-robot system. Also, investigation about how to set parameters for achieving
+satisfying solutions was performed.
+
+%solving the nonlinear 
+%programming problem (NLP).
 
  
 
 %Plan
 
-This paper is structured as follows: The second section presents a trajectory 
-planning algorithm that solves the problem of one robot going from an initial 
-configuration to a final one in the presence of static obstacles. The third 
-section extends the method presented in the second section so a collision-free 
-trajectory that maintains the communication link between the robots in the 
-team can be computed. The forth section is dedicated to the results found by 
-this method and the analysis of the computation time and solution quality and 
-how they are impacted by the algorithm parameters. The fifth section presents 
-the comparison of this approach to another one presented in~\cite{}. Finally, in 
-section six we present our conclusions and perspectives.
+This paper is structured as follows: The second section states the problem to
+be resolved pointing out the cost function for motion planning and all constraints
+that need to be respected by the computed solution.
+%motion planning algorithm that solves the problem of one robot going from an initial 
+%configuration to a final one in the presence of static obstacles.
+The third explains the method to resolve the motion planning problem and gives
+some remarks on how to resolve the constrained optimization problems associated
+with the method.
+%section extends the method presented in the second section so a collision-free 
+%trajectory that maintains the communication link between the robots in the 
+%team can be computed.
+The forth section is dedicated to the results found using
+this method and the analysis of the certain performance criteria and 
+how they are impacted by the algorithm parameters. In the fifth section this
+approach is compared to another one presented in~\cite{Kelly_2003}.
+Finally, in last section we present our conclusions and perspectives.
 
 %\newpage
 %\mbox{}\newpage
@@ -190,7 +198,7 @@ section six we present our conclusions and perspectives.
 
 %We consider the following assumptions for the simulation of our approach:
 \subsection{Assumptions}
-In the development of this approach the following assumptions are made:
+In the development of this approach, the following assumptions are made:
 
 \begin{enumerate}
 
@@ -201,7 +209,8 @@ In the development of this approach the following assumptions are made:
     nonholonomic mobile robots.
     
     \item A robot (denoted $R_b,\ R_b \in \mathcal{R},\ b \in \{0,\dots,B-1\}$) is 
-    geometrically represented by a circle of radius $\rho_b$ centered at $(x_b, y_b)$.
+    geometrically represented by a circle of radius $\rho_b$ centered at
+    $(x_b, y_b)$.
         
     \item All obstacles in the environment are considered static. They can be
     represented by a set $\mathcal{O}$ of $M$ static obstacles.
@@ -215,14 +224,15 @@ In the development of this approach the following assumptions are made:
     $O_m$ having its geometric center apart from the geometric center of the
     robot $R_b$ of a distance inferior than the detection radius $d_{b,sen}$
     of the robot $R_b$ is considered detected by this robot.
-    Thus, this obstacle is part of the set $\mathcal{O}_b$
+    Therefore, this obstacle is part of the set $\mathcal{O}_b$
     ($\mathcal{O}_b \subset \mathcal{O}$) of detected obstacles.
     
-    \item A robot has precise knowledge of the position and geometric representation of
-    a detected obstacle.
+    \item A robot has precise knowledge of the position and geometric 
+    representation of a detected obstacle, i.e., obstacles perception issues
+    are neglected.
     
     \item A robot can access 
-    information about any robot in the team using 
+    information about any robot in the team by using 
     a wireless communication link.
     
     \item Latency, communication outages and other problems associated
@@ -256,9 +266,9 @@ In the development of this approach the following assumptions are made:
 
 \subsection{Constraints and cost functions}
 
-After loosely defining what is the motion planning problem in
-Section~\ref{sec:intro} and presenting the assumptions in the previous Subsection
-we can identify and define what are the constraints and the cost function for the
+After introducing the motion planning problem in
+Section~\ref{sec:intro} and giving the assumptions in the previous Subsection,
+we can define the constraints and the cost function for the
 multi-robot navigation.
 
 \begin{enumerate}
@@ -307,7 +317,7 @@ multi-robot navigation.
         u^{*}_{b}(t_{final}) = u_{b,goal}.
     \end{equation}
 
-    \item The practical limitations of the input impose
+    \item Practical limitations of the input impose
     the following constraint: $\forall t \in [t_{init}, t_{final}]$, $\forall i \in [1,2,\cdots, p]$,
     \begin{equation}
         |u^{*}_{b,i}(t)| \leq u_{b,i,max}.
@@ -323,7 +333,7 @@ multi-robot navigation.
     
     \item 
     %TODO define the functions "distance" robot-to-obstacle:
-    To ensure collision avoidance with obstacles the euclidean 
+    To ensure collision avoidance with obstacles, the euclidean 
     distance between
     a robot and an obstacle (denoted $\mathrm{d}(R_b, O_m)\ |\ O_m
     \in \mathcal{O}_b, R_b \in \mathcal{B} $) has to satisfy:
@@ -337,13 +347,30 @@ multi-robot navigation.
         \sqrt{(x_{b} - x_{O_m})^2 + (y_{b} - y_{\mathrm{O}_m})^2}  - \rho_b - r_{O_m}.
     \end{equation*}
     
-    For the polygon representation, the distance was calculated using three different
-    definitions according to the Voronoi region~\cite{ericson2004real}
-    $R_b$ is located. Figure~\ref{fig:convexpolygon} shows an example of the three kinds
-    of regions for a quadrilateral $ABCD$ representation. The Voronoi regions are 
+    For the convex polygon representation, the distance was calculated
+    using three different
+    definitions, according to the Voronoi region~\cite{ericson2004real}
+    $R_b$ is located. Voronoi regions are 
     defined by
     the lines containing the sides ($s$ lines) and by the lines passing
-    through the vertices that are orthogonal to the sides ($r$ lines).    
+    through the vertexes that are orthogonal to the sides ($r$ lines) of
+    the convex polygon. 
+    Figure~\ref{fig:convexpolygon} shows an
+    quadrilateral $ABCD$ representation of an obstacle where three of the nine
+    regions were distinguished. 
+    %Each of these three region are 
+%     For a generic convex polygon three different
+%    kinds of regions can be defined. 
+    
+%    One kind is defined by the two lines passing 
+%    through a vertix, another by one line passing through two consecutive vertese
+%     Figure~\ref{fig:convexpolygon} shows an
+%    quadrilateral $ABCD$ representation of the obstacle where three of the nine . For this
+%    representation three different kinds of regions can be define.
+    
+    
+%    regions he three kinds
+%    of regions for a quadrilateral $ABCD$ representation.    
     
 	In this example, the region in which the robot $R_b$ is located
 	at an instant $t_k$
@@ -355,11 +382,9 @@ multi-robot navigation.
  	
 %    The region which the position associated with a given configuration $q_b$
 %    is in can be computed as follows.
-
-    TODO: for the quadrilateral we have 9 regions, the 3 that shown...
     
     In addition, the distance
-    robot-to-quadrilateral could be found as follows:
+    robot-to-quadrilateral is computed as follows:
     \begin{enumerate}
     
 	   	\item If robot in region $1$:
@@ -389,6 +414,8 @@ multi-robot navigation.
 	    
     \end{enumerate}
     
+    The distance computation for other regions can be easily 
+    inferred from the above equations.
     
     \begin{figure}[!h]
 	\centering
@@ -429,7 +456,7 @@ multi-robot navigation.
 	\end{figure}
 
     \item 
-    In order to prevent inter-robot collisions the following constraint must be respected:
+    In order to prevent inter-robot collisions, the following constraint must be respected:
     $\forall\ (R_b, R_c) \in \mathcal{R} \times \mathcal{R}, b\neq c, c \in \mathcal{C}_b$,
     %o a robot $R_b$ avoid collision with other robots the following
     %relation must be satisfied. 
@@ -471,15 +498,19 @@ multi-robot navigation.
 %problem shown in equations~\ref{eq:} and~\ref{eq:}.
 %TODO present method or make reference to Defoort introducing $T_c$, $T_p$ etc.
 
-As said before trying to find the solution from the initial configuration
-until the goal is not feasible. Thus, the planning has to be computed on-line
-as the multi-robot system evolves in the environment.
-One way to do so is to use a receding horizon control approach~\cite{Keviczky2006}.
+Since the environment is progressively perceived by the robots and new obstacles may appear as time passes,
+planning the whole motion from initial to goal configurations is
+not a satisfying approach. Planning locally and replanning is 
+a more suitable approach for taking new information, as they come, into account. Besides, the computation cost of finding a motion plan using
+the first approach may be prohibited high as planning complexity is most certainly dependent of the distance between start and goal configurations.
 
+Therefore, an on-line planner that computes the configuration and input 
+trajectories as the multi-robot system evolves in the environment is proposed.
+One possible way to do so is to use a receding horizon control approach~\cite{Keviczky2006}.
 
-All robots in the team use the same constant planning horizon $T_p$ and update
-horizon $T_c$. $T_p$ is the time horizon for which a solution will be computed,
-$T_c$ is the time horizon during which a plan is be execute while the
+This approach is based in two concepts: planning horizon $T_p$ and update/computation horizon $T_c$.
+All robots in the team use the same $T_p$ and $T_c$. $T_p$ is the timespan for which a solution will be computed and
+$T_c$ is the time horizon during which a plan is executed while the
 next plan, for the next timespan $T_p$, is being computed.
 
 
