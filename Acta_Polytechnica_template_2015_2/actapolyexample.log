@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  23 JUL 2015 16:42
+This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  24 JUL 2015 16:07
 entering extended mode
 **actapolyexample.tex
 (actapolyexample.tex
@@ -1263,39 +1263,28 @@ Overfull \hbox (8.55695pt too wide) in paragraph at lines 448--448
  []
 
 Requested font "ts1-lmr10" at 10.0pt
-
-Underfull \hbox (badness 1314) in paragraph at lines 517--521
-\T1/lmr/m/n/10 (de-noted $\OT1/lmr/m/n/10 ([](\OML/lmm/m/it/10 t\OT1/lmr/m/n/10
- )\OML/lmm/m/it/10 ; []\OT1/lmr/m/n/10 (\OML/lmm/m/it/10 t\OT1/lmr/m/n/10 ))$\T
-1/lmr/m/n/10 ) by ig-nor-ing cou-pling con-
- []
-
 Requested font "ts1-lmcsc10" at 10.0pt
 [3]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 602.
-File: ./images/receding_horizon/motionplanning2.png Graphic file (type QTm)
- <use  "./images/receding_horizon/motionplanning2.png" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Overfull \hbox (2.47456pt too wide) detected at line 659
+Overfull \hbox (2.47456pt too wide) detected at line 648
 [][] []
  []
 
 
-Overfull \hbox (23.64673pt too wide) detected at line 680
+Overfull \hbox (23.64673pt too wide) detected at line 671
 [][] []
  []
 
 [4]
-Underfull \hbox (badness 1163) in paragraph at lines 728--730
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 678.
+File: ./images/receding_horizon/recedinghorizon2.png Graphic file (type QTm)
+ <use  "./images/receding_horizon/recedinghorizon2.png" >
+Underfull \hbox (badness 1163) in paragraph at lines 761--763
 []\T1/lmr/m/n/10 It is pos-si-ble to spec-ify a level of con-ti-nu-ity
  []
 
 
-LaTeX Warning: Reference `Defoort2009' on page 5 undefined on input line 752.
+LaTeX Warning: Reference `Defoort2009' on page 5 undefined on input line 785.
 
 File: ./images/collision/multirobot-path.pdf Graphic file (type QTm)
 <use  "./images/collision/multirobot-path.pdf" >
@@ -1304,28 +1293,25 @@ File: ./images/collision/multirobot-vw.pdf Graphic file (type QTm)
 <use  "./images/collision/multirobot-vw.pdf" >
 File: ./images/collision/multirobot-interr.pdf Graphic file (type QTm)
 
-<use  "./images/collision/multirobot-interr.pdf" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
+<use  "./images/collision/multirobot-interr.pdf" > [5]
 File: ./images/no_collision/multirobot-path2.pdf Graphic file (type QTm)
+
 <use  "./images/no_collision/multirobot-path2.pdf" >
 File: ./images/no_collision/multirobot-vw.pdf Graphic file (type QTm)
 
 <use  "./images/no_collision/multirobot-vw.pdf" >
 File: ./images/no_collision/multirobot-interr.pdf Graphic file (type QTm)
 
-<use  "./images/no_collision/multirobot-interr.pdf" > [5]
+<use  "./images/no_collision/multirobot-interr.pdf" > [6]
 File: ./images/drho/drho-rmp.pdf Graphic file (type QTm)
 
 <use  "./images/drho/drho-rmp.pdf" >
+File: ./images/drho/drho-tot.pdf Graphic file (type QTm)
+ <use  "./images/drho/drho-tot.pdf" >
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[6]
-File: ./images/drho/drho-tot.pdf Graphic file (type QTm)
- <use  "./images/drho/drho-tot.pdf" >
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 900.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 933.
 Requested font "rm-lmr12" at 11.0pt
 Requested font "rm-lmr8" at 7.69997pt
 Requested font "rm-lmr6" at 5.5pt
@@ -1336,11 +1322,11 @@ Requested font "lmsy10" at 11.0pt
 Requested font "lmsy8" at 7.69997pt
 Requested font "lmsy6" at 5.5pt
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <11> on input line 900.
+(Font)              <11> on input line 933.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.69997> on input line 900.
+(Font)              <7.69997> on input line 933.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.5> on input line 900.
+(Font)              <5.5> on input line 933.
 Requested font "msam10" at 11.0pt
 Requested font "msam7" at 7.69997pt
 Requested font "msam5" at 5.5pt
@@ -1348,22 +1334,21 @@ Requested font "msbm10" at 11.0pt
 Requested font "msbm7" at 7.69997pt
 Requested font "msbm5" at 5.5pt
 
-
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 900.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 900.
+(hyperref)                removing `math shift' on input line 933.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 900.
+(hyperref)                removing `subscript' on input line 933.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 933.
 
 File: ./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps Graphic file (type
  eps)
 <./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps>
-Overfull \hbox (5.64545pt too wide) in paragraph at lines 914--920
+Overfull \hbox (5.64545pt too wide) in paragraph at lines 947--953
  []  [] 
  []
 
@@ -1374,12 +1359,12 @@ File: ./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps Graphic file (type
  eps)
 
 <./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps>
-Overfull \hbox (5.64545pt too wide) in paragraph at lines 921--933
+Overfull \hbox (5.64545pt too wide) in paragraph at lines 954--966
  []  [] 
  []
 
 
-Overfull \hbox (1.20102pt too wide) in paragraph at lines 921--933
+Overfull \hbox (1.20102pt too wide) in paragraph at lines 954--966
  [] 
  []
 
@@ -1388,14 +1373,14 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 941.
+(hyperref)                removing `math shift' on input line 974.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 941.
+(hyperref)                removing `math shift' on input line 974.
 
 
-LaTeX Warning: Reference `fig:pen' on page 7 undefined on input line 943.
+LaTeX Warning: Reference `fig:pen' on page 7 undefined on input line 976.
 
 File: ./images/penetration/pen-nsi.pdf Graphic file (type QTm)
 <use  "./images/penetration/pen-nsi.pdf" >
@@ -1404,34 +1389,32 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 954.
+(hyperref)                removing `math shift' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 954.
+(hyperref)                removing `subscript' on input line 987.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 954.
+(hyperref)                removing `math shift' on input line 987.
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 963--965
+Underfull \hbox (badness 1158) in paragraph at lines 996--998
 []\T1/lmr/m/n/10 TODO Be-fore con-clud-ing do com-par-i-son with
  []
 
 (actapolyexample.bbl [7]) 
 AED: lastpage setting LastPage
-[8
-
-]
+[8]
 
 Package natbib Warning: There were undefined citations.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 986.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 986.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1019.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1019.
 (actapolyexample.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 986.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 986.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 1019.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1019.
 
 
 LaTeX Warning: There were undefined references.
@@ -1439,15 +1422,15 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 986.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1019.
  ) 
 Here is how much of TeX's memory you used:
- 25441 strings out of 428760
- 433122 string characters out of 3164296
- 543386 words of memory out of 3000000
- 28316 multiletter control sequences out of 15000+200000
+ 25442 strings out of 428760
+ 433138 string characters out of 3164296
+ 542442 words of memory out of 3000000
+ 28317 multiletter control sequences out of 15000+200000
  141313 words of font info for 103 fonts, out of 3000000 for 9000
  1096 hyphenation exceptions out of 8191
- 55i,14n,54p,540b,883s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,15n,54p,540b,883s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on actapolyexample.pdf (8 pages).
