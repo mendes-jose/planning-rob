@@ -9,7 +9,8 @@
 \makeatother
 
 \bibitem{Gizmag}
-{Autonomous robots are helping to pack your Amazon orders}.
+S.~Robarts.
+\newblock {Autonomous robots are helping to pack your Amazon orders}.
 \newblock \url{http://www.gizmag.com/amazon-kiva-fulfillment-system/34999/}.
 \newblock Accessed: 2015-07-22.
 
@@ -71,7 +72,7 @@ T.~Keviczky, F.~Borrelli, G.~J. Balas.
 \newblock \textit{Automatica} \textbf{42}(12):2105--2115, 2006.
 \newblock \bibdoi{10.1016/j.automatica.2006.07.008}.
 
-\bibitem{milam2003}
+\bibitem{Milam2003}
 M.~B. Milam.
 \newblock \textit{{Real-time optimal trajectory generation for constrained
   dynamical systems}}.
@@ -84,5 +85,17 @@ R.~E. Perez, P.~W. Jansen, J.~R. R.~A. Martins.
 \newblock \textit{Structures and Multidisciplinary Optimization}
   \textbf{45}(1):101--118, 2012.
 \newblock \bibdoi{10.1007/s00158-011-0666-3}.
+
+\bibitem{Kraft1988}
+D.~Kraft.
+\newblock \textit{{A software package for sequential quadratic programming}}.
+\newblock DLR German Aerospace Center – Institute for Flight Mechanics, Koln,
+  Germany, 1988.
+
+\bibitem{slsqperror}
+{Runtime errors for large gradients}.
+\newblock
+  \url{http://comments.gmane.org/gmane.science.analysis.nlopt.general/191}.
+\newblock Accessed: 2015-07-27.
 
 \end{thebibliography}

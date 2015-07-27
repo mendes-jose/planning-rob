@@ -22,7 +22,7 @@
 %{Example of an Article with a Long Title, the Title Should Be Capitalised 
 %Properly in the Code Long Long}
 \title[Trajectory Generation Approach]
-{Multi Robot Optimal Trajectory Generation}
+{Multi Robot Optimal Motion Planning: a Modified Receding Horizon Approach using SLSQP Optimizer}
 
 \author[J. M. Mendes Filho]{Jos\'{e} M. Mendes Filho}{my,their}
 \correspondingauthor[E. Lucet]{Eric Lucet}{my}{eric.lucet@cea.fr}
@@ -350,14 +350,17 @@ multi-robot navigation.
     For the convex polygon representation, the distance was calculated
     using three different
     definitions, according to the Voronoi region~\cite{ericson2004real}
-    $R_b$ is located. Voronoi regions are 
-    defined by
-    the lines containing the sides ($s$ lines) and by the lines passing
-    through the vertexes that are orthogonal to the sides ($r$ lines) of
-    the convex polygon. 
+    $R_b$ is located.
+%    Voronoi regions are 
+%    defined by
+%    the lines containing the sides ($s$ lines) and by the lines passing
+%    through the vertexes that are orthogonal to the sides ($r$ lines) of
+%    the convex polygon. 
     Figure~\ref{fig:convexpolygon} shows an
     quadrilateral $ABCD$ representation of an obstacle where three of the nine
     regions were distinguished. 
+
+
     %Each of these three region are 
 %     For a generic convex polygon three different
 %    kinds of regions can be defined. 
@@ -372,28 +375,28 @@ multi-robot navigation.
 %    regions he three kinds
 %    of regions for a quadrilateral $ABCD$ representation.    
     
-	In this example, the region in which the robot $R_b$ is located
-	at an instant $t_k$
-	can be computed by evaluating the line
- 	equations 
- 	$s_{AB}$, $s_{BC}$, $s_{CD}$, $s_{DA}$, $r_{AB}$, $r_{AD}$, $r_{BA}$, $r_{BA}$,
- 	$r_{BC}$, $r_{BA}$, $r_{BC}$, $r_{CB}$, $r_{CD}$, $r_{DC}$ and $r_{DA}$ for 
- 	the position associated with the configuration $q^*_b(t_k)$.
+%	In this example, the region in which the robot $R_b$ is located
+%	at an instant $t_k$
+%	can be computed by evaluating the line
+% 	equations 
+% 	$s_{AB}$, $s_{BC}$, $s_{CD}$, $s_{DA}$, $r_{AB}$, $r_{AD}$, $r_{BA}$, $r_{BA}$,
+% 	$r_{BC}$, $r_{BA}$, $r_{BC}$, $r_{CB}$, $r_{CD}$, $r_{DC}$ and $r_{DA}$ for 
+% 	the position associated with the configuration $q^*_b(t_k)$.
  	
 %    The region which the position associated with a given configuration $q_b$
 %    is in can be computed as follows.
     
-    In addition, the distance
+    For these three regions, the distance
     robot-to-quadrilateral is computed as follows:
     \begin{enumerate}
     
-	   	\item If robot in region $1$:
+	   	\item \label{it:vora} If robot in region $1$:
    	   	\begin{equation*}
     	    \sqrt{(x_{b} - x_{A})^2 + (y_{b} - y_{A})^2} - \rho_b
 	    \end{equation*}
 	    which is simply the distance of the robot to the vertex $A$.
 	    
-	    \item If robot in region $2$:
+	    \item \label{it:vorb} If robot in region $2$:
 %	    
 		\begin{equation*}
 			\mathrm{d}(s_{DA}, (x_{b}, y_{b})) - \rho_b
@@ -415,7 +418,7 @@ multi-robot navigation.
     \end{enumerate}
     
     The distance computation for other regions can be easily 
-    inferred from the above equations.
+    inferred from equations in items~\ref{it:vora} and~\ref{it:vorb}.
     
     \begin{figure}[!h]
 	\centering
@@ -521,8 +524,8 @@ here a receding horizon planning problem.
 
 For each receding horizon planning problem the following is done:
 \paragraph{Step 1.}\label{step1} All robots in the team compute an intended solution trajectory (denoted $(\hat{q}_b(t), \hat{u}_b(t))$)
-by ignoring coupling
-constraints, that is, constraints \ref{eq:coll} and \ref{eq:com} that involve 
+by solving a constrained optimization problem where coupling
+constraints are ignored, that is, constraints \ref{eq:coll} and \ref{eq:com} that involve 
 other robots in the team.
 \paragraph{Step 2.}\label{step2} Robots involved in a potential conflict (i.e. risk of collision 
 or lost of communication) update their trajectories computed during \nameref{step1} by solving another constrained optimization problem
@@ -599,7 +602,8 @@ goal configuration.
 After stopping the receding horizon planning, we calculate new parameters for 
 the solution representation and computation taking into
 account the estimate remaining distance and the typical distance traveled
-for a $T_p$ planning horizon (as better explained in TODO REF).
+for a $T_p$ planning horizon.
+%(as better explained in TODO REF).
 This is done in order to rescale the configuration intended for a previous 
 planning horizon not necessarily equal to the new one. Potentially, this
 rescaling will decrease the computation time for the termination planning.
@@ -624,10 +628,10 @@ intended plan.
 The optimization
 problem associated with the update step is defined in equations 
 \ref{eq:cost} and \ref{eq:const} and produces the final solution ($q^*_b(t)$, $u^*_b(t)$).
-Besides, in both new constrained optimal problems the planning horizon is not
+Besides, in both new constrained optimal problems, the planning horizon is not
 a fixed constant as before, instead it is a part of the solution to be found.
 
-So, for generating the intended plan:
+Then, for generating the intended plan the following is resolved:
 
 \begin{align}\label{eq:costsa}
 \underset{\hat{q}_b(t),\hat{u}_b(t),T_f}{\mathrm{min}} L_{b,f}(\hat{q}_b(t), \hat{u}_b(t), q_{b,goal},u_{b,goal})
@@ -729,7 +733,7 @@ block in motion can be modeled as a flat system.
 This means that a change of variables is possible in a way that states and
 inputs of the kinematic model of the mobile robot can be written in terms
 of a new variable, called flat output ($z$), and its $l$th first derivatives.
-The value of $l$ depending on kinematic model.
+The value of $l$ depends on the kinematic model.
 Therefore, the behavior of the system can be completely determined by the flat
 output.
 
@@ -751,7 +755,7 @@ to retrieve back the original configuration and input trajectories.
 \subsubsection{Parametrization of the flat output by B-splines}
 
 Another important aspect of this approach is the parametrization of 
-the flat output trajectory. As done in~\cite{milam2003}, the use
+the flat output trajectory. As done in~\cite{Milam2003}, the use
 of B-spline functions present interesting properties:
 
 
@@ -771,25 +775,62 @@ The first property is very well suited for parametrizing the flat output since
 its $l$th first derivatives will be needed when computing the system actual state
 and input trajectories. The second property is important when searching for an
 admissible solution in the flat space; such parametrization is more efficient
-and well-conditioned than, for instance, a polynomial parametrization.
-
-TODO cite Millan?
+and well-conditioned than, for instance, a polynomial parametrization \cite{Milam2003}.
 
 \subsubsection{Optimization solver}
 
 There exists a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}.
 
-Obviously not all of those implementations are suited for solving
+Not all of those implementations are suited for solving
 the particular kind of optimization problems presented before.
+The need of a solver that supports nonlinear equality and inequality constrains
+restricts the number of possible choices.
 
-As explained in~\ref{Defoort2009} a Feasible Sequential Quadratic Programming is best suited for solving the motion
-planning problem as stated in thins paper. 
-This class of solvers compute at every iteration solution
-that respects the problem constraints.
+For our initial implementation of the motion planning algorithm the
+SLSQP optimizer stood out
+as a good option. Besides being able to handle nonlinear equality and inequality 
+constrains, its availability in the minimization module of the open-source
+scientific package Scipy helps to facilitate the motion planner implementation.
+%Finally, when compared with others free licensed optimizers such as the ones
+%available in the Python-based package PyOpt, SLSQP showed fast and better
+%results.
 
-TODO keep explaining, present SLSQL and ALGENCAN, present reasons why we used SLSQP (i.e. availability in python, free license, and faster then ALGENCAN)
+However a runtime error was experienced using this optimizer which uses SLSQP 
+Optimization subroutine originally implemented by Dieter Kraft~\cite{Kraft1988}.
+As the cost function value becomes too high (typically for values greater than 
+$10^3$) the optimization algorithm finishes with the "Positive 
+directional derivative for linesearch" error message. This appears to be
+a numerical stability problem experienced by other users as discussed in~\cite{slsqperror}.
 
-\paragraph{SLSQP numerical stability}
+For working around this problem, we proposed a change in the objective functions
+of the receding horizon optimization problems. This change aims to keep the 
+evaluated cost of the objective function around a known value instead of 
+dependent on the goal configuration.
+
+We simply exchanged the goal position point in the cost function by a new point computed as follows:
+
+$$
+    p_{b,new} = \frac{p_{b,goal} - p_{b}(\tau_{s-1}+T_c) }{\mathrm{norm}(p_{b,goal} - p_{b}(\tau_{s-1}+T_c) )} \alpha T_pv_{b,max}
+$$
+
+Where $p$ is the position associated with a configuration $q$, $\alpha\ |\ 
+\alpha \geq 1, \alpha \in \mathbb{R}$ a constant for controlling where the
+new point is placed and $T_pv_{b,max}$ the maximum possible distance covered by $R_b$.
+
+%change of assuming a high value when converging to a solution. Instead of %computing the distance 
+%between the final position of a plan $T_p$ A change in the cost function
+
+%Other two algorithms from another Python-based optimization package, PyOpt 
+%\cite{pyopt-paper} were tested with 
+
+%As explained in~\ref{Defoort2009}, a Feasible Sequential Quadratic Programming 
+%is best suited for solving the motion
+%planning problem as stated in thins paper. 
+%This class of solvers compute at every iteration solution
+%that respects the problem constraints.
+
+%TODO keep explaining, present SLSQL and ALGENCAN, present reasons why we used 
+%SLSQP (i.e. availability in python, free license, and faster then ALGENCAN)
 
 %\newpage
 %\mbox{}\newpage

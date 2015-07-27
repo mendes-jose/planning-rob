@@ -5,20 +5,16 @@ White space in argument---line 24 of file actapolyexample.aux
 I'm skipping whatever remains of this command
 The style file: actapoly.bst
 Database file #1: biblio.bib
-I was expecting a `,' or a `}'---line 190 of file biblio.bib
- :   
- :   author = {Stu Robarts}
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-Repeated entry---line 239 of file biblio.bib
+Repeated entry---line 260 of file biblio.bib
  : @article{Schwartz1988
  :                      ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 334 of file biblio.bib
+Repeated entry---line 355 of file biblio.bib
  : @article{Defoort2009
  :                     ,
 I'm skipping whatever remains of this entry
 Warning--I didn't find a database entry for ""
 Warning--I didn't find a database entry for "Khatib1986"
 Warning--I didn't find a database entry for "Quinlan1994"
-(There were 4 error messages)
+Warning--missing publisher in Kraft1988
+(There were 3 error messages)
