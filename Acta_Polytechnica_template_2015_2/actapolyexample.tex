@@ -978,7 +978,7 @@ The three criteria defined for a given robot $R_b$ are:
 \begin{itemize}
 
 \item
-\textit{Maximum computation time} over the computation horizon ($MCT/T_c$ 
+\textit{Maximum computation time} during the planning over the computation horizon ($MCT/T_c$ 
 ratio).
 
 \item
@@ -1008,23 +1008,16 @@ Each dot along the curves corresponds to the average of $MCT/T_c$ along differen
 
 It is possible to see how increasing the number of $N_s$ increases $MCT/T_c$ for a 
 given $T_c/T_p$. Similarly an increasing of $MCT/T_c$ as the number of internal knots
-$N_{knots}$.
+$N_{knots}$ increases from chart \ref{fig:uni34} to \ref{fig:uni36}.
 
 
  a greater impact of the number of samples (Ns ) and number of
-non-null internal knots (Nknots ) is observed. The greater the Nknots or the Ns the greater
-is the maximum computation time /Tc . This behavior is the one expected since the number
+non-null internal knots (Nknots ) is observed. The greater the Nknots or the Ns the 
+greater
+is the maximum computation time /Tc . This behavior is the one expected since the 
+number
 of constraints and the number of arguments for the cost function to be minimized depend
-on these two parameters respectively
-
-
-a simulation for a specific set of parameters.
-It is possible to see how the curves for a greater number of time sampling $N_s$
-Further analysis from those data
-
-
- were able to
-produce the charts shown in the Figure~\ref{fig:uni3}
+on these two parameters respectively.
 
 \begin{table}[!h]
 \caption {Motion planner main parameters} \label{tab:s3param}
@@ -1077,10 +1070,13 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \caption{Simulations for a }\label{fig:uni3}
 \end{figure}
 
-%\begin{itemize}
-% \item 
-% SLSPQ method request $O(n^3)$ time, $n$ being the number of knots; 
-%\end{itemize}
+For finding the solution using with SLSPQ method:
+\begin{itemize}
+ \item 
+ $O(N_{knots}^3)$ time is requested; 
+ \item 
+ $O(N_s)$ time is requested;
+\end{itemize}
 
 \subsection{Obstacle penetration $P$}
 
