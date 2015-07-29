@@ -19,37 +19,27 @@ S.~Robarts.
 \newblock \url{http://supplychainmagazine.fr/NL/2015/2085/}.
 \newblock Accessed: 2015-07-22.
 
-\bibitem{Schwartz1988}
-J.~Schwartz, M.~Sharir.
-\newblock {A survey of motion planning and related geometric algorithms}.
-\newblock \textit{Artificial Intelligence} \textbf{37}(1-3):157--169, 1988.
-\newblock \bibdoi{10.1016/0004-3702(88)90053-7}.
+\bibitem{Borrelli2006}
+F.~Borrelli, D.~Subramanian, a.U. Raghunathan, L.~Biegler.
+\newblock {MILP and NLP Techniques for centralized trajectory planning of
+  multiple unmanned air vehicles}.
+\newblock \textit{2006 American Control Conference} pp. 5763--5768, 2006.
+\newblock \bibdoi{10.1109/ACC.2006.1657644}.
 
-\bibitem{Latombe1991}
-J.-C. Latombe.
-\newblock \textit{{Robot Motion Planning}}, vol. 124.
-\newblock Springer US, Boston, MA, 1991.
-\newblock \bibdoi{10.1007/978-1-4615-4022-9}.
+\bibitem{Sanchez2002}
+G.~Sanchez, J.-C. Latombe.
+\newblock On delaying collision checking in {PRM} planning: Application to
+  multi-robot coordination.
+\newblock \textit{The International Journal of Robotics Research}
+  \textbf{21}(1):5--26, 2002.
+\newblock \bibdoi{10.1177/027836402320556458}.
 
-\bibitem{Fox1997}
-D.~Fox, W.~Burgard, S.~Thrun.
-\newblock {The dynamic window approach to collision avoidance}.
-\newblock \textit{IEEE Robotics \& Automation Magazine} \textbf{4}(1):23--33,
-  1997.
-\newblock \bibdoi{10.1109/100.580977}.
-
-\bibitem{Defoort2007a}
-M.~Defoort.
-\newblock {Contributions \`{a} la planification et \`{a} la commande pour les
-  robots mobiles coop\'{e}ratifs}.
-\newblock \textit{Ecole Centrale de Lille} 2007.
-
-\bibitem{Kelly_2003}
-A.~Kelly, B.~Nagy.
-\newblock Reactive nonholonomic trajectory generation via parametric optimal
-  control.
-\newblock \textit{int j robot res} \textbf{22}(7):583--601, 2003.
-\newblock \bibdoi{10.1177/027836403128965277}.
+\bibitem{Khatib1986}
+O.~Khatib.
+\newblock Real-time obstacle avoidance for manipulators and mobile robots.
+\newblock In \textit{Autonomous Robot Vehicles}, pp. 396--404. {Springer
+  Science and Business Media}, 1986.
+\newblock \bibdoi{10.1007/978-1-4613-8997-2_29}.
 
 \bibitem{Defoort2009}
 M.~Defoort, A.~Kokosy, T.~Floquet, et~al.
@@ -58,6 +48,13 @@ M.~Defoort, A.~Kokosy, T.~Floquet, et~al.
 \newblock \textit{Robotics and Autonomous Systems} \textbf{57}(11):1094--1106,
   2009.
 \newblock \bibdoi{10.1016/j.robot.2009.07.004}.
+
+\bibitem{Kelly_2003}
+A.~Kelly, B.~Nagy.
+\newblock Reactive nonholonomic trajectory generation via parametric optimal
+  control.
+\newblock \textit{int j robot res} \textbf{22}(7):583--601, 2003.
+\newblock \bibdoi{10.1177/027836403128965277}.
 
 \bibitem{ericson2004real}
 C.~Ericson.
@@ -71,6 +68,12 @@ T.~Keviczky, F.~Borrelli, G.~J. Balas.
   decoupled systems}.
 \newblock \textit{Automatica} \textbf{42}(12):2105--2115, 2006.
 \newblock \bibdoi{10.1016/j.automatica.2006.07.008}.
+
+\bibitem{Defoort2007a}
+M.~Defoort.
+\newblock {Contributions \`{a} la planification et \`{a} la commande pour les
+  robots mobiles coop\'{e}ratifs}.
+\newblock \textit{Ecole Centrale de Lille} 2007.
 
 \bibitem{Milam2003}
 M.~B. Milam.

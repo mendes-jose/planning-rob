@@ -22,15 +22,20 @@
 %{Example of an Article with a Long Title, the Title Should Be Capitalised 
 %Properly in the Code Long Long}
 \title[Trajectory Generation Approach]
-{Multi Robot Optimal Motion Planning: a Modified Receding Horizon Approach using SLSQP Optimizer}
+{Multi-Robot Motion Planning: a Modified Receding Horizon Approach for reaching Goal States}
 
 \author[J. M. Mendes Filho]{Jos\'{e} M. Mendes Filho}{my,their}
 \correspondingauthor[E. Lucet]{Eric Lucet}{my}{eric.lucet@cea.fr}
 
 \institution{my}{CEA, LIST, Interactive Robotics Laboratory, Gif-sur-Yvette, 
 F-91191, France}
-\institution{their}{ENSTA Paristech, Unit\'{e} d'Informatique et d'Ing\'{e}nierie 
-des Syst\`{e}mes, 828 bd des Marechaux, 91762, France}
+\institution{their}{ENSTA
+Paristech,
+Unité
+d'Informatique et
+d'Ingénierie 
+des Systèmes,
+828 bd des Marechaux, 91762, France}
 %\institution{their}{ENSTA Paristech, Unit\'{e} informatique et Ingénierie des 
 %Système, 828 boulevard des Marechaux, F-91762, France}
 %\institution{their}{CEA, LIST, Interactive Robotics Laboratory, 
@@ -62,10 +67,11 @@ des Syst\`{e}mes, 828 bd des Marechaux, 91762, France}
 
 %General Context
 
+
 The %command and
 control of mobile robots is a long-standing subject of research 
 in the iterative robotics domain. A trending application of mobile robots systems
-is its use in industrial supply-chains for processing orders and optimizing products storage and distribution. Companies such as Amazon and the logistic provider IDEA Groupe employ moble multi-robot systems (Kiva systems, Scallog) for autonomously processing clients orders~\cite{Gizmag,supplychain}.
+is its use in industrial supply-chains for processing orders and optimizing products storage and distribution. Companies such as Amazon and the logistic provider IDEA Groupe employ moble multi-robot systems (Kiva systems, Scallog respectively) for autonomously processing clients orders~\cite{Gizmag,supplychain}.
 %such as teams of autonomous forklift trucks
 %(for instance Kiva robots used by Amazon~\cite{Gizmag},
 %to improve their commercial performance,
@@ -107,65 +113,103 @@ execution time (time spent from going from initial to goal configurations).
 
 %State of Art
 
-In recent years, a great amount of work towards collision-free trajectory 
-planning has been proposed.
+A great amount of work towards collision-free motion 
+planning for cooperative multi-robot systems has been proposed. That work can
+be split into centralized and decentralized approaches.
+Centralized approaches are usually formulated as an optimal
+control problem that takes all robots in the team into account at once.
+This produces more optimal solutions compared to decentralized approaches. However, the computation time, security vulnerability and communication 
+requirements can make it impracticable specially for a great number of 
+robots~\cite{Borrelli2006}.
 
-Some work has been done towards analytic methods for solving the problem for 
-certain classes of systems (~\cite{})
-TODO cite
-. However~\cite{Schwartz1988} shows 
-that analytic methods  are inapplicable for nonholonomic systems in presence of 
-obstacles.
+Decentralized methods based in probabilistic~\cite{Sanchez2002} and artificial 
+potential fields~\cite{Khatib1986} approaches, for instance, are computationally fast.
+However, they are inapplicable to real-live scenarios as collision avoidance
+is dealt as a function to be minimized which value increases as paths leading
+to collision are considered.
 
+Other decentralized algorithms are based on receding horizon approaches.
+In \cite{Defoort2009} a brief comparison of the main decentralized receding 
+methods is made as well as the presentation of the base approach extended in
+our work.
+In this approach each robot optimizes only its own 
+trajectory at each computation/update horizon. In order to
+avoid robot-to-robot collisions and lost of communication, neighbors robots 
+exchange information about their intended trajectories before 
+performing the update. The intended trajectories are computed by each robot
+ignoring coupling constraints, that is, constraints that take the other robots 
+into account.
+Identified drawbacks of this approach are the dependence on 
+several parameters for achieving real-time performance and good solution 
+optimality, the difficulty to adapt it for handling dynamic obstacles, the 
+impossibility of bringing the robots to a precise goal state and the limited
+geometric representation of obstacles.
 
-Cell decomposition methods, as presented in~\cite{Latombe1991}, have the 
-downside of requiring a structured configuration space and an \textit{a priori} 
-model of its connectivity. Besides, the cell decomposition reduces the space 
-of admissible solutions.
-
- 
-
-Initially proposed in~\cite{Khatib1986}, the vector field obstacle avoidance 
-method was improved along time for treating problems such as oscillation of the 
-solution for narrow passages. This method does not present a near optimal 
-generated trajectory.
-
- 
-
-Elastic band approach initially proposed by~\cite{Quinlan1994} and extended to 
-mobile manipulators in~\cite{Brock et Khatib, 1998} uses approximations of the 
-trajectory shape (combinations of arcs and straight lines) limiting the space 
-of solutions and thus making this method inappropriate for really constrained 
-environments.
-
- 
-
-The dynamic window approach~\cite{Fox1997} can handle trajectory 
-planning for robots at high speeds and in presence of obstacles. But it is not 
-flexible enough to be extended to a multi-robot system.
+%Some work has been done towards analytic methods for solving the problem for 
+%certain classes of systems (~\cite{})
+%TODO cite
+%. However~\cite{Schwartz1988} shows 
+%that analytic methods  are inapplicable for nonholonomic systems in presence of 
+%obstacles.
+%
+%
+%Cell decomposition methods, as presented in~\cite{Latombe1991}, have the 
+%downside of requiring a structured configuration space and an \textit{a priori} 
+%model of its connectivity. Besides, the cell decomposition reduces the space 
+%of admissible solutions.
+%
+% 
+%
+%Initially proposed in~\cite{Khatib1986}, the vector field obstacle avoidance 
+%method was improved along time for treating problems such as oscillation of the 
+%solution for narrow passages. This method does not present a near optimal 
+%generated trajectory.
+%
+% 
+%
+%Elastic band approach initially proposed by~\cite{Quinlan1994} and extended to 
+%mobile manipulators in~\cite{Brock et Khatib, 1998} uses approximations of the 
+%trajectory shape (combinations of arcs and straight lines) limiting the space 
+%of solutions and thus making this method inappropriate for really constrained 
+%environments.
+%
+% 
+%
+%The dynamic window approach~\cite{Fox1997} can handle trajectory 
+%planning for robots at high speeds and in presence of obstacles. But it is not 
+%flexible enough to be extended to a multi-robot system.
 
  
 
 %What do we propose
 
-In this paper, we focus on the development of a motion planning algorithm. 
-This algorithm finds collision-free trajectories and computes the corresponding
+Therefore, in this paper, we propose a motion planning algorithm that extends 
+the approach presented in~\cite{Defoort2009} so goal states can be precisely
+reached and more complexes forms of obstacles handled. Furthermore, we perform a study 
+of how the methods parameters impact a set of performance criteria.
+Thus, this decentralized algorithm is able to find collision-free trajectories and 
+computes the corresponding
 angular and longitudinal velocities for a multi-robot system in 
 presence of static obstacles perceived by the robots as they evolve 
 in their environment. The dynamic trajectories computed are near optimal with 
 respect to the total time spent going from the initial configuration to the 
-final one. Besides, this algorithm uses a decentralized approach making the 
-system more robust to communication outages and individual robot failure than 
-compared to a centralized approach. Identified drawbacks are the dependence on 
-several parameters for achieving real-time performance and good solution 
-optimality, and the difficulty of handling dynamic obstacles as it is.
+final one.
 
- 
+%This algorithm finds collision-free trajectories and computes the corresponding
+%angular and longitudinal velocities for a multi-robot system in 
+%presence of static obstacles perceived by the robots as they evolve 
+%in their environment. The dynamic trajectories computed are near optimal with 
+%respect to the total time spent going from the initial configuration to the 
+%final one. Besides, this algorithm uses a decentralized approach making the 
+%system more robust to communication outages and individual robot failure than 
+%compared to a centralized approach. Identified drawbacks are the dependence on 
+%several parameters for achieving real-time performance and good solution 
+%optimality, and the difficulty of handling dynamic obstacles as it is.
 
-This algorithm is an extension of the work done in~\cite{Defoort2007a}. In particular,
-improvements are proposed for the respect of a precise final configuration of the 
-multi-robot system. Also, investigation about how to set parameters for achieving
-satisfying solutions was performed.
+%This algorithm is an extension of the work done in~\cite{Defoort2007a}. In particular,
+%improvements are proposed for the respect of a precise final configuration of the 
+%multi-robot system. Also, investigation about how to set parameters for achieving
+%satisfying solutions was performed.
 
 %solving the nonlinear 
 %programming problem (NLP).
@@ -187,8 +231,9 @@ with the method.
 %team can be computed.
 The forth section is dedicated to the results found using
 this method and the analysis of the certain performance criteria and 
-how they are impacted by the algorithm parameters. In the fifth section this
-approach is compared to another one presented in~\cite{Kelly_2003}.
+how they are impacted by the algorithm parameters.
+%In the fifth section this
+%approach is compared to another one presented in~\cite{Kelly_2003}.
 Finally, in last section we present our conclusions and perspectives.
 
 %\newpage
@@ -777,6 +822,13 @@ and input trajectories. The second property is important when searching for an
 admissible solution in the flat space; such parametrization is more efficient
 and well-conditioned than, for instance, a polynomial parametrization \cite{Milam2003}.
 
+%As said before $l$ derives from the kinematic model of the robot.
+
+This choice for parameterizing the flat output introduces a new parameter to be set in
+the motion planning algorithm which is the number of non-null knots intervals 
+(denoted simply $N_{knots}$). This parameter plus the $l$ value determines how many 
+control points will be used for generating the B-splines.
+
 \subsubsection{Optimization solver}
 
 There exists a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}.
@@ -817,6 +869,12 @@ Where $p$ is the position associated with a configuration $q$, $\alpha\ |\
 \alpha \geq 1, \alpha \in \mathbb{R}$ a constant for controlling where the
 new point is placed and $T_pv_{b,max}$ the maximum possible distance covered by $R_b$.
 
+Numerically solving the constraints optimization problems presented before (which includes constraints equations that must hold for a time interval) introduces
+a new parameter to the algorithm: the time sampling for optimization $N_s$.
+
+How this parameters is set impacts on the solution quality and computation time. We
+discuss that in the following section.
+
 %change of assuming a high value when converging to a solution. Instead of %computing the distance 
 %between the final position of a plan $T_p$ A change in the cost function
 
@@ -832,8 +890,8 @@ new point is placed and $T_pv_{b,max}$ the maximum possible distance covered by 
 %TODO keep explaining, present SLSQL and ALGENCAN, present reasons why we used 
 %SLSQP (i.e. availability in python, free license, and faster then ALGENCAN)
 
-%\newpage
-%\mbox{}\newpage
+\newpage
+\mbox{}\newpage
 
 
 
@@ -874,9 +932,9 @@ we have a collision-free solution. The blue zones in Figure~\ref{fig:nocollision
 % <-- use this for your graphics
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw.pdf} %
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw2.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-interr.pdf} %
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-interr2.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Motion planning solution with collision handling\label{fig:nocollision}}
 \label{fig:res}
@@ -905,7 +963,7 @@ This considerable number of parameters having influence on the solution
 and/or on the time for finding a solution makes the search for a
 satisfactory set of parameters' values a laborious task.
 
-Thus, it is important to have a better understanding of how some
+Therefore, it is important to have a better understanding of how some
 performance criteria are impacted by the changes in algorithm
 parameters.
 
@@ -930,6 +988,108 @@ Obstacle penetration area ($P$).
 Total execution time ($T_{tot}$).
 
 \end{itemize}
+
+\subsection{Maximum computation time over computation horizon $MCT/T_c$}
+
+The significance of this criterion lays in the need of assuring the 
+real-time property of this algorithm.
+In a real implementation of this approach the computation horizon would have 
+always to be superior than the
+maximum time took for computing a plan (coupling constraints
+taken into account).
+
+Several simulations for different scenarios with different sets of parameters were
+performed.
+
+For instance, Table~\ref{tab:s3param} summarizes one of the scenarios studied for a 
+single robot. In Figure~\ref{fig:uni3} we present the results obtained from simulation in that scenario for different parameters set.
+
+Each dot along the curves corresponds to the average of $MCT/T_c$ along different $T_p$s for a specific value of ($T_c/T_p$, $N_s$).
+
+It is possible to see how increasing the number of $N_s$ increases $MCT/T_c$ for a 
+given $T_c/T_p$. Similarly an increasing of $MCT/T_c$ as the number of internal knots
+$N_{knots}$.
+
+
+ a greater impact of the number of samples (Ns ) and number of
+non-null internal knots (Nknots ) is observed. The greater the Nknots or the Ns the greater
+is the maximum computation time /Tc . This behavior is the one expected since the number
+of constraints and the number of arguments for the cost function to be minimized depend
+on these two parameters respectively
+
+
+a simulation for a specific set of parameters.
+It is possible to see how the curves for a greater number of time sampling $N_s$
+Further analysis from those data
+
+
+ were able to
+produce the charts shown in the Figure~\ref{fig:uni3}
+
+\begin{table}[!h]
+\caption {Motion planner main parameters} \label{tab:s3param}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+$v_{max}$ & $1.00\ \mathrm{m/s}$\\
+\hline
+$\omega_{max}$ & $5.00\ \mathrm{rad/s}$\\
+\hline
+$q_{inital}$ & $[-0.05\ 0.00\ \pi/2]^T$\\
+\hline
+$q_{final}$ & $[0.10\ 7.00\ \pi/2]^T$\\
+\hline
+$u_{initial}$ & $[0.00\ 0.00]^T$\\
+\hline
+$u_{goal}$ & $[0.00\ 0.00]^T$\\
+\hline
+$O_0$ & $[0.55\ 1.91\ 0.31]$\\
+\hline
+$O_1$ & $[-0.08\ 3.65\ 0.32]$\\
+\hline
+$O_2$ & $[0.38\ 4.65\ 0.16]$\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[!h]
+        \centering
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps}
+                \caption{Four internal knots. Average variance between lines is $1.047\times 10^{-2}$}\label{fig:uni34}
+        \end{subfigure}
+        
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_5/mcttc-tctp.eps}
+                \caption{Five internal knots. Average variance between lines is $0.972\times 10^{-2}$}\label{fig:uni35}
+        \end{subfigure}
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.48\textwidth}
+                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps}
+                \caption{Six internal knots. Average variance between lines is $0.587\times 10^{-2}$}\label{fig:uni36}
+        \end{subfigure}
+        \caption{Simulations for a }\label{fig:uni3}
+\end{figure}
+
+%\begin{itemize}
+% \item 
+% SLSPQ method request $O(n^3)$ time, $n$ being the number of knots; 
+%\end{itemize}
+
+\subsection{Obstacle penetration $P$}
+
+\begin{figure}[!h]\centering
+  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.pdf} %
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Obstacle penetration decreasing as sampling increases}
+\label{fig:res}
+\end{figure}
 
 \subsubsection{Detection radius impact}
 
@@ -971,59 +1131,6 @@ These two behaviors indicate how a compromise between computation time and optim
 %The numbers that can be seen
 %over the blue curve are the maximum number of obstacles seen at once during the whole mission.
 
-\subsection{Maximum computation time over computation horizon $MCT/T_c$}
-
-The significance of this criterion lays in the need of assuring the 
-real-time property of this algorithm.
-In a real implementation of this approach the computation horizon would have 
-always to be superior than the
-maximum time took for computing a plan (coupling constraints
-taken into account).
-
-Based on several simulations with different scenarios we were able to
-produce the charts shown in the Figure~\ref{fig:uni3}
-
-\begin{figure}[!h]
-        \centering
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps}
-                \caption{Four internal knots. Average variance between lines is $1.047\times 10^{-2}$}\label{fig:uni34}
-        \end{subfigure}
-        
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_5/mcttc-tctp.eps}
-                \caption{Five internal knots. Average variance between lines is $0.972\times 10^{-2}$}\label{fig:uni35}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps}
-                \caption{Six internal knots. Average variance between lines is $0.587\times 10^{-2}$}\label{fig:uni36}
-        \end{subfigure}
-        \caption{Three obstacles scenario}\label{fig:uni3}
-\end{figure}
-
-\begin{itemize}
- \item 
- SLSPQ method request $O(n^3)$ time, $n$ being the number of knots; 
-\end{itemize}
-
-\subsection{Obstacle penetration $P$}
-
-\ref{fig:pen}
-TODO rescale images
-
-\begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.pdf} %
-  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \caption{Obstacle penetration decreasing as sampling increases{fig:pen}}
-\label{fig:res}
-\end{figure}
-
 
 \subsection{Total execution time $T_{tot}$}
 
@@ -1053,6 +1160,9 @@ multi-robot stuff
 TODO perspectives
 
 Analise influence of dynamics of system, sensors, communication latency;
+
+\newpage
+\mbox{}\newpage
 
 \bibliographystyle{actapoly}
 \bibliography{biblio}

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  28 JUL 2015 13:05
+This is XeTeX, Version 3.14159265-2.6-0.99991 (MiKTeX 2.9 64-bit) (preloaded format=xelatex 2015.5.18)  29 JUL 2015 16:28
 entering extended mode
 **actapolyexample.tex
 (actapolyexample.tex
@@ -1058,7 +1058,7 @@ Requested font "ec-lmcsc10" at 12.0pt
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/12'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 53.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 58.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmr.fd"
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1066,7 +1066,7 @@ File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 Requested font "rm-lmr12" at 12.0pt
 Requested font "rm-lmr8" at 8.0pt
 Requested font "rm-lmr6" at 6.0pt
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 53.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 58.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omllmm.fd"
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1074,7 +1074,7 @@ File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 Requested font "lmmi12" at 12.0pt
 Requested font "lmmi8" at 8.0pt
 Requested font "lmmi6" at 6.0pt
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 53.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 58.
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omslmsy.fd"
@@ -1083,20 +1083,20 @@ File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 Requested font "lmsy10" at 12.0pt
 Requested font "lmsy8" at 8.0pt
 Requested font "lmsy6" at 6.0pt
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 53.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 58.
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omxlmex.fd"
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 53.
+(Font)              <12> on input line 58.
 Requested font "lmex10" scaled 1000
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 53.
+(Font)              <8> on input line 58.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 53.
-LaTeX Font Info:    Try loading font information for U+msa on input line 53.
+(Font)              <6> on input line 58.
+LaTeX Font Info:    Try loading font information for U+msa on input line 58.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -1108,7 +1108,7 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
 Requested font "msam10" at 8.0pt
 Requested font "msam7" at 6.0pt
-LaTeX Font Info:    Try loading font information for U+msb on input line 53.
+LaTeX Font Info:    Try loading font information for U+msb on input line 58.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1140,7 +1140,7 @@ Requested font "msam5" at 5.0pt
 Requested font "msbm5" at 5.0pt
 Requested font "ec-lmr9" at 9.0pt
 Requested font "ec-lmri9" at 9.0pt
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 53.
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 58.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmtt.fd"
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1155,7 +1155,7 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/10'.
 (microtype)             Ignoring protrusion settings for this character.
 
-Underfull \hbox (badness 5050) in paragraph at lines 53--53
+Underfull \hbox (badness 5050) in paragraph at lines 58--58
 \T1/lmr/m/sc/10 Keywords: []\T1/lmr/m/n/10 , [], [],
  []
 
@@ -1171,32 +1171,15 @@ Requested font "rm-lmr9" at 9.0pt
 Requested font "lmmi9" at 9.0pt
 Requested font "lmsy9" at 9.0pt
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 81.
+(Font)              <9> on input line 87.
 Requested font "msam10" at 9.0pt
 Requested font "msbm10" at 9.0pt
-Requested font "ec-lmri10" at 10.0pt
-Requested font "ec-lmbx10" at 10.0pt
-
-Package natbib Warning: Citation `Khatib1986' on page 1 undefined on input line
- 128.
-
-
-Package natbib Warning: Citation `Quinlan1994' on page 1 undefined on input lin
-e 135.
-
-
-Package natbib Warning: Citation `Brock et Khatib' on page 1 undefined on input
- line 136.
-
-
-Package natbib Warning: Citation `1998' on page 1 undefined on input line 136.
-
 Requested font "ec-lmbx9" at 9.0pt
 Requested font "ec-lmcsc10" at 9.0pt
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/9'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 162.
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 197.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmr.fd"
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1225,25 +1208,25 @@ Requested font "lmmi7" at 7.0pt
 Requested font "lmsy10" at 10.0pt
 Requested font "lmsy7" at 7.0pt
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 206.
+(Font)              <10> on input line 251.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 206.
+(Font)              <7> on input line 251.
 Requested font "msam10" at 10.0pt
 Requested font "msam7" at 7.0pt
 Requested font "msbm10" at 10.0pt
 Requested font "msbm7" at 7.0pt
 
-Underfull \hbox (badness 10000) in paragraph at lines 218--222
+Underfull \hbox (badness 10000) in paragraph at lines 263--267
 []\T1/lmr/m/n/10 An ob-sta-cle (de-noted $\OML/lmm/m/it/10 O[]; $[]$; $
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 218--222
+Underfull \hbox (badness 10000) in paragraph at lines 263--267
 []\T1/lmr/m/n/10 ) is ge-o-met-ri-cally rep-re-
  []
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 329--333
+Underfull \hbox (badness 1642) in paragraph at lines 374--378
 \T1/lmr/m/n/10 where $\OML/lmm/m/it/10 L[]\OT1/lmr/m/n/10 (\OML/lmm/m/it/10 q[]
 \OT1/lmr/m/n/10 (\OML/lmm/m/it/10 t\OT1/lmr/m/n/10 )\OML/lmm/m/it/10 ; u[]\OT1/
 lmr/m/n/10 (\OML/lmm/m/it/10 t\OT1/lmr/m/n/10 )\OML/lmm/m/it/10 ; q[]; u[]\OT1/
@@ -1253,40 +1236,46 @@ lmr/m/n/10 )$ \T1/lmr/m/n/10 is the in-te-
 Requested font "ec-lmss10" at 10.0pt
 Requested font "ec-lmssbx10" at 10.0pt
 [2]
-Overfull \hbox (7.50002pt too wide) in paragraph at lines 450--450
+Overfull \hbox (7.50002pt too wide) in paragraph at lines 495--495
 [][][][]$\OML/lmm/m/it/10 A$  
  []
 
 
-Overfull \hbox (8.55695pt too wide) in paragraph at lines 451--451
+Overfull \hbox (8.55695pt too wide) in paragraph at lines 496--496
 [][][][]$\OML/lmm/m/it/10 D$  
  []
 
 Requested font "ts1-lmr10" at 10.0pt
+Requested font "ec-lmbx10" at 10.0pt
 Requested font "ts1-lmcsc10" at 10.0pt
 [3]
-Overfull \hbox (2.47456pt too wide) detected at line 652
+Overfull \hbox (2.47456pt too wide) detected at line 697
 [][] []
  []
 
 
-Overfull \hbox (23.64673pt too wide) detected at line 675
+Overfull \hbox (23.64673pt too wide) detected at line 720
 [][] []
  []
 
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 682.
+put line 727.
 File: ./images/receding_horizon/recedinghorizon2.png Graphic file (type QTm)
 <use  "./images/receding_horizon/recedinghorizon2.png" >
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [4]
-Underfull \hbox (badness 1163) in paragraph at lines 765--767
+Underfull \hbox (badness 1163) in paragraph at lines 810--812
 []\T1/lmr/m/n/10 It is pos-si-ble to spec-ify a level of con-ti-nu-ity
  []
 
-[5]
+
+Underfull \hbox (badness 2644) in paragraph at lines 872--874
+\T1/lmr/m/n/10 prob-lems pre-sented be-fore (which in-cludes con-
+ []
+
+[5] [6]
 File: ./images/collision/multirobot-path.pdf Graphic file (type QTm)
  <use  "./images/collision/multirobot-path.pdf" >
 File: ./images/collision/multirobot-vw.pdf Graphic file (type QTm)
@@ -1300,25 +1289,14 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 File: ./images/no_collision/multirobot-path2.pdf Graphic file (type QTm)
 <use  "./images/no_collision/multirobot-path2.pdf" >
-File: ./images/no_collision/multirobot-vw.pdf Graphic file (type QTm)
+File: ./images/no_collision/multirobot-vw2.pdf Graphic file (type QTm)
 
-<use  "./images/no_collision/multirobot-vw.pdf" >
-File: ./images/no_collision/multirobot-interr.pdf Graphic file (type QTm)
+<use  "./images/no_collision/multirobot-vw2.pdf" >
+File: ./images/no_collision/multirobot-interr2.pdf Graphic file (type QTm)
 
-<use  "./images/no_collision/multirobot-interr.pdf" >
-File: ./images/drho/drho-rmp.pdf Graphic file (type QTm)
-
-<use  "./images/drho/drho-rmp.pdf" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-File: ./images/drho/drho-tot.pdf Graphic file (type QTm)
-<use  "./images/drho/drho-tot.pdf" >
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[6]
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 974.
+<use  "./images/no_collision/multirobot-interr2.pdf" >
+Requested font "ec-lmri10" at 10.0pt
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 992.
 Requested font "rm-lmr12" at 11.0pt
 Requested font "rm-lmr8" at 7.69997pt
 Requested font "rm-lmr6" at 5.5pt
@@ -1329,11 +1307,11 @@ Requested font "lmsy10" at 11.0pt
 Requested font "lmsy8" at 7.69997pt
 Requested font "lmsy6" at 5.5pt
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <11> on input line 974.
+(Font)              <11> on input line 992.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7.69997> on input line 974.
+(Font)              <7.69997> on input line 992.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5.5> on input line 974.
+(Font)              <5.5> on input line 992.
 Requested font "msam10" at 11.0pt
 Requested font "msam7" at 7.69997pt
 Requested font "msam5" at 5.5pt
@@ -1343,20 +1321,21 @@ Requested font "msbm5" at 5.5pt
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 974.
+(hyperref)                removing `math shift' on input line 992.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 974.
+(hyperref)                removing `subscript' on input line 992.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 974.
+(hyperref)                removing `math shift' on input line 992.
 
+[7]
 File: ./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps Graphic file (type
  eps)
-<./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps>
-Overfull \hbox (5.64545pt too wide) in paragraph at lines 988--994
+ <./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps>
+Overfull \hbox (5.64545pt too wide) in paragraph at lines 1058--1064
  []  [] 
  []
 
@@ -1367,12 +1346,12 @@ File: ./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps Graphic file (type
  eps)
 
 <./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps>
-Overfull \hbox (5.64545pt too wide) in paragraph at lines 995--1007
+Overfull \hbox (5.64545pt too wide) in paragraph at lines 1065--1077
  []  [] 
  []
 
 
-Overfull \hbox (1.20102pt too wide) in paragraph at lines 995--1007
+Overfull \hbox (1.20102pt too wide) in paragraph at lines 1065--1077
  [] 
  []
 
@@ -1381,66 +1360,69 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1015.
+(hyperref)                removing `math shift' on input line 1085.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1015.
-
-
-LaTeX Warning: Reference `fig:pen' on page 7 undefined on input line 1017.
+(hyperref)                removing `math shift' on input line 1085.
 
 File: ./images/penetration/pen-nsi.pdf Graphic file (type QTm)
 <use  "./images/penetration/pen-nsi.pdf" >
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
+File: ./images/drho/drho-rmp.pdf Graphic file (type QTm)
+<use  "./images/drho/drho-rmp.pdf" >
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+File: ./images/drho/drho-tot.pdf Graphic file (type QTm)
+<use  "./images/drho/drho-tot.pdf" >
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1028.
+(hyperref)                removing `math shift' on input line 1135.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 1028.
+(hyperref)                removing `subscript' on input line 1135.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1028.
+(hyperref)                removing `math shift' on input line 1135.
 
 
-Underfull \hbox (badness 1158) in paragraph at lines 1037--1039
+Underfull \hbox (badness 1158) in paragraph at lines 1144--1146
 []\T1/lmr/m/n/10 TODO Be-fore con-clud-ing do com-par-i-son with
  []
 
-(actapolyexample.bbl [7]
+[8] (actapolyexample.bbl [9]
 Missing character: There is no – in font ec-lmr9!
 ) 
 AED: lastpage setting LastPage
-[8]
+[10
 
-Package natbib Warning: There were undefined citations.
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1060.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1060.
-(actapolyexample.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 1060.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1060.
-
-
-LaTeX Warning: There were undefined references.
+]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1170.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1170.
+ (actapolyexample.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 1170.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1170.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1060.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1170.
  ) 
 Here is how much of TeX's memory you used:
  25449 strings out of 428760
- 433248 string characters out of 3164296
- 545622 words of memory out of 3000000
- 28324 multiletter control sequences out of 15000+200000
+ 433278 string characters out of 3164296
+ 545664 words of memory out of 3000000
+ 28322 multiletter control sequences out of 15000+200000
  141313 words of font info for 103 fonts, out of 3000000 for 9000
  1096 hyphenation exceptions out of 8191
  55i,14n,54p,540b,883s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on actapolyexample.pdf (8 pages).
+Output written on actapolyexample.pdf (10 pages).

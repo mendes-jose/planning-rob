@@ -1715,8 +1715,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2191,10 +2191,10 @@ class WorldSim(object):
 
             [ax.add_artist(r) for r in plt_robots_c]
             [ax.add_artist(r) for r in plt_robots_t]
-            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
-            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
-            ax.text(2.95, 2.08, 'collision', fontsize=9)
-            ax.text(6.25, 2.82, 'collision', fontsize=9)
+#            ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
+#            ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
+#            ax.text(2.95, 2.08, 'collision', fontsize=9)
+#            ax.text(6.25, 2.82, 'collision', fontsize=9)
             
             ctr = 0
             while True:
