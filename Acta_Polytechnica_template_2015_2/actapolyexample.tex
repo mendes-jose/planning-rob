@@ -1093,6 +1093,7 @@ be seen in the Figure~\ref{fig:drhormp} for a scenario where seven obstacles whe
 Naturally, the computation time stops increasing as the robot sees all obstacles present
 in the environment.
 
+%\subsection{Parameters' impact analyses}
 
 %\begin{itemize}
 % \item 
@@ -1138,33 +1139,33 @@ Another complementary metric for characterizing solution quality would be the ex
 $T_{tot}$. Analyses of data from several simulations show a tendency that for a given value 
 for $N_{knots}$, $N_s$ and $T_c$ the execution time decreases as the planning horizon $T_p$ decreases.
 This can be explained by the simple fact that for a given $T_c$ a more optimal solution (in terms of execution time) can be found if the planning horizon $T_p$ is smaller.
-
+%Figure~\ref{fig:ttot} show data that supports these analysis.
+%\begin{figure}[!h]
+%        \centering
+%        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%          %(or a blank line to force the subfigure onto a new line)
+%        \begin{subfigure}[b]{0.48\textwidth}
+%                \includegraphics[width=\textwidth]{./images/tot/tot10.eps}
+%                \caption{$N_s = 10$}\label{fig:ttot1}
+%        \end{subfigure}
+%        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%          %(or a blank line to force the subfigure onto a new line)
+%        \begin{subfigure}[b]{0.48\textwidth}
+%                \includegraphics[width=\textwidth]{./images/tot/tot11.eps}
+%                \caption{$N_s = 11$}\label{fig:ttot2}
+%        \end{subfigure}
+%        
+%        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+%          %(or a blank line to force the subfigure onto a new line)
+%        \begin{subfigure}[b]{0.48\textwidth}
+%                \includegraphics[width=\textwidth]{./images/tot/tot12.eps}
+%                \caption{$N_s = 12$}\label{fig:ttot3}
+%        \end{subfigure}
+%        \caption{Variation of total execution time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and sampling number ($N_s$) in three obstacles scenarion.}\label{fig:ttot}
+%\end{figure}
 Another relevant observation is that the overall execution time decreases as the sampling 
 number $N_s$ decreases. This misleading improvement in the solution quality hides the fact 
 that the fewer the samples the greater will be the obstacle penetration area as shown previously in Figure~\ref{fig:res}.
-\begin{figure}[!h]
-        \centering
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/tot/tot10.eps}
-                \caption{$N_s = 10$}\label{fig:ttot1}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/tot/tot11.eps}
-                \caption{$N_s = 11$}\label{fig:ttot2}
-        \end{subfigure}
-        
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{./images/tot/tot12.eps}
-                \caption{$N_s = 12$}\label{fig:ttot3}
-        \end{subfigure}
-        \caption{Variation of total execution time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and sampling number ($N_s$) in three obstacles scenarion.}\label{fig:ttot}
-\end{figure}
 Furthermore, the Figure~\ref{fig:drhotot} shows how the total execution time
 is invariant for changes in the detection radius far from degraded values that are too small.
 This points out that a local knowledge of the environment provides enough information for finding good solutions.
@@ -1173,7 +1174,30 @@ This points out that a local knowledge of the environment provides enough inform
   \caption{Increasing of detection radius and impact on a $T_{tot}$ 
 ratio\label{fig:drhotot}}
 \end{figure}
-%\subsection{Additional time for conflict handling$P$}
+
+%Valid for SLSQP-based sovler:
+%
+%\begin{itemize}
+% \item [$\bullet$] $MCT/T_c$ is $O(n^3)$ time dependent where $n$ is directly proportional to $N_{knots}$;
+% \item [$\bullet$] $MCT/T_c$ is $O(n)$ where $n$ is directly proportional to $N_s$;
+% \item [$\bullet$] $MCT/T_c$ increases as the detection radius of the robot increases;
+% \item [$\bullet$] $T_{tot}$ decreases as $N_s$ decreases (up to a minimum value);
+% \item [$\bullet$] $T_{tot}$ is not influenced by $T_c$ in a observable way;
+% \item [$\bullet$] $T_{tot}$ decreases as the $N_{knots}$ increases (but not indefitalely);
+% \item [$\bullet$] $P$ increases as $N_s$ decreases (up to a maximum value);
+%\end{itemize}
+%
+%"Semantic" interpretation/analysis of the obstacles can speedup NPL solving by reducing the number of contraints.
+%
+%"Calibration" of the parameters can be done once knowing the real application conditions:
+%\begin{itemize}
+% \item [$\bullet$] Approx. obstacles "density";
+% \item [$\bullet$] Robots max speed;
+% \item [$\bullet$] Approx. distance;
+% \item [$\bullet$] etc.
+% \end{itemize}
+%by simulating before and pay attention to the behavior of important values such as $MCT/T$, $T_{tot}$, $P$.
+
 
 
 %TODO Comparison with the other method;
@@ -1184,12 +1208,18 @@ ratio\label{fig:drhotot}}
 \section{Conclusions}
 
 A decentralized motion planner based on a receding horizon approached modified for taking into account 
-termination constraints is proposed and studied. By identifying a stop condition 
-the receding horizon approach is finished and a termination planning problem is solved.
-The problem is stated as constrained optimization problem which minimizes the time for reaching
-a precise goal configuration through a collision-free trajectory that secures communication
-between robots.
-%Future work may be 
+termination constraints is proposed and studied. Near the goal configuration 
+neighborhood the receding horizon approach is finished and a termination planning 
+problem is solved for bring the robots to their final state.
+The problem is stated as constrained optimization problem which minimizes the time 
+for reaching a precise goal configuration through a collision-free trajectory that 
+secures communication between robots.
+Key techniques for implementing the motion planner are system flatness property, 
+B-spline parameterization of the flat output and SLSQP optimizer.
+Finally, solutions using this planner for different scenarios are generated in 
+order to validate the method studying how different parameters can impact the 
+computation time and quality of the solution. 
+Future analyze influence of dynamics of system, sensors, communication latency;
 
 
 %\begin{nomenclature}
