@@ -1213,13 +1213,13 @@ neighborhood the receding horizon approach is finished and a termination plannin
 problem is solved for bring the robots to their final state.
 The problem is stated as constrained optimization problem which minimizes the time 
 for reaching a precise goal configuration through a collision-free trajectory that 
-secures communication between robots.
+secures communication between robots. Our planner can handle circle and convex polygon representation of obstacles.
 Key techniques for implementing the motion planner are system flatness property, 
 B-spline parameterization of the flat output and SLSQP optimizer.
 Finally, solutions using this planner for different scenarios are generated in 
 order to validate the method studying how different parameters can impact the 
 computation time and quality of the solution. 
-Future analyze influence of dynamics of system, sensors, communication latency;
+Future work may be done for testing the planner in a more realistic simulation environment where dynamics is taken into account as well as sensors models and communication latency.
 
 
 %\begin{nomenclature}
