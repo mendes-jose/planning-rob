@@ -14,14 +14,14 @@
 \fi}
 \global\let\hyper@last\relax 
 \gdef\HyperFirstAtBeginDocument#1{#1}
-\providecommand*\HyPL@Entry[1]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{Gizmag,supplychain}
 \citation{Borrelli2006}
 \citation{Sanchez2002}
 \citation{Khatib1986}
 \citation{Defoort2009}
 \citation{Defoort2009}
-\HyPL@Entry{0<</S/D>>}
 \newlabel{FirstPage}{{}{1}{}{Doc-Start}{}}
 \select@language{english}
 \@writefile{toc}{\select@language{english}}
@@ -39,7 +39,7 @@
 \newlabel{eq:finalconfig}{{4}{2}{Constraints and cost functions}{equation.2.4}{}}
 \newlabel{eq:finalinput}{{5}{2}{Constraints and cost functions}{equation.2.5}{}}
 \citation{Keviczky2006}
-\citation{Defoort2007a}
+\citation{Defoort2009,Defoort2007a}
 \newlabel{it:vora}{{{\bgroup \normalfont  ({\bgroup \normalfont  (6.)\egroup }.a.)\egroup }}{3}{Constraints and cost functions}{Item.18}{}}
 \newlabel{it:vorb}{{{\bgroup \normalfont  ({\bgroup \normalfont  (6.)\egroup }.b.)\egroup }}{3}{Constraints and cost functions}{Item.19}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Voronoi regions used for case differentiation. \relax }}{3}{figure.1}}
@@ -78,14 +78,14 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}Parametrization of the flat output by B-splines}{5}{subsubsection.3.3.2}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3}Optimization solver}{5}{subsubsection.3.3.3}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Simulation results}{6}{section.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Parameters' impact analyses}{6}{subsection.4.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Motion planning solution without collision handling\relax }}{6}{figure.3}}
 \newlabel{fig:res}{{3}{6}{Motion planning solution without collision handling\relax }{figure.3}{}}
 \newlabel{fig:collision}{{3}{6}{Motion planning solution without collision handling\relax }{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Parameters' impact analyses}{6}{subsection.4.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Maximum computation time over computation horizon $MCT/T_c$}{6}{subsubsection.4.1.1}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Motion planning solution with collision handling\relax }}{7}{figure.4}}
 \newlabel{fig:res}{{4}{7}{Motion planning solution with collision handling\relax }{figure.4}{}}
 \newlabel{fig:nocollision}{{4}{7}{Motion planning solution with collision handling\relax }{figure.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Maximum computation time over computation horizon $MCT/T_c$}{7}{subsubsection.4.1.1}}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Values for scenario definition\relax }}{7}{table.1}}
 \newlabel{tab:s3param}{{1}{7}{Values for scenario definition\relax }{table.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Obstacle penetration $P$}{7}{subsubsection.4.1.2}}
@@ -97,12 +97,13 @@
 \newlabel{sub@fig:uni36}{{c}{8}{Six internal knots. Average variance between lines is $0.587\times 10^{-2}$\relax }{subfigure.5.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Three obstacles scenario simulations\relax }}{8}{figure.5}}
 \newlabel{fig:uni3}{{5}{8}{Three obstacles scenario simulations\relax }{figure.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.3}Travel time $T_{tot}$}{8}{subsubsection.4.1.3}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Increasing of detection radius and impact on a $MTC/T_c$ ratio\relax }}{8}{figure.6}}
 \newlabel{fig:drhormp}{{6}{8}{Increasing of detection radius and impact on a $MTC/T_c$ ratio\relax }{figure.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Obstacle penetration decreasing as sampling increases\relax }}{8}{figure.7}}
 \newlabel{fig:res}{{7}{8}{Obstacle penetration decreasing as sampling increases\relax }{figure.7}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.3}Travel time $T_{tot}$}{8}{subsubsection.4.1.3}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{8}{section.5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Increasing of detection radius and impact on $T_{tot}$\relax }}{8}{figure.8}}
+\newlabel{fig:drhotot}{{8}{8}{Increasing of detection radius and impact on $T_{tot}$\relax }{figure.8}{}}
 \bibstyle{actapoly}
 \bibdata{biblio}
 \bibcite{Gizmag}{{1}{2001}{{A}}{{}}}
@@ -118,8 +119,7 @@
 \bibcite{pyopt-paper}{{11}{2011}{{A}}{{}}}
 \bibcite{Kraft1988}{{12}{2012}{{A}}{{}}}
 \bibcite{slsqperror}{{13}{2013}{{A}}{{}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Increasing of detection radius and impact on $T_{tot}$\relax }}{9}{figure.8}}
-\newlabel{fig:drhotot}{{8}{9}{Increasing of detection radius and impact on $T_{tot}$\relax }{figure.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusions}{9}{section.5}}
 \newlabel{LastPage}{{}{9}{}{page.9}{}}
 \xdef\lastpage@lastpage{9}
 \xdef\lastpage@lastpageHy{9}
