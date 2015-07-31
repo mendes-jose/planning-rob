@@ -115,8 +115,8 @@ try:
     os.mkdir(direc_charts)
 except OSError:
     print('Probably the output directory already exists, going to overwrite content')
-fig.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
-fig2.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+fig.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
+fig2.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
 fig.savefig(direc_charts+'/drho-tot.pdf', bbox_inches='tight', dpi=300)
 fig.savefig(direc_charts+'/drho-tot.png', bbox_inches='tight', dpi=300)
 fig2.savefig(direc_charts+'/drho-rmp.pdf', bbox_inches='tight', dpi=300)

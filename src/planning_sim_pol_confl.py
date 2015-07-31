@@ -2137,17 +2137,21 @@ class WorldSim(object):
         handles, labels = ax_rr_d.get_legend_handles_labels()
         ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
 
-        fig_rr_d.set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+        fig_rr_d.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
         fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.png',\
                 bbox_inches='tight', dpi=300)
         fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.pdf',\
                 bbox_inches='tight', dpi=300)
 
 
-        fig_s, axarray = plt.subplots(2)
+        fig_s_trash, axarray = plt.subplots(2)
+        fig_s = plt.figure()
+        ax_lin_vel = fig_s.gca()
+        axarray[0] = ax_lin_vel
         axarray[0].set_ylabel(r'$v(m/s)$')
         axarray[0].set_title('Linear speed')
         axarray[1].set_xlabel('time(s)')
+        axarray[0].set_xlabel('time(s)')
         axarray[1].set_ylabel(r'$\omega(rad/s)$')
         axarray[1].set_title('Angular speed')
 
@@ -2256,7 +2260,7 @@ class WorldSim(object):
                 axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i))
             axarray[0].grid()
             axarray[1].grid()
-            axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
+            axarray[0].set_ylim([0.6, 1.1*self._robs[0].k_mod.u_max[0, 0]])
             axarray[1].set_ylim([-5.5, 5.5])
             fig_s.canvas.draw()
 
@@ -2265,6 +2269,7 @@ class WorldSim(object):
             handles2, labels2 = axarray[1].get_legend_handles_labels()
             axarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
+            fig_s.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight', dpi=300)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight', dpi=300)
 

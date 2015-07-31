@@ -6,12 +6,19 @@ import os
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.interpolate import interp1d
+from scipy.optimize import curve_fit
 
-font = {'family' : 'sans-serif',
-        'weight' : 'normal',
-        'size'   : 10}
 
-mpl.rc('font', **font)
+def interp_exp(x, a, b, c):
+#    return a*np.exp(b*x)
+    return [a*np.exp(b*d)+c for d in x]
+#    return a*[c*c for c in x] + b
+
+#font = {'family' : 'sans-serif',
+#        'weight' : 'normal',
+#        'size'   : 10}
+#
+#mpl.rc('font', **font)
 
 direc = "../traces/rt-full-table"
 direc = "./Ns_var_pen2"
@@ -151,6 +158,15 @@ for scnt in scenarios_tables:
 
     ax.plot(all_Ns, 10000*all_pen, label='P(N_s)', marker='.')
 
+    popt, pcov = curve_fit(interp_exp, all_Ns, 10000*all_pen, p0=[5.2e3, -4.14e-1, 0])
+    print popt
+
+    ax.plot(all_Ns, interp_exp(all_Ns, *popt), 'r--', label=r'Fitted Curve (${0:.2f}\,\exp({1:.2f}\,N_s)+{2:.2f}$)'
+            .format(popt[0], popt[1], popt[2]))
+
+    hand, lab = ax.get_legend_handles_labels()
+    ax.legend(hand, lab, loc=1)
+
     ax.grid()
     ax.set_title('Time sampling and obstacle penetration relationship')
     ax.set_xlabel(r'$N_s$')
@@ -158,7 +174,7 @@ for scnt in scenarios_tables:
     handles, labels = ax.get_legend_handles_labels()
     #ax.legend(handles, labels, loc=1)
     #ax.set_xlim(0.0,all_Ns[-1])
-    fig[fidx].set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+    fig[fidx].set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
     fig[fidx].savefig(direc_charts+'/pen-nsi.eps', bbox_inches='tight')
     fig[fidx].savefig(direc_charts+'/pen-nsi.pdf', bbox_inches='tight')
     fig[fidx].savefig(direc_charts+'/pen-nsi.png', bbox_inches='tight')

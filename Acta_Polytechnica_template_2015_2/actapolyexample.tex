@@ -11,6 +11,8 @@
 %\usepackage{graphicx}
 \usepackage{subcaption}
 
+\hyphenpenalty=100000
+
 %\usepackage{draftwatermark}
 %\SetWatermarkText{DRAFT}
 %\SetWatermarkScale{1}
@@ -77,22 +79,22 @@ Such logistics tasks became increasingly complex as uncertainties sources, such 
 
 %Problem
 
-One basic requirement for such mobile robot systems is the capacity of motion planning, i.e., generating admissible configuration and input trajectories that connects two arbitrary states. For solving the motion planning problem, different 
-constraints must be taken into account, in particular:
-
-\begin{itemize}
-
- \item robot's kinematic and dynamic constraints;
-
- \item geometric constraints;
+One basic requirement for such mobile robot systems is the capacity of motion planning, that is, generating admissible configuration and input trajectories connecting two arbitrary states. For solving the motion planning problem, different 
+constraints must be taken into account, in particular, the robot's kinematic and dynamic constraints and geometric constraints.
+%
+%\begin{itemize}
+%
+% \item robot's kinematic and dynamic constraints;
+%
+% \item geometric constraints;
 
 % \item constraints associated with uncertainties about the current state of 
 %world and the outcome of actions.
 
-\end{itemize}
+%\end{itemize}
 
 The first constraints derive directly from the mobile robot architecture 
-implying, for example, in nonholonomic constraints and sliding phenomena.
+implying, in particular, in nonholonomic constraints and sliding phenomena.
 Geometric 
 constraints result from need of preventing the robot to assume specific configurations
 in order to avoid collisions, communication lost, etc.
@@ -104,8 +106,8 @@ in order to avoid collisions, communication lost, etc.
 
 
 We are particularly interested in solving the problem of planning a 
-trajectory for a team of nonholonomic mobile robots in a partially known 
-environment occupied by static obstacles being near optimal with respect to the 
+trajectory for a team of nonholonomic mobile robots, in a partially known 
+environment occupied by static obstacles, being near optimal with respect to the 
 execution time (time spent from going from initial to goal configurations).
 
 
@@ -117,13 +119,12 @@ be split into centralized and decentralized approaches.
 Centralized approaches are usually formulated as an optimal
 control problem that takes all robots in the team into account at once.
 This produces more optimal solutions compared to decentralized approaches. However, the computation time, security vulnerability and communication 
-requirements can make it impracticable specially for a great number of 
+requirements can make it impracticable, specially for a great number of 
 robots~\cite{Borrelli2006}.
 
 Decentralized methods based in probabilistic~\cite{Sanchez2002} and artificial 
 potential fields~\cite{Khatib1986} approaches, for instance, are computationally fast.
-However, they are inapplicable to real-live scenarios as collision avoidance
-is dealt as a function to be minimized which value increases as paths leading
+However, they are inapplicable to real-live scenarios. They deal with collision avoidance as a cost function to be minimized. The cost increases as paths leading
 to collision are considered.
 
 Other decentralized algorithms are based on receding horizon approaches.
@@ -134,9 +135,9 @@ In this approach each robot optimizes only its own
 trajectory at each computation/update horizon. In order to
 avoid robot-to-robot collisions and lost of communication, neighbors robots 
 exchange information about their intended trajectories before 
-performing the update. The intended trajectories are computed by each robot
-ignoring coupling constraints, that is, constraints that take the other robots 
-into account.
+performing the update. Intended trajectories are computed by each robot
+ignoring constraints that take the other robots into account.
+
 Identified drawbacks of this approach are the dependence on 
 several parameters for achieving real-time performance and good solution 
 optimality, the difficulty to adapt it for handling dynamic obstacles, the 
@@ -182,16 +183,13 @@ geometric representation of obstacles.
 %What do we propose
 
 Therefore, in this paper, we propose a motion planning algorithm that extends 
-the approach presented in~\cite{Defoort2009} so goal states can be precisely
-reached and more complexes forms of obstacles handled. Furthermore, we perform a study 
-of how the methods parameters impact a set of performance criteria.
-Thus, this decentralized algorithm is able to find collision-free trajectories and 
-computes the corresponding
-angular and longitudinal velocities for a multi-robot system in 
+the approach presented in~\cite{Defoort2009}. In this modified algorithm goal states can be precisely reached and more complexes forms of obstacles handled.
+Furthermore, we perform a investigation 
+about how the method's parameters impact a set of performance criteria.
+Thus, this decentralized algorithm is able to find collision-free near-optimal trajectories and 
+computes the corresponding angular and longitudinal velocities for a multi-robot system in 
 presence of static obstacles perceived by the robots as they evolve 
-in their environment. The dynamic trajectories computed are near optimal with 
-respect to the total time spent going from the initial configuration to the 
-final one.
+in their environment.
 
 %This algorithm finds collision-free trajectories and computes the corresponding
 %angular and longitudinal velocities for a multi-robot system in 
@@ -216,12 +214,12 @@ final one.
 
 %Plan
 
-This paper is structured as follows: The second section states the problem to
-be resolved pointing out the cost function for motion planning and all constraints
+This paper is structured as follows. The second section states the problem to
+be resolved, pointing out the cost function for motion planning and all constraints
 that need to be respected by the computed solution.
 %motion planning algorithm that solves the problem of one robot going from an initial 
 %configuration to a final one in the presence of static obstacles.
-The third explains the method to resolve the motion planning problem and gives
+The third section explains the method to resolve the motion planning problem and gives
 some remarks on how to resolve the constrained optimization problems associated
 with the method.
 %section extends the method presented in the second section so a collision-free 
@@ -322,7 +320,7 @@ multi-robot navigation.
     $q^{*}_b(t) \in \mathbb{R}^n$ being the solution trajectory for
     the robot's configuration and $u^{*}_b(t) \in \mathbb{R}^p$ the solution
     trajectory for the robot's input -- must satisfy the
-    robots kinematic model equation:   
+    robots kinematic model equation:
 %    For a robot $R_b$     
 %    its kinematic model equation
 %    must hold for a computed solution to the
@@ -544,18 +542,20 @@ multi-robot navigation.
 %problem shown in equations~\ref{eq:} and~\ref{eq:}.
 %TODO present method or make reference to Defoort introducing $T_c$, $T_p$ etc.
 
-Since the environment is progressively perceived by the robots and new obstacles may appear as time passes,
-planning the whole motion from initial to goal configurations at a moment
-previous to the beginning of the motion is
+Since the environment is progressively perceived by the robots and new obstacles may 
+appear as time passes,
+planning the whole motion from initial to goal configurations before the beginning
+of the motion is
 not a satisfying approach. Planning locally and replanning is 
-a more suitable approach for taking new information, as they come, into account. Besides, the computation cost of finding a motion plan using
+more suitable for taking new information, as they come, into account. Besides, the computation cost of finding a motion plan using
 the first approach may be prohibited high if the planning complexity depends
 on the distance between start and goal configurations.
 
-
-Therefore, an on-line planner that computes the configuration and input 
-trajectories as the multi-robot system evolves in the environment is proposed.
-One possible way to do so is to use a receding horizon control approach~\cite{Keviczky2006}.
+Therefore, an on-line motion planner 
+%that computes the configuration and input 
+%trajectories as the multi-robot system evolves in the environment
+is proposed.
+In order to do so a receding horizon control approach~\cite{Keviczky2006} is used.
 
 Two fundamental concepts of this approach are the planning horizon $T_p$ and 
 update/computation horizon $T_c$. $T_p$ is the timespan for which a solution 
@@ -565,12 +565,12 @@ next plan, for the next timespan $T_p$, is being computed.
 The problem of producing a motion plan during a $T_c$ time interval is called
 here a receding horizon planning problem.
 
-For each receding horizon planning problem the following is done:
+For each receding horizon planning problem, the following steps are performed:
 \paragraph{Step 1.}\label{step1} All robots in the team compute an intended solution trajectory (denoted $(\hat{q}_b(t), \hat{u}_b(t))$)
-by solving a constrained optimization problem where coupling
-constraints are ignored, that is, constraints \ref{eq:coll} and \ref{eq:com} that involve 
-other robots in the team.
-\paragraph{Step 2.}\label{step2} Robots involved in a potential conflict (i.e. risk of collision 
+by solving a constrained optimization problem. Coupling
+constraints \ref{eq:coll} and \ref{eq:com} that involve 
+other robots in the team are ignored.
+\paragraph{Step 2.}\label{step2} Robots involved in a potential conflict (that is, risk of collision 
 or lost of communication) update their trajectories computed during \nameref{step1} by solving another constrained optimization problem
 that additionally takes into account
 coupling constraints (\ref{eq:coll} and \ref{eq:com}).
@@ -584,20 +584,19 @@ solution trajectory is identical to the one estimated in \nameref{step1}.
 
 All robots in the team use the same $T_p$ and $T_c$ for assuring synchronization when exchanging information about their positions and intended trajectories.
 
-For each of these steps and for each robot in the team one constrained optimization problem is resolved. The cost function to be minimized in those
+For each of these steps and for each robot in the team, one constrained optimization problem is resolved. The cost function to be minimized in those
 optimization problems
 %, proposed in \cite{Defoort2007a}
 is the distance of a robot's current configuration to its goal configuration.
-This assures that the robots are driven towards their goal configurations.
+This assures that the robots are driven towards their goal.
 
 This two step scheme is explained in details in~\cite{Defoort2009, Defoort2007a} where 
 constrained optimization problems associated to the receding horizon 
 optimization problem are formulated.
 
 However, constraints related to the goal configuration and goal input of the motion planning problem are
-neglected in the receding horizon scheme presented in~\cite{Defoort2007a}.
-Constraints~\ref{eq:finalconfig} and~\ref{eq:finalinput} are left out
-in the receding horizon scheme.
+neglected in their method.
+Constraints~\ref{eq:finalconfig} and~\ref{eq:finalinput} are left out of the planning.
 For taking them into account, a termination procedure is proposed in the following that enables the robots to reach their goal state.
 
 
@@ -606,22 +605,21 @@ For taking them into account, a termination procedure is proposed in the followi
 
 
 
-As the robots evolve in the environment using the decentralized receding horizon planning, their configuration approximate to the goal configuration.
-%That is so because the  since the distance between current and final state is what is to 
-%be minimized.
-But simply stopping the motion planner as the robots are in the neighbourhood 
-of their final configuration is not a satisfying approach (it leaves 
-constraints~\ref{eq:finalconfig} and~\ref{eq:finalinput} unsatisfied).
+%As the robots evolve in the environment using the decentralized receding horizon planning, their configuration approximate to the goal configuration.
+%%That is so because the  since the distance between current and final state is what is to 
+%%be minimized.
+%But simply stopping the motion planner when robots are in the neighborhood 
+%of their final configuration leaves 
+%constraints~\ref{eq:finalconfig} and~\ref{eq:finalinput} unsatisfied.
 
 %Furthermore, the use of a constant planning horizon $T_p$ prevents the robot of
 %finding 
 
-Therefore, after stopping the receding horizon planning algorithm, we propose a 
-termination planning that considers those constraints associated to 
-the goal state
+After stopping the receding horizon planning algorithm, we propose a 
+termination planning that considers those constraints related to
+the goal state.
 %in the \textbf{termination optimization problem}
-and that plans for unknown, to be determined planning horizon. This enables
-the robots to reach their goal states.
+This enables the robots to reach their goal states.
 
 %The constraints associated to the final configuration and input have to be integrated 
 %into the optimization problem. In addition, the timespan for performing this last
@@ -630,8 +628,7 @@ the robots to reach their goal states.
 
 The criterion used to pass from the receding 
 horizon planning to the termination planning is based on the distance between
-goal and current position of the robots and is defined in the
-equation~\ref{eq:stopcond}:
+goal and current position of the robots. It is defined by the inequation~\ref{eq:stopcond}:
 \begin{align}\label{eq:stopcond}
   d_{rem} \geq d_{min} + T_c \cdot v_{max}
 \end{align}
@@ -640,8 +637,8 @@ $d_{min}$ distance from the robot's goal position.
 This minimal distance is assumed to be sufficient for the robot to reach the 
 goal configuration.
 
-After stopping the receding horizon planning, we calculate new parameters for 
-the solution representation and computation taking into
+Before solving the termination planning problem new parameters for 
+the solution representation and computation are calculated by taking into
 account the estimate remaining distance and the typical distance traveled
 for a $T_p$ planning horizon.
 %(as better explained in TODO REF).
@@ -663,12 +660,11 @@ It also has the two steps presented before for computing an intended plan and
 for updating it, if need be, so conflicts are avoided.
 The difference consists in how the optimization problems associated to it are 
 defined. The optimization problem defined in equations \ref{eq:costsa} and
-\ref{eq:constsa} is the problem solved at the first step which generates an
-intended plan.
+\ref{eq:constsa} is the problem solved at the first step.
 %(denoted ($\hat{q}_b(t)$, $\hat{u}_b(t)$))
 The optimization
-problem associated with the update step is defined in equations 
-\ref{eq:cost} and \ref{eq:const} and produces the final solution ($q^*_b(t)$, $u^*_b(t)$).
+problem associated with the second step is defined in equations 
+\ref{eq:cost} and \ref{eq:const}.
 Besides, in both new constrained optimal problems, the planning horizon is not
 a fixed constant as before, instead it is a part of the solution to be found.
 
@@ -793,9 +789,7 @@ to retrieve back the original configuration and input trajectories.
 
 Another important aspect of this approach is the parametrization of 
 the flat output trajectory. As done in~\cite{Milam2003}, the use
-of B-spline functions present interesting properties:
-
-
+of B-spline functions present interesting properties.
 \begin{itemize}
 
 
@@ -807,7 +801,6 @@ of B-spline functions present interesting properties:
  
  
 \end{itemize}
-
 The first property is very well suited for parametrizing the flat output since
 its $l$th first derivatives will be needed when computing the system actual state
 and input trajectories. The second property is important when searching for an
@@ -823,9 +816,9 @@ control points will be used for generating the B-splines.
 
 \subsubsection{Optimization solver}
 
-There exists a variety of numerical optimization packages implemented in many different programming languages available for solving optimization problems~\cite{pyopt-paper}.
+%There exists a variety of numerical optimization packages implemented in many different %programming languages available for solving optimization problems~\cite{pyopt-paper}.
 
-Not all of those implementations are suitable for solving
+Not all implementations of numerical optimizers are suitable for solving
 the particular kind of optimization problems presented before.
 The need of a solver that supports nonlinear equality and inequality constrains
 restricts the number of possible choices.
@@ -834,7 +827,7 @@ For our initial implementation of the motion planning algorithm, the
 SLSQP optimizer stood out
 as a good option. Besides being able to handle nonlinear equality and inequality 
 constrains, its availability in the minimization module of the open-source
-scientific package Scipy helps to facilitate the motion planner implementation.
+scientific package Scipy~\cite{Scipy} helps to facilitate the motion planner implementation.
 %Finally, when compared with others free licensed optimizers such as the ones
 %available in the Python-based package PyOpt, SLSQP showed fast and better
 %results.
@@ -859,11 +852,10 @@ Where $p_{b,goal}$ and $p_{b}(\tau_{s-1}+T_c)$ are the positions associated with
 \alpha \geq 1, \alpha \in \mathbb{R}$ is a constant for controlling how far from the
 current position the new point is placed, the product $T_pv_{b,max}$ the maximum possible distance covered by $R_b$ during a planning horizon and $s\ |\ s \in [0, k), s \in \mathbb{N}$ the current receding horizon problem index.
 
-Numerically solving the constrained optimization problems presented before (which includes constraints equations that must hold for a time interval) introduces
+Numerically solving the constrained optimization problems presented before introduces
 a new parameter in the algorithm: the time sampling for optimization $N_s$.
 
-How this parameters is set impacts on the solution quality and computation time. We
-discuss that in the following section.
+%The impacts of these parameters on the solution quality and computation time are discussed in the following section.
 
 %change of assuming a high value when converging to a solution. Instead of %computing the distance 
 %between the final position of a plan $T_p$ A change in the cost function
@@ -890,27 +882,29 @@ discuss that in the following section.
 
 
 
-Here we show the results and analyses founded for the motion planner presented
-in the previous sections.
+Results and their analysis for the motion planner presented in the previous sections are 
+presented here.
 
-The trajectory and velocities shown in the Figures~\ref{fig:collision} and~\ref{fig:nocollision}
+The trajectory and velocities shown in Figures~\ref{fig:collision} and~\ref{fig:nocollision}
 illustrate a motion planning solution found for a team of three robots.
-The robots move in an environment where three static obstacles are present.
+They plan their motion in an environment where three static obstacles are present.
 Each point along the trajectory line of a robot represents the beginning
-of a $Tc$ computation horizon.
+of a $Tc$ update/computation horizon.
 
 It is possible to see on those figures how the planner generates configuration and 
-input trajectories satisfying the constraints associated to the goal state.
+input trajectories satisfying the constraints associated with the goal states.
 
-In particular, in Figure~\ref{fig:collision} we show the resulting plan when 
-coupling constraints
-are ignored (\nameref{step2} is never performed). In Figure~\ref{fig:nocollision}
-we have a collision-free solution. The blue zones in Figure~\ref{fig:nocollision} 
-are in the same position as the red ones in Figure~\ref{fig:collision}. Specially 
-near these regions a change in the trajectory is present. Complementary, changes 
-in the robots velocities across charts in both figures can be notice. Finally, the 
-bottom charts show that the collisions were indeed avoid: inter-robot distances in 
-Figure~\ref{fig:nocollision} are greater then or equal to zero all along the 
+In particular, in Figure~\ref{fig:collision}, the resulting plan is computed ignoring 
+coupling constraints (\nameref{step2} is never performed) and consequently two points of collision occur.
+A collision-free solution is presented in Figure~\ref{fig:nocollision}.
+%The blue zones in
+%Figure~\ref{fig:nocollision} 
+%are in the same position as the red ones in Figure~\ref{fig:collision}.
+Specially near the regions were collisions occurred a change in the trajectory is present from Figure~\ref{fig:collision} to Figure~\ref{fig:nocollision} to avoid collision. 
+Complementary, changes 
+in the robots (linear) velocities across charts in both figures can be noticed. Finally, the 
+bottom charts show that the collisions were indeed avoided: inter-robot distances in 
+Figure~\ref{fig:nocollision} are greater than or equal to zero all along the 
 simulation.
 %The trajectories and
 %velocities resulting from the solution update.
@@ -918,78 +912,80 @@ simulation.
 %TODO distance robot-to-robot for the 2 cases
 
 \begin{figure}[!h]\centering
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-path.pdf} %
+  \includegraphics[width=\linewidth]{./images/collision/new/multirobot-path.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw.pdf} % 
+  \includegraphics[width=\linewidth]{./images/collision/new/multirobot-vw.pdf} % 
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \includegraphics[width=\linewidth]{./images/collision/multirobot-interr.pdf} % 
+  \includegraphics[width=\linewidth]{./images/collision/new/multirobot-interr.pdf} % 
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Motion planning solution without collision handling\label{fig:collision}}
 \label{fig:res}
 \end{figure}
 
 \begin{figure}\centering
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path2.pdf} 
+  \includegraphics[width=\linewidth]{./images/no_collision/new/multirobot-path.pdf} 
 % <-- use this for your graphics
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \\[1mm]
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw2.pdf} %
+  \includegraphics[width=\linewidth]{./images/no_collision/new/multirobot-vw.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
-  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-interr2.pdf} %
+  \includegraphics[width=\linewidth]{./images/no_collision/new/multirobot-interr.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Motion planning solution with collision handling\label{fig:nocollision}}
 \label{fig:res}
 \end{figure}
 
-For performing these two previous simulations a reasonable number of parameters have to be set. These parameters can be categorized into two groups. The \textbf{algorithm related} parameters and the \textbf{optimization solver related} ones.
+For performing these two previous simulations, a reasonable number of parameters have to be set. These parameters can be categorized into two groups. \textbf{Algorithm related} parameters and the \textbf{optimization solver related} ones.
 Among the former group, the most important ones are:
 \begin{itemize}
 \item[$\bullet$] The number of sample for time discretization ($N_s$);
-\item[$\bullet$] The number of internal knots for the B-splines curves ($n_{knots}$);
+\item[$\bullet$] The number of internal knots for the B-splines curves ($N_{knots}$);
 \item[$\bullet$] The planning horizon for the sliding window ($T_p$);
 \item[$\bullet$] The computation horizon ($T_c$).
+\item[$\bullet$] The detection radius of the robot ($d_{sen}$).
 \end{itemize}
 
 The latter kind depends on the numeric optimization solver adopted.
 However, since most of them are iterative methods, it is common
-to have at least the two following parameters:
-\begin{itemize}
-\item[$\bullet$] Maximum number of iterations;
-\item[$\bullet$] Stop condition.
-\end{itemize}
+to have at least the a maximum number of iterations and a stop condition parameters.
 
 %The task of searching for a satisfactory set of parameters' values with regard to a performance metric (e.g. total time to complete the miss1ion) is quite laborious.
 
-This considerable number of parameters having influence on the solution
-and/or on the time for finding a solution makes the search for a
+This considerable number of parameters
+%having influence on the solution
+%and/or on the time for finding a solution
+makes the search for a
 satisfactory set of parameters' values a laborious task.
 
 Therefore, it is important to have a better understanding of how some
 performance criteria are impacted by the changes in algorithm
 parameters.
 
-\subsection{Parameters' impact analyses}
+\subsection{Parameters' impact}
 
-Three criteria considered important for the validation of this method were studied.
-We tested different parameters configuration and scenario in order to 
-understand how they influence
-those criteria.
-The three criteria defined for a given robot $R_b$ are:
-
-\begin{itemize}
-
-\item
-\textit{Maximum computation time} during the planning over the computation horizon ($MCT/T_c$ 
-ratio).
-
-\item
-Obstacle penetration area ($P$).
-
-\item
-Travel time ($T_{tot}$).
-
-\end{itemize}
+Three criteria considered important for the validation of this method were studied: {Maximum computation time} during the planning over the computation horizon ($MCT/T_c$ 
+ratio); Obstacle penetration area ($P$); Travel time ($T_{tot}$).
+Different parameters configuration and scenarios where tested in order to highlight
+how they influence those criteria.
+%We tested different parameters configuration and scenario in order to 
+%understand how they influence
+%those criteria.
+%The three criteria defined for a given robot $R_b$ are:
+%
+%\begin{itemize}
+%
+%\item
+%\textit{Maximum computation time} during the planning over the computation horizon ($MCT/T_c$ 
+%ratio).
+%
+%\item
+%Obstacle penetration area ($P$).
+%
+%\item
+%Travel time ($T_{tot}$).
+%
+%\end{itemize}
 
 \subsubsection{Maximum computation time over computation horizon $MCT/T_c$}
 
@@ -999,29 +995,29 @@ In a real implementation of this approach the computation horizon would have
 always to be superior than the
 maximum time took for computing a plan.
 
-Several simulations for different scenarios with different sets of parameters were
-performed.
+%Several simulations for different scenarios with different sets of parameters were
+%performed.
 
-For instance, Table~\ref{tab:s3param} summarizes one of the scenarios studied for a 
-single robot. In Figure~\ref{fig:uni3} we present the results obtained from simulation in 
-that scenario for different parameters set.
+%For instance,
+Table~\ref{tab:s3param} summarizes one of the scenarios studied for a 
+single robot. Results obtained from simulations in 
+that scenario are presented in Figure~\ref{fig:uni3}, for different parameters set.
 
 Each dot along the curves corresponds to the average of $MCT/T_c$ along different $T_p$'s for a given value of ($T_c/T_p$, $N_s$).
 
 The absolute values observed in the charts depend on the processing speed of the machine
 where the algorithm is run. Those simulations were run in an Intel Xeon CPU 2.53GHz processor.
 
-But rather than observing the absolute values, it is interesting to analyze the impact of 
-changes in the parameters values. It is possible to see that an increasing number of $N_s$ 
+Rather than observing the absolute values, it is interesting to analyze the impact of 
+changes in the parameters values. In particular, an increasing number of $N_s$ 
 increases $MCT/T_c$ for a 
-given $T_c/T_p$. Similarly, we see an increasing of $MCT/T_c$ as the number of
-internal knots $N_{knots}$ increases from chart \ref{fig:uni34} to \ref{fig:uni36}.
+given $T_c/T_p$. Similarly, an increasing of $MCT/T_c$ as the number of
+internal knots $N_{knots}$ increases from charts \ref{fig:uni34} to \ref{fig:uni36} is 
+noticed.
 
-Further analyses of those data show that finding the solution using the SLSPQ method 
+Further analyses of those data show that finding the solution using the SLSPQ method
 requires $O(N_{knots}^3)$ and $O(N_s)$ time. Although augmenting $N_{knots}$ can yield
-to an impractical computation time, typical $N_{knots}$ values used for the B-spline 
-representation did not need to exceed $10$ in our simulation, which is a sufficiently
-small value.
+to an impractical computation time, typical $N_{knots}$ values did not need to exceed $10$ in our simulations, which is a sufficiently small value.
 
 % a greater impact of the number of samples (Ns ) and number of
 %non-null internal knots (Nknots ) is observed. The greater the Nknots or the Ns the 
@@ -1062,20 +1058,26 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_4/mcttc-tctp.eps}
-                \caption{Four internal knots. Average variance between lines is $1.047\times 10^{-2}$}\label{fig:uni34}
+                \caption{Four internal knots
+                %. Average variance between lines is $1.047\times 10^{-2}$
+                }\label{fig:uni34}
         \end{subfigure}
         
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_5/mcttc-tctp.eps}
-                \caption{Five internal knots. Average variance between lines is $0.972\times 10^{-2}$}\label{fig:uni35}
+                \caption{Five internal knots
+                %. Average variance between lines is $0.972\times 10^{-2}$
+                }\label{fig:uni35}
         \end{subfigure}
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
         \begin{subfigure}[b]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{./images/realtime/Scenario_3__N_knots_6/mcttc-tctp.eps}
-                \caption{Six internal knots. Average variance between lines is $0.587\times 10^{-2}$}\label{fig:uni36}
+                \caption{Six internal knots
+                %. Average variance between lines is $0.587\times 10^{-2}$
+                }\label{fig:uni36}
         \end{subfigure}
         \caption{Three obstacles scenario simulations}\label{fig:uni3}
 \end{figure}
@@ -1086,13 +1088,13 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
   \caption{Increasing of detection radius and impact on a $MTC/T_c$ 
 ratio\label{fig:drhormp}}
 \end{figure}
-Another parameter that has direct impact on the $MCT/T_c$ ratio is the detection radius
+Another parameter having direct impact on the $MCT/T_c$ ratio is the detection radius
 of the robot's sensors.
-As the detection radius of the robot increases more obstacles are
+As the detection radius of the robot increases, more obstacles are
 seen at once which, in turn,
 increases the number of constraints in the optimization problems.
 The impact of increasing the detection radius $d_{sen}$ in the $MCT/T_c$ ratio can
-be seen in the Figure~\ref{fig:drhormp} for a scenario where seven obstacles where present.
+be seen in the Figure~\ref{fig:drhormp} for a scenario with seven obstacles.
 The computation time stops increasing as soon as the robot sees all obstacles present in the environment.
 
 %\subsection{Parameters' impact analyses}
@@ -1106,22 +1108,22 @@ The computation time stops increasing as soon as the robot sees all obstacles pr
 
 \subsubsection{Obstacle penetration $P$}
 
-The obstacle penetration area ($P$) gives a metric for obstacle avoidance and 
-consequently for solution quality.
-
-Ideally we would have $P = 0$. Because time sampling is performed and non-collision 
-constraints are evaluated for precise instants, that is not the case and $P>0$.
+Obstacle penetration area $P$ gives a metric for obstacle avoidance and 
+consequently for solution quality. A solution where the planned trajectory does not pass through 
+an object at any instant of time gives $P = 0$. The greater the $P$ the worse is the solution. 
+However, since time sampling is performed during the optimization, $P$ is usually greater than 
+zero.
 A way of assuring $P = 0$ would  be to increase the obstacles radius computed by the robot's 
 perception system by the 
 maximum distance that the robot can run within the time spam $T_p/N_s$. However simple,
 this approach represents a loss of optimality and is not considered in this work.
 
-We seek then to observe the impact of the algorithm parameters in the obstacle penetration
-area. $T_c/T_p$ ratio, $N_{knots}$ and $d_{sen}$ impact on this criteria is only 
-significant for degraded cases, that is to say that around typical values those parameters 
-does not change $P$ significantly. However, time sampling $N_s$ has a more important impact
-on $P$. 
-Figure~\ref{fig:res} shows the penetration area rapidly decreasing as the number of samples 
+It is relevant then to observe the impact of the algorithm parameters in the obstacle 
+penetration area.
+$T_c/T_p$ ratio, $N_{knots}$ and $d_{sen}$ impact on this criteria is only 
+significant for degraded cases, meaning that around typical values those parameters 
+do not change $P$ significantly. However, time sampling $N_s$ is a relevant parameter.
+Figure~\ref{fig:res} shows the penetration area decreasing as the number of samples 
 increases.
 \begin{figure}[!h]\centering
   \includegraphics[width=\linewidth]{./images/penetration/pen-nsi.pdf} %
@@ -1137,10 +1139,10 @@ increases.
 %These two behaviors indicate how a compromise between computation time and optimality must be found.
 \subsubsection{Travel time $T_{tot}$}
 %
-Another complementary metric for characterizing solution quality would be the travel time
+Another complementary metric for characterizing solution quality is the travel time
 $T_{tot}$. Analyses of data from several simulations show a tendency that for a given value 
-for $N_{knots}$, $N_s$ and $T_c$ the travel time decreases as the planning horizon $T_p$ decreases.
-This can be explained by the simple fact that for a given $T_c$ a more optimal solution (in terms of travel time) can be found if the planning horizon $T_p$ is smaller.
+of $N_{knots}$, $N_s$ and $T_c$ the travel time decreases as the planning horizon $T_p$ decreases.
+This can be explained by the simple fact that for a given $T_c$, a more optimal solution (in terms of travel time) can be found if the planning horizon $T_p$ is smaller.
 %Figure~\ref{fig:ttot} show data that supports these analysis.
 %\begin{figure}[!h]
 %        \centering
@@ -1165,12 +1167,12 @@ This can be explained by the simple fact that for a given $T_c$ a more optimal s
 %        \end{subfigure}
 %        \caption{Variation of total travel time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and sampling number ($N_s$) in three obstacles scenarion.}\label{fig:ttot}
 %\end{figure}
-Another relevant observation is that the overall travel time decreases as the sampling 
-number $N_s$ decreases. This misleading improvement in the solution quality hides the fact 
+Another relevant observation is that the overall travel time is shorter for smaller $N_s$'s. 
+This misleading improvement does take into account the fact 
 that the fewer the samples the greater will be the obstacle penetration area as shown previously in Figure~\ref{fig:res}.
 
-Furthermore, the Figure~\ref{fig:drhotot} shows how the travel time
-is invariant for changes in the detection radius far from degraded values that are too small.
+Furthermore, the Figure~\ref{fig:drhotot} shows travel time
+invariance for changes in the detection radius far from degraded values that are too small.
 This points out that a local knowledge of the environment provides enough information for finding good solutions.
 \begin{figure}[!h]\centering
   \includegraphics[width=\linewidth]{./images/drho/drho-tot.pdf}
@@ -1210,19 +1212,18 @@ This points out that a local knowledge of the environment provides enough inform
 
 \section{Conclusions}
 
-A decentralized motion planner based on a receding horizon approached modified for taking into account 
-termination constraints was proposed. Near the goal configuration 
-neighborhood the receding horizon approach is finished and a termination planning 
-problem is solved for bring the robots to their precise final state.
-The problem is stated as constrained optimization problem which minimizes the time 
-for reaching a goal configuration through a collision-free trajectory that 
-secures communication between robots. Our planner can handle circle and convex polygon representation of obstacles.
+A decentralized motion planner based on a receding horizon approach, modified for taking into account 
+termination constraints, was proposed. Near the goal configuration 
+neighborhood, the receding horizon approach is finished and a termination planning 
+problem is solved for bringing the robots to their precise final state.
+The problem is stated as a constrained optimization problem. It minimizes the time 
+for reaching a goal configuration through a collision-free trajectory securing communication between robots. Circle and convex polygon representation of obstacles are supported.
 Key techniques for implementing the motion planner are: system flatness property, 
 B-spline parameterization of the flat output and SLSQP optimizer.
 Finally, solutions using this planner for different scenarios were generated in 
-order to validate the method analyzing how different parameters can impact the 
-computation time and quality of the solution.
-Future work may be done for testing the planner in a more realistic simulation environment where dynamics is taken into account as well as sensors models and communication latency.
+order to validate the method. Impact of different parameters on 
+computation time and quality of the solution was analyzed.
+Future work will be performed in physics simulation environment where dynamics is taken into account as well as sensors models and communication latency.
 
 
 %\begin{nomenclature}

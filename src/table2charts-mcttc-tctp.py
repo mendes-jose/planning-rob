@@ -191,7 +191,10 @@ for scnt in scenarios_tables:
         handles, labels = ax.get_legend_handles_labels()
 #        ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
         ax.legend(handles, labels, ncol=2)
-        fig[fidx].set_size_inches(1.2*18.5/2.54,1.2*10.5/2.54)
+
+#        fig[fidx].set_size_inches(1.0*18.5/2.54,1.0*8.5/2.54)
+
+        fig[fidx].set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
         fig[fidx].savefig(direc_scen+'/mcttc-tctp.eps'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
         fig[fidx].savefig(direc_scen+'/mcttc-tctp.pdf'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
         fig[fidx].savefig(direc_scen+'/mcttc-tctp.png'.format(nst[0,nsi]), bbox_inches='tight', dpi=300)
