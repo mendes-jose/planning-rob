@@ -43,7 +43,10 @@ des Systèmes,
 
 \begin{abstract}
 
-This paper proposes the real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots evolving in an industrial context in presence of different structures of obstacles. The method is validated in simulation environment for a team of three robots. Then, impact of the algorithm parameters setting is studied with regard to critical performance criteria, being mainly real-time implementation, obstacle avoidance and time to complete the task.
+%This paper proposes the real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots evolving in an industrial context in presence of different structures of obstacles. The method is validated in simulation environment for a team of three robots. Then, impact of the algorithm parameters setting is studied with regard to critical performance criteria, being mainly real-time implementation, obstacle avoidance and time to complete the task.
+
+This paper proposes the real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots in presence of different structures of obstacles. The method is simulated with three robots. Impact of parameters is studied with regard to computation time, obstacle avoidance and travel time.
+
 % In view 
  
 \end{abstract}
@@ -66,7 +69,7 @@ This paper proposes the real-time implementation of a multi-robot optimal collis
 The %command and
 control of mobile robots is a long-standing subject of research 
 in the iterative robotics domain. A trending application of mobile robots systems
-is its use in industrial supply-chains for processing orders and optimizing products storage and distribution. Companies such as Amazon and the logistic provider IDEA Groupe employ moble multi-robot systems (Kiva systems, Scallog respectively) for autonomously processing clients orders~\cite{Gizmag,supplychain}.
+is their use in industrial supply-chains for processing orders and optimizing products storage and distribution. Companies such as Amazon and the logistic provider IDEA Groupe employ mobile multi-robot systems (Kiva systems, Scallog respectively) for autonomously processing clients orders~\cite{Gizmag,supplychain}.
 %such as teams of autonomous forklift trucks
 %(for instance Kiva robots used by Amazon~\cite{Gizmag},
 %to improve their commercial performance,
@@ -984,7 +987,7 @@ ratio).
 Obstacle penetration area ($P$).
 
 \item
-Total execution time ($T_{tot}$).
+Travel time ($T_{tot}$).
 
 \end{itemize}
 
@@ -1090,8 +1093,7 @@ seen at once which, in turn,
 increases the number of constraints in the optimization problems.
 The impact of increasing the detection radius $d_{sen}$ in the $MCT/T_c$ ratio can
 be seen in the Figure~\ref{fig:drhormp} for a scenario where seven obstacles where present.
-Naturally, the computation time stops increasing as the robot sees all obstacles present
-in the environment.
+The computation time stops increasing as soon as the robot sees all obstacles present in the environment.
 
 %\subsection{Parameters' impact analyses}
 
@@ -1104,7 +1106,7 @@ in the environment.
 
 \subsubsection{Obstacle penetration $P$}
 
-The obstacle penetration area ($P$) gives a sort of metric for obstacle avoidance and 
+The obstacle penetration area ($P$) gives a metric for obstacle avoidance and 
 consequently for solution quality.
 
 Ideally we would have $P = 0$. Because time sampling is performed and non-collision 
@@ -1114,7 +1116,7 @@ perception system by the
 maximum distance that the robot can run within the time spam $T_p/N_s$. However simple,
 this approach represents a loss of optimality and is not considered in this work.
 
-We sick then to observe the impact of the algorithm parameters in the obstacle penetration
+We seek then to observe the impact of the algorithm parameters in the obstacle penetration
 area. $T_c/T_p$ ratio, $N_{knots}$ and $d_{sen}$ impact on this criteria is only 
 significant for degraded cases, that is to say that around typical values those parameters 
 does not change $P$ significantly. However, time sampling $N_s$ has a more important impact
@@ -1133,12 +1135,12 @@ increases.
 %the robot can run within the time spam Tp /Ns (equivalent to Tc /NTc ). However simple,
 %this approach represents a loss of optimality and will not be considered in this work.1
 %These two behaviors indicate how a compromise between computation time and optimality must be found.
-\subsubsection{Total execution time $T_{tot}$}
-
-Another complementary metric for characterizing solution quality would be the execution time
+\subsubsection{Travel time $T_{tot}$}
+%
+Another complementary metric for characterizing solution quality would be the travel time
 $T_{tot}$. Analyses of data from several simulations show a tendency that for a given value 
-for $N_{knots}$, $N_s$ and $T_c$ the execution time decreases as the planning horizon $T_p$ decreases.
-This can be explained by the simple fact that for a given $T_c$ a more optimal solution (in terms of execution time) can be found if the planning horizon $T_p$ is smaller.
+for $N_{knots}$, $N_s$ and $T_c$ the travel time decreases as the planning horizon $T_p$ decreases.
+This can be explained by the simple fact that for a given $T_c$ a more optimal solution (in terms of travel time) can be found if the planning horizon $T_p$ is smaller.
 %Figure~\ref{fig:ttot} show data that supports these analysis.
 %\begin{figure}[!h]
 %        \centering
@@ -1161,18 +1163,19 @@ This can be explained by the simple fact that for a given $T_c$ a more optimal s
 %                \includegraphics[width=\textwidth]{./images/tot/tot12.eps}
 %                \caption{$N_s = 12$}\label{fig:ttot3}
 %        \end{subfigure}
-%        \caption{Variation of total execution time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and sampling number ($N_s$) in three obstacles scenarion.}\label{fig:ttot}
+%        \caption{Variation of total travel time with the computation horizon ($T_c$) for differet planning horizons ($T_p$) and sampling number ($N_s$) in three obstacles scenarion.}\label{fig:ttot}
 %\end{figure}
-Another relevant observation is that the overall execution time decreases as the sampling 
+Another relevant observation is that the overall travel time decreases as the sampling 
 number $N_s$ decreases. This misleading improvement in the solution quality hides the fact 
 that the fewer the samples the greater will be the obstacle penetration area as shown previously in Figure~\ref{fig:res}.
-Furthermore, the Figure~\ref{fig:drhotot} shows how the total execution time
+
+Furthermore, the Figure~\ref{fig:drhotot} shows how the travel time
 is invariant for changes in the detection radius far from degraded values that are too small.
 This points out that a local knowledge of the environment provides enough information for finding good solutions.
 \begin{figure}[!h]\centering
   \includegraphics[width=\linewidth]{./images/drho/drho-tot.pdf}
-  \caption{Increasing of detection radius and impact on a $T_{tot}$ 
-ratio\label{fig:drhotot}}
+  \caption{Increasing of detection radius and impact on
+  $T_{tot}$\label{fig:drhotot}}
 \end{figure}
 
 %Valid for SLSQP-based sovler:
@@ -1208,17 +1211,17 @@ ratio\label{fig:drhotot}}
 \section{Conclusions}
 
 A decentralized motion planner based on a receding horizon approached modified for taking into account 
-termination constraints is proposed and studied. Near the goal configuration 
+termination constraints was proposed. Near the goal configuration 
 neighborhood the receding horizon approach is finished and a termination planning 
-problem is solved for bring the robots to their final state.
+problem is solved for bring the robots to their precise final state.
 The problem is stated as constrained optimization problem which minimizes the time 
-for reaching a precise goal configuration through a collision-free trajectory that 
+for reaching a goal configuration through a collision-free trajectory that 
 secures communication between robots. Our planner can handle circle and convex polygon representation of obstacles.
-Key techniques for implementing the motion planner are system flatness property, 
+Key techniques for implementing the motion planner are: system flatness property, 
 B-spline parameterization of the flat output and SLSQP optimizer.
-Finally, solutions using this planner for different scenarios are generated in 
-order to validate the method studying how different parameters can impact the 
-computation time and quality of the solution. 
+Finally, solutions using this planner for different scenarios were generated in 
+order to validate the method analyzing how different parameters can impact the 
+computation time and quality of the solution.
 Future work may be done for testing the planner in a more realistic simulation environment where dynamics is taken into account as well as sensors models and communication latency.
 
 
