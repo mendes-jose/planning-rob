@@ -39,6 +39,9 @@
 \newtheorem{conjecture}{Conjecture}
 \newtheorem{idea}{Idea}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 \title{PFE-WrittenReport}
 \author{MENDES FILHO, José Magno}
 
@@ -97,9 +100,9 @@
 {Réf : DIASI / 15-351 \hfill}
 
 \HRule \\[0.2cm]
-\Huge \textbf{Local Dynamic Path Planning for an Autonomous Forklift in Human Environment}\\[-0.2cm] % Title
+\Huge \textbf{Motion Planning for Autonomous Multi-robot System in Human Environment}\\[-0.2cm] % Title
 \HRule \\[0.5cm]
-
+%: a Modified Receding Horizon Approach for reaching Goal States
 \begin{center}
 \textbf{\textcolor{red}{\Large{
 Unclassified Report}\\[-0.4cm]% Classified
@@ -123,14 +126,14 @@ Promotion 2014
 
 \begin{minipage}{0.45\textwidth}
 \begin{flushleft} \large
-\emph{Supervisor - ENSTA:}\\
+\emph{Advisor - ENSTA:}\\
 David \textsc{Filliat} % Tuteur ENSTA
 \end{flushleft}
 \end{minipage}
 ~
 \begin{minipage}{0.45\textwidth}
 \begin{flushright} \large
-\emph{Supervisor - CEA:} \\
+\emph{Advisor - CEA:} \\
 Éric \textsc{Lucet} % Tuteur Ailleurs
 \end{flushright}
 \end{minipage}\\[1.0cm]
@@ -152,20 +155,34 @@ David \textsc{Filliat} % Tuteur ENSTA
 \cfoot{\textsc{Mendes Filho} José Magno - CEA\\\textcolor{red}{Unclassified - Can be made public on the internet}}
 \fancyfoot[OR,EL]{\thepage}
 
+\let\savecleardoublepage\cleardoublepage
+\let\cleardoublepage\clearpage
 \chapter*{Acknowledgements}
-\lipsum[1-3]
+
+Firstly, I would like to express my sincere gratitude to my ENSTA advisor Prof. Dr. David Filliat who welcomed me in the U2IS - Unité Informatique et Ingénierie des Systèmes for the two first months of my internship.
+
+My sincere thanks also goes to my advisor at CEA, Dr. Eric Lucet for the continuous support and incentive of my work during the whole internship.
+
+I thank all my colleagues at both U2IS and CEA for all the coffee breaks and stimulating discussions (sometimes even related to our works). They helped to make theses last six months a very pleasant time.
+
+Last but not the least, I must not forget to thank my family who always supported my life and career choices no matter how strange they may seem to them.
 
 \begin{abstractpage}
 \thispagestyle{empty}
-%\selectlanguage{french}
-\begin{Abstract}{french}
-    \lipsum[1]
-\end{Abstract}
-%\selectlanguage{english}
+\selectlanguage{english}
 \begin{Abstract}{english}
-    \lipsum[1]
+
+This work proposes the real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots evolving in an industrial context in presence of different structures of obstacles. The method is validated in simulation environment for a team of three robots. Then, impact of the method's parameters is studied with regard to critical performance criteria, being mainly computation time, obstacle avoidance and travel time.
+
+\end{Abstract}
+\selectlanguage{french}
+\begin{Abstract}{french}
+
+Ce travail propose la mise en oeuvre d'un algorithme "real-time" de planification de trajectoire avec évitement de collision basé sur le concept de fenêtre glissante. Il est destiné à l'évolution autonome d'une flottille des robots mobiles dans un contexte industriel en présence de différents types d'obstacles. La méthode est validée en simulation pour un système de trois robots. Finalement, l'impact de paramètres de la méthode sur des critères de performance critiques, notamment le temps de calcul, l'évitement d'obstacle et le temps total de déplacement.
+
 \end{Abstract}
 \end{abstractpage}
+\let\cleardoublepage\savecleardoublepage
 
 \selectlanguage{english}
 
@@ -189,7 +206,7 @@ David \textsc{Filliat} % Tuteur ENSTA
 %\pagenumbering{roman}
 
 \appendix
-\chapter{Random Graphs}
+\chapter{XDE: physics simulation software}
 \lipsum[1-5]
 
 

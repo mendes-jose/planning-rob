@@ -1,39 +1,134 @@
 \selectlanguage{english}
-\part{Internship Description}
+%\part{Internship Description}
 
-\chapter{Work Description}
+%Courte, elle doit présenter le sujet du stage et le contenu du rapport. Décrire le
+%contexte dans lequel s’est déroulé le stage (structure du service, organisation, buts,
+%conditions de travail…). Et annoncer le plan du rapport de stage.
+%Il est conseillé d’écrire l’introduction dans sa version définitive une fois le travail de
+%rédaction du rapport terminé.
+\let\savecleardoublepage\cleardoublepage
+\let\cleardoublepage\clearpage
+\chapter{Introduction}
 
-\section{Internship first part: ENSTA}
+This document is meant to describe the work developed during my final year internship at CEA
+as an engineering student from ENSTA ParisTech and UPMC - Paris VI.
+The internship subject was named "Replanification dynamique locale de trajectoire d’un cariste autonome en milieu humain" and was proposed by the "Laboratoire de Robotique Interactive" at CEA.
+Due to some delay imposed by administrative and security procedures at CEA 
+the first two months of my work,
+from beginning of Mars until end of April, took place at the "Unité Informatique et In-
+génierie des Systèmes" at ENSTA under the supervision of Prof. Dr. David Filliat.
+Later, from May until the end of August, I worked at CEA LIST Digiteo Moulon under the
+supervision of Dr. Eric Lucet.
 
-\section{Internship second part: CEA}
 
-\subsection{CEA background and history}
+\section{Internship context}
 
-Le CEA (Commissariat à l’Energie Atomique) a été créé en 1948, selon la volonté du général De Gaulle, qui voulait assurer à la France une autonomie énergétique.  C’est selon cette volonté qu’a été, pendant de nombreuses années, orienté le développement du CEA. 
-Cette mission fut un grand succès au regard de la place qu’occupe aujourd’hui le nucléaire dans le secteur énergétique français. Cependant, le secteur énergétique n’est pas le seul domaine dans lequel le nucléaire occupe une place importante. Le CEA a ainsi participé au développement de tous les domaines utilisant le nucléaire (imagerie médicale, études fondamentales sur les particules, etc…)
 
-Au fil des années, le CEA a souhaité diversifier ses activités, cherchant à rester en permanence à la pointe des découvertes scientifiques.  C’est ainsi qu’ont été créés plusieurs laboratoires de recherche.
-Le premier de ces laboratoires à avoir été créé est le LETI (Laboratoire d’Electronique et de Technologie de l’Informatique) en 1967. Suivront, dans les années 2000, deux autres laboratoires : le le LIST et le LITEN. Ces trois laboratoires constituent le CEA Tech dont je parle plus loin dans ce document.
-	Ces laboratoires permettent au CEA de développer de nouvelles technologies, sans se limiter au seul domaine du nucléaire. On peut également citer plusieurs partenariats qui ont été mis en place et qui soulignent bien la volonté du CEA d’être partout à la fois dans le domaine scientifique. On trouve ainsi le LSCE (le Laboratoire des Sciences du Climat et de l’Environnement) qui a été mis en place avec le CNRS, Neurospin,  un centre de neuro-imagerie, le CNS et le CNG (respectivement Centre National de Séquençage et Centre National de Génotypage), le MIRcen (Molecular Imaging research center), HelioBiotech (recherche sur les biocarburants), Nanno-Innov (robotique)
-	
-\subsection{CEA current scenario}
+The work developed during this internship falls within the context of an applied research project on 
+automation of a forklift truck fleet for the effective supply of assembly lines where human can be 
+present.
 
-Le CEA d’aujourd’hui est un EPIC (Etablissement Public à caractère Industriel et Commercial). Le siège social est basé à Saclay et possède différents sites en France (une dizaine). Le CEA est divisé en plusieurs grandes catégories : le pôle défense (DAM), le pôle nucléaire (DEN), le pôle recherches technologiques (DRT), le pôle science de la matière (DSM) et le pôle science du vivant (DSV) (cf organigramme en annexe).
-Pour ma part, j’ai effectué mon stage au CEA Tech, qui est une structure un peu particulière du CEA. Le but de cette unité est de permettre un lien entre la recherche fondamentale et l’industrie. Le CEA Tech fonctionne donc sur les principes d’une entreprise. J’ai été rattachée à la DRT pour la durée de mon stage.
-Le CEA emploie plus de 16000 personnes sur toute la France. Chaque année le CEA fonctionne grâce à un budget de 4,4 milliards d’euros.
+Thus, the autonomous forklift trucks
+%, which are mobile robots,
+have to be able to evolve in an environment that is partially known at a given moment while efficiently 
+avoiding collisions with obstacles such as boxes, shelves and other robots and above all else avoiding 
+collisions with humans.
 
-\subsection{Work environment}
+%the presence
+%of static and dynamic obstacles. The challenge of having the robots aiming for efficiency with respect to the travel time while preserving above all the workers' safety arises.
 
-Les trois laboratoires dont j’ai parlé plus haut forment donc le CEA Tech. On compte donc :
--	Le LETI, ‘’qui concentre ses activités sur les micros et nanotechnologies, ainsi que de leur intégration dans les systèmes’’ (d’après http://www-leti.cea.fr/fr)
--	Le LITEN : le Laboratoire d’Innovation pour les Technologies et des Energies Nouvelles et les nanomatériaux
--	Le LIST qui est  ‘’un institut public de recherche spécialisé dans la conception des systèmes numériques’’ (d’après http://www-list.cea.fr/)
+\section{Related work}
 
-Je ne développerai que ce dernier laboratoire puisque c’est dans celui-ci que j’ai effectué mon stage. Le LIST est lui-même découpé en plusieurs sous-parties. J’ai pour ma part été rattachée au LRI (Laboratoire de Robotique Interactive), sur le site de DIGITEO MOULON à Saclay. Sur ce site il y a environ une quarantaine de personnes comprenant des ingénieurs, des doctorants et des post-doc.
+A great amount of work towards collision-free motion 
+planning for cooperative multi-robot systems has been proposed. That work can
+be split into centralized and decentralized approaches.
+Centralized approaches are usually formulated as an optimal
+control problem that takes all robots in the team into account at once.
+This produces more optimal solutions compared to decentralized approaches as more information 
+is take into account at once. However, the computation time, security vulnerability and communication 
+requirements can make it impracticable, specially for a great number of 
+robots~\cite{Borrelli2006}.
 
-Le LIST fonctionne comme une entreprise, c’est-à-dire que les ingénieurs sont poussés par ‘’la culture du résultat, avec des objectifs de coûts, de délais et de performance’’.  Ainsi le LIST établit chaque année de nombreux partenariats industriels, chaque année il collabore ainsi avec une cinquantaine de grands groupes, ainsi qu’une cinquantaine de PME. Et ce laboratoire connait chaque année un chiffre d’affaire en croissance.
+Decentralized methods based in probabilistic~\cite{Sanchez2002} and artificial 
+potential fields~\cite{Khatib1986} approaches, for instance, are computationally fast.
+However, they are inapplicable to real-live scenarios. They deal with collision avoidance as a cost function to be minimized. But rather than having a cost that increases as paths leading
+to collision are considered, for security sake, collision avoidance has to be considered as a problem's constraint.
 
-De plus, sont créées chaque année, des start-up (en  douzaine en dix ans) qui constituent l’utilisateur final des innovations portées par le CEA Tech. Ces start-up restent ensuite en contact avec les CEA et le LIST pour continuer à innover et ‘’contribuent ainsi à un écosystème d’innovation en plein essor’’.
+Another group of decentralized algorithms are based on receding horizon approaches.
+In \cite{Defoort2009} a brief comparison of the main decentralized receding 
+methods is made as well as the presentation of the base approach extended in
+our work.
+In this approach each robot optimizes only its own 
+trajectory at each computation/update horizon. In order to
+avoid robot-to-robot collisions and lost of communication, neighbors robots 
+exchange information about their intended trajectories before 
+performing the update. Intended trajectories are computed by each robot
+ignoring constraints that take the other robots into account.
+Those trajectories are computed by
+solving nonlinear optimization problems~\cite{betts1998survey}
+using flatness property to reduce the size of the problem and B-splines for representing
+the flat output~\cite{milam2003real}.
 
-\chapter{Work Description}
-\lipsum[1-3]
+Identified drawbacks of this approach presented in \cite{Defoort2009} are the dependence on 
+several parameters for achieving real-time performance and good solution 
+optimality, the difficulty to adapt it for handling dynamic obstacles, the 
+impossibility of bringing the robots to a precise goal state and the limited
+geometric representation of obstacles.
+
+\section{Objectives}
+
+The main objective of this internship is to implement, test, evaluate and improve an optimal motion planning algorithm presented in details in~\cite{Defoort2007a} with respect to its applicability to a scenario as described before, where autonomous forklift trucks and humans share the same environment.
+
+As stated in~\cite{Defoort2007a} compared with other solutions
+this approach presents good advantages for multi-robots systems evolving in an uncertain environment with static obstacles.
+
+The two main challenges that may be confronted during this work are how to guarantee real-time performance for our specific application and how to generalize the algorithm in order to account for dynamic obstacles (including humans).
+
+The rest of this document is structure as follows. Chapter 2 presents the motion planning method 
+developed during the internship and the results after testing it in a simulation environment. In
+the first section of this chapter we present the problem of finding a trajectory as a set of 
+constraints and cost function to be minimized. Then, in the second section, the distributed 
+motion planning algorithm is developed, giving emphasis to where it differs from previous 
+work and to important implementation techniques. In the third section the
+simulation results of this method and some analysis of its performance and parametrization.
+The third and last chapter presents our conclusions and perspectives.
+
+
+%\section{Internship first part description: ENSTA}
+%
+%The first two months of this internship took place at the "Unité Informatique et Ingénierie des Systèmes" at ENSTA under the supervision of David Filliat.
+%
+%\lipsum[1-3]
+%
+%\section{Internship second part description: CEA}
+%
+%\subsection{CEA background and history}
+
+%Le CEA (Commissariat à l’Energie Atomique) a été créé en 1948, selon la volonté du général De Gaulle, qui voulait assurer à la France une autonomie énergétique.  C’est selon cette volonté qu’a été, pendant de nombreuses années, orienté le développement du CEA. 
+%Cette mission fut un grand succès au regard de la place qu’occupe aujourd’hui le nucléaire dans le secteur énergétique français. Cependant, le secteur énergétique n’est pas le seul domaine dans lequel le nucléaire occupe une place importante. Le CEA a ainsi participé au développement de tous les domaines utilisant le nucléaire (imagerie médicale, études fondamentales sur les particules, etc…)
+%
+%Au fil des années, le CEA a souhaité diversifier ses activités, cherchant à rester en permanence à la pointe des découvertes scientifiques.  C’est ainsi qu’ont été créés plusieurs laboratoires de recherche.
+%Le premier de ces laboratoires à avoir été créé est le LETI (Laboratoire d’Electronique et de Technologie de l’Informatique) en 1967. Suivront, dans les années 2000, deux autres laboratoires : le le LIST et le LITEN. Ces trois laboratoires constituent le CEA Tech dont je parle plus loin dans ce document.
+%	Ces laboratoires permettent au CEA de développer de nouvelles technologies, sans se limiter au seul domaine du nucléaire. On peut également citer plusieurs partenariats qui ont été mis en place et qui soulignent bien la volonté du CEA d’être partout à la fois dans le domaine scientifique. On trouve ainsi le LSCE (le Laboratoire des Sciences du Climat et de l’Environnement) qui a été mis en place avec le CNRS, Neurospin,  un centre de neuro-imagerie, le CNS et le CNG (respectivement Centre National de Séquençage et Centre National de Génotypage), le MIRcen (Molecular Imaging research center), HelioBiotech (recherche sur les biocarburants), Nanno-Innov (robotique)
+%	
+%\subsection{CEA current scenario}
+%
+%Le CEA d’aujourd’hui est un EPIC (Etablissement Public à caractère Industriel et Commercial). Le siège social est basé à Saclay et possède différents sites en France (une dizaine). Le CEA est divisé en plusieurs grandes catégories : le pôle défense (DAM), le pôle nucléaire (DEN), le pôle recherches technologiques (DRT), le pôle science de la matière (DSM) et le pôle science du vivant (DSV) (cf organigramme en annexe).
+%Pour ma part, j’ai effectué mon stage au CEA Tech, qui est une structure un peu particulière du CEA. Le but de cette unité est de permettre un lien entre la recherche fondamentale et l’industrie. Le CEA Tech fonctionne donc sur les principes d’une entreprise. J’ai été rattachée à la DRT pour la durée de mon stage.
+%Le CEA emploie plus de 16000 personnes sur toute la France. Chaque année le CEA fonctionne grâce à un budget de 4,4 milliards d’euros.
+%
+%\subsection{Work environment}
+%
+%Les trois laboratoires dont j’ai parlé plus haut forment donc le CEA Tech. On compte donc :
+%-	Le LETI, ‘’qui concentre ses activités sur les micros et nanotechnologies, ainsi que de leur intégration dans les systèmes’’ (d’après http://www-leti.cea.fr/fr)
+%-	Le LITEN : le Laboratoire d’Innovation pour les Technologies et des Energies Nouvelles et les nanomatériaux
+%-	Le LIST qui est  ‘’un institut public de recherche spécialisé dans la conception des systèmes numériques’’ (d’après http://www-list.cea.fr/)
+%
+%Je ne développerai que ce dernier laboratoire puisque c’est dans celui-ci que j’ai effectué mon stage. Le LIST est lui-même découpé en plusieurs sous-parties. J’ai pour ma part été rattachée au LRI (Laboratoire de Robotique Interactive), sur le site de DIGITEO MOULON à Saclay. Sur ce site il y a environ une quarantaine de personnes comprenant des ingénieurs, des doctorants et des post-doc.
+%
+%Le LIST fonctionne comme une entreprise, c’est-à-dire que les ingénieurs sont poussés par ‘’la culture du résultat, avec des objectifs de coûts, de délais et de performance’’.  Ainsi le LIST établit chaque année de nombreux partenariats industriels, chaque année il collabore ainsi avec une cinquantaine de grands groupes, ainsi qu’une cinquantaine de PME. Et ce laboratoire connait chaque année un chiffre d’affaire en croissance.
+%
+%De plus, sont créées chaque année, des start-up (en  douzaine en dix ans) qui constituent l’utilisateur final des innovations portées par le CEA Tech. Ces start-up restent ensuite en contact avec les CEA et le LIST pour continuer à innover et ‘’contribuent ainsi à un écosystème d’innovation en plein essor’’.
+
+%\chapter{Work Description}
+%\lipsum[1-3]
