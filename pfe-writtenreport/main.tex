@@ -3,8 +3,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper, left=2.8cm, right=2.0cm, top=3.0cm, bottom=3.0cm]{geometry}
-\usepackage{graphicx}
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{ dsfont }
 \usepackage{float}
 \usepackage{color}
 \usepackage[english, french]{babel}
@@ -18,6 +18,8 @@
 \usepackage{parcolumns}
 \usepackage{fancyhdr}
 \usepackage{tikz}
+\usepackage{tikzscale}
+\usetikzlibrary{matrix,shapes,arrows,positioning,chains,calc}
 \usepackage{caption}
 \usepackage{subcaption}
 % \usepackage[enable]{easy-todo}
@@ -25,6 +27,7 @@
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage{soul}
 \usepackage{epstopdf}
+\usepackage{graphicx,adjustbox}
 
 \newcommandx{\change}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 
@@ -59,7 +62,51 @@
    \begin{center}\bfseries\abstractname\end{center}}
   {\par\bigskip}
 
+
+
 \begin{document}
+
+% Define block styles
+\tikzset{
+desicion/.style={
+    diamond,
+    draw,
+    aspect=1.8,
+    text width=7em,
+    text badly centered,
+    inner sep=0pt
+},
+block/.style={
+    rectangle,
+    draw,
+    text width=10em,
+    text centered,
+    rounded corners
+},
+cloud/.style={
+    draw,
+    ellipse,
+    minimum height=2em
+},
+descr/.style={
+    fill=white,
+    inner sep=2.5pt
+},
+connector/.style={
+    -latex,
+    font=\scriptsize
+},
+rectangle connector/.style={
+    connector,
+    to path={(\tikztostart) -- ++(#1,0pt) \tikztonodes |- (\tikztotarget) },
+    pos=0.5
+},
+rectangle connector/.default=-2cm,
+straight connector/.style={
+    connector,
+    to path=--(\tikztotarget) \tikztonodes
+}
+}
 
 %=======%
 % TITLE %
@@ -100,7 +147,7 @@
 {Réf : DIASI / 15-351 \hfill}
 
 \HRule \\[0.2cm]
-\Huge \textbf{Motion Planning for Autonomous Multi-robot System in Human Environment}\\[-0.2cm] % Title
+\Huge \textbf{Decentralized Motion Planning for Multi-robot System in Human Environment}\\[-0.2cm] % Title
 \HRule \\[0.5cm]
 %: a Modified Receding Horizon Approach for reaching Goal States
 \begin{center}
@@ -159,13 +206,11 @@ David \textsc{Filliat} % Tuteur ENSTA
 \let\cleardoublepage\clearpage
 \chapter*{Acknowledgements}
 
-Firstly, I would like to express my sincere gratitude to my ENSTA advisor Prof. Dr. David Filliat who welcomed me in the U2IS - Unité Informatique et Ingénierie des Systèmes for the two first months of my internship.
+Firstly, I would like to express my sincere gratitude to both of my advisors, to Prof. Dr. David Filliat who welcomed me in the U2IS - Unité Informatique et Ingénierie des Systèmes at ENSTA for the two first months of my internship as well as to Dr. Eric Lucet, my advisor at CEA, for the continuous support and incentive of my work during the whole internship.
 
-My sincere thanks also goes to my advisor at CEA, Dr. Eric Lucet for the continuous support and incentive of my work during the whole internship.
+My sincere thanks also goes to all my colleagues at both U2IS and CEA for all the coffee breaks and stimulating discussions (sometimes even related to our works). They helped to make these last six months a very pleasant time.
 
-I thank all my colleagues at both U2IS and CEA for all the coffee breaks and stimulating discussions (sometimes even related to our works). They helped to make theses last six months a very pleasant time.
-
-Last but not the least, I must not forget to thank my family who always supported my life and career choices no matter how strange they may seem to them.
+Last but not the least, I must not forget to thank my family who always supported my life and career choices no matter how strange they may have seemed to them.
 
 \begin{abstractpage}
 \thispagestyle{empty}
@@ -198,6 +243,16 @@ Ce travail propose la mise en oeuvre d'un algorithme "real-time" de planificatio
 
 \input{part2.tex}
 
+\chapter{Conclusion}
+
+A motion planner for cooperative multi-robot systems has been developed. A base algorithm presented in~\cite{Defoort2009} was implemented, extended and analyzed aiming for the development of an optimal, distributed, collision-free and local motion planner for multi-robot systems composed by nonhonolomic mobile robots in  the presence of obstacles.
+
+There is several points of this method that can be improved.
+
+Although the use of the free optimization solver SLSQP provided in the SciPy library was enough to produce good results, it will be interesting to test licensed solvers as well. In particular, the solver CFSQP, which is also a sequential quadratic programming solver, should be tested. This solver produces feasible solutions at each iteration while searching for the locally optimal solution of the NLP. This aspect would be convenient for when the $T_c$ interval expires before an optimal solution is found as the intermediary solution would still be useful for the robot's motion.
+
+Better initialization of the "first guesses" that must be provided to the NLP solvers could be done by performing a fast non-optimal collision-free path planning and feeding its solution to the solver.
+
 \nocite{*}
 \bibliography{rapport}
 \bibliographystyle{plain}
@@ -206,7 +261,7 @@ Ce travail propose la mise en oeuvre d'un algorithme "real-time" de planificatio
 %\pagenumbering{roman}
 
 \appendix
-\chapter{XDE: physics simulation software}
+%\chapter{XDE: physics simulation software}
 \lipsum[1-5]
 
 

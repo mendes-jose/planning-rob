@@ -1,0 +1,104 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{graphicx,adjustbox}
+\usetikzlibrary{matrix,shapes,arrows,positioning,chains,calc}
+
+\begin{document}
+
+% Define block styles
+\tikzset{
+desicion/.style={
+    diamond,
+    draw,
+    aspect=1.8,
+    text width=7em,
+    text badly centered,
+    inner sep=0pt
+},
+block/.style={
+    rectangle,
+    draw,
+    text width=10em,
+    text centered,
+    rounded corners
+},
+cloud/.style={
+    draw,
+    ellipse,
+    minimum height=2em
+},
+descr/.style={
+    fill=white,
+    inner sep=2.5pt
+},
+connector/.style={
+    -latex,
+    font=\scriptsize
+},
+rectangle connector/.style={
+    connector,
+    to path={(\tikztostart) -- ++(#1,0pt) \tikztonodes |- (\tikztotarget) },
+    pos=0.5
+},
+rectangle connector/.default=-2cm,
+straight connector/.style={
+    connector,
+    to path=--(\tikztotarget) \tikztonodes
+}
+}
+\begin{figure}[!h]
+\begin{adjustbox}{max width=0.5\textwidth}
+\begin{tikzpicture}[thick,scale=0.6, every node/.style={transform shape}]
+\matrix (m)[matrix of nodes, column  sep=1cm,row  sep=8mm, align=center, nodes={rectangle,draw, anchor=center} ]{
+    |[block]| {Start} &  & \\
+    |[block]| {Initilize} &  & \\
+    |[block]| {Update}     & |[desicion]| {Neighborhood of $q_{b,goal}$ reached?} &      |[block]| {Update} \\
+    |[block]| {Solve $NLP_{b,1}(\tau_k)$} & &  |[block]| {Rescale} \\
+    |[block]| {Computation of conflict sets}     &  &         |[block]| {Solve $NLP_{b,3}(\tau_k)$}\\
+    |[desicion]| {Is $\mathcal{C}_{com,b}(\tau_k) \bigcup \mathcal{C}_{coll,b}(\tau_k)$ empty?} &  &|[desicion]| {Is $\mathcal{C}_{com,b}(\tau_k) \bigcup \mathcal{C}_{coll,b}(\tau_k)$ empty?}  \\
+    |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{com,b} \bigcup \mathcal{C}_{coll,b}$}& &  |[block]| {Computation of conflict sets} \\
+    |[block]| {Exchange}     & &   |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{com,b} \bigcup \mathcal{C}_{coll,b}$}\\
+    |[block]| {Solve $NLP_{b,2}(\tau_k)$}     & |[block]| {Do nothing while $t-\tau_{ref}<T_p$} &    |[block]| {Exchange} \\
+     & |[block]| {Finish}  &  |[block]| {Solve $NLP_{b,4}(\tau_k)$}\\
+};
+
+%\coordinate[left=9mm of m-6-3] (invis);
+%\path let \p1=(invis) in coordinate (invis2) at (\x2,\y1);
+\path let \p1=(m-6-3) in coordinate (invis) at (2.5,\y1);
+\path let \p1=(m-10-3) in coordinate (invis2) at (2.5,\y1);
+
+\path let \p1=(m-6-1) in coordinate (invis1) at (-2.4,\y1);
+\path let \p1=(m-9-2) in coordinate (invis12) at (-2.4,\y1);
+%\coordinate (invis2) at ($(invis) + (0,-10)$);
+
+\path [>=latex,->] (m-1-1) edge (m-2-1);
+\path [>=latex,->] (m-2-1) edge (m-3-1);
+\path [>=latex,->] (m-3-1) edge node[anchor=west, near start] {$\mathcal{O}_n(\tau_k), \tau_{ref}, \dots$} (m-4-1);
+\path [>=latex,->] (m-4-1) edge (m-5-1);
+\path [>=latex,->] (m-5-1) edge (m-6-1);
+\path [>=latex,->] (m-6-1) edge node[anchor=east] {no} (m-7-1);
+\path [>=latex,->] (m-6-1) edge node[anchor=north] {yes} (invis1);
+\path [>=latex,->] (invis1) edge (invis12);
+%\path [>=latex,->,bend left] (m-6-1) edge node[anchor=east] {yes} (m-9-2);
+\path [>=latex,->] (m-7-1) edge (m-8-1);
+\path [>=latex,->] (m-8-1) edge (m-9-1);
+\path [>=latex,->] (m-9-1) edge (m-9-2);
+\path [>=latex,->] (m-9-2) edge (m-3-2);
+\path [>=latex,->] (m-3-2) edge node[anchor=north] {no} (m-3-1);
+\path [>=latex,->] (m-3-2) edge node[anchor=north] {yes} (m-3-3);
+\path [>=latex,->] (m-3-3) edge (m-4-3);
+\path [>=latex,->] (m-4-3) edge (m-5-3);
+\path [>=latex,->] (m-5-3) edge (m-6-3);
+\path [>=latex,->] (m-6-3) edge node[anchor=east] {no} (m-7-3);
+\path [>=latex,->] (m-6-3) edge node[anchor=north] {yes} (invis);
+\path [>=latex,->] (invis) edge (invis2);
+\path [>=latex,->] (m-7-3) edge (m-8-3);
+\path [>=latex,->] (m-8-3) edge (m-9-3);
+\path [>=latex,->] (m-9-3) edge (m-10-3);
+\path [>=latex,->] (m-10-3) edge (m-10-2);
+
+\end{tikzpicture}
+\end{adjustbox}
+\end{figure}
+\end{document}
