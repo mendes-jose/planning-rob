@@ -206,7 +206,7 @@ David \textsc{Filliat} % Tuteur ENSTA
 \let\cleardoublepage\clearpage
 \chapter*{Acknowledgements}
 
-Firstly, I would like to express my sincere gratitude to both of my advisors, to Prof. Dr. David Filliat who welcomed me in the U2IS - Unité Informatique et Ingénierie des Systèmes at ENSTA for the two first months of my internship as well as to Dr. Eric Lucet, my advisor at CEA, for the continuous support and incentive of my work during the whole internship.
+Firstly, I would like to express my sincere gratitude to both of my advisors, to Prof. Dr. David Filliat who welcomed me in the U2IS - Unité Informatique et Ingénierie des Systèmes at ENSTA for the first two months of my internship as well as to Dr. Eric Lucet, my advisor at CEA, for the continuous support and incentive of my work during the whole internship.
 
 My sincere thanks also goes to all my colleagues at both U2IS and CEA for all the coffee breaks and stimulating discussions (sometimes even related to our works). They helped to make these last six months a very pleasant time.
 
@@ -217,13 +217,13 @@ Last but not the least, I must not forget to thank my family who always supporte
 \selectlanguage{english}
 \begin{Abstract}{english}
 
-This work proposes the real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots evolving in an industrial context in presence of different structures of obstacles. The method is validated in simulation environment for a team of three robots. Then, impact of the method's parameters is studied with regard to critical performance criteria, being mainly computation time, obstacle avoidance and travel time.
+This work proposes a real-time implementation of a multi-robot optimal collision-free motion planner algorithm based on a receding horizon approach, for the navigation of a team of mobile robots evolving in an industrial context in presence of different structures of obstacles. The method is validated in simulation environment for a team of three robots. Then, impact of the method's parameters is studied with regard to critical performance criteria, being mainly computation time, obstacle avoidance and travel time.
 
 \end{Abstract}
 \selectlanguage{french}
 \begin{Abstract}{french}
 
-Ce travail propose la mise en oeuvre d'un algorithme "real-time" de planification de trajectoire avec évitement de collision basé sur le concept de fenêtre glissante. Il est destiné à l'évolution autonome d'une flottille des robots mobiles dans un contexte industriel en présence de différents types d'obstacles. La méthode est validée en simulation pour un système de trois robots. Finalement, l'impact de paramètres de la méthode sur des critères de performance critiques, notamment le temps de calcul, l'évitement d'obstacle et le temps total de déplacement.
+Ce travail propose la mise en oeuvre d'un algorithme "real-time" pour la planification de trajectoire avec évitement de collision basé sur le concept de fenêtre glissante. Il est destiné à l'évolution autonome d'une flottille des robots mobiles dans un contexte industriel en présence de différents types d'obstacles. La méthode est validée en simulation pour un système de trois robots. Finalement, l'impact de paramètres de la méthode sur des critères de performance critiques, notamment le temps de calcul, l'évitement d'obstacle et le temps total de déplacement.
 
 \end{Abstract}
 \end{abstractpage}
@@ -261,8 +261,51 @@ Better initialization of the "first guesses" that must be provided to the NLP so
 %\pagenumbering{roman}
 
 \appendix
-%\chapter{XDE: physics simulation software}
-\lipsum[1-5]
+\chapter{NLPs}
+
+$NLP_{b,3}$:
+\begin{align}\label{eq:costsa}
+\underset{\hat{q}_b(t),\hat{u}_b(t),T_f}{\mathrm{min}} L_{b,f}(\hat{q}_b(t), \hat{u}_b(t), q_{b,goal},u_{b,goal})
+\end{align}
+under the following constraints for $\tau_k = kT_c$ with $k$ the number of receding horizon
+problems solved before the termination problem:
+\begin{equation}\label{eq:constsa}
+\left\lbrace\begin{array}{lcl}
+    \dot{\hat{q}}_b(t) = f(\hat{q}_b(t),\hat{u}_b(t)),\ \ \forall t \in [\tau_{k}, \tau_{k}+T_f]\\
+    \hat{q}_b(\tau_{k}) = q^*_{b}(\tau_{k-1}+T_c)\\
+    \hat{u}_b(\tau_{k}) = u^*_{b}(\tau_{k-1}+T_c)\\
+    \hat{q}_b(\tau_{k}+T_f) = q_{b,goal}\\
+    \hat{u}_b(\tau_{k}+T_f) = u_{b,goal}\\
+    |\hat{u}_{b,i}(t)| \leq u_{b,i,max},\ \ \forall i \in [1,p],\forall t \in (\tau_{k}, \tau_{k}+T_f)\\
+    d(R_b, O_m) \geq 0,\quad \forall O_m \in \mathcal{O}_b, t \in (\tau_{k}, \tau_{k}+T_f)
+\end{array}\right.
+\end{equation}
+
+$NLP_{b,4}$:
+\begin{align}\label{eq:cost}
+\underset{q^*_b(t),u^*_b(t),T_f}{\mathrm{min}} L_{b,f}(q^*_b(t), u^*_b(t), q_{b,goal},u_{b,goal})
+\end{align}
+under the following constraints:
+\begin{equation}\label{eq:const}
+\left\lbrace\begin{array}{lcl}
+    \dot{q^*}_b(t) = f(q^*_b(t),u^*_b(t)),\ \ \forall t \in [\tau_{k}, \tau_{k}+T_f]\\
+    q^*_b(\tau_{k}) = q^*_{b}(\tau_{k-1}+T_c)\\
+    u^*_b(\tau_{k}) = u^*_{b}(\tau_{k-1}+T_c)\\
+    q^*_b(\tau_{k}+T_f) = q_{b,goal}\\
+    u^*_b(\tau_{k}+T_f) = u_{b,goal}\\
+    |u^*_{b,i}(t)| \leq u_{b,i,max},\ \ \forall i \in [1,p],\forall t \in (\tau_{k}, \tau_{k}+T_f)\\
+    d(R_b, O_m) \geq 0,\ \ \forall O_m \in \mathcal{O}_b, \forall t \in (\tau_{k}, \tau_{k}+T_f)\\
+    \mathrm{d}(R_b, R_c) - \rho_b - \rho_c \geq 0,\ \ \forall R_c \in \mathcal{C}_b, \forall t \in (\tau_{k}, \tau_{k}+T_f)\\
+    \mathrm{d}(R_b, R_d) - \min(d_{b,com},d_{d,com}) \geq 0,\ \ \forall R_d \in \mathcal{D}_b,\\
+    \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \forall t \in (\tau_{k}, \tau_{k}+T_f)\\
+    \mathrm{d}(q^*_b(t), \hat{q}_b(t)) \leq \xi,\ \ \forall t \in (\tau_{k}, \tau_{k}+T_f)
+\end{array}\right.
+\end{equation}
+
+A possible definition for the $L_{b,f}$ cost function present in the equations above can be simply $T_f^2$.
+The sets $\mathcal{O}_b$, $\mathcal{C}_b$ and $\mathcal{D}_b$ are all functions of
+$\tau_k$.
+%\lipsum[1-5]
 
 
 \end{document}

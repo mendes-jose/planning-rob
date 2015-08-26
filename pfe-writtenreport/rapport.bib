@@ -125,3 +125,472 @@ year = {2003}
   author={Workshop},
   year = {2015}
 }
+
+
+
+
+This is a file `actapolymanual.bib' which contains bibliography
+examples for the demonstration of `actapoly' bibliography style.
+
+@book {Knuth1,
+	author = {Knuth, Donald E.},
+	title = {The art of computer programming. {V}ol.~1: {F}undamental algorithms},
+	series = {Second printing},
+	publisher = {Addison-Wesley Publishing Co., Reading, Mass.-London-Don Mills, Ont},
+	year = {1969},
+	pages = {xxi+634},
+}
+
+@incollection {TeXbook:D,
+	author = {Donald E. Knuth},
+	title = {Running {\TeX}},
+	booktitle = {The {\TeX}book},
+	chapter = {{23}},
+	publisher = {Addison-Wesley Publishing Co., Reading},
+	year = {1986},
+}
+
+@misc {booktabs,
+	author = {Simon Fear and Danie Els},
+	title = {{CTAN} web interface: {P}ackage booktabs},
+	note = {[2012-06-24]},
+	eprint = {http://www.ctan.org/pkg/booktabs},
+}
+
+@misc {msc,
+	author = {{American Mathematical Society}},
+	title = {2010 {M}athematics Subject Classification},
+	eprint = {http://www.ams.org/mathscinet/msc/msc2010.html},
+}
+
+@misc {johndoe,
+	author = {John Doe},
+	title = {Example of an ar{X}iv reference},
+	eprint = {http://arxiv.org/abs/0000.0000v1},
+	archive = {arXiv:0000.0000v1},
+}
+
+@article {Ch,
+	author = {Chandrasekhar, S.},
+	title = {ON THE CONTINUOUS ABSORPTION COEFFICIENT OF THE NEGATIVE HYDROGEN ION .2.},
+	journal = {Astrophys J},
+	year = {1945},
+	volume = {102},
+	number = {3},
+	pages = {395-401},
+}
+
+@manual {doi,
+    organization = {DOI Foundation},
+    title = {{DOI} {H}andbook},
+    note = {\url{http://www.doi.org/hb.html}},
+    year = {2014},
+    doi = {10.1000/182},
+}
+	
+@misc {abcdef,
+    author = {Me},
+    title = {Your {BibTeX} file can comprise as many items as you wish, and they will not be used in the document unless you cite them
+      or you use the {\string\nocite} macro},
+}
+
+MY ENTRIES
+
+
+
+@misc{Scipy,
+  title = {{SciPy - Scientific Computing Tools for Python}},
+  howpublished = {\url{http://www.scipy.org/}},
+  note = {Accessed: 2015-07-31}
+}
+
+@incollection{Khatib1986,
+	doi = {10.1007/978-1-4613-8997-2_29},
+	url = {http://dx.doi.org/10.1007/978-1-4613-8997-2_29},
+	year = 1986,
+	publisher = {{Springer Science and Business Media}},
+	pages = {396--404},
+	author = {Oussama Khatib},
+	title = {Real-Time Obstacle Avoidance for Manipulators and Mobile Robots},
+	booktitle = {Autonomous Robot Vehicles}
+}
+
+@article{Sanchez2002,
+	doi = {10.1177/027836402320556458},
+	url = {http://dx.doi.org/10.1177/027836402320556458},
+	year = 2002,
+	month = {jan},
+	publisher = {{SAGE} Publications},
+	volume = {21},
+	number = {1},
+	pages = {5--26},
+	author = {G. Sanchez and J.-C. Latombe},
+	title = {On Delaying Collision Checking in {PRM} Planning: Application to Multi-Robot Coordination},
+	journal = {The International Journal of Robotics Research}
+}
+
+@article{Dunbar2004,
+abstract = { We consider the control of interacting subsystems whose dynamics and constraints are decoupled, but whose state vectors are coupled non-separably in a single cost function of a finite horizon optimal control problem. For a given cost structure, we generate distributed optimal control problems for each subsystem and establish that a distributed receding horizon control implementation is stabilizing. The implementation requires synchronous updates and the exchange of the most recent optimal control trajectory between coupled subsystems prior to each update. Key requirements for stability are that each subsystem not deviates too far from the previous open-loop state trajectory, and that the receding horizon updates happen sufficiently fast. The venue of multi-vehicle formation stabilization is used to demonstrate the distributed implementation and simulations are provided.},
+author = {Dunbar, W.B. and Murray, R.M.},
+doi = {10.1109/CDC.2004.1430341},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/Dunbar-01430341.pdf:pdf},
+isbn = {0-7803-8682-5},
+issn = {0191-2216},
+journal = {2004 43rd IEEE Conference on Decision and Control (CDC) (IEEE Cat. No.04CH37601)},
+keywords = {cooperative control,distributed control,receding horizon control},
+mendeley-groups = {DEMUR2015},
+pages = {1995--2002},
+title = {{Receding horizon control of multi-vehicle formations: a distributed implementation}},
+volume = {2},
+year = {2004}
+}
+
+
+@article{Borrelli2006,
+abstract = {We consider the problem of optimal cooperative three-dimensional conflict resolution involving multiple unmanned air vehicles (UAVs) using numerical trajectory optimization methods. The conflict problem is posed as an optimal control problem of finding trajectories that minimize a certain objective function while maintaining the safe separation between each UAV pair. We assume the origin and destination of the UAV are known and consider UAV models with simplified linear kinematics. The main objective of this report is to present two different approaches to the solution of the problem. In the first approach, the optimal control is converted to a finite dimensional nonlinear program (NLP) by using collocation on finite elements and by reformulating the disjunctions involved in modeling the protected zones by using continuous variables. In the second approach the optimal control is converted to a finite dimensional mixed integer linear program (MILP) using Euler discretization and reformulating the disjunctions involved with the protected zones by using binary variables and Big-M techniques. Based on results of extensive random simulations, we compare time complexity and optimality of the solutions obtained with the MILP approach and the NLP approach. NLPs are essential to enforce flyability constraints on more detailed UAV models. Moreover, any nonlinear extensions to the problem cannot be dealt with by MILP solvers. The main objective of this paper is to open the route to the use of MILP solutions (based on simple linear UAV models) in order to initialize NLP solvers which allow the use of dynamic UAV models at any desired level of detail},
+author = {Borrelli, F. and Subramanian, D. and a.U. Raghunathan and Biegler, L.T.},
+doi = {10.1109/ACC.2006.1657644},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/BORELLI-Centralized-01657644.pdf:pdf},
+isbn = {1-4244-0210-7},
+issn = {07431619},
+journal = {2006 American Control Conference},
+mendeley-groups = {DEMUR2015},
+pages = {5763--5768},
+title = {{MILP and NLP Techniques for centralized trajectory planning of multiple unmanned air vehicles}},
+year = {2006}
+}
+
+@phdthesis{Defoort2007,
+  TITLE = {{Contributions to motion planning and control for cooperative mobile robots}},
+  AUTHOR = {Defoort, Michael},
+  URL = {https://tel.archives-ouvertes.fr/tel-00196529},
+  SCHOOL = {{Ecole Centrale de Lille}},
+  YEAR = {2007},
+  MONTH = Oct,
+  KEYWORDS = {Mobile robot ; Multi-robots system ; Motion planning ; Control synthesis ; Non holonomic system ; Sliding mode ; Robotique Mobile ; Syst{\`e}me multi-robots ; Planification de trajectoire ; Synth{\`e}se commande ; Syst{\`e}me non holonome ; Modes glissants ; Coordination},
+  PDF = {https://tel.archives-ouvertes.fr/tel-00196529/file/these_definitif.pdf},
+  HAL_ID = {tel-00196529},
+  HAL_VERSION = {v1},
+  howpublished = {\url{https://tel.archives-ouvertes.fr/tel-00196529}}
+}
+@article{Defoort2009,
+abstract = {This paper presents a decentralized motion planner for a team of nonholonomic mobile robots subject to constraints imposed by sensors and the communication network. The motion planning scheme consists of decentralized receding horizon planners that reside on each vehicle to achieve coordination among flocking agents. The advantage of the proposed algorithm is that each vehicle only requires local knowledge of its neighboring vehicles. The main requirement for designing an optimal conflict-free trajectory in a decentralized way is that each robot does not deviate too far from its presumed trajectory designed without taking the coupling constraints into account. A comparative study between the proposed algorithm and other existing algorithms is provided in order to show the advantages, especially in terms of computing time. Finally, experiments are performed on a team of three mobile robots to demonstrate the validity of the proposed approach. ?? 2009 Elsevier B.V. All rights reserved.},
+author = {Defoort, Michael and Kokosy, Annemarie and Floquet, Thierry and Perruquetti, Wilfrid and Palos, Jorge},
+doi = {10.1016/j.robot.2009.07.004},
+file = {:C$\backslash$:/Users/JM246044/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Defoort et al. - 2009 - Motion planning for cooperative unicycle-type mobile robots with limited sensing ranges A distributed receding h.pdf:pdf},
+isbn = {0921-8890},
+issn = {09218890},
+journal = {Robotics and Autonomous Systems},
+keywords = {Decentralized intelligence,Nonholonomic mobile robot,Receding horizon planning},
+mendeley-groups = {DEMUR2015},
+number = {11},
+pages = {1094--1106},
+publisher = {Elsevier B.V.},
+title = {{Motion planning for cooperative unicycle-type mobile robots with limited sensing ranges: A distributed receding horizon approach}},
+url = {http://dx.doi.org/10.1016/j.robot.2009.07.004},
+volume = {57},
+year = {2009}
+}
+@book{Latombe1991,
+address = {Boston, MA},
+author = {Latombe, Jean-Claude},
+doi = {10.1007/978-1-4615-4022-9},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/bok\%3A978-1-4615-4022-9.pdf:pdf},
+isbn = {978-0-7923-9206-4},
+mendeley-groups = {DEMUR2015},
+publisher = {Springer US},
+title = {{Robot Motion Planning}},
+url = {http://link.springer.com/10.1007/978-1-4615-4022-9},
+volume = {124},
+year = {1991}
+}
+
+@phdthesis{Milam2003,
+abstract = {With the advent of powerful computing and efficient computational algorithms, real-time solutions to constrained optimal control problems are nearing a reality. In this thesis, we develop a computationally efficient Nonlinear Trajectory Generation (NTG) algorithm and describe its software implementation to solve, in real-time, nonlinear optimal trajectory generation problems for constrained systems. NTG is a nonlinear trajectory generation software package that combines nonlinear control theory, B-spline basis functions, and nonlinear programming. We compare NTG with other numerical optimal control problem solution techniques, such as direct collocation, shooting, adjoints, and differential inclusions. We demonstrate the performance of NTG on the Caltech Ducted Fan testbed. Aggressive, constrained optimal control problems are solved in real-time for hover-to-hover, forward flight, and terrain avoidance test cases. Real-time trajectory generation results are shown for both the two-degree of freedom and receding horizon control designs. Further experimental demonstration is provided with the station-keeping, reconfiguration, and deconfiguration of micro-satellite formation with complex nonlinear constraints. Successful application of NTG in these cases demonstrates reliable real-time trajectory generation, even for highly nonlinear and non-convex systems. The results are among the first to apply receding horizon control techniques for agile flight in an experimental setting, using representative dynamics and computation.},
+author = {Milam, Mark B.},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/Dynamic Window Approach.pdf:pdf},
+mendeley-groups = {DEMUR2015},
+pages = {161},
+school = {California Institute of Technology},
+title = {{Real-time optimal trajectory generation for constrained dynamical systems}},
+volume = {2003},
+year = {2003}
+}
+
+@article{Schwartz1988,
+author = {Schwartz, J.T. and Sharir, M.},
+doi = {10.1016/0004-3702(88)90053-7},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/1-s2.0-0004370288900537-main.pdf:pdf},
+issn = {00043702},
+journal = {Artificial Intelligence},
+mendeley-groups = {DEMUR2015},
+number = {1-3},
+pages = {157--169},
+title = {{A survey of motion planning and related geometric algorithms}},
+volume = {37},
+year = {1988}
+}
+@article{Fox1997,
+author = {Fox, D and Burgard, W and Thrun, S},
+doi = {10.1109/100.580977},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/Dynamic Window Approach.pdf:pdf;:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/paper/fox1997.pdf:pdf},
+issn = {10709932},
+journal = {IEEE Robotics \& Automation Magazine},
+mendeley-groups = {DEMUR2015},
+month = mar,
+number = {1},
+pages = {23--33},
+publisher = {Institute of Electrical \{\&\} Electronics Engineers (\{IEEE\})},
+title = {{The dynamic window approach to collision avoidance}},
+url = {http://dx.doi.org/10.1109/100.580977 http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=580977},
+volume = {4},
+year = {1997}
+}
+@article{Ong1997,
+abstract = {An algorithm is presented for computing the Euclidean distance
+between a pair of objects represented by convex polytopes in three
+dimensional space. It is a fast version of the well known algorithm by
+Gilbert, Johnson and Keerthi (1988) in which the polytopes are
+characterized by their vertices. The improvement in speed comes from the
+inclusion of additional structural information on the objects; for each
+vertex there is a list of adjacent vertices. No other information or
+preprocessing of data is needed. Following Cameron, the adjacency
+structures are used to greatly reduce the number of inner product
+evaluations needed to compute the polytope support functions used in the
+original Gilbert-Johnson-Keerthi algorithm. When the algorithm is
+applied to a pair of objects that move incrementally along smooth paths,
+it shares the advantage of the incremental distance algorithm introduced
+by Lin and Canny (1991). Algorithmic details and performance issues are
+developed fully. Computational experiments provide quantitative data on
+the effects of object complexity and the size of incremental object
+motions},
+author = {Ong, Chong Jin Ong Chong Jin and Gilbert, E.G.},
+doi = {10.1109/ROBOT.1997.614298},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/Ausarbeitung\_Beispiel.pdf:pdf},
+isbn = {0-7803-3612-7},
+issn = {10504729},
+journal = {Proceedings of International Conference on Robotics and Automation},
+keywords = {Collision Detection,Convex Hull,Distance Computation,GJK,Minkowski Difference,Proximity Queries,Support Mapping},
+mendeley-groups = {DEMUR2015},
+title = {{The Gilbert-Johnson-Keerthi distance algorithm: a fast version for
+incremental motions}},
+volume = {2},
+year = {1997}
+}
+
+
+@misc{Gizmag,
+  title = {{Autonomous robots are helping to pack your Amazon orders}},
+  howpublished = {\url{http://www.gizmag.com/amazon-kiva-fulfillment-system/34999/}},
+  note = {Accessed: 2015-07-22},
+  author = {Stu Robarts}
+}
+
+@misc{Neos2015,
+  title = {{Feasible Sequential Quadratic Programming}},
+  howpublished = {\url{http://neos-guide.org/content/feasible-sequential-quadratic-programming}},
+  note = {Accessed: 2015-07-27},
+  author = {}
+}
+
+@misc{slsqperror,
+  title = {{Runtime errors for large gradients}},
+  howpublished = {\url{http://comments.gmane.org/gmane.science.analysis.nlopt.general/191}},
+  note = {Accessed: 2015-07-27},
+  author = {}
+}
+
+@misc{supplychain,
+  title = {{Idea Groupe met en place Scallog pour sa préparation de commandes}},
+  howpublished = {\url{http://supplychainmagazine.fr/NL/2015/2085/}},
+  note = {Accessed: 2015-07-22}
+}
+
+@book{Nocedal,
+   title = "Numerical optimization : with 85 illustrations",
+   author = "Nocedal, Jorge and Wright, Steve J.",
+   series = "Springer series in operations research",
+   publisher = "Springer",
+   address = "New York, Berlin, Heidelberg",
+   url = "http://opac.inria.fr/record=b1096778",
+   isbn = "0-387-98793-2",
+   note = "Tirage corrigé: 2000",
+   year = 1999
+}
+
+@book{ericson2004real,
+  title={Real-Time Collision Detection},
+  author={Ericson, C.},
+  isbn={9780080474144},
+  series={M038/the Morgan Kaufmann Ser. in Interactive 3D Technology Series},
+  url={https://books.google.fr/books?id=4wTNBQAAQBAJ},
+  year={2004},
+  publisher={Taylor \& Francis}
+}
+
+@article{betts1998survey,
+  title={Survey of numerical methods for trajectory optimization},
+  author={Betts, John T},
+  journal={Journal of guidance, control, and dynamics},
+  volume={21},
+  number={2},
+  pages={193--207},
+  year={1998}
+}
+
+@book{Kraft1988,
+  address = {DLR German Aerospace Center – Institute for Flight Mechanics, Koln, Germany},
+  title={{A software package for sequential quadratic programming}},
+  author={Dieter Kraft},
+  year={1988}
+  
+}
+
+@phdthesis{milam2003real,
+  title={Real-time optimal trajectory generation for constrained dynamical systems},
+  author={Milam, Mark B},
+  year={2003},
+  school={California Institute of Technology}
+}
+
+@article{Schwartz1988,
+author = {Schwartz, J.T. and Sharir, M.},
+doi = {10.1016/0004-3702(88)90053-7},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/1-s2.0-0004370288900537-main.pdf:pdf},
+issn = {00043702},
+journal = {Artificial Intelligence},
+mendeley-groups = {DEMUR2015},
+number = {1-3},
+pages = {157--169},
+title = {{A survey of motion planning and related geometric algorithms}},
+volume = {37},
+year = {1988}
+}
+
+
+@book{latombe2012robot,
+  title={Robot motion planning},
+  author={Latombe, Jean-Claude},
+  volume={124},
+  year={2012},
+  publisher={Springer Science \& Business Media}
+}
+
+@article{fox1997dynamic,
+  title={The dynamic window approach to collision avoidance},
+  author={Fox, Dieter and Burgard, Wolfram and Thrun, Sebastian and others},
+  journal={IEEE Robotics \& Automation Magazine},
+  volume={4},
+  number={1},
+  pages={23--33},
+  year={1997}
+}
+
+@article{Kelly2003,
+abstract = {There are many situations for which a feasible nonholonomic motion plan must be generated immediately based on real-time perceptual information. Parametric trajectory representations limit computation because they reduce the search space for solutions (at the cost of potentially introducing suboptimality). The use of any parametric trajectory model converts the optimal control formulation into an equivalent nonlinear programming problem. In this paper, curvature polynomials of arbitrary order are used as the assumed form of solution. Polynomials sacrifice little in terms of spanning the set of feasible controls while permitting an expression of the general solution to the system dynamics in terms of decoupled quadratures. These quadratures are then readily linearized to express the necessary conditions for optimality. Resulting trajectories are convenient to manipulate and execute in vehicle controllers and they can be computed with a straightforward numerical procedure in real time.},
+author = {Kelly, a. and Nagy, B.},
+doi = {10.1177/02783649030227008},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/ijrr02TrajGen.pdf:pdf},
+issn = {0278-3649},
+journal = {The International Journal of Robotics Research},
+keywords = {car-like robots,clothoid,cornu,curve generation,generation,mobile robots,nonholonomic,optimal control,spiral,trajectory},
+mendeley-groups = {PFE},
+number = {7-8},
+pages = {583--601},
+title = {{Reactive Nonholonomic Trajectory Generation via Parametric Optimal Control}},
+volume = {22},
+year = {2003}
+}
+@article{Kelly_2003,
+	doi = {10.1177/027836403128965277},
+	url = {http://dx.doi.org/10.1177/027836403128965277},
+	year = 2003,
+	month = {jul},
+	publisher = {{SAGE} Publications},
+	volume = {22},
+	number = {7},
+	pages = {583--601},
+	author = {Alonzo Kelly and Bryan Nagy},
+	title = {Reactive Nonholonomic Trajectory Generation via Parametric Optimal Control},
+	journal = {int j robot res}
+}
+
+@misc{Workshop,
+  title = {Workshop on On-line decision-making in multi-robot coordination},
+  howpublished = {\url{http://robotics.fel.cvut.cz/demur15/}},
+  note = {Accessed: 2015-06-22},
+  author={Workshop},
+  year = {2015}
+}
+
+@article {Defoort2007,
+	abstract = {This paper presents an architecture for the navigation of an autonomous mobile robot evolving in an uncertain environment with obstacles. The proposed strategy consists in separating the path planning from the control algorithm. The path planning is done by computing the time optimal collision-free trajectory which takes into account the limitations on the linear and angular speeds of the vehicle. The position and shape of obstacles are computed by a vision algorithm using a single camera. A saturated controller based on integral sliding mode is designed to solve the tracking problem in the presence of input saturations and of the unknown disturbances. The effectiveness, perfect performance of obstacle avoidance, real-time and high robustness properties are demonstrated by experimental results.},
+	author = {Defoort, M. and Palos, J. and Kokosy, a. and Floquet, T. and Perruquetti, W. and Boulinguez, D.},
+	doi = {10.1109/ROBOT.2007.363650},
+	file = {:home/mendes/Dev/planning-rob/docs/biblio/04209414.pdf:pdf},
+	isbn = {1-4244-0601-3},
+	issn = {1050-4729},
+	journal = {Proceedings 2007 IEEE International Conference on Robotics and Automation},
+	number = {April},
+	pages = {10--14},
+	title = {{Experimental Motion Planning and Control for an Autonomous Nonholonomic Mobile Robot}},
+	year = {2007}
+}
+
+@article{Defoort2007a,
+author = {Defoort, Michael},
+file = {:home/mendes/Dev/planning-rob/docs/biblio/these\_M.Defoort2007\_plannif-commande\_vehicules\_cooperatifs.pdf:pdf},
+journal = {Ecole Centrale de Lille},
+keywords = {<tel-00196529>},
+mendeley-tags = {<tel-00196529>},
+title = {{Contributions \`{a} la planification et \`{a} la commande pour les robots mobiles coop\'{e}ratifs}},
+url = {https://tel.archives-ouvertes.fr/tel-00196529 http://www.theses.fr/2007ECLI0012},
+year = {2007}
+}
+
+@article{Defoort2009,
+abstract = {This paper presents a decentralized motion planner for a team of nonholonomic mobile robots subject to constraints imposed by sensors and the communication network. The motion planning scheme consists of decentralized receding horizon planners that reside on each vehicle to achieve coordination among flocking agents. The advantage of the proposed algorithm is that each vehicle only requires local knowledge of its neighboring vehicles. The main requirement for designing an optimal conflict-free trajectory in a decentralized way is that each robot does not deviate too far from its presumed trajectory designed without taking the coupling constraints into account. A comparative study between the proposed algorithm and other existing algorithms is provided in order to show the advantages, especially in terms of computing time. Finally, experiments are performed on a team of three mobile robots to demonstrate the validity of the proposed approach. ?? 2009 Elsevier B.V. All rights reserved.},
+author = {Defoort, Michael and Kokosy, Annemarie and Floquet, Thierry and Perruquetti, Wilfrid and Palos, Jorge},
+doi = {10.1016/j.robot.2009.07.004},
+file = {:C$\backslash$:/Users/JM246044/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Defoort et al. - 2009 - Motion planning for cooperative unicycle-type mobile robots with limited sensing ranges A distributed receding h.pdf:pdf},
+isbn = {0921-8890},
+issn = {09218890},
+journal = {Robotics and Autonomous Systems},
+keywords = {Decentralized intelligence,Nonholonomic mobile robot,Receding horizon planning},
+mendeley-groups = {DEMUR2015},
+number = {11},
+pages = {1094--1106},
+publisher = {Elsevier B.V.},
+title = {{Motion planning for cooperative unicycle-type mobile robots with limited sensing ranges: A distributed receding horizon approach}},
+url = {http://dx.doi.org/10.1016/j.robot.2009.07.004},
+volume = {57},
+year = {2009}
+}
+
+
+@article{pyopt-paper,
+  author = {Ruben E. Perez and Peter W. Jansen and Joaquim R. R. A. Martins},
+  title = {py{O}pt: A {P}ython-Based Object-Oriented Framework for Nonlinear Constrained Optimization},
+  journal = {Structures and Multidisciplinary Optimization},
+  year = {2012},
+  volume = {45},
+  number = {1},
+  pages = {101--118},
+  doi = {10.1007/s00158-011-0666-3}
+}
+@article{Keviczky2006,
+abstract = {We present a detailed study on the design of decentralized receding horizon control (RHC) schemes for decoupled systems. We formulate an optimal control problem for a set of dynamically decoupled systems where the cost function and constraints couple the dynamical behavior of the systems. The coupling is described through a graph where each system is a node, and cost and constraints of the optimization problem associated with each node are only function of its state and the states of its neighbors. The complexity of the problem is addressed by breaking a centralized RHC controller into distinct RHC controllers of smaller sizes. Each RHC controller is associated with a different node and computes the local control inputs based only on the states of the node and of its neighbors. We analyze the properties of the proposed scheme and introduce sufficient stability conditions based on prediction errors. Finally, we focus on linear systems and show how to recast the stability conditions into a set of matrix semi-definiteness tests.},
+author = {Keviczky, Tam\'{a}s and Borrelli, Francesco and Balas, Gary J.},
+doi = {10.1016/j.automatica.2006.07.008},
+file = {:home/mendes/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Keviczky, Borrelli, Balas - 2006 - Decentralized receding horizon control for large scale dynamically decoupled systems.pdf:pdf},
+issn = {00051098},
+journal = {Automatica},
+keywords = {Decentralized predictive control,Decoupled subsystems,Receding horizon control},
+month = dec,
+number = {12},
+pages = {2105--2115},
+title = {{Decentralized receding horizon control for large scale dynamically decoupled systems}},
+url = {http://www.sciencedirect.com/science/article/pii/S0005109806003049},
+volume = {42},
+year = {2006}
+}
