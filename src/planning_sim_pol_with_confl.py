@@ -2144,10 +2144,10 @@ class WorldSim(object):
                 bbox_inches='tight', dpi=300)
 
 
-        fig_s_trash, axarray = plt.subplots(2)
-        fig_s = plt.figure()
-        ax_lin_vel = fig_s.gca()
-        axarray[0] = ax_lin_vel
+        fig_s, axarray = plt.subplots(2)
+        #fig_s = plt.figure()
+        #ax_lin_vel = fig_s.gca()
+        #axarray[0] = ax_lin_vel
         axarray[0].set_ylabel(r'$v(m/s)$')
         axarray[0].set_title('Linear speed')
         axarray[0].set_xlabel('time(s)')
@@ -2269,7 +2269,7 @@ class WorldSim(object):
             handles2, labels2 = axarray[1].get_legend_handles_labels()
             axarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
-            fig_s.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
+            fig_s.set_size_inches(1.0*18.5/2.54,1.0*13/2.54)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight', dpi=300)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight', dpi=300)
 

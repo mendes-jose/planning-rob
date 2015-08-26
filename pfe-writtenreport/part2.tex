@@ -18,7 +18,7 @@ Let us present some assumptions about the problem in hand. These assumptions and
     the instant $t_{init}$ and goes until the instant $t_{final}$.
 
     \item The team of robots consists of a set $\mathcal{R}$ of $B$
-    nonholonomic mobile. Their kinematic model can be written in the form:
+    nonholonomic mobile robots. Their kinematic model can be written in the form:
     $$
     \dot{q}(t) = f(q(t),u(t))
     $$
@@ -63,7 +63,7 @@ Let us present some assumptions about the problem in hand. These assumptions and
     \item Latency, communication outages and other problems associated
     to the communication between robots in the team are neglected.
         
-    \item Dynamics is neglected.
+    \item The dynamic model of the multi-robot systems is neglected.
     
     \item The input for each mobile robot $R_b$ is limited, thus $|u_{b,i}(t)| \leq u_{b,i,max},\ \ \forall i \in [1,p],\forall t \in [t_{init},\ t_{final}]$.
     
@@ -293,7 +293,7 @@ Another important notion about how to approach the problem is whether there is a
 
 In reference~\cite{Defoort2007a} all these possibilities are studied in details. For our specific context a distributed local approach was necessary.
 %since limited knowledge of the environment, security, and computation time were strong , se.
-We then addressed locality by using a receding horizon~\cite{TODO} approach while decentralization is done by postponing the evaluation of coupling constraints, i.e., by performing a first step where each robot plans its own motion ignoring other robots in the team followed by a second step where they individually optimize their solution trajectory found in the first step by taking those coupling constraints into account.
+We then addressed locality by using a receding horizon approach while decentralization is done by postponing the evaluation of coupling constraints, i.e., by performing a first step where each robot plans its own motion ignoring other robots in the team followed by a second step where they individually optimize their solution trajectory found in the first step by taking those coupling constraints into account.
 
 %For 
 
@@ -330,14 +330,14 @@ by numerically solving a constrained nonlinear optimization problem ($NLP_{b,1}$
 constraints \ref{eq:coll} and \ref{eq:com}, and the goal state constraints~\ref{eq:finalconfig} and~\ref{eq:finalinput}. Ignoring the coupling constraints is what enables the robot to compute its intended trajectory without taking into account the other robots in the team. Goal state constraints are ignored because the produced solution is local, valid for only the planning horizon $T_p$ ahead in time.
 \paragraph{Step 2.}\label{step2} Robots involved in a potential conflict
 (that is, risk of collision or lost of communication) update their trajectories
-computed during \ref{step1} by solving another constrained optimization problem ($NLP_{b,2}$) that additionally takes into account
+computed during \nameref{step1} by solving another constrained optimization problem ($NLP_{b,2}$) that additionally takes into account
 coupling constraints (\ref{eq:coll} and \ref{eq:com}).
 This is done by using the other robots' intended
 trajectories computed in the previous step as an estimate of those robots'
 final trajectories for that planning horizon $T_p$.
-If a robot is not involved in any conflict, \ref{step2}
+If a robot is not involved in any conflict, \nameref{step2}
 is not executed and its final
-solution trajectory is identical to the one estimated in \ref{step1}. For the same reason as before, goal state constraints are still left out of the NPL.
+solution trajectory is identical to the one estimated in \nameref{step1}. For the same reason as before, goal state constraints are still left out of the NPL.
 
 \mbox{}
 
@@ -351,7 +351,7 @@ is the distance of a robot's current configuration to its goal configuration.
 This assures that the robots are driven towards their goal.
 
 This two step scheme is explained in details in~\cite{Defoort2007a, Defoort2009} where the 
-constrained optimization problems associated to the receding horizon planning problem are formulated. They are presented in this document, with some modifications, in the Appendix \ref{TODO}.
+constrained optimization problems associated to the receding horizon planning problem are formulated. They are presented in this document, with some modifications, in the Appendix \ref{app:nlps}.
 
 The resolution of this receding horizons problems is done interactively through time until the robots get close to their goal configurations.
 
@@ -474,7 +474,7 @@ Actually that final planning horizon (denoted $T_f$) cannot be known beforehand 
 
 The 2-step structure seen before is kept in this termination planning. It also computes an intended plan and then updates it according to the evaluation of possible conflicts.
 
-The flowchart shown in Figure~\ref{fig:flowchart} aims to illustrate the whole motion planning planning algorithm presented until now. One can identify the receding horizon planning as the left group of blocks from "Update" to "Solve $NLP_{b,2}(\tau_k)$". Within this group of blocks, the decision block represents the evaluation of whether Step 2 (\ref{step2}) will be performed or not based on the evaluation of possible conflicts. Analogously, the right group of blocks represent the termination planning.
+The flowchart shown in Figure~\ref{fig:flowchart} aims to illustrate the whole motion planning planning algorithm presented until now. One can identify the receding horizon planning as the left group of blocks from "Update" to "Solve $NLP_{b,2}(\tau_k)$". Within this group of blocks, the decision block represents the evaluation of whether \nameref{step2} will be performed or not based on the evaluation of possible conflicts. Analogously, the right group of blocks represent the termination planning.
 
 The pseudo code~\ref{cod:algo} shows another way of summarizing the planning algorithm and the Figure~\ref{fig:recedinghor} illustrates how plans would be generated through time by the algorithm.
 
@@ -494,61 +494,6 @@ defined. Besides, in both new constrained optimal problems, the planning horizon
 %The optimization
 %problem associated with the second step is defined in equations 
 %\ref{eq:cost} and \ref{eq:const}.
-
-\begin{figure}[!h]
-\begin{adjustbox}{max width=\textwidth}
-    \begin{tikzpicture}
-		\matrix (m)[matrix of nodes, column  sep=1cm,row  sep=8mm, align=center, nodes={rectangle,draw, anchor=center} ]{
-		    |[block]| {Start} &  & \\
-		    |[block]| {Initilize} &  & \\
-		    |[block]| {Update}     & |[desicion]| {Neighborhood of $q_{b,goal}$ reached? (eq:~\ref{eq:stopcond})} &      |[block]| {Update} \\
-		    |[block]| {Solve $NLP_{b,1}(\tau_k)$} & &  |[block]| {Rescale} \\
-		    |[block]| {Computation of conflict sets}     &  &         |[block]| {Solve $NLP_{b,3}(\tau_k)$}\\
-		    |[desicion]| {Is $\mathcal{C}_{b,com}(\tau_k) \bigcup \mathcal{C}_{b,coll}(\tau_k)$ empty?} &  &|[block]| {Computation of conflict sets}\\
-		    |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$}& & |[desicion]| {Is $\mathcal{C}_{b,com}(\tau_k) \bigcup \mathcal{C}_{b,coll}(\tau_k)$ empty?}\\
-		    |[block]| {Exchange}     & &   |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$}\\
-		    |[block]| {Solve $NLP_{b,2}(\tau_k)$}     & |[block]| {Do nothing while $t-\tau_{ref}<T_p$} &    |[block]| {Exchange} \\
-		     & |[block]| {Finish}  &  |[block]| {Solve $NLP_{b,4}(\tau_k)$}\\
-		};
-		
-		
-		\path let \p1=(m-7-3) in coordinate (invis) at (2.5,\y1);
-		\path let \p1=(m-10-3) in coordinate (invis2) at (2.5,\y1);
-		
-		\path let \p1=(m-6-1) in coordinate (invis1) at (-2.5,\y1);
-		\path let \p1=(m-9-2) in coordinate (invis12) at (-2.5,\y1);
-		
-		\path [>=latex,->] (m-1-1) edge (m-2-1);
-		\path [>=latex,->] (m-2-1) edge (m-3-1);
-		\path [>=latex,->] (m-3-1) edge node[anchor=west, near start] {$\mathcal{O}_n(\tau_k), \tau_{ref}, \dots$} (m-4-1);
-		\path [>=latex,->] (m-4-1) edge (m-5-1);
-		\path [>=latex,->] (m-5-1) edge (m-6-1);
-		\path [>=latex,->] (m-6-1) edge node[anchor=east] {no} (m-7-1);
-		\path [>=latex,->] (m-6-1) edge node[anchor=north] {yes} (invis1);
-		\path [>=latex,->] (invis1) edge (invis12);
-		%\path [>=latex,->,bend left] (m-6-1) edge node[anchor=east] {yes} (m-9-2);
-		\path [>=latex,->] (m-7-1) edge (m-8-1);
-		\path [>=latex,->] (m-8-1) edge (m-9-1);
-		\path [>=latex,->] (m-9-1) edge (m-9-2);
-		\path [>=latex,->] (m-9-2) edge (m-3-2);
-		\path [>=latex,->] (m-3-2) edge node[anchor=north] {no} (m-3-1);
-		\path [>=latex,->] (m-3-2) edge node[anchor=north] {yes} (m-3-3);
-		\path [>=latex,->] (m-3-3) edge (m-4-3);
-		\path [>=latex,->] (m-4-3) edge (m-5-3);
-		\path [>=latex,->] (m-5-3) edge (m-6-3);
-		\path [>=latex,->] (m-6-3) edge (m-7-3);
-		\path [>=latex,->] (m-7-3) edge node[anchor=north] {yes} (invis);
-		\path [>=latex,->] (invis) edge (invis2);
-		\path [>=latex,->] (m-7-3) edge node[anchor=east] {no}  (m-8-3);
-		\path [>=latex,->] (m-8-3) edge (m-9-3);
-		\path [>=latex,->] (m-9-3) edge (m-10-3);
-		\path [>=latex,->] (m-10-3) edge (m-10-2);
-		
-		\end{tikzpicture}
-		\end{adjustbox}
-    \caption{Flowchart illustrating the distributed local motion planning\label{fig:flowchart}}
-\end{figure}
-
 \begin{algorithm}
     \caption{Motion planning algorithm\label{cod:algo}}
     \label{swpa}
@@ -591,6 +536,62 @@ defined. Besides, in both new constrained optimal problems, the planning horizon
   \caption{Receding horizon scheme with termination plan. The timespan $T_f$ represents the duration of the plan for reaching the goal configuration.\label{fig:recedinghor}}
 \end{figure}
 
+\begin{figure}[H]
+\begin{adjustbox}{max width=\textwidth}
+    \begin{tikzpicture}
+		\matrix (m)[matrix of nodes, column  sep=1cm,row  sep=8mm, align=center, nodes={rectangle,draw, anchor=center} ]{
+		    |[block]| {Start} &  & \\
+		    |[block]| {Initilize} &  & \\
+		    |[block]| {Update}     & |[desicion]| {Neighborhood of $q_{b,goal}$ reached? (eq:~\ref{eq:stopcond})} &      |[block]| {Update} \\
+		    |[block]| {Solve $NLP_{b,1}(\tau_k)$} & &  |[block]| {Rescale} \\
+		    |[block]| {Computation of conflict sets $\mathcal{C}_{b,com}$ and $\mathcal{C}_{b,coll}$}     &  &         |[block]| {Solve $NLP_{b,3}(\tau_k)$}\\
+		    |[desicion]| {Is $\mathcal{C}_{b,com}(\tau_k) \bigcup \mathcal{C}_{b,coll}(\tau_k)$ empty?} &  &|[block]| {Computation of conflict sets $\mathcal{C}_{b,com}$ and $\mathcal{C}_{b,coll}$}\\
+		    |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$}& & |[desicion]| {Is $\mathcal{C}_{b,com}(\tau_k) \bigcup \mathcal{C}_{b,coll}(\tau_k)$ empty?}\\
+		    |[block]| {Exchange intented trajectories with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$}     & &   |[block]| {Sync with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$}\\
+		    |[block]| {Solve $NLP_{b,2}(\tau_k)$}     & |[block]| {Wait while $t-\tau_{ref}<T_c$} &    |[block]| {Exchange intented trajectories with $\forall R_c | R_c \in \mathcal{C}_{b,com} \bigcup \mathcal{C}_{b,coll}$} \\
+		     & |[block]| {Finish}  &  |[block]| {Solve $NLP_{b,4}(\tau_k)$}\\
+		};
+		
+		
+		\path let \p1=(m-7-3) in coordinate (invis) at (2.5,\y1);
+		\path let \p1=(m-10-3) in coordinate (invis2) at (2.5,\y1);
+		
+		\path let \p1=(m-6-1) in coordinate (invis1) at (-2.5,\y1);
+		\path let \p1=(m-9-2) in coordinate (invis12) at (-2.5,\y1);
+		
+		\path [>=latex,->] (m-1-1) edge (m-2-1);
+		\path [>=latex,->] (m-2-1) edge node[anchor=west, near start] {$q^*_{b}(\tau_{-1}+T_c) \leftarrow q_{init}, \dots$} (m-3-1);
+		\path [>=latex,->] (m-3-1) edge node[anchor=west, near start] {$\mathcal{O}_n(\tau_k), \tau_{ref} \leftarrow t$} (m-4-1);
+		\path [>=latex,->] (m-4-1) edge (m-5-1);
+		\path [>=latex,->] (m-5-1) edge (m-6-1);
+		\path [>=latex,->] (m-6-1) edge node[anchor=east] {no} (m-7-1);
+		\path [>=latex,->] (m-6-1) edge node[anchor=north] {yes} (invis1);
+		\path [>=latex,->] (invis1) edge (invis12);
+		%\path [>=latex,->,bend left] (m-6-1) edge node[anchor=east] {yes} (m-9-2);
+		\path [>=latex,->] (m-7-1) edge (m-8-1);
+		\path [>=latex,->] (m-8-1) edge (m-9-1);
+		\path [>=latex,->] (m-9-1) edge (m-9-2);
+		\path [>=latex,->] (m-9-2) edge (m-3-2);
+		\path [>=latex,->] (m-3-2) edge node[anchor=north] {no} (m-3-1);
+		\path [>=latex,->] (m-3-2) edge node[anchor=north] {yes} (m-3-3);
+		\path [>=latex,->] (m-3-3) edge node[anchor=west, near start] {$\mathcal{O}_n(\tau_k), \tau_{ref} \leftarrow t$} (m-4-3);
+		\path [>=latex,->] (m-4-3) edge (m-5-3);
+		\path [>=latex,->] (m-5-3) edge (m-6-3);
+		\path [>=latex,->] (m-6-3) edge (m-7-3);
+		\path [>=latex,->] (m-7-3) edge node[anchor=north] {yes} (invis);
+		\path [>=latex,->] (invis) edge (invis2);
+		\path [>=latex,->] (m-7-3) edge node[anchor=east] {no}  (m-8-3);
+		\path [>=latex,->] (m-8-3) edge (m-9-3);
+		\path [>=latex,->] (m-9-3) edge (m-10-3);
+		\path [>=latex,->] (m-10-3) edge (m-10-2);
+		\node[blue!80,text width=10cm] at ($(m-9-1.south east) + (0.0,-1.7)$){Receding Horizon Planning};
+		\draw[blue!80,line width=1.0pt,dotted] ($(m-3-1.north west)+(-0.4,1.2)$)  rectangle ($(m-9-2.south east)+(0.2,-0.6)$);
+		
+		\end{tikzpicture}
+		\end{adjustbox}
+    \caption{Flowchart illustrating the distributed local motion planning\label{fig:flowchart}}
+\end{figure}
+
 
 \section{Strategies for solving the constrained optimization problems}
 
@@ -620,12 +621,6 @@ of a new variable, called flat output ($z$), and its $l$th first derivatives.
 The value of $l\ |\ l \leq n$ depends on the kinematic model of the mobile robot.
 Therefore, the flat output can completely determine behavior of the system.
 Figure~\ref{fig:flatness} helps to convey this idea.
-
-\begin{figure}[!h]\centering
-  \includegraphics[width=.6\linewidth]{./images/flatness.png} %
-  \caption{Flatness\label{fig:flatness}}
-\label{fig:res}
-\end{figure}
 
 Searching for a solution to our problem in the flat space rather than in
 the actual state space of the system presents advantages.
@@ -690,8 +685,14 @@ The equations \ref{eq:phi1}, \ref{eq:phi2} show how the state variables and cont
 %as shown in Figure~\ref{fig:flatness}.
 
 Since we made the assumption that all robots in our multi-robot system were nonholonomic mobile robots the use of the flat output was possible. This means that
-the each NLP in our implementation was written in terms of the variable $z$ and no integration was need for respecting the kinematic model constraint ~\ref{eq:kinematic}.
+the each NLP in our implementation was written in terms of the variable $z$ and no integration was need for respecting the kinematic model constraint~\ref{eq:kinematic}.
 
+
+\begin{figure}[H]\centering
+  \includegraphics[width=.6\linewidth]{./images/flatness.png} %
+  \caption{Flatness\label{fig:flatness}}
+\label{fig:res}
+\end{figure}
 
 \subsection{Parametrization of the flat output by B-splines}
 
@@ -869,17 +870,22 @@ It is possible to see on those figures how the planner generates configuration a
 input trajectories satisfying the constraints associated with the goal states.
 
 In particular, in Figure~\ref{fig:collision}, the resulting plan is computed ignoring 
-coupling constraints (\ref{step2} is never performed) and consequently two points of collision occur.
+coupling constraints (\nameref{step2} is never performed) and consequently two points of collision occur.
 A collision-free solution is presented in Figure~\ref{fig:nocollision}.
 %The blue zones in
 %Figure~\ref{fig:nocollision} 
 %are in the same position as the red ones in Figure~\ref{fig:collision}.
 Specially near the regions were collisions occurred a change in the trajectory is present from Figure~\ref{fig:collision} to Figure~\ref{fig:nocollision} to avoid collision. 
 Complementary, changes 
-in the robots (linear) velocities across charts in both figures can be noticed. Finally, the 
+in the robots velocities across charts in both figures can be noticed. Finally, the 
 bottom charts show that the collisions were indeed avoided: inter-robot distances in 
 Figure~\ref{fig:nocollision} are greater than or equal to zero all along the 
 simulation.
+
+Notice as well that high variations on the velocities occur in a short time interval. This indicates high values of acceleration in the generated solution. %As defined before, our method does not take into account acceleration.
+Later on we will see that this high acceleration values will can cause.
+
+ simply adding constraints on the maximum value of the acceleration can produce a plan more appropriated for a real application increasing the number of inequations constrains in $(N_s-1)*p$.
 %The trajectories and
 %velocities resulting from the solution update.
 
@@ -910,7 +916,7 @@ simulation.
 \label{fig:res}
 \end{figure}
 
-For performing these two previous simulations, a reasonable number of parameters have to be set. These parameters can be categorized into two groups. \textbf{Algorithm related} parameters and the \textbf{optimization solver related} ones.
+For performing these two previous simulations, a reasonable number of parameters had to be set. These parameters can be categorized into two groups. \textbf{Algorithm related} parameters and the \textbf{optimization solver related} ones.
 Among the former group, the most important ones are:
 \begin{itemize}
 \item[$\bullet$] The number of sample for time discretization ($N_s$);
@@ -1062,7 +1068,7 @@ $O_2$ & $[0.38\ 4.65\ 0.16]$\\
         \caption{Three obstacles scenario simulations}\label{fig:uni3}
 \end{figure}
 
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\linewidth]{./images/drho/drho-rmp.pdf} % <-- use this
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Increasing of detection radius and impact on a $MTC/T_c$ 
@@ -1105,7 +1111,7 @@ significant for degraded cases, meaning that around typical values those paramet
 do not change $P$ significantly. However, time sampling $N_s$ is a relevant parameter.
 Figure~\ref{fig:res} shows the penetration area decreasing as the number of samples 
 increases.
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\linewidth]{./images/penetration/pen-nsi.pdf} %
   %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
   \caption{Obstacle penetration decreasing as sampling increases}
@@ -1124,7 +1130,7 @@ $T_{tot}$. Analyses of data from several simulations show a tendency that for a 
 of $N_{knots}$, $N_s$ and $T_c$ the travel time decreases as the planning horizon $T_p$ decreases.
 This can be explained by the simple fact that for a given $T_c$, a more optimal solution (in terms of travel time) can be found if the planning horizon $T_p$ is smaller.
 %Figure~\ref{fig:ttot} show data that supports these analysis.
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1154,7 +1160,7 @@ that the fewer the samples the greater will be the obstacle penetration area as 
 Furthermore, the Figure~\ref{fig:drhotot} shows travel time
 invariance for changes in the detection radius far from degraded values that are too small.
 This points out that a local knowledge of the environment provides enough information for finding good solutions.
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\linewidth]{./images/drho/drho-tot.pdf}
   \caption{Increasing of detection radius and impact on
   $T_{tot}$\label{fig:drhotot}}
@@ -1162,9 +1168,9 @@ This points out that a local knowledge of the environment provides enough inform
 
 
 
-\section{Tests in a physics simulation environment}
+\section{Tests in a dynamic simulation environment}
 
-To test and evaluate the performance of our motion planning algorithm in a near real situation we used a physics simulation environment called XDE. 
+To test and evaluate the performance of our motion planning algorithm in a more realistic situation we used a physics simulation environment called XDE. 
 
 XDE is a physics simulation software fully developed by CEA-LIST that can handle a variety of physical aspects such as deformable bodies, multibody systems with kinematic constraints and contacts, and fluids. Its utilization presents though some rough edges and a steep learning curve.
 
@@ -1176,23 +1182,23 @@ To used it we needed to reimplement the motion planning algorithm in C++ and int
 
 An overview of the simulator visual environment showing the unicycle mobile robot used for implementing the algorithm can be seen in Figure~\ref{fig:xde}.
 %For instance the obstacle detection can be based on real sensors models carrying uncertainties instead of assuming the absolute knowledge of an obstacle position as soon as it enters within the robot's detection radius.
-\clearpage
-\begin{figure}[!h]
+%\clearpage
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{./images/xde4.png}
 	\caption{XDE - unicycle mobile robot application\label{fig:xde}}
 \end{figure}
 
-Our preliminary results for this implementation for a scenario described in the Table~\ref{tab:xdesimin} can be seen bellow in Figure~\ref{fig:xdepath} to~\ref{fig:xdevelo}. In red we have the solution found by the algorithm while in blue we have the simulated robot's actual path, velocities and yaw.
+Our preliminary results for this implementation for a scenario described in the Table~\ref{tab:xdesimin} can be seen bellow in Figure~\ref{fig:xdepath} to~\ref{fig:xdevelo}. In red we have the solution found by the algorithm while in blue we have the simulated robot's actual path, velocities and yaw. The input generated by our motion planner were directly send to the simulated robot, no controller nor use of state feedback information were implemented.
 
-\begin{table}[!h]
-\caption {Values for scenario definition} \label{tab:s3param}
+\begin{table}[H]
+\caption {Values for scenario definition} \label{tab:xdesimin}
 \begin{center}
 \begin{tabular}{|c|c|}
 \hline
 $v_{max}$ & $0.80\ \mathrm{m/s}$\\
 \hline
-$\omega_{max}$ & $1.50\ \mathrm{rad/s}$\\
+$\omega_{max}$ & $1.80\ \mathrm{rad/s}$\\
 \hline
 $q_{inital}$ & $[0.00\ 0.00\ 0.00]^T$\\
 \hline
@@ -1204,35 +1210,35 @@ $u_{goal}$ & $[0.00\ 0.00]^T$\\
 \hline
 $\dot{v}_{max}$ & $0.40\ \mathrm{m/s^2}$\\
 \hline
-$\dot{\omega}_{max}$ & $0.60\ \mathrm{rad/s^2}$\\
+$\dot{\omega}_{max}$ & $0.70\ \mathrm{rad/s^2}$\\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
 
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\textwidth]{./images/xde/dy_path.pdf}
-  \caption{Increasing of detection radius and impact on
-  $T_{tot}$\label{fig:xdepath}}
+  \caption{Planned and actual trajectory for the dynamic simulation\label{fig:xdepath}}
 \end{figure}
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\textwidth]{./images/xde/ang.pdf}
-  \caption{Increasing of detection radius and impact on
-  $T_{tot}$\label{fig:xdeang}}
+  \caption{Planned and actual yaw for the dynamic simulation \label{fig:xdeang}}
 \end{figure}
-\begin{figure}[!h]\centering
+\begin{figure}[H]\centering
   \includegraphics[width=.65\textwidth]{./images/xde/dy_vw.pdf}
-  \caption{Increasing of detection radius and impact on
-  $T_{tot}$\label{fig:xdevelo}}
+  \caption{Planned and actual velocites for the dynamic simulation\label{fig:xdevelo}}
 \end{figure}
 
 
 At the beginning of the implementation of the algorithm on XDE we used the optimization library NLOPT which supports the same solver SLSQP used before, requiring though the user to implement the objective function gradient and constraints Jacobian matrix computation.
 
-Find those analytic derivatives is not trivial. Probably due to some error while calculating our fist implementation using the SLSQP solver halted after the first iteration due to round off errors. We used then the derivative-free solver COBYLA to generate the results presented.
+Finding those analytic derivatives is not trivial. Probably due to some error while calculating those derivatives, our fist implementation using the SLSQP solver halted after the first iteration due to round off errors.
+We used then the derivative-free solver COBYLA to generate the results presented.
 
-Besides, acceleration constraints were added to the NLPs.
+We can notice smaller slopes in the velocities curves in comparison to the ones seen for the kinematic simulation. This is due to the consideration of acceleration constraints in this version of the planner.
+
+Some problems can be identified in this solution even though the scenario is very simple. For instance, violation of some constraints in the in the termination planning stage are present. We can notice that the error between the planned final configuration and the goal configuration is too high.
 
 
 %Valid for SLSQP-based sovler:
@@ -1423,7 +1429,7 @@ Besides, acceleration constraints were added to the NLPs.
 
 
 
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %	\centering
 %	\includegraphics[width=1.\textwidth]{./img/classes_planning.pdf}
 %	\caption{Class diagram.\label{fig:classesdiagram}}
@@ -1486,7 +1492,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %%\todo[inline]{talk about accuracy}
 %
-%\begin{table}[!h]
+%\begin{table}[H]
 %\caption {Optimization solver parameters} \label{tab:optparam}
 %\begin{center}
 %\begin{tabular}{|c|c|}
@@ -1530,7 +1536,7 @@ Besides, acceleration constraints were added to the NLPs.
 %Within a given image the lines are close together showing that variations in $N_s$ have weak impact.
 %In addition, comparing the three images (\ref{fig:uni04}, \ref{fig:uni05}, \ref{fig:uni06}) we see that variations in the $N_{knots}$ have also a weak influence for this scenario.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        \begin{subfigure}[b]{0.48\textwidth}
 %                \includegraphics[width=\textwidth]{./img/realtime/Scenario_0__N_knots_4/mcttc-tctp.eps}
@@ -1554,7 +1560,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %For the sake of an example we present a simulation result in the Figure~\ref{fig:sim0} run with the parameters presented in the table~\ref{tab:s0param} for a "no obstacles" scenario.
 %
-%\begin{table}[!h]
+%\begin{table}[H]
 %\caption {Motion planner main parameters} \label{tab:s0param}
 %\begin{center}
 %\begin{tabular}{|c|c|}
@@ -1583,7 +1589,7 @@ Besides, acceleration constraints were added to the NLPs.
 %\end{center}
 %\end{table}
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1618,7 +1624,7 @@ Besides, acceleration constraints were added to the NLPs.
 %This behavior is the one expected since the number of constraints and the number of arguments for the cost function
 %to be minimized depend on these two parameters respectively.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1644,7 +1650,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %Again, in the Figure~\ref{fig:sim0} we show a simulation example run with the parameters' values presented in table~\ref{tab:s3param}.
 %
-%\begin{table}[!h]
+%\begin{table}[H]
 %\caption {Motion planner main parameters} \label{tab:s3param}
 %\begin{center}
 %\begin{tabular}{|c|c|}
@@ -1679,7 +1685,7 @@ Besides, acceleration constraints were added to the NLPs.
 %\end{center}
 %\end{table}
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1711,7 +1717,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %As for the scenario with six obstacles we realize that the observations for the latest scenario are accentuated.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1736,7 +1742,7 @@ Besides, acceleration constraints were added to the NLPs.
 %\end{figure}
 %
 %
-%\begin{table}[!h]
+%\begin{table}[H]
 %\caption {Motion planner main parameters} \label{tab:s3param}
 %\begin{center}
 %\begin{tabular}{|c|c|}
@@ -1777,7 +1783,7 @@ Besides, acceleration constraints were added to the NLPs.
 %\end{center}
 %\end{table}
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1812,7 +1818,7 @@ Besides, acceleration constraints were added to the NLPs.
 %Figure~\ref{fig:drho-rmg} gives a example of how the ratio varies as the detection radius progressively increases. The numbers that can be seen
 %over the blue curve are the maximum number of obstacles seen at once during the whole mission.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %	\centering
 %	\includegraphics[width=.6\textwidth]{./img/penetration/drho-rmp.eps}
 %	\caption{$MCT/T_c$ ratio varying with $\rho_d$.\label{fig:drho-rmg}}
@@ -1832,7 +1838,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %Figure~\ref{fig:ttot} show how the time spend for completing the mission behaves with respect to three parameters: $T_c$, $T_p$, $N_s$.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %        \centering
 %        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
 %          %(or a blank line to force the subfigure onto a new line)
@@ -1872,7 +1878,7 @@ Besides, acceleration constraints were added to the NLPs.
 %rapidly decrease of the the mission time as the $\rho_d$ increases showing that a more optimal trajectory can be found when a better knologde of the environment is
 %possible.
 %
-%\begin{figure}[!h]
+%\begin{figure}[H]
 %	\centering
 %	\includegraphics[width=.6\textwidth]{./img/penetration/drho-tot.eps}
 %	\caption{Total mission time varying with $\rho_d$.\label{fig:drho-tot}}
@@ -1895,7 +1901,7 @@ Besides, acceleration constraints were added to the NLPs.
 %
 %As expected, the greater the $N_{ssol}$ (which in turn increases $N_{Tc}$) the more accurate is the area found. We show in Figure \ref{fig:pen-conv} that the area value converges to the precise area as $N_{ssol}$ increases.
 %
-% \begin{figure}[!h]
+% \begin{figure}[H]
 % 	\centering
 % 	\includegraphics[width=.6\textwidth]{./img/penetration/pen-nssol.eps}
 % 	\caption{Convergence of the area computation.\label{fig:pen-conv}}
@@ -1914,7 +1920,7 @@ Besides, acceleration constraints were added to the NLPs.
 %Now, analyzing the impact of the sampling on the penetration area we see that the greater the number of samples the smaller is the penetration area (as expected).
 %In Figure \ref{fig:ns-pen} we see that the penetration total area rapidly decreases as $N_s$ increases.
 %
-% \begin{figure}[!h]
+% \begin{figure}[H]
 % 	\centering
 % 	\includegraphics[width=.6\textwidth]{./img/penetration/pen-nsi.eps}
 % 	\caption{Penetration area varying with $N_s$.\label{fig:ns-pen}}
