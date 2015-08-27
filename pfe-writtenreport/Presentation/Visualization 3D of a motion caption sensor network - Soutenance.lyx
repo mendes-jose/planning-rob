@@ -1,0 +1,3984 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass beamer
+\begin_preamble
+%\usetheme{Warsaw}
+%\usetheme{Szeged}
+%\usetheme{Singapore}
+\usetheme{CambridgeUS}
+% or ...
+
+\setbeamercovered{transparent}
+% or whatever (possibly just delete it)
+\usepackage{movie15}
+%\usepackage[frenchb]{babel}
+\usepackage{ upgreek }
+\usepackage{tikz}
+\usepackage{subfigure}
+
+\newcommand{\aresta}{0.75}
+\newcommand{\gridSize}{1.5}
+\newcommand{\passo}{0.25}
+\newcommand{\xyzSize}{0.4}
+\newcommand{\abcSize}{1.6}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language french
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+This file is a solution template for:
+\end_layout
+
+\begin_layout Itemize
+Talk at a conference/colloquium.
+ 
+\end_layout
+
+\begin_layout Itemize
+Talk length is about 10min.
+ 
+\end_layout
+
+\begin_layout Itemize
+Style is ornate.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Copyright 1004 by Till Tantau <tantau@users.sourceforge.net>.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+In principle, this file can be redistributed and/or modified under the terms
+ of the GNU Public License, version 1.
+ However, this file is supposed to be a template to be modified for your
+ own needs.
+ For this reason, if you use this file as a template and not specifically
+ distribute it as part of a another package/program, the author grants the
+ extra permission to freely copy and modify this file as you see fit and
+ even to delete this copyright notice.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+
+\series bold
+\size huge
+\lang american
+Planification d’actions et de mouvements sous incertitudes
+\series default
+\size default
+\lang english
+ 
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+optional, use only with long paper titles
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+
+\size small
+José Magno MENDES FILHO
+\size default
+
+\begin_inset Note Note
+status open
+
+\begin_layout Itemize
+Give the names in the same order as the appear in the paper.
+ 
+\end_layout
+
+\begin_layout Itemize
+Use the 
+\begin_inset Quotes eld
+\end_inset
+
+Institute mark
+\begin_inset Quotes erd
+\end_inset
+
+ inset (
+\family sans
+Insert\SpecialChar \menuseparator
+Custom Insets\SpecialChar \menuseparator
+InstituteMark
+\family default
+) only if the authors have different affiliations.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Mendes
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+- optional, use only with lots of authors
+\end_layout
+
+\begin_layout Plain Layout
+- if there are really lots of authors, use 
+\begin_inset Quotes eld
+\end_inset
+
+Author et al.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+If you have a file called "institution-logo-filename.xxx", where xxx is a
+ graphic format that can be processed by latex or pdflatex, resp., then you
+ can add a logo by uncommenting the following:
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pgfdeclareimage[height=0.5cm]{institution-logo}{images/ENSTA_ParisTech}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+logo{
+\backslash
+pgfuseimage{institution-logo}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The following causes the table of contents to be shown at the beginning
+ of every subsection.
+ Delete this, if you do not want it.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+AtBeginSubsection[]{
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+frame<beamer>{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+frametitle{Plan}   
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+tableofcontents[currentsection,currentsubsection] 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+If you wish to uncover everything in a step-wise fashion, uncomment the
+ following command:
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+beamerdefaultoverlayspecification{<+->}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Plan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Structuring a talk is a difficult task and the following structure may not
+ be suitable.
+ Here are some rules that apply for this solution: 
+\end_layout
+
+\begin_layout Itemize
+Exactly two or three sections (other than the summary).
+ 
+\end_layout
+
+\begin_layout Itemize
+At *most* three subsections per section.
+ 
+\end_layout
+
+\begin_layout Itemize
+Talk about 30s to 1min per frame.
+ So there should be between about 15 and 30 frames, all told.
+\end_layout
+
+\begin_layout Itemize
+A conference audience is likely to know very little of what you are going
+ to talk about.
+ So *simplify*! 
+\end_layout
+
+\begin_layout Itemize
+In a 10min talk, getting the main ideas across is hard enough.
+ Leave out details, even if it means being less precise than you think necessary.
+ 
+\end_layout
+
+\begin_layout Itemize
+If you omit details that are vital to the proof/implementation, just say
+ so once.
+ Everybody will be happy with that.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Description de l'unité des capteurs
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Plan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+tableofcontents[currentsection,hidesubsection] 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+L'unité des capteurs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Itemize
+Centrale inertielle
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Gyromètre
+\end_layout
+
+\begin_layout Itemize
+Accéléromètre
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Magnétomètre
+\end_layout
+
+\begin_layout Itemize
+D'autres capteurs
+\end_layout
+
+\begin_layout Itemize
+Module WiFi
+\end_layout
+
+\begin_layout Itemize
+Carte CPU
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{-3.5cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace{5cm}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Users/magno/Dropbox/PRe/Report_DRAFT/images/opened_box.jpg
+	lyxscale 4
+	scale 6
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Calibrage des capteurs
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Plan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+tableofcontents[currentsection,hidesubsection] 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Les erreurs de measure
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+L'erreurs déterministes :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Les biais
+\end_layout
+
+\begin_layout Itemize
+L'erreurs d’alignement (axes non orthogonal)
+\end_layout
+
+\begin_layout Itemize
+Le facteur d'échelles
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+L'erreurs non déterministes (ou stochastique) :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Le bruit (Gaussian blanc)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le modéle des capteurs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+footnotesize 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\begin{bmatrix}\nu_{k}\\
+\mathbf{a}_{k}\\
+\mathbf{m}_{k}
+\end{bmatrix}=\begin{bmatrix}^{\nu}K^{-1} & 0 & 0\\
+0 & ^{\mathbf{a}}K^{-1} & 0\\
+0 & 0 & ^{\mathbf{m}}K^{-1}
+\end{bmatrix}\begin{bmatrix}\mathbf{I} & 0 & 0\\
+0 & \mathcal{Q} & 0\\
+0 & 0 & \mathcal{Q}
+\end{bmatrix}\begin{bmatrix}\upomega_{k}\\
+(\chi_{k}-\mathbf{g})\\
+\mathbf{h}
+\end{bmatrix}+\begin{bmatrix}^{\nu}\mathbf{b}\\
+^{\mathbf{a}}\mathbf{b}\\
+^{\mathbf{m}}\mathbf{b}
+\end{bmatrix}+\begin{bmatrix}^{\nu}\mathbf{v}_{k}\\
+^{\mathbf{a}}\mathbf{v}_{k}\\
+^{\mathbf{m}}\mathbf{v}_{k}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Gyromètre
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Calibrage statique
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Le modéle :
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula 
+\[
+\nu_{k}={}^{\nu}K^{-1}\upomega_{k}+\ {}^{\nu}\mathbf{b}+\ {}^{\nu}\mathbf{v}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+En absence de rotation :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nu_{k}=\,^{\nu}\mathbf{b}+\,^{\nu}\mathbf{v}_{k}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+^{\nu}\mathbf{b}=E\{\nu_{k}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+On considere :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+^{\nu}K=\mathbf{I}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Accéléromètre
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+L'aspect générale du 
+\begin_inset Quotes fld
+\end_inset
+
+Six-position test
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Methode statique pour une calibrage compléte d'un accéléromètre.
+\end_layout
+
+\begin_layout Itemize
+Les axes du capteur sont alignés avec la direction verticale.
+ Chaque axe subit en alternance 
+\begin_inset Formula $+\mathbf{g}$
+\end_inset
+
+ et 
+\begin_inset Formula $-\mathbf{g}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Les paramètres de calibrage sont estimés au sens de la métrique des moindres
+ carrés.
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Un example du 
+\begin_inset Quotes fld
+\end_inset
+
+Six-position test
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+
+\lang american
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{-.5cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+small
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{figure}[!h]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 1----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (
+\backslash
+abcSize,0,0) node[anchor=west]{$a$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,
+\backslash
+abcSize,0) node[anchor=west]{$b$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,0,
+\backslash
+abcSize) node[anchor=west]{$c$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 3----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (
+\backslash
+abcSize,0,0) node[anchor=west]{$c$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,
+\backslash
+abcSize,0) node[anchor=west]{$a$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,0,
+\backslash
+abcSize) node[anchor=west]{$b$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 5----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (
+\backslash
+abcSize,0,0) node[anchor=west]{$b$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,
+\backslash
+abcSize,0) node[anchor=west]{$c$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (0,0,0) -- (0,0,
+\backslash
+abcSize) node[anchor=west]{$a$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 2----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta,
+\backslash
+aresta) node[anchor=north]{$b$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta) node[anchor=west]{$a$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize) node[anchor=north]{$c$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 4----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta,
+\backslash
+aresta) node[anchor=north]{$a$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta) node[anchor=west]{$c$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize) node[anchor=north]{$b$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subfigure[]
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%% -------------------POSITION 6----------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture} 
+\end_layout
+
+\begin_layout Plain Layout
+
+[cube/.style={thick,black}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+grid/.style={very thin,gray}, 			
+\end_layout
+
+\begin_layout Plain Layout
+
+axis/.style={->,blue,thick},
+\end_layout
+
+\begin_layout Plain Layout
+
+cube_hidden/.style={thick,dashed}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw a grid in the x-y plane 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+x in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize} 		
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+foreach 
+\backslash
+y in {-
+\backslash
+passo,0,...,
+\backslash
+gridSize}
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (
+\backslash
+x,-
+\backslash
+passo) -- (
+\backslash
+x,
+\backslash
+gridSize); 			
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[grid] (-
+\backslash
+passo,
+\backslash
+y) -- (
+\backslash
+gridSize,
+\backslash
+y); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the XYZ axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize + 
+\backslash
+xyzSize,
+\backslash
+gridSize,0) node[anchor=west,color=red]{$x$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize + 
+\backslash
+xyzSize,0) node[anchor=west,color=red]{$y$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis,red] (
+\backslash
+gridSize,
+\backslash
+gridSize,0) -- (
+\backslash
+gridSize,
+\backslash
+gridSize,
+\backslash
+xyzSize) node[anchor=west,color=red]{$z$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!100] (
+\backslash
+aresta,0,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the front-left of the cube 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!10] (0,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,0) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- cycle;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the top of the cube
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[cube,fill=gray!60] (0,0,
+\backslash
+aresta) -- (0,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,0,
+\backslash
+aresta) -- cycle; 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw dashed lines to represent hidden edges 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (
+\backslash
+aresta,0,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,
+\backslash
+aresta,0); 	
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+draw[cube_hidden] (0,0,0) -- (0,0,
+\backslash
+aresta);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+%draw the ABC axes 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta,
+\backslash
+aresta) node[anchor=north]{$c$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize,
+\backslash
+aresta) node[anchor=west]{$b$}; 	
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+draw[axis] (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta) -- (
+\backslash
+aresta,
+\backslash
+aresta,
+\backslash
+aresta-
+\backslash
+abcSize) node[anchor=north]{$a$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+caption{Six-positions cofiguration 
+\backslash
+label{fig:Sixpositions}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{figure}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Calibrage par 
+\begin_inset Quotes fld
+\end_inset
+
+Six-position test
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Le modéle du accélérometre :
+\begin_inset Formula 
+\[
+\mathbf{a}_{k}={}^{\mathbf{a}}K^{-1}\mathcal{Q}(\chi_{k}-\mathbf{g})+{}^{\mathbf{a}}\mathbf{b}+{}^{\mathbf{a}}\mathbf{v}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+En absance d'acceleration et en prenant les données pour chaqu'une des six
+ positions :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\underbrace{\begin{bmatrix}\mathbf{a}_{1} & \mathbf{a}_{2} & \cdots & \mathbf{a}_{6}\end{bmatrix}}_{U}=\underbrace{\left[^{\mathbf{a}}K^{-1}\mid{}^{\mathbf{a}}\mathbf{b}\right]}_{M}\underbrace{\begin{bmatrix}\mathcal{Q}_{1}(-\mathbf{g}) & \mathcal{Q}_{2}(-\mathbf{g}) & \cdots & \mathcal{Q}_{6}(-\mathbf{g})\\
+1 & 1 & \cdots & 1
+\end{bmatrix}}_{A}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+L'estimative au sens des moindres carrées de ces système surdéterminé est
+ donnée par :
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\hat{M}=U\, A^{T}\,(AA^{T})^{-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Magnétomètre
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+L'idée generale de l'algorithm 
+\begin_inset Quotes fld
+\end_inset
+
+TOWSTEP
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Methode indépendant de l'attitude pour une calibrage compléte du magnetomètre.
+\end_layout
+
+\begin_layout Itemize
+L'estimation est issue de la minimization d'une fonction log-vraisemblance
+ négative.
+\end_layout
+
+\begin_layout Itemize
+La première étape compute une estimative des paramètres de calibrage et
+ si besoin est :
+\end_layout
+
+\begin_layout Itemize
+La deuxième étape compute une correction de façon itérative.
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Calibrage par l'algorithm 
+\begin_inset Quotes fld
+\end_inset
+
+TWOSTEP
+\begin_inset Quotes frd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename C:/Users/magno/Dropbox/PRe/Report_DRAFT/images/cali2.png
+	lyxscale 10
+	display false
+	scale 25
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Procedure de calibrage finale
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Procedure de calibrage finale
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Six-position test pour la calibrage de l'accéléromètre et gyromètre avec
+ estimation des matrices de covariance du bruit de measure de chaqu'un des
+ trois capteurs.
+\end_layout
+
+\begin_layout Itemize
+Calibrage independent de l'attitude pour le magnétomètre.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Determination de l'orientation d'une partie du corps
+\end_layout
+
+\begin_layout Subsection
+Filtre de Kalman
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Les principaux caracteristiques du filtre de Kalman
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+L'estimation de l'état est basée seulement sur l'état précédent et les mesures
+ actuelles (recursivité).
+\end_layout
+
+\begin_layout Itemize
+Il est capable de bien estimer l'état malgré les imperfection du modéle.
+\end_layout
+
+\begin_layout Itemize
+Il fonctione à deux étapes distinctes : la Prédition et la Mise à jour.
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le modèle du system
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Le modèle d'évolution adapté à la measure du gyromètre:
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+scriptsize
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbf{x}_{k+1}=A\left(T_{k},\ \upomega_{k}^{\prime}\right)\mathbf{x}_{k}+\mathbf{w}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\upomega_{k}^{\prime}=\,^{\nu}K\left(\nu_{k}-\,^{\nu}\mbox{\mathbf{b}}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+normalsize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Le modèle d'obersavation adapté à la manque de conaissance de l'acceleration
+ :
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+scriptsize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{y}_{k} & = & f(\mathbf{x}_{k})+\mathbf{v}_{k}\\
+ & = & \left[\begin{array}{cc}
+^{\mathbf{a}}K^{-1} & 0\\
+0 & ^{\mathbf{m}}K^{-1}
+\end{array}\right]\begin{bmatrix}\mathcal{Q} & 0\\
+0 & \mathcal{Q}
+\end{bmatrix}\left[\begin{array}{c}
+-\mathbf{g}\\
+\mathbf{h}
+\end{array}\right]+\begin{bmatrix}\mathbf{^{a}b}_{k}\\
+^{\mathbf{m}}\mathbf{b}_{k}
+\end{bmatrix}+\begin{bmatrix}\mathbf{^{a}v}_{k}\\
+\mathbf{^{m}v}_{k}
+\end{bmatrix}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\mathcal{Q}_{11}=\mathbf{x}_{k,1}^{2}+\mathbf{x}_{k,2}^{2}-\mathbf{x}_{k,3}^{2}-\mathbf{x}_{k,4}^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le filtre de Kalman étendu (EKF)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+L'idée :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Utiliser la Jacobienne pour linearizer le modéle permettant d'employer le
+ Filtre de Kalman classic.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Les avantages :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Intuitif.
+\end_layout
+
+\begin_layout Itemize
+Il marche bien si les non linearités sont quasi-lineaires.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Les inconvénients :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Perte de l'optimalité due à l'approximation au premier ordre.
+\end_layout
+
+\begin_layout Itemize
+Il faut computer la Jacobienne.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le filtre de Kalman 
+\begin_inset Quotes fld
+\end_inset
+
+unscented
+\begin_inset Quotes frd
+\end_inset
+
+ (UKF)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+L'idée :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Utiliser la 
+\begin_inset Quotes fld
+\end_inset
+
+Unscented Transformation
+\begin_inset Quotes frd
+\end_inset
+
+ pour propager les 
+\begin_inset Quotes fld
+\end_inset
+
+sigma points
+\begin_inset Quotes frd
+\end_inset
+
+ atravers les fonction non lineaire et puis recuperer l'information de moyenne
+ et covariance.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Les avantages :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Il assure une moyenne correct jusqu'au troisième ordre et une covariance
+ jusqu'au deuxième ordre.
+\end_layout
+
+\begin_layout Itemize
+Il marche bien malgré le niveau de non linearité.
+\end_layout
+
+\begin_layout Itemize
+Pas besoin de connaître la Jacobienne.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Les inconvénients :
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Plus coûteux que l'EKF.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Subsection
+Validation des measurements
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le mécanisme d'adaptation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+On essay de compenser l'imperfection du modéle et les distortion du champ
+ magnetique en choisissant les valeurs pour la matrice de covariance du
+ bruit de mesure de façon adaptative.
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\mathrm{R}_{k}=\begin{bmatrix}R_{11} & 0\\
+0 & R_{22}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+R_{11}=\begin{cases}
+^{\mathbf{a}}\Sigma, & \left|\left\Vert (\chi_{k}-\mathbf{g})^{\prime}\right\Vert -\left\Vert \mathbf{g}\right\Vert \right|<\epsilon_{\mathbf{a}}\\
+\infty, & \mathrm{otherwise}
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+R_{22}=\begin{cases}
+^{\mathbf{m}}\Sigma, & \left|\left\Vert \mathbf{h}_{j+1}^{\prime}\right\Vert -\left\Vert \mathbf{h}\right\Vert \right|<\epsilon_{\mathbf{m}}\cap\left|\phi_{dip}^{\prime}-\phi_{dip}\right|<\epsilon_{dip}\\
+\infty, & \mathrm{ohterwise}
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang american
+\begin_inset Formula 
+\[
+\phi_{dip}^{\prime}=\arccos\left(\frac{\mathbf{h}_{k}^{\prime}\cdot(\chi_{k}-\mathbf{g}_{k})^{\prime}}{\left\Vert \mathbf{h}_{k}^{\prime}\right\Vert \left\Vert (\chi_{k}-\mathbf{g}_{k})^{\prime}\right\Vert }\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Determination de la position d'une partie du corps
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Les entraves
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+La determination de la position est très entravée par les limitation de
+ measurement.
+\end_layout
+
+\begin_layout Itemize
+L'accéléromètre est le seule capteur qui peut apporter des information à
+ propos de la translation.
+\end_layout
+
+\begin_layout Itemize
+L'intégration double accumule beaucoup d'erreur.
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Alternative: Determiner la position relative
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Itemize
+Des membres comme
+\begin_inset Newline newline
+\end_inset
+
+ des corps rigides
+\end_layout
+
+\begin_layout Itemize
+Structure articulée
+\end_layout
+
+\begin_layout Itemize
+Articulation permettant 
+\begin_inset Newline newline
+\end_inset
+
+3 degrés de liberté 
+\begin_inset Newline newline
+\end_inset
+
+(roulis, tangage, lacet)
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{-3.5cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+hspace{5cm}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Users/magno/Dropbox/PRe/Report_DRAFT/images/body.png
+	lyxscale 5
+	scale 13
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Le résultat
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Le résultat
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Questions
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Questions?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

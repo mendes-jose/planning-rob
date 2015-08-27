@@ -1,0 +1,125 @@
+QtiPlot 0.9.8 project file
+<scripting-lang>	muParser
+<windows>	2
+<table>
+Tabela1	30	6	22/01/13 20:51
+geometry	0	0	639	628	
+header	1[X]	2[Y]	3[Y]	4[Y]	5[Y]	6[Y]
+ColWidth	100	100	100	100	100	100	
+<com>
+</com>
+ColType	0;0/13	0;0/13	0;0/13	0;0/13	0;0/13	0;0/13
+ReadOnlyColumn	0	0	0	0	0	0
+HiddenColumn	0	0	0	0	0	0
+Comments							
+WindowLabel		2
+<data>
+0	0	99.8	98.4	91.2	99.8	99.8
+1	1	96.7	77.4	91.8	96.7	96.5
+2	2	96	85.6	96.2	96	98
+3	3	94.7	80.8	93.4	94.7	86.3
+4	4	96.5	78.4	96.5	96.5	98.4
+5	5	96.1	86.1	96.8	96.1	95.8
+6	6	98.9	94.5	93.1	99.1	98
+7	7	97.6	91.5	97.1	97.6	98.9
+8	8	96.4	91.3	90.6	96.4	98.9
+9	9	93.6	77.5	86	93.6	95.6
+</data>
+</table>
+<multiLayer>
+Gráfico1	1	1	22/01/13 21:16
+geometry	maximized	active
+WindowLabel		2
+Margins	5	5	5	5
+Spacing	5	5
+LayerCanvasSize	400	300
+Alignement	0	0
+<AlignPolicy>0</AlignPolicy>
+<CommonAxes>0</CommonAxes>
+<graph>
+ggeometry	10	6	1257	466
+<PageGeometry>0.0078125	0.00995025	0.982031	0.772803</PageGeometry>
+PlotTitle	Comparaison des méthodes de classification	#000000	4228
+<Antialiasing>0</Antialiasing>
+<Autoscaling>1</Autoscaling>
+<ScaleFonts>1</ScaleFonts>
+<GridOnTop>0</GridOnTop>
+<MissingDataGap>1</MissingDataGap>
+Background	#ffffff	0
+Margin	0
+Border	0	#000000
+grid	0	0	1	1	#0000ff	0	0.5	#a0a0a4	2	0.4	#0000ff	0	0.5	#a0a0a4	2	0.4	0	0	2	0	0
+EnabledAxes	1	1	1	1	
+AxesTitles	Classes	Résultats corrects (%)			
+AxesTitleColors	#000000	#000000	#000000	#000000	
+AxesTitleAlignment	5124	5124	5124	5124
+AxesTitleDistance	2	2	1	2
+TitleFont	Ubuntu	18	75	0	0	0
+ScaleFont0	Ubuntu	16	75	0	0	0
+ScaleFont1	Ubuntu	16	75	0	0	0
+ScaleFont2	Ubuntu	16	75	0	0	0
+ScaleFont3	Ubuntu	16	75	0	0	0
+AxisFont0	Ubuntu	14	75	1	0	0
+AxisFont1	Ubuntu	14	75	1	0	0
+AxisFont2	Ubuntu	14	75	1	0	0
+AxisFont3	Ubuntu	14	75	1	0	0
+AxesColors	#000000	#000000	#000000	#000000
+AxesNumberColors	#3c3c3c	#3c3c3c	#3c3c3c	#3c3c3c
+AxesBaseline	0	0	0	0	
+CanvasBackground	#ffffff	0
+curve	Tabela1_1	Tabela1_2	3	1	#000000	0	1	7	0	#000000	#000000	1	#000000	0	90	-200	2	0	0	29	1
+curve	Tabela1_1	Tabela1_3	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#ff0000	0	90	-100	2	0	0	29	1
+curve	Tabela1_1	Tabela1_4	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ff00	0	90	0	2	0	0	29	1
+curve	Tabela1_1	Tabela1_5	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#0000ff	0	90	100	2	0	0	29	1
+curve	Tabela1_1	Tabela1_6	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ffff	0	90	200	2	0	0	29	1
+scale	0	76	100	0	13	4	0	0
+scale	1	76	100	0	13	4	0	0
+scale	2	-1	10	0	12	0	0	0
+scale	3	-1	10	0	12	0	0	0
+LabelsFormat	0	6	0	6	0	6	0	6
+AxisType	0	0	0	0	
+MajorTicks	1	1	1	1
+MinorTicks	1	1	1	1
+TicksLength	5	9
+DrawAxesBackbone	1	1	1	1	1
+AxesLineWidth	1
+LabelsRotation	0	0	0	0
+LabelsPrefix				
+LabelsSuffix				
+TickLabelsSpace	4	4	4	4
+ShowTicksPolicy	0	0	0	0
+EnabledTickLabels	1	0	1	0
+<line>	0	0	4.92380136986301	64.2530487804878	1	#000000	SolidLine	0	0	4	45	1	1</line>
+<line>	3.48287671232877	55.2914110429448	3.41695205479452	69.2484662576687	3.1	#a0a0a4	SolidLine	0	0	4	45	1	1</line>
+<Legend>
+<Frame>2</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>-1.1599657827203</x>
+<y>72.245810055866</y>
+<right>1.21129170230967</right>
+<bottom>64.804469273743</bottom>
+<attachTo>1</attachTo>
+<onTop>1</onTop>
+<visible>1</visible>
+<Text>
+\l(1) PPM (1V)
+\l(2) Euclidienne
+\l(3) Mahalanobis
+\l(4) Fen. de Parzen
+\l(5) Sép. Lin. à Marge Maximum
+</Text>
+<Font>Ubuntu	12	25	1	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>255</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+</graph>
+<LinkXAxes>0</LinkXAxes>
+<ScaleLayers>1</ScaleLayers>
+</multiLayer>
+<open>1</open>

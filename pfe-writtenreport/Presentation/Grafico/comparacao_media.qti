@@ -1,0 +1,336 @@
+QtiPlot 0.9.8 project file
+<scripting-lang>	muParser
+<windows>	3
+<table>
+Tabela1	30	6	22/01/13 23:15
+geometry	0	0	661	234	
+header	1[X]	2[Y]	3[Y]	4[Y]	5[Y]	6[Y]
+ColWidth	100	100	100	100	100	100	
+<com>
+</com>
+ColType	0;0/13	0;0/13	0;0/13	0;0/13	0;0/13	0;0/13
+ReadOnlyColumn	0	0	0	0	0	0
+HiddenColumn	0	0	0	0	0	0
+Comments							
+WindowLabel		2
+<data>
+0	1	96.6				
+1	2		86.1			
+2	3			93.3		
+3	4				96.6	
+4	5					96.7
+</data>
+</table>
+<multiLayer>
+Gráfico1	1	1	22/01/13 23:40
+geometry	393	276	618	293	
+WindowLabel		2
+Margins	5	5	5	5
+Spacing	5	5
+LayerCanvasSize	400	300
+Alignement	0	0
+<AlignPolicy>0</AlignPolicy>
+<CommonAxes>0</CommonAxes>
+<graph>
+ggeometry	2	0	608	184
+<PageGeometry>0.00327869	0	0.996721	0.75102</PageGeometry>
+PlotTitle	Comparaison des moyennes 	#000000	4
+<Antialiasing>0</Antialiasing>
+<Autoscaling>1</Autoscaling>
+<ScaleFonts>1</ScaleFonts>
+<GridOnTop>0</GridOnTop>
+<MissingDataGap>1</MissingDataGap>
+Background	#ffffff	0
+Margin	0
+Border	0	#000000
+grid	0	0	1	1	#0000ff	0	0.5	#a0a0a4	2	0.4	#0000ff	0	0.5	#a0a0a4	2	0.4	0	0	2	0	0
+EnabledAxes	1	0	1	0	
+AxesTitles	 	Résultats corrects (%)		%(?Y)	
+AxesTitleColors	#000000	#000000	#000000	#000000	
+AxesTitleAlignment	5124	4	5124	4
+AxesTitleDistance	0	-1	0	-1
+TitleFont	Ubuntu	6	75	0	0	0
+ScaleFont0	Ubuntu	4	75	0	0	0
+ScaleFont1	Ubuntu	4	75	0	0	0
+ScaleFont2	Ubuntu	4	75	0	0	0
+ScaleFont3	Ubuntu	4	75	0	0	0
+AxisFont0	Ubuntu	4	50	0	0	0
+AxisFont1	Ubuntu	4	50	0	0	0
+AxisFont2	Ubuntu	4	50	0	0	0
+AxisFont3	Ubuntu	4	50	0	0	0
+AxesColors	#000000	#000000	#000000	#000000
+AxesNumberColors	#3c3c3c	#3c3c3c	#3c3c3c	#3c3c3c
+AxesBaseline	0	0	0	0	
+CanvasBackground	#ffffff	0
+curve	Tabela1_1	Tabela1_2	3	1	#000000	0	1	7	0	#000000	#000000	1	#000000	0	60	-100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_2</column>
+	<color>#000000</color>
+	<whiteOut>1</whiteOut>
+	<Font>	Ubuntu,nan,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>1</justify>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_3	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#ff0000	0	80	-50	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_3</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>	Ubuntu,nan,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>100</xoffset>
+	<yoffset>10</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_4	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ff00	0	87	0	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_4</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>	Ubuntu,nan,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_5	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#0000ff	0	90	50	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_5</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>	Ubuntu,nan,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>520</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_6	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ffff	0	92	100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_6</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>	Ubuntu,nan,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>870</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+scale	0	70	100	0	7	5	0	0
+scale	1	70	100	0	7	5	0	0
+scale	2	1	5	0	9	5	0	0
+scale	3	1	5	0	9	5	0	0
+LabelsFormat	0	6	0	6	0	6	0	6
+AxisType	0	0	0	0	
+MajorTicks	1	1	1	1
+MinorTicks	1	1	1	1
+TicksLength	5	9
+DrawAxesBackbone	1	1	1	1	1
+AxesLineWidth	1
+LabelsRotation	0	0	0	0
+LabelsPrefix				
+LabelsSuffix				
+TickLabelsSpace	4	4	3	4
+ShowTicksPolicy	0	0	0	0
+EnabledTickLabels	1	0	0	0
+<Legend>
+<Frame>2</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>300</x>
+<y>20</y>
+<right>300.691526</right>
+<bottom>-5.46864e+258</bottom>
+<attachTo>1</attachTo>
+<onTop>1</onTop>
+<visible>1</visible>
+<Text>
+\l(1) PPV (1V)
+\l(2) Euclidienne
+\l(3) Gaussienne
+\l(4) Fen. de Parzen
+\l(5) Sép. Lin. à Marge Maximum
+</Text>
+<Font>Ubuntu	4	50	0	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>0</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+<Legend>
+<Frame>2</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>1.2857142857143</x>
+<y>65.218508997429</y>
+<right>2.11330049261084</right>
+<bottom>56.6580976863753</bottom>
+<attachTo>1</attachTo>
+<onTop>1</onTop>
+<visible>1</visible>
+<Text>
+\l(1) PPV (1V)
+\l(2) Euclidienne
+\l(3) Mahalanobis
+\l(4) Fen. de Parzen
+\l(5) Sép. Lin. à Marge Maximum
+</Text>
+<Font>Ubuntu	5	25	1	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>0</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+</graph>
+<LinkXAxes>0</LinkXAxes>
+<ScaleLayers>1</ScaleLayers>
+</multiLayer>
+<multiLayer>
+Gráfico2	1	1	23/01/13 21:48
+geometry	maximized	active
+WindowLabel		2
+Margins	5	5	5	5
+Spacing	5	5
+LayerCanvasSize	400	300
+Alignement	0	0
+<AlignPolicy>0</AlignPolicy>
+<CommonAxes>0</CommonAxes>
+<graph>
+ggeometry	13	7	1255	462
+<PageGeometry>0.0101563	0.0116086	0.980469	0.766169</PageGeometry>
+PlotTitle	Comparaison des moyennes	#000000	4228
+<Antialiasing>0</Antialiasing>
+<Autoscaling>1</Autoscaling>
+<ScaleFonts>1</ScaleFonts>
+<GridOnTop>0</GridOnTop>
+<MissingDataGap>1</MissingDataGap>
+Background	#ffffff	0
+Margin	0
+Border	0	#000000
+grid	0	0	1	1	#0000ff	0	0.5	#a0a0a4	2	0.4	#0000ff	0	0.5	#a0a0a4	2	0.4	0	0	2	0	0
+EnabledAxes	1	0	1	0	
+AxesTitles		Résultats corrects (%)		%(?Y)	
+AxesTitleColors	#000000	#000000	#000000	#000000	
+AxesTitleAlignment	5124	4	5124	4
+AxesTitleDistance	2	-1	2	-1
+TitleFont	Ubuntu	19	75	0	0	0
+ScaleFont0	Ubuntu	16	75	0	0	0
+ScaleFont1	Ubuntu	16	75	0	0	0
+ScaleFont2	Ubuntu	16	75	0	0	0
+ScaleFont3	Ubuntu	16	75	0	0	0
+AxisFont0	Ubuntu	16	50	0	0	0
+AxisFont1	Ubuntu	16	50	0	0	0
+AxisFont2	Ubuntu	16	50	0	0	0
+AxisFont3	Ubuntu	16	50	0	0	0
+AxesColors	#000000	#000000	#000000	#000000
+AxesNumberColors	#3c3c3c	#3c3c3c	#3c3c3c	#3c3c3c
+AxesBaseline	0	0	0	0	
+CanvasBackground	#ffffff	0
+curve	Tabela1_1	Tabela1_2	3	1	#000000	0	1	7	0	#000000	#000000	1	#000000	0	60	-100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_2</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>650</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_3	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#ff0000	0	80	-50	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_3</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>350</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_4	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ff00	0	86	0	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_4</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>-10</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_5	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#0000ff	0	90	50	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_5</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>-350</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_6	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ffff	0	92	100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_6</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>-700</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+scale	0	70	100	0	7	5	0	0
+scale	1	70	100	0	7	5	0	0
+scale	2	1	5	0	9	5	0	0
+scale	3	1	5	0	9	5	0	0
+LabelsFormat	0	6	0	6	0	6	0	6
+AxisType	0	0	0	0	
+MajorTicks	1	1	1	1
+MinorTicks	1	1	1	1
+TicksLength	5	9
+DrawAxesBackbone	1	1	1	1	1
+AxesLineWidth	1
+LabelsRotation	0	0	0	0
+LabelsPrefix				
+LabelsSuffix				
+TickLabelsSpace	4	4	4	4
+ShowTicksPolicy	0	0	0	0
+EnabledTickLabels	1	1	0	1
+<Legend>
+<Frame>2</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>0.99660441426146</x>
+<y>67.995049504951</y>
+<right>1.83191850594228</right>
+<bottom>59.7524752475247</bottom>
+<attachTo>1</attachTo>
+<onTop>1</onTop>
+<visible>1</visible>
+<Text>
+\l(1) PPV (1v)
+\l(2) Euclidienne
+\l(3) Mahalanobis
+\l(4) Fen. Parzen
+\l(5) Sép. Lin. à Marge Maximum
+</Text>
+<Font>Ubuntu	12	25	1	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>0</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+</graph>
+<LinkXAxes>0</LinkXAxes>
+<ScaleLayers>1</ScaleLayers>
+</multiLayer>
+<open>1</open>

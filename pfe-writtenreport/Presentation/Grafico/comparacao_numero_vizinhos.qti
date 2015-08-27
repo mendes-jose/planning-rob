@@ -1,0 +1,156 @@
+QtiPlot 0.9.8 project file
+<scripting-lang>	muParser
+<windows>	2
+<table>
+Tabela1	30	5	23/01/13 10:07
+geometry	0	0	1280	623	
+header	1[X]	2[Y]	3[Y]	4[Y]	5[Y]
+ColWidth	100	100	100	100	100	
+<com>
+</com>
+ColType	0;0/13	0;0/13	0;0/13	0;0/13	0;0/13
+ReadOnlyColumn	0	0	0	0	0
+HiddenColumn	0	0	0	0	0
+Comments						
+WindowLabel		2
+<data>
+0	1	3.37			
+1	2		3.95		
+2	3			7.7	
+3	4				12.63
+</data>
+</table>
+<multiLayer>
+Gráfico1	1	1	23/01/13 10:19
+geometry	maximized	active
+WindowLabel		2
+Margins	5	5	5	5
+Spacing	5	5
+LayerCanvasSize	400	300
+Alignement	0	0
+<AlignPolicy>0</AlignPolicy>
+<CommonAxes>0</CommonAxes>
+<graph>
+ggeometry	14	7	1254	461
+<PageGeometry>0.0109375	0.0116086	0.979688	0.764511</PageGeometry>
+PlotTitle	PPV - Comparaison entre le nombre de voisins	#000000	4228
+<Antialiasing>0</Antialiasing>
+<Autoscaling>1</Autoscaling>
+<ScaleFonts>1</ScaleFonts>
+<GridOnTop>0</GridOnTop>
+<MissingDataGap>1</MissingDataGap>
+Background	#ffffff	0
+Margin	0
+Border	0	#000000
+grid	0	0	1	1	#0000ff	0	0.5	#a0a0a4	2	0.4	#0000ff	0	0.5	#a0a0a4	2	0.4	0	0	2	0	0
+EnabledAxes	1	0	1	0	
+AxesTitles	 	Erreur (%)		%(?Y)	
+AxesTitleColors	#000000	#000000	#000000	#000000	
+AxesTitleAlignment	5124	4	5124	4
+AxesTitleDistance	2	-1	2	-1
+TitleFont	Ubuntu	20	75	0	0	0
+ScaleFont0	Ubuntu	16	75	0	0	0
+ScaleFont1	Ubuntu	16	75	0	0	0
+ScaleFont2	Ubuntu	16	75	0	0	0
+ScaleFont3	Ubuntu	16	75	0	0	0
+AxisFont0	Ubuntu	14	75	1	0	0
+AxisFont1	Ubuntu	14	75	1	0	0
+AxisFont2	Ubuntu	14	75	1	0	0
+AxisFont3	Ubuntu	14	75	1	0	0
+AxesColors	#000000	#000000	#000000	#000000
+AxesNumberColors	#3c3c3c	#3c3c3c	#3c3c3c	#3c3c3c
+AxesBaseline	0	0	0	0	
+CanvasFrame	1	#000000
+CanvasBackground	#ffffff	0
+curve	Tabela1_1	Tabela1_2	3	1	#000000	0	1	7	0	#000000	#000000	1	#000000	0	80	-100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_2</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>460</xoffset>
+	<yoffset>75</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_3	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#ff0000	0	90	-25	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_3</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>120</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_4	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#00ff00	0	93	-30	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_4</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>130</xoffset>
+	<yoffset>80</yoffset>
+</CurveLabels>
+curve	Tabela1_1	Tabela1_5	3	1	#000000	0	1	7	0	#ff0000	#ff0000	1	#0000ff	0	95	100	2	0	0	29	1
+<CurveLabels>
+	<column>Tabela1_5</column>
+	<color>#000000</color>
+	<whiteOut>0</whiteOut>
+	<Font>Ubuntu,11,-1,5,50,0,0,0,0,0</Font>
+	<angle>0</angle>
+	<justify>4</justify>
+	<xoffset>-480</xoffset>
+	<yoffset>70</yoffset>
+</CurveLabels>
+scale	0	2	14	0	7	5	0	0
+scale	1	2	14	0	7	5	0	0
+scale	2	1	4	0	7	5	0	0
+scale	3	1	4	0	7	5	0	0
+LabelsFormat	0	6	0	6	0	6	0	6
+AxisType	0	0	0	0	
+MajorTicks	1	1	1	1
+MinorTicks	1	1	1	1
+TicksLength	5	9
+DrawAxesBackbone	0	0	0	0	0
+AxesLineWidth	1
+LabelsRotation	0	0	0	0
+LabelsPrefix				
+LabelsSuffix				
+TickLabelsSpace	4	4	4	4
+ShowTicksPolicy	0	0	0	0
+EnabledTickLabels	1	1	0	1
+<Legend>
+<Frame>1</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>1.0176916596462</x>
+<y>0.53191489361702</y>
+<right>1.18702611625948</right>
+<bottom>-2.24468085106383</bottom>
+<attachTo>1</attachTo>
+<onTop>1</onTop>
+<visible>1</visible>
+<Text>
+\l(1) 1 voisin
+\l(2) 10 voisins
+\l(3) 100 voisins
+\l(4) 300 voisins
+</Text>
+<Font>Ubuntu	12	25	1	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>0</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+</graph>
+<LinkXAxes>0</LinkXAxes>
+<ScaleLayers>1</ScaleLayers>
+</multiLayer>
+<open>1</open>

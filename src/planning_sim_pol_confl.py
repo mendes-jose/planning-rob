@@ -1715,8 +1715,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-#        if False:
-        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+        if False:
+#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
