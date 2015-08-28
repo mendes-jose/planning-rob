@@ -1247,14 +1247,7 @@ For the first of the three simulations (Figure~\ref{fig:xde1}) we can notice tha
 
 for simulations represented in Figure~\ref{fig:xde2} and Figure~\ref{fig:xde3} we changed the set of constraints in the NLPs so angular and linear accelerations could be taken into account. We limited the module of those accelerations by arbitrary values.
 
-Constraining the accelerations had the impact of significatively decreasing the errors in position and yaw. Two downsides of this approach for improving the generated solution with respect to dynamics effects are:
-
-\begin{itemize}
-\item [$\bullet$] Increase in the computation time. Adding accelerations constraints adds approximately $(N_s-1)*p$ inequations to each NLP.
-
-\item [$\bullet$] Possibility of oscillation effects as the one present in Figure~\ref{fig:xde2}. Simulations represented in Figure~\ref{fig:xde2} and Figure~\ref{\ref{fig:xde3} differ only in the computation/update horizon $T_c$. $T_c$ for Figure~\ref{\ref{fig:xde3} is half of the one used in Figure~\ref{\ref{fig:xde2}.
-
-\end{itemize}
+Constraining the accelerations had the impact of significatively decreasing the errors in position and yaw. One downside of this approach for improving the generated solution with respect to dynamics effects is the increasing in the computation time. Adding accelerations constraints adds approximately $(N_s-1)p$ inequations to each NLP.
 
 Some implementation problems can be identified in this solution even though the scenario is very simple. For instance, violation of some constraints in the in the termination planning stage are present. We can notice that the error between the planned final configuration and the goal configuration is too high.
 
