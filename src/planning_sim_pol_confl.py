@@ -1,4 +1,4 @@
-"""
+﻿"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -980,16 +980,19 @@ class Robot(object):
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
         dz = self._comb_bsp(mtime[1:-1], C, 0).T
-        for dev in range(1, self.k_mod.l+1):
+        for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
 
-        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+        dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
         utTp = map(self.k_mod.phi_2, dztTp)
 
         # get a list over time of values q(t)
         qtTp = map(self.k_mod.phi_1, dztTp)
+
+        # get a list over time of values a(t)
+        atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
         # N_s*nb_obst_detected
@@ -1004,8 +1007,14 @@ class Robot(object):
                 [[self.k_mod.u_max[i, 0]-abs(ut[i, 0]) \
                 for i in range(self.k_mod.u_dim)]for ut in utTp]))
 
+        ## Max acceleration constraints
+        # N_s*u_dim inequations
+        max_acc_cons = list(itertools.chain.from_iterable(
+                [[self.k_mod.acc_max[i, 0]-abs(at[i, 0]) for i in range(self.k_mod.u_dim)]\
+                for at in atTp]))
+
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
 
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1146,16 +1155,19 @@ class Robot(object):
 
         # get a list over time of the matrix [z dz ddz](t) t in [t_{k+1}, t_k+Tp]
         dz = self._comb_bsp(self._mtime[1:], C, 0).T
-        for dev in range(1, self.k_mod.l+1):
+        for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(self._mtime[1:], C, dev).T, axis=0)
 
-        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+        dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
         utTp = map(self.k_mod.phi_2, dztTp)
 
         # get a list over time of values q(t)
         qtTp = map(self.k_mod.phi_1, dztTp)
+
+        # get a list over time of values a(t)
+        atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
         # N_s*nb_obst_detected
@@ -1170,8 +1182,14 @@ class Robot(object):
                 [[self.k_mod.u_max[i, 0]-abs(ut[i, 0]) for i in range(self.k_mod.u_dim)]\
                 for ut in utTp]))
 
+        ## Max acceleration constraints
+        # N_s*u_dim inequations
+        max_acc_cons = list(itertools.chain.from_iterable(
+                [[self.k_mod.acc_max[i, 0]-abs(at[i, 0]) for i in range(self.k_mod.u_dim)]\
+                for at in atTp]))
+
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1272,10 +1290,10 @@ class Robot(object):
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
         dz = self._comb_bsp(mtime[1:-1], C, 0).T
-        for dev in range(1, self.k_mod.l+1):
+        for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
 
-        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+        dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
         utTp = map(self.k_mod.phi_2, dztTp)
@@ -1283,6 +1301,11 @@ class Robot(object):
         # get a list over time of values q(t)
         qtTp = map(self.k_mod.phi_1, dztTp)
 
+        # get a list over time of values a(t)
+        atTp = map(self.k_mod.phi_3, dztTp)
+
+        # Create final array
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
         ## Obstacles constraints
         # N_s*nb_obst_detected
         obst_cons = []
@@ -1295,9 +1318,16 @@ class Robot(object):
         max_speed_cons = list(itertools.chain.from_iterable(
                 [[self.k_mod.u_max[i, 0]-abs(ut[i, 0]) for i in range(self.k_mod.u_dim)]\
                 for ut in utTp]))
+               
+        ## Max acceleration constraints
+        # N_s*u_dim inequations
+        max_acc_cons = list(itertools.chain.from_iterable(
+                [[self.k_mod.acc_max[i, 0]-abs(at[i, 0]) for i in range(self.k_mod.u_dim)]\
+                for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
+
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
         return np.asarray(ieq_cons)
@@ -1387,16 +1417,19 @@ class Robot(object):
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
         dz = self._comb_bsp(self._mtime[1:], C, 0).T
-        for dev in range(1, self.k_mod.l+1):
+        for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(self._mtime[1:], C, dev).T, axis=0)
 
-        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+        dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
         utTp = map(self.k_mod.phi_2, dztTp)
 
         # get a list over time of values q(t)
         qtTp = map(self.k_mod.phi_1, dztTp)
+
+        # get a list over time of values a(t)
+        atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
         # N_s*nb_obst_detected
@@ -1410,6 +1443,12 @@ class Robot(object):
         max_speed_cons = list(itertools.chain.from_iterable(
                 [[self.k_mod.u_max[i, 0]-abs(ut[i, 0]) for i in range(self.k_mod.u_dim)]\
                 for ut in utTp]))
+
+        ## Max acceleration constraints
+        # N_s*u_dim inequations
+        max_acc_cons = list(itertools.chain.from_iterable(
+                [[self.k_mod.acc_max[i, 0]-abs(at[i, 0]) for i in range(self.k_mod.u_dim)]\
+                for at in atTp]))
 
         ## Communication constraints
         com_cons = []
@@ -1448,7 +1487,7 @@ class Robot(object):
             deform_cons.append(self._def_epsilon - d_ii)
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons + com_cons + collision_cons + deform_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1715,8 +1754,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -2512,12 +2551,12 @@ if __name__ == '__main__':
         obst_info = [([0.0, 1.6], 0.3),
                 ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
 
-    obst_info = [([3.0, 4.8], 0.30)]
+    obst_info = [([3.0, 4.8], 0.30), ([4.3, 3.2], 0.55)]
     obstacles = []
     obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 
     # Polygon obstacle exemple
-    obstacles += [PolygonObstacle(np.array([[3.5,2.8],[4.25,2.7],[5,2.8],[4.5,3.9],[4,3.9]]))]
+    #obstacles += [PolygonObstacle(np.array([[3.5,2.8],[4.25,2.7],[5,2.8],[4.5,3.9],[4,3.9]]))]
     obstacles += [PolygonObstacle(np.array([[6,3.5],[6.5,3.5],[7,4],[6,5],[5.5,4.5],[5.5,4]]))]
 #    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
 
@@ -2526,19 +2565,22 @@ if __name__ == '__main__':
             [8.6,  2.5, .0], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-            [1.0,  5.0]),          # u_max
+            [0.8,  1.8],
+            [0.4, 1.7]),          # u_max
             UnicycleKineModel(
             [1.1,  2.5, .0], # q_initial
             [8.5, 0., .0], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-            [1.0,  5.0]),          # u_max
+            [0.8,  1.8],
+            [0.4, 1.7]),          # u_max
             UnicycleKineModel(
             [1,  1, .0], # q_initial
             [8.3, 3.85, .0], # q_final
             [0.0,  0.0],          # u_initial
             [0.0,  0.0],          # u_final
-            [1.0,  5.0])]          # u_max
+            [0.8,  1.8],
+            [0.4, 1.7])]          # u_max
 
     robots = []
     for i in range(options.no_robots):

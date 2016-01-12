@@ -1,4 +1,4 @@
-"""
+﻿"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -25,6 +25,8 @@ import os
 import logging
 from scipy.optimize import fmin_slsqp
 from optparse import OptionParser
+import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
 
 __version__ = '1.0.0'
 
@@ -623,7 +625,7 @@ class Robot(object):
             Tc=1.0,
             Tp=3.0,
             Td=3.0,
-            rho=0.2,
+            rho=0.3,
             detec_rho=3.0,
             com_range=15.0,
             def_epsilon=0.5,
@@ -645,6 +647,7 @@ class Robot(object):
         self._conflict_syncer_conds = None
         self._com_link = None
         self.sol = None
+        self.p_sol = None
         """ Solution, i.e., finded path.
         """
         self.rtime = None
@@ -723,6 +726,7 @@ class Robot(object):
         self._C = np.zeros((self._n_ctrlpts, self.k_mod.u_dim))
 
         self._all_dz = []
+        self._all_C = []
         self._all_times = []
         self._all_comp_times = []
 
@@ -747,6 +751,8 @@ class Robot(object):
                 self._com_link = value
             elif name == 'sol':
                 self.sol = value
+            elif name == 'p_sol':
+                self.p_sol = value
             elif name == 'rtime':
                 self.rtime = value
             elif name == 'ctime':
@@ -1682,7 +1688,7 @@ class Robot(object):
         self._solve_opt_pbl()
         toc = time.time()
 
-        # No need to sync process here, the intended path does impact the conflicts computation
+        # No need to sync process here, the intended path does not impact the conflicts computation
 
         self._log('i', 'R{rid}@tkref={tk:.4f}: Time to solve stand alone optimization '
                 'problem: {t}'.format(rid=self.eyed, t=toc-tic, tk=self._mtime[0]))
@@ -1733,8 +1739,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -1775,7 +1781,13 @@ class Robot(object):
                         self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
 
         # Storing
-#        self._all_C[0:self._n_ctrlpts,:] += [self._C[0:self._n_ctrlpts,:]]
+        if self._plan_state == 'ls':
+            self._all_C.append(
+                    [self._est_dtime]+
+                    list(self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)))
+        else:
+            #print list(self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
+            self._all_C.append(list(self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)))
 
         if self._plan_state == 'fs':
             self._all_dz.append(dz_sol[:, 0:time_idx_sol])
@@ -1887,6 +1899,7 @@ class Robot(object):
         self.sol[self.eyed] = self._all_dz
         self.rtime[self.eyed] = self._all_times
         self.ctime[self.eyed] = self._all_comp_times
+        self.p_sol[self.eyed] = self._all_C
         self._com_link.done_planning[self.eyed] = 1
 
         #  Notify every robot waiting on this robot that it is ready for the conflict solving
@@ -1956,6 +1969,7 @@ class WorldSim(object):
         solutions = manager.list(range(n_robots))
         race_time = manager.list(range(n_robots))
         comp_time = manager.list(range(n_robots))
+        paramzed_solution = manager.list([[]]*n_robots)
 
         # Setting multiprocessing stuff for every robot
         [r.set_option('log_lock', log_lock) for r in self._robs]
@@ -1965,6 +1979,7 @@ class WorldSim(object):
         [r.set_option('conflict_syncer_conds', conflict_syncer_conds) for r in self._robs]
         [r.set_option('com_link', com_link) for r in self._robs]
         [r.set_option('sol', solutions) for r in self._robs]
+        [r.set_option('p_sol', paramzed_solution) for r in self._robs]
         [r.set_option('rtime', race_time) for r in self._robs]
         [r.set_option('ctime', comp_time) for r in self._robs]
         ####################################################################
@@ -1974,6 +1989,20 @@ class WorldSim(object):
         # Make all robots plan their trajectories
         [r.planning_process.start() for r in self._robs]
         [r.planning_process.join() for r in self._robs]
+
+        # Saving parameterized solution to xml file
+        #<?xml version="1.0" encoding="utf-8"?>
+        xml_root = ET.Element('root')
+
+        for i in range(len(self._robs)):
+            #ET.SubElement(doc, "field2", name="asdfasd").text = "some vlaue2"
+            agv = ET.SubElement(xml_root, 'agv', id = str(self._robs[i].eyed))
+            for p in paramzed_solution[i]:
+                plan = ET.SubElement(agv, 'plan').text = str(p)
+        tree = ET.ElementTree(xml_root)
+        # tree.write('output.xml')
+        f = open('../../xde/xde/xde/xde/src/aiv/output.xml', 'w')
+        f.write(minidom.parseString(ET.tostring(xml_root, encoding='utf-8')).toprettyxml(indent="\t"))
 
         # Reshaping the solution
         path = range(len(self._robs))
@@ -2398,11 +2427,75 @@ def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
 # MAIN ########################################################################
 
 if __name__ == '__main__':
-    mpc.freeze_support() # windows freeze bug fix TODO verify if it works
+    mpc.freeze_support() # windows freeze bug fix. TODO verify if it works
 
     #################################
     # python planning_sim.py --help #
     #################################
+    
+    # XML parsing #############################################################
+    root = ET.parse('../../xde/xde/xde/xde/src/aiv/config.xml').getroot()
+
+    mpmethod = root.find('mpmethod')
+
+    time_c = float(mpmethod.find('comphorizon').text)
+    time_p = float(mpmethod.find('planninghorizon').text)
+    no_sopt = int(mpmethod.find('sampling').text)
+    no_knots = int(mpmethod.find('interknots').text)
+    ls_min_dist = float(mpmethod.find('terminationdist').text)
+    seps = float(mpmethod.find('interrobotsafetydist').text)
+    deps = float(mpmethod.find('conflictfreepathdeviation').text)
+
+    optimizer = root.find('optimizer')
+
+    f_max_it = int(optimizer.find('maxiteraction').find('first').text)
+    max_it = int(optimizer.find('maxiteraction').find('inter').text)
+    l_max_it = int(optimizer.find('maxiteraction').find('last').text)
+
+    # iterate over obstacles
+    obstacles = []
+    for obstacle in root.find('obstacles'):
+        if obstacle.tag == 'circular':
+            obstacles.append(RoundObstacle(
+                    [float(obstacle.find('cmposition').find('x').text), float(obstacle.find('cmposition').find('y').text)],
+                    float(obstacle.find('radius').text)))
+        elif obstacle.tag == 'polygon':
+            vertices = []
+            for vertex in obstacle.find('vertices'):
+                vertices.append([float(vertex.find('x').text), float(vertex.find('y').text)])
+            obstacles.append(PolygonObstacle((np.array(vertices))))
+        else:
+            logging.info("Unknown type of obstacle")
+
+    boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
+
+    # iterate over robots
+
+    kine_models = []
+    for robot in root.find('aivs'):
+        if robot.tag == 'aiv':
+            kine_models.append(UnicycleKineModel(
+                [float(robot.find('initpose').find('x').text),
+                float(robot.find('initpose').find('y').text),
+                float(robot.find('initpose').find('theta').text)],# q_initial
+                [float(robot.find('goalpose').find('x').text),
+                float(robot.find('goalpose').find('y').text),
+                float(robot.find('goalpose').find('theta').text)],# q_final
+                [float(robot.find('initvelo').find('linear').text),
+                float(robot.find('initvelo').find('angular').text)],# u_initial
+                [float(robot.find('goalvelo').find('linear').text),
+                float(robot.find('goalvelo').find('angular').text)],# u_final
+                [float(robot.find('maxvelo').find('linear').text),
+                float(robot.find('maxvelo').find('angular').text)],# u_max
+                [float(robot.find('maxacc').find('linear').text),
+                float(robot.find('maxacc').find('angular').text)])) #a_max
+        else:
+            logging.info("Unknown type of robot")
+
+    no_robots = len(kine_models)
+    no_obsts = len(obstacles)
+
+    ###########################################################################
 
     ls_time_opt_scale = 1.0
 
@@ -2415,44 +2508,13 @@ if __name__ == '__main__':
                 help='view results in a iteractive plot and save each frame')
         parser.add_option('-P', '--storepath', dest='direc',
                 help='path for storing simulation data', metavar='PATH', default='./simoutput')
-        parser.add_option('-b', '--robots', dest='no_robots', default=2,
-                action='store', type='int', help='number of robots')
-        parser.add_option('-o', '--obstacles', dest='no_obsts', default=3,
-                action='store', type='int', help='number of obstacles')
-        parser.add_option('-c', '--comphorizon', dest='time_c',
-                action='store', type='float', help='computation time horizon', default=0.5)
-        parser.add_option('-p', '--planhorizon', dest='time_p', default=2.0,
-                action='store', type='float', help='planning time horizon')
         parser.add_option('-S', '--timesamplingsol', dest='no_ssol', default=14,
                 action='store', type='int', help='number of time samples used for creating the solution')
-        parser.add_option('-s', '--timesamplingopt', dest='no_sopt', default=14,
-                action='store', type='int', help='number of time samples used for optimization')
-        parser.add_option('-k', '--knots', dest='no_knots', default=5,
-                action='store', type='int', help='number of internal knots')
         parser.add_option('-a', '--accuracy', dest='acc', default=1E-3,
                 action='store', type='float', help='optimization accuracy')
-        parser.add_option('-m', '--maxiteration', dest='max_it', default=15,
-                action='store', type='int',
-                help='number of maximum iterations for intermadiaries plan sections')
-        parser.add_option('-I', '--lastmaxiteration', dest='l_max_it', default=20,
-                action='store', type='int',
-                help='number of maximum iterations for last plan sections')
-        parser.add_option('-i', '--firstmaxiteration', dest='f_max_it', default=40,
-                action='store', type='int',
-                help='number of maximum iterations for first plan sections')
-        parser.add_option('-d', '--deviation', dest='deps', default=5.0,
-                action='store', type='float',
-                help='path deviation from initial one when dealing with conflict (in meters)')
-        parser.add_option('-f', '--safety', dest='seps', default=0.1,
-                action='store', type='float',
-                help='minimal allowed distance between two robots (in meters)')
         parser.add_option('-r', '--detectionradius', dest='drho', default=6.0,
                 action='store', type='float',
                 help='detection radius within which the robot can detect an obstacle (in meters)')
-        parser.add_option('-l', '--lastsecmindist', dest='ls_min_dist', default=0.5,
-                action='store', type='float',
-                help=\
-                'minimal distance left for completing the last section of the planning (in meters)')
         return
 
     scriptname = sys.argv[0]
@@ -2466,21 +2528,21 @@ if __name__ == '__main__':
     except OSError:
         print('Probably the output directory '+options.direc+' already exists.')
 
-    sim_id = '_'+str(options.no_robots)+\
-            '_'+str(options.no_obsts)+\
-            '_'+str(options.time_c)+\
-            '_'+str(options.time_p)+\
-            '_'+str(options.no_sopt)+\
+    sim_id = '_'+str(no_robots)+\
+            '_'+str(no_obsts)+\
+            '_'+str(time_c)+\
+            '_'+str(time_p)+\
+            '_'+str(no_sopt)+\
             '_'+str(options.no_ssol)+\
-            '_'+str(options.no_knots)+\
+            '_'+str(no_knots)+\
             '_'+str(options.acc)+\
-            '_'+str(options.max_it)+\
-            '_'+str(options.f_max_it)+\
-            '_'+str(options.l_max_it)+\
-            '_'+str(options.deps)+\
-            '_'+str(options.seps)+\
+            '_'+str(max_it)+\
+            '_'+str(f_max_it)+\
+            '_'+str(l_max_it)+\
+            '_'+str(deps)+\
+            '_'+str(seps)+\
             '_'+str(options.drho)+\
-            '_'+str(options.ls_min_dist)
+            '_'+str(ls_min_dist)
 
     if options.savelog:
         flog = options.direc+'/'+scriptname[0:-3]+sim_id+'.log'
@@ -2489,79 +2551,9 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-    boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
-
-# Generate random round obstacles
-#    obst_info = rand_round_obst(options.no_obsts, Boundary([-1., 1.], [0.8, 5.2]))
-
-    # 0 obsts
-    if options.no_obsts == 0:
-        obst_info = []
-    # 2 obsts
-    elif options.no_obsts == 2:
-        obst_info = [#([0.0, 1.6], 0.3),
-                ([-0.2, 0.4], 0.4), ([0.7, -0.8], 0.3)]
-    # 3 obsts
-    elif options.no_obsts == 3:
-        obst_info = [([1.16, 0.0], 0.4),
-                ([-0.5, 0.52], 0.3), ([-0.51, -.52], 0.3)];
-#        obst_info = [([0.55043504350435046, 1.9089108910891091], 0.31361636163616358),
-#                ([-0.082028202820282003, 3.6489648964896491], 0.32471747174717469),
-#                ([0.37749774977497741, 4.654905490549055], 0.16462646264626463)]
-    # 6 obsts
-    elif options.no_obsts == 6:
-        obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
-                ([0.21441144114411448, 2.5279927992799281], 0.32584258425842583),
-                ([-0.3232123212321232, 4.8615661566156621], 0.23165816581658166),
-                ([0.098239823982398278, 3.975877587758776], 0.31376637663766377),
-                ([0.62277227722772288, 1.247884788478848], 0.1802030203020302),
-                ([1.16985698569856988, 3.6557155715571559], 0.25223522352235223)]
-    # 12 obsts
-    elif options.no_obsts == 7:
-        obst_info = [([-0.35104510451045101, 1.3555355535553557], 0.38704870487048704),
-                ([0.35104510451045101, 3.3555355535553557], 0.38704870487048704),
-                ([-0.35104510451045101, 5.3555355535553557], 0.38704870487048704),
-                ([0.35104510451045101, 7.3555355535553557], 0.38704870487048704),
-                ([-0.35104510451045101, 9.3555355535553557], 0.38704870487048704),
-                ([0.35104510451045101, 11.3555355535553557], 0.28704870487048704),
-                ([-0.35104510451045101, 13.0555355535553557], 0.38704870487048704)]
-    else:
-        logging.info("Using 3 obstacles configuration")
-        obst_info = [([0.0, 1.6], 0.3),
-                ([0.6, 3.0], 0.35), ([-0.6, 3.0], 0.35)]
-
-    #obst_info = [([3.0, 4.8], 0.30)]
-    obstacles = []
-    obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-
-    # Polygon obstacle exemple
-    #obstacles += [PolygonObstacle(np.array([[3.5,2.8],[4.25,2.7],[5,2.8],[4.5,3.9],[4,3.9]]))]
-    #obstacles += [PolygonObstacle(np.array([[6,3.5],[6.5,3.5],[7,4],[6,5],[5.5,4.5],[5.5,4]]))]
-#    obstacles += [PolygonObstacle(np.array([[0,1],[1,0],[3,0],[4,2]]))]
-
-    kine_models = [UnicycleKineModel(
-            [0, 0.0, 0], # q_initial
-            [6.0,  3.0, .0], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
-            [0.8,  1.5],          # u_max
-            [0.4, 0.7]),          # a_max
-            UnicycleKineModel(
-            [1.1,  2.5, .0], # q_initial
-            [8.5, 0., .0], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
-            [1.0,  5.0]),          # u_max
-            UnicycleKineModel(
-            [1,  1, .0], # q_initial
-            [8.3, 3.85, .0], # q_final
-            [0.0,  0.0],          # u_initial
-            [0.0,  0.0],          # u_final
-            [1.0,  5.0])]          # u_max
-
     robots = []
-    for i in range(options.no_robots):
-        if i-1 >= 0 and i+1 < options.no_robots:
+    for i in range(len(kine_models)):
+        if i-1 >= 0 and i+1 < len(kine_models):
             neigh = [i-1, i+1]
         elif i-1 >= 0:
             neigh = [i-1]
@@ -2574,22 +2566,22 @@ if __name__ == '__main__':
             boundary,               # planning plane boundary
             neigh,                  # neighbors to whom this robot shall talk ...
                                     #...(used for conflict only, not for real comm between process)
-            N_s=options.no_sopt,                # numbers samplings for each planning interval
+            N_s=no_sopt,                # numbers samplings for each planning interval
             N_ssol=options.no_ssol,
-            n_knots=options.no_knots,# number of knots for b-spline interpolation
-            Tc=options.time_c,       # computation time
-            Tp=options.time_p,       # planning horizon
-            Td=options.time_p,
-            def_epsilon=options.deps,       # in meters
-            safe_epsilon=options.seps,      # in meters
+            n_knots=no_knots,# number of knots for b-spline interpolation
+            Tc=time_c,       # computation time
+            Tp=time_p,       # planning horizon
+            Td=time_p,
+            def_epsilon=deps,       # in meters
+            safe_epsilon=seps,      # in meters
             detec_rho=options.drho,
             ls_time_opt_scale = ls_time_opt_scale,
-            ls_min_dist = options.ls_min_dist)] 
+            ls_min_dist = ls_min_dist)] 
 
     [r.set_option('acc', options.acc) for r in robots] 
-    [r.set_option('maxit', options.max_it) for r in robots] 
-    [r.set_option('ls_maxit', options.l_max_it) for r in robots] 
-    [r.set_option('fs_maxit', options.f_max_it) for r in robots]
+    [r.set_option('maxit', max_it) for r in robots] 
+    [r.set_option('ls_maxit', l_max_it) for r in robots] 
+    [r.set_option('fs_maxit', f_max_it) for r in robots]
 
     world_sim = WorldSim(sim_id, options.direc, robots, obstacles, boundary, plot=options.plot)
 
