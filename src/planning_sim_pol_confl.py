@@ -2300,7 +2300,7 @@ class WorldSim(object):
             axarray[0].grid()
             axarray[1].grid()
             axarray[0].set_ylim([0.6, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-            axarray[1].set_ylim([-5.5, 5.5])
+            #axarray[1].set_ylim([-5.5, 5.5])
             fig_s.canvas.draw()
 
             handles1, labels1 = axarray[0].get_legend_handles_labels()

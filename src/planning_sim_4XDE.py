@@ -1,4 +1,4 @@
-"""
+﻿"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -168,7 +168,7 @@ class PolygonObstacle(Obstacle):
         Input
             *polygon*: Numeric array of points (longitude, latitude). It is assumed
             to be closed, i.e. first and last points are identical
-        Output 
+        Output
             Numeric (1 x 2) array of points representing the centroid
         """
 
@@ -730,12 +730,6 @@ class Robot(object):
         self._all_times = []
         self._all_comp_times = []
 
-        self._unsatisf_eq_values = []
-        self._unsatisf_ieq_values = []
-        self._exit_mode = 0
-        self._n_it = 0
-        self._t_final = 0
-
         # Instantiating the planning process
         self.planning_process = mpc.Process(target=Robot._plan, args=(self, ))
         """ Planning process handler for where the planning routine is called.
@@ -917,11 +911,11 @@ class Robot(object):
 
         # get new knots and the flat output initial and final values for this plan section.
         self._knots = self._gen_knots(self._mtime[0], t_final)
-        dztinit = self._comb_bsp([self._mtime[0]], C, 0).T + np.asarray(self._latest_z)
+        dztinit = self._comb_bsp([self._mtime[0]], C, 0).T
         for dev in range(1, self.k_mod.l+1):
             dztinit = np.append(dztinit, self._comb_bsp([self._mtime[0]], C, dev).T, axis=1)
 
-        dztfinal = self._comb_bsp([t_final], C, 0).T + np.asarray(self._latest_z)
+        dztfinal = self._comb_bsp([t_final], C, 0).T
         for dev in range(1, self.k_mod.l+1):
             dztfinal=np.append(dztfinal, self._comb_bsp([t_final], C, dev).T, axis=1)
 
@@ -991,7 +985,7 @@ class Robot(object):
         mtime = np.linspace(self._mtime[0], t_final, self._N_s)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(mtime[1:-1], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(mtime[1:-1], C, 0).T
         for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
 
@@ -1054,7 +1048,7 @@ class Robot(object):
         """
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
-        dz = self._comb_bsp([self._mtime[-1]], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp([self._mtime[-1]], C, 0).T
         for dev in range(1, self.k_mod.l+1):
             dz = np.append(dz, self._comb_bsp([self._mtime[-1]], C, dev).T, axis=1)
         qTp = self.k_mod.phi_1(dz)
@@ -1103,7 +1097,7 @@ class Robot(object):
         """
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
-        dztinit = self._comb_bsp([self._mtime[0]], C, 0).T + np.asarray(self._latest_z)
+        dztinit = self._comb_bsp([self._mtime[0]], C, 0).T
         for dev in range(1, self.k_mod.l+1):
             dztinit = np.append(dztinit, self._comb_bsp([self._mtime[0]], C, dev).T, axis=1)
 
@@ -1166,7 +1160,7 @@ class Robot(object):
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
         # get a list over time of the matrix [z dz ddz](t) t in [t_{k+1}, t_k+Tp]
-        dz = self._comb_bsp(self._mtime[1:], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(self._mtime[1:], C, 0).T
         for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(self._mtime[1:], C, dev).T, axis=0)
 
@@ -1301,7 +1295,7 @@ class Robot(object):
         mtime = np.linspace(self._mtime[0], t_final, self._N_s)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(mtime[1:-1], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(mtime[1:-1], C, 0).T
         for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
 
@@ -1428,7 +1422,7 @@ class Robot(object):
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(self._mtime[1:], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(self._mtime[1:], C, 0).T
         for dev in range(1, self.k_mod.l+2):
             dz = np.append(dz, self._comb_bsp(self._mtime[1:], C, dev).T, axis=0)
 
@@ -1658,9 +1652,9 @@ class Robot(object):
             curve1 = []
             curve2 = []
             for i in range(self.k_mod.z_dim):
-                curve1 += [np.insert(np.linspace(0.0, minus2th_pt[i,0],
+                curve1 += [np.insert(np.linspace(self._latest_z[i,0], minus2th_pt[i,0],
                         self._n_ctrlpts-1), self._n_ctrlpts-1, last_ctrl_pt[i,0])]
-                curve2 += [np.linspace(0.0, last_ctrl_pt[i,0],
+                curve2 += [np.linspace(self._latest_z[i,0], last_ctrl_pt[i,0],
                         self._n_ctrlpts)]
             curve = [
                     [(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
@@ -1686,17 +1680,17 @@ class Robot(object):
             first_displ = (self.k_mod.u_init[0,0] + self.k_mod.u_max[0,0])/2.\
                     *self._Td/(self._n_ctrlpts-1) #+ np.finfo(float).eps
 
-            _2th_pt = (first_displ*np.array(\
+            _2th_pt = (self._latest_z.T + first_displ*np.array(\
                     [np.cos(self.k_mod.q_init[-1, 0]), np.sin(self.k_mod.q_init[-1, 0])])).T
 
             # create positions thru time assuming that the speed is constant (thus the linspace)
             curve1 = []
             curve2 = []
             for i in range(self.k_mod.z_dim):
-                sec2last = np.linspace(_2th_pt[i], last_ctrl_pt[i,0],self._n_ctrlpts-1)
-                first = [0.0,0.0]
+                sec2last = np.linspace(_2th_pt[i,0], last_ctrl_pt[i,0],self._n_ctrlpts-1)
+                first = self._latest_z[i,0]
                 curve1 += [np.insert(sec2last, 0, first)]
-                curve2 += [np.linspace(0.0, last_ctrl_pt[i,0],
+                curve2 += [np.linspace(self._latest_z[i,0], last_ctrl_pt[i,0],
                         self._n_ctrlpts)]
             curve = [[(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
 #            curve = curve1
@@ -1708,15 +1702,13 @@ class Robot(object):
 #                    [np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])
 #            self._C[self._n_ctrlpts-2,] = minus2_C
 
-        self._log('i', 'R{rid}@tkref={tk:.4f}: Ctrlpts: \n{ctrl}'.format(rid=self.eyed, tk=self._mtime[0], ctrl=self._C))
+#        print 'First guess :\n', self._C
 
         self._std_alone = True
 
         tic = time.time()
         self._solve_opt_pbl()
         toc = time.time()
-
-        self._log('i', 'R{rid}@tkref={tk:.4f}: Ctrlpts: \n{ctrl}'.format(rid=self.eyed, tk=self._mtime[0], ctrl=self._C))
 
         # No need to sync process here, the intended path does impact the conflicts computation
 
@@ -1738,13 +1730,11 @@ class Robot(object):
         time_idx = None if self._plan_state == 'ls' else self._Tcd_idx+1
         time_idx_sol = None if self._plan_state == 'ls' else self._Tcd_idx_sol+1
 
-        dz = self._comb_bsp(self._mtime, self._C[0:self._n_ctrlpts,:], 0).T + np.asarray(self._latest_z)
-        #self._log('i', 'R{rid}@tkref={tk:.4f}: -----------------{dim} {t}'.format(rid=self.eyed, tk=self._mtime[0], dim=dz.shape, t=type(dz).__name__))
-        #self._log('i', 'R{rid}@tkref={tk:.4f}: -----------------{dim} {t}'.format(rid=self.eyed, tk=self._mtime[0], dim=dz.shape, t=type(dz).__name__))
+        dz = self._comb_bsp(self._mtime, self._C[0:self._n_ctrlpts,:], 0).T
         for dev in range(1, self.k_mod.l+1):
             dz = np.append(dz, self._comb_bsp(
                     self._mtime, self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
-        dz_sol = self._comb_bsp(self._soltime, self._C[0:self._n_ctrlpts,:], 0).T + np.asarray(self._latest_z)
+        dz_sol = self._comb_bsp(self._soltime, self._C[0:self._n_ctrlpts,:], 0).T
         for dev in range(1, self.k_mod.l+1):
             dz_sol = np.append(dz_sol, self._comb_bsp(
                     self._soltime, self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
@@ -1771,8 +1761,8 @@ class Robot(object):
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
 #        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+#        if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -1803,16 +1793,14 @@ class Robot(object):
             time_idx = None if self._plan_state == 'ls' else self._Tcp_idx+1
             time_idx_sol = None if self._plan_state == 'ls' else self._Tcp_idx_sol+1
 
-            dz = self._comb_bsp(self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], 0).T + self._latest_z
+            dz = self._comb_bsp(self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], 0).T
             for dev in range(1, self.k_mod.l+1):
                 dz = np.append(dz, self._comb_bsp(
                         self._mtime[0:time_idx], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
-            dz_sol = self._comb_bsp(self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], 0).T + self._latest_z
+            dz_sol = self._comb_bsp(self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], 0).T
             for dev in range(1, self.k_mod.l+1):
                 dz_sol = np.append(dz_sol, self._comb_bsp(
                         self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
-
-        self._log('d', 'R{rid}@tkref{tk:.4f}: dz_sol:\n{path}'.format(rid=self.eyed, tk=self._mtime[0], path=dz_sol[0:2,:]))
 
         # Storing
         if self._plan_state == 'ls':
@@ -1822,8 +1810,6 @@ class Robot(object):
         else:
             #print list(self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
             self._all_C.append(list(self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)))
-
-        #self._log('d', 'R{rid}@tkref={tk:.4f}: dz')
 
         if self._plan_state == 'fs':
             self._all_dz.append(dz_sol[:, 0:time_idx_sol])
@@ -1888,10 +1874,10 @@ class Robot(object):
 #        self._final_step = False
         self._plan_state = 'fs'
 
-        self._knots = self._gen_knots(self._t_init, self._Td)
-        #self._knots = self._gen_knots(0.0, self._Td)
-        self._mtime = np.linspace(self._t_init, self._Td, self._N_s)
-        #self._mtime = np.linspace(0.0, self._Td, self._N_s)
+        #self._knots = self._gen_knots(self._t_init, self._Td)
+        self._knots = self._gen_knots(0.0, self._Td)
+        #self._mtime = np.linspace(self._t_init, self._Td, self._N_s)
+        self._mtime = np.linspace(0.0, self._Td, self._N_s)
         self._soltime = np.linspace(self._t_init, self._t_init + self._Td, self._N_ssol)
 
         # while the remaining dist is greater than the max dist during Tp
@@ -1918,8 +1904,6 @@ class Robot(object):
                 break
 
             self._plan_section()
-            self._log('i', 'R{}: --------------------------'.format(self.eyed))
-            self._log('i', 'R{}: Latest Z: {}'.format(self.eyed, self._latest_z))
             self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
 #        self._final_step = True
