@@ -975,17 +975,17 @@ class Robot(object):
         mtime = np.linspace(self._opttime[0], t_final, self._N_s)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(mtime[1:-1], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(mtime, C, 0).T + np.asarray(self._latest_z)
         for dev in range(1, self.k_mod.l+2):
-            dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
+            dz = np.append(dz, self._comb_bsp(mtime, C, dev).T, axis=0)
 
         dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
-        utTp = map(self.k_mod.phi_2, dztTp)
+        utTp = map(self.k_mod.phi_2, dztTp[1:-1])
 
         # get a list over time of values q(t)
-        qtTp = map(self.k_mod.phi_1, dztTp)
+        qtTp = map(self.k_mod.phi_1, dztTp[1:-1])
 
         # get a list over time of values a(t)
         atTp = map(self.k_mod.phi_3, dztTp)
@@ -1150,17 +1150,17 @@ class Robot(object):
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
         # get a list over time of the matrix [z dz ddz](t) t in [t_{k+1}, t_k+Tp]
-        dz = self._comb_bsp(self._opttime[1:], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(self._opttime, C, 0).T + np.asarray(self._latest_z)
         for dev in range(1, self.k_mod.l+2):
-            dz = np.append(dz, self._comb_bsp(self._opttime[1:], C, dev).T, axis=0)
+            dz = np.append(dz, self._comb_bsp(self._opttime, C, dev).T, axis=0)
 
         dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
-        utTp = map(self.k_mod.phi_2, dztTp)
+        utTp = map(self.k_mod.phi_2, dztTp[1:])
 
         # get a list over time of values q(t)
-        qtTp = map(self.k_mod.phi_1, dztTp)
+        qtTp = map(self.k_mod.phi_1, dztTp[1:])
 
         # get a list over time of values a(t)
         atTp = map(self.k_mod.phi_3, dztTp)
@@ -1189,6 +1189,7 @@ class Robot(object):
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
+        # print unsatisf_list
         self._unsatisf_ieq_values = unsatisf_list
 
         # return arrray where each element is an inequation constraint
@@ -1285,17 +1286,17 @@ class Robot(object):
         mtime = np.linspace(self._opttime[0], t_final, self._N_s)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(mtime[1:-1], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(mtime, C, 0).T + np.asarray(self._latest_z)
         for dev in range(1, self.k_mod.l+2):
-            dz = np.append(dz, self._comb_bsp(mtime[1:-1], C, dev).T, axis=0)
+            dz = np.append(dz, self._comb_bsp(mtime, C, dev).T, axis=0)
 
         dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
-        utTp = map(self.k_mod.phi_2, dztTp)
+        utTp = map(self.k_mod.phi_2, dztTp[1:-1])
 
         # get a list over time of values q(t)
-        qtTp = map(self.k_mod.phi_1, dztTp)
+        qtTp = map(self.k_mod.phi_1, dztTp[1:-1])
 
         # get a list over time of values a(t)
         atTp = map(self.k_mod.phi_3, dztTp)
@@ -1412,17 +1413,17 @@ class Robot(object):
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
-        dz = self._comb_bsp(self._opttime[1:], C, 0).T + np.asarray(self._latest_z)
+        dz = self._comb_bsp(self._opttime, C, 0).T + np.asarray(self._latest_z)
         for dev in range(1, self.k_mod.l+2):
-            dz = np.append(dz, self._comb_bsp(self._opttime[1:], C, dev).T, axis=0)
+            dz = np.append(dz, self._comb_bsp(self._opttime, C, dev).T, axis=0)
 
         dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz.T]
 
         # get a list over time of command values u(t)
-        utTp = map(self.k_mod.phi_2, dztTp)
+        utTp = map(self.k_mod.phi_2, dztTp[1:])
 
         # get a list over time of values q(t)
-        qtTp = map(self.k_mod.phi_1, dztTp)
+        qtTp = map(self.k_mod.phi_1, dztTp[1:])
 
         # get a list over time of values a(t)
         atTp = map(self.k_mod.phi_3, dztTp)
