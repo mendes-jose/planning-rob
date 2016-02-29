@@ -1,0 +1,184 @@
+
+%One way of modelling the motion planning problem would be to write a NPL
+%that accounts for all robots 
+%
+%Modeling the 
+%At this point a nonlinear programming problem can be written as in the
+%equations~\ref{eq:objfunc} to~\ref{eq:lastconst} for finding the
+%B-spline parameters that can minimize the mission time respecting some constraints.
+%
+%The equations~\ref{eq:qi} and~\ref{eq:qf} express the we see a first group of constraints that are expressed
+%as equations
+%a NLP 
+%
+%
+
+%\begin{align}
+%\underset{(C_{(0,\tau_k)},\dotsc,C_{(d+n_{knot}-2,\tau_k)})}{\mathrm{min}} J_{\tau_k} =
+%\nonumber\\
+%\|\varphi_1(z(\tau_k+T_p,\tau_k),\dotsc,z^{(l-1)}(\tau_k+T_p,\tau_k))-q_{final}\|^2
+%\end{align}
+%
+%under the following constraints $\forall t \in [\tau_k, \tau_k+T_p]$:
+%\begin{equation}%\label{eq:sysr4}
+%\left\lbrace\begin{array}{lcl}
+%	\varphi_1(z(\tau_{k},\tau_{k}),\dotsc,z^{(l-1)}(\tau_k,\tau_k)) & = &  q_{ref}(\tau_k,\tau_{k-1})\\
+%    \varphi_2(z(\tau_{k},\tau_{k}),\dotsc,z^{(l)}(\tau_k,\tau_k)) & = & u_{ref}(\tau_k,\tau_{k-1})\\
+%    \varphi_2(z(t,\tau_k),\dotsc,z^{(l)}(t,\tau_k)) &\in& \mathcal{U}\\
+%    d_{O_m}(t,\tau_k) &\geq& \rho + r_m,\quad \forall O_m \in \mathcal{O}(\tau_k)
+%\end{array}\right.
+%\end{equation}
+%
+
+%The following pseudo code explains the planning process. Procedures PlanSec
+%and PlanLastSec formulate the NLP and
+%call the an optimization method that can handles equations and inequations 
+%constraints.
+
+
+%A flat system has the important property that the states and the inputs
+%can be written in terms of the outputs $z$ and their derivatives. Thus, the 
+%behavior
+%of the system is determined by the flat outputs. Note that the map w is 
+%bijective(simple unicycle and simple car models for instance)
+%have what is called flatness property~\ref{TODO}. 
+
+%This property means that TODO.
+
+%TODO system flatness
+
+%TODO put image of the rejected trajectory??
+
+%\begin{algorithm}[h]
+%\begin{algorithmic}
+%%\While{$d_{rem} \geq d_{min} + T_c \times v_{max}$}
+%%\State \Call{{\scshape plan_sec}}{a}
+%%\EndWhile
+%%\Stae \Call{{\scshape rescale_pbl}}{a}
+%%\State \Call{{\scshape plan_last_sec}}{a}
+%\Function {{\scshape hpn}}{$currentState, goal , operators, absLevel , world$}
+%	\If {holds(goal , currentState)}
+%		\State \Return {\scshape True}
+%	\Else
+%    	\State $p \gets ${\scshape plan}$(currentState, goal , operators, 
+%absLevel)$
+%		\For {$(o_i , g_i ) \in p$}
+%			\If {{\scshape prim}$(o_i)$}
+%				\State $currentState \gets world.${\scshape 
+%execute}$(o_i)$
+%			\Else
+%            	\State \Call{{\scshape hpn}}{$currentState, g_i , operators, 
+%${\scshape nextLevel}$(absLevel, o_i), world$}
+%    		\EndIf
+%        \EndFor
+%    \EndIf
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%\subsection{NLP initialization and objective function}
+%
+%
+%%\subsection{Solving NLP}
+%The initialization of the solution paths used for each NLP solving is important 
+%for two reasons:
+%\begin{itemize}
+%
+% \item
+%A good initialization allows the
+%optimization solver to find a better solution for a given timespan.
+% \item
+%When using a local optimization method the initialization
+%can drag the final solution to one or other local minima.
+%\end{itemize}
+%
+%The simplest of initializations was performed in ours studies. Linear spacing 
+%from current flat output value to the estimate final flat output.
+%The estimate final output is simply the flat output computed from the estimate 
+%final states and inputs. The estimate final states and inputs
+%are computed assuming a displacement from the current position of the maximum 
+%linear speed
+%of the robot times the planning horizon, and assuming that the direction of the 
+%movement is equal to (final position - current pos) vector.
+%
+%TODO talk about the too close obstacles problem and the dumb solution.
+
+A straight forward extension of the previous algorithm can be done in order to
+support a multi robot system. The sliding window algorithm presented before 
+remains
+virtually the same. The changes are done within the {\scshape PlanSec} 
+{\scshape PlanLastSec} routine.
+
+After solving the NLP stated before each robot will have generated an intended 
+trajectory that would be valid
+if we were dealing with a mono robot system.
+For the multi robot system some exchange of information among the robots and 
+possibly some replanning has to be done.
+
+Right after solving the standalone NLP a given robot represented by the index 
+$i$ computes a conflict list that is based on 
+all robots' positions as of when they started planning their intended 
+trajectories (solving the latest standalone NLP).
+This conflict list contains the indexes of
+the robots  that can possibly cause some conflict. The word 
+conflict here is understood as a collision or a loss of communication
+between robots in the team.
+
+Notice that the $i$ robot can compute its conflict list as soon as it finishes 
+its planning even though other robots may still be doing so.
+
+For the next step of replanning all robots involved in a conflict have to be 
+done computing the first standalone planning. This is needed simply because
+all intended trajectories will be taken into account on the replanning part.
+
+Using the intended trajectory as the initialization of the optimization 
+parameters a new NLP is solved where collision avoidance between robots
+and keeping communication are translated into constraints.
+
+After solving this second NLP, the trajectories are updated and the planning 
+goes on to the next section.
+
+In Figures~\ref{fig:collision} and \ref{fig:nocollision} the results of the 
+decentralized multi robot algorithm can be seen.
+In Figure~\ref{fig:collision} no conflict handling is done and two collisions 
+zones can be identified.
+For trajectory showed in the Figure~\ref{fig:nocollision} the robots optimize 
+their trajectories using the multi robot
+adaptation of the algorithm. No conflict occurs and we can observe a change in 
+the robots velocities and total execution time.
+
+
+%Conflict detection is computed TODOThe additional constraints associated to 
+%the multi robot system TODO  \centering
+
+\begin{figure}[!h]\centering
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-path2.pdf} %
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \\[1mm]
+  \includegraphics[width=\linewidth]{./images/collision/multirobot-vw2.pdf} % 
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{Collision\label{fig:collision}}
+\label{fig:res}
+\end{figure}
+
+\begin{figure}\centering
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-path2.pdf} 
+% <-- use this for your graphics
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \\[1mm]
+  \includegraphics[width=\linewidth]{./images/no_collision/multirobot-vw2.pdf} %
+  %\rule{5cm}{5cm} % <-- this is just a black box substitute for graphics
+  \caption{No collision\label{fig:nocollision}}
+\label{fig:res}
+\end{figure}
+
+
+\subsection{Conflict detection}
+
+Conflict detection is computed TODO
+
+\subsection{Aditional constraints}
+
+The additional constraints associated to the multi robot system TODO
+
+

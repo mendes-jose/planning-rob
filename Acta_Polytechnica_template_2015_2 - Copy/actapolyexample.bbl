@@ -1,0 +1,102 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\eprint}[2][]{\url{#2}}
+\makeatletter
+\def\bibdoi{\begingroup\def\do##1{\catcode
+  `##112\relax}\do$\do\\\do\_\do\%\do\^\expandafter\endgroup\@bibdoi}
+\def\@bibdoi#1{\href{http://dx.doi.org/#1}{\textsc{doi}:#1}}
+\makeatother
+
+\bibitem{Gizmag}
+S.~Robarts.
+\newblock {Autonomous robots are helping to pack your Amazon orders}.
+\newblock \url{http://www.gizmag.com/amazon-kiva-fulfillment-system/34999/}.
+\newblock Accessed: 2015-07-22.
+
+\bibitem{supplychain}
+{Idea Groupe met en place Scallog pour sa préparation de commandes}.
+\newblock \url{http://supplychainmagazine.fr/NL/2015/2085/}.
+\newblock Accessed: 2015-07-22.
+
+\bibitem{Borrelli2006}
+F.~Borrelli, D.~Subramanian, a.U. Raghunathan, L.~Biegler.
+\newblock {MILP and NLP Techniques for centralized trajectory planning of
+  multiple unmanned air vehicles}.
+\newblock \textit{2006 American Control Conference} pp. 5763--5768, 2006.
+\newblock \bibdoi{10.1109/ACC.2006.1657644}.
+
+\bibitem{Sanchez2002}
+G.~Sanchez, J.-C. Latombe.
+\newblock On delaying collision checking in {PRM} planning: Application to
+  multi-robot coordination.
+\newblock \textit{The International Journal of Robotics Research}
+  \textbf{21}(1):5--26, 2002.
+\newblock \bibdoi{10.1177/027836402320556458}.
+
+\bibitem{Khatib1986}
+O.~Khatib.
+\newblock Real-time obstacle avoidance for manipulators and mobile robots.
+\newblock In \textit{Autonomous Robot Vehicles}, pp. 396--404. {Springer
+  Science and Business Media}, 1986.
+\newblock \bibdoi{10.1007/978-1-4613-8997-2_29}.
+
+\bibitem{Defoort2009}
+M.~Defoort, A.~Kokosy, T.~Floquet, et~al.
+\newblock {Motion planning for cooperative unicycle-type mobile robots with
+  limited sensing ranges: A distributed receding horizon approach}.
+\newblock \textit{Robotics and Autonomous Systems} \textbf{57}(11):1094--1106,
+  2009.
+\newblock \bibdoi{10.1016/j.robot.2009.07.004}.
+
+\bibitem{ericson2004real}
+C.~Ericson.
+\newblock \textit{Real-Time Collision Detection}.
+\newblock M038/the Morgan Kaufmann Ser. in Interactive 3D Technology Series.
+  Taylor \& Francis, 2004.
+
+\bibitem{Keviczky2006}
+T.~Keviczky, F.~Borrelli, G.~J. Balas.
+\newblock {Decentralized receding horizon control for large scale dynamically
+  decoupled systems}.
+\newblock \textit{Automatica} \textbf{42}(12):2105--2115, 2006.
+\newblock \bibdoi{10.1016/j.automatica.2006.07.008}.
+
+\bibitem{Defoort2007a}
+M.~Defoort.
+\newblock {Contributions \`{a} la planification et \`{a} la commande pour les
+  robots mobiles coop\'{e}ratifs}.
+\newblock \textit{Ecole Centrale de Lille} 2007.
+
+\bibitem{Milam2003}
+M.~B. Milam.
+\newblock \textit{{Real-time optimal trajectory generation for constrained
+  dynamical systems}}.
+\newblock Ph.D. thesis, California Institute of Technology, 2003.
+
+\bibitem{pyopt-paper}
+R.~E. Perez, P.~W. Jansen, J.~R. R.~A. Martins.
+\newblock py{O}pt: A {P}ython-based object-oriented framework for nonlinear
+  constrained optimization.
+\newblock \textit{Structures and Multidisciplinary Optimization}
+  \textbf{45}(1):101--118, 2012.
+\newblock \bibdoi{10.1007/s00158-011-0666-3}.
+
+\bibitem{Scipy}
+{SciPy - Scientific Computing Tools for Python}.
+\newblock \url{http://www.scipy.org/}.
+\newblock Accessed: 2015-07-31.
+
+\bibitem{Kraft1988}
+D.~Kraft.
+\newblock \textit{{A software package for sequential quadratic programming}}.
+\newblock DLR German Aerospace Center – Institute for Flight Mechanics, Koln,
+  Germany, 1988.
+
+\bibitem{slsqperror}
+{Runtime errors for large gradients}.
+\newblock
+  \url{http://comments.gmane.org/gmane.science.analysis.nlopt.general/191}.
+\newblock Accessed: 2015-07-27.
+
+\end{thebibliography}

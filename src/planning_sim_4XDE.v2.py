@@ -537,7 +537,9 @@ class UnicycleKineModel(object):
         """
         if zl.shape >= (self.u_dim, self.l+1):
             # Prevent division by zero
-            den = zl[0, 1]**2 + zl[1, 1]**2 + np.finfo(float).eps
+            eps = np.finfo(float).eps
+            den = zl[0, 1]**2 + zl[1, 1]**2
+            den = den if abs(den) > eps else eps
             return np.matrix([[LA.norm(zl[:, 1])], \
                     [(zl[0, 1]*zl[1, 2]-zl[1, 1]*zl[0, 2] \
                     )/den]])
@@ -570,9 +572,14 @@ class UnicycleKineModel(object):
             \end{array}
         """
         if zl.shape >= (self.u_dim, self.l+1):
+            eps = np.finfo(float).eps
+            pquartereps = eps**(.25)
             # Prevent division by zero
             dz_norm = LA.norm(zl[:, 1])
-            den = dz_norm + np.finfo(float).eps
+            # min_den_norm = np.finfo(float).eps**(-4)
+            # den = dz_norm if dz_norm >= min_den_norm else min_den_norm
+            den = dz_norm if abs(dz_norm) > pquartereps else pquartereps
+            # den = dz_norm
             dv = (zl[0, 1]*zl[0, 2]+zl[1, 1]*zl[1, 2])/den
             dw = ((zl[0, 2]*zl[1, 2]+zl[1, 3]*zl[0, 1]- \
                     (zl[1, 2]*zl[0, 2]+zl[0, 3]*zl[1, 1]))*(dz_norm**2) - \
@@ -647,6 +654,7 @@ class Robot(object):
         self._conflict_syncer_conds = None
         self._com_link = None
         self.sol = None
+        self.accel = None
         self.p_sol = None
         """ Solution, i.e., finded path.
         """
@@ -707,6 +715,7 @@ class Robot(object):
         self._C = np.zeros((self._n_ctrlpts, self.k_mod.u_dim))
 
         self._all_dz = []
+        self._accel = []
         self._all_C = []
         self._all_times = []
         self._all_comp_times = []
@@ -743,6 +752,8 @@ class Robot(object):
                 self.sol = value
             elif name == 'p_sol':
                 self.p_sol = value
+            elif name == 'accel':
+                self.accel = value
             elif name == 'rtime':
                 self.rtime = value
             elif name == 'ctime':
@@ -769,6 +780,62 @@ class Robot(object):
         knots.extend([gk(i) for i in range(self._d, self._d+self._n_knots-1)])
         knots.extend([t_final for _ in range(self._d)])
         return np.asarray(knots)
+
+    def _num_phi_3(self, t, C):
+        #np.append(dztinit, self._comb_bsp([self._opttime[0]], C, dev).T, axis=1)
+        """
+        """
+        eps = np.finfo(float).eps
+        # sqrteps = sqrt(eps)
+
+        # h = eps if t < eps else sqrteps*t
+        h = 1e-12
+
+        dt = 2*h
+
+        # ta = t-h
+        # tp = t+h
+        # for vta, vtp, i in zip(ta, tp, range(len(ta))):
+        #     if vta < t[0]:
+        #         ta[i] = t[0]
+        #     if vta > t[-1]:
+        #         ta[i] = t[-1]
+        #     if vtp < t[0]:
+        #         tp[i] = t[0]
+        #     if vtp > t[-1]:
+        #         tp[i] = t[-1]
+
+        dz = self._comb_bsp(t, C, 0).T + np.asarray(self._latest_z)
+        for dev in range(1, self.k_mod.l+1):
+            dz = np.append(dz, self._comb_bsp(t, C, dev).T, axis=0)
+
+        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+
+        # get a list over time of command values u(t)
+        ut = map(self.k_mod.phi_2, dztTp)
+
+        dz = self._comb_bsp([x-h for x in t], C, 0).T + np.asarray(self._latest_z)
+        for dev in range(1, self.k_mod.l+1):
+            dz = np.append(dz, self._comb_bsp([x-h for x in t], C, dev).T, axis=0)
+
+        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+
+        # get a list over time of command values u(t)
+        uta = map(self.k_mod.phi_2, dztTp)
+
+        dz = self._comb_bsp([x+h for x in t], C, 0).T + np.asarray(self._latest_z)
+        for dev in range(1, self.k_mod.l+1):
+            dz = np.append(dz, self._comb_bsp([x+h for x in t], C, dev).T, axis=0)
+
+        dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+
+        # get a list over time of command values u(t)
+        utp = map(self.k_mod.phi_2, dztTp)
+
+        ret = [(utpi - utai)/dt for utpi, utai in zip(utp[1:-1], uta[1:-1])]
+        ret = [(utp[0] - ut[0])/dt/2] + ret + [(ut[-1] - uta[-1])/dt/2]
+        # print ret
+        return ret
 
     def _comb_bsp(self, t, ctrl_pts, deriv_order):
         """ Combine base b-splines into a Bezier curve given control points and derivate order.
@@ -988,6 +1055,7 @@ class Robot(object):
         qtTp = map(self.k_mod.phi_1, dztTp[1:-1])
 
         # get a list over time of values a(t)
+        # atTp = self._num_phi_3(mtime, C)
         atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
@@ -1010,7 +1078,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
 
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1052,7 +1120,7 @@ class Robot(object):
             goal_pt = self._latest_z+pos2target/pos2target_norm*self._D
         else:
             goal_pt = self.k_mod.q_final[0:-1, :]
-        cost = LA.norm(qTp[0:-1, :] - goal_pt)**2
+        cost = LA.norm(qTp[0:-1, :] - goal_pt)
         #cost = LA.norm(qTp[0:-1, :] - self.k_mod.q_final[0:-1, :])
         # TODO
         if cost > 1e6:
@@ -1163,6 +1231,7 @@ class Robot(object):
         qtTp = map(self.k_mod.phi_1, dztTp[1:])
 
         # get a list over time of values a(t)
+        # atTp = self._num_phi_3(self._opttime, C)
         atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
@@ -1185,7 +1254,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1299,10 +1368,9 @@ class Robot(object):
         qtTp = map(self.k_mod.phi_1, dztTp[1:-1])
 
         # get a list over time of values a(t)
+        # atTp = self._num_phi_3(mtime, C)
         atTp = map(self.k_mod.phi_3, dztTp)
 
-        # Create final array
-        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
         ## Obstacles constraints
         # N_s*nb_obst_detected
         obst_cons = []
@@ -1323,7 +1391,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
 
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1426,6 +1494,7 @@ class Robot(object):
         qtTp = map(self.k_mod.phi_1, dztTp[1:])
 
         # get a list over time of values a(t)
+        # atTp = self._num_phi_3(self._opttime, C)
         atTp = map(self.k_mod.phi_3, dztTp)
 
         ## Obstacles constraints
@@ -1484,7 +1553,7 @@ class Robot(object):
             deform_cons.append(self._def_epsilon - d_ii)
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons # + max_acc_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1749,9 +1818,9 @@ class Robot(object):
                     self._conflict_syncer_conds[i].wait()
         # Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
-#        if self._conflict_robots_idx != [] and False:
-        if False:
-#        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+        # if self._conflict_robots_idx != []:
+        # if False:
+        if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
 
@@ -1791,11 +1860,38 @@ class Robot(object):
 
         time_idx_sol = None if self._plan_state == 'ls' else self._Tc_idx_sol+1
         dz_sol = self._comb_bsp(self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], 0).T + self._latest_z
-        for dev in range(1, self.k_mod.l+1):
+        for dev in range(1, self.k_mod.l+2):
             dz_sol = np.append(dz_sol, self._comb_bsp(
                     self._soltime[0:time_idx_sol], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
+        
+        dztTp = [dzt.reshape(self.k_mod.l+2, self.k_mod.u_dim).T for dzt in dz_sol.T]
+        
+        # ut = map(self.k_mod.phi_2, dztTp)
 
-        print 'KNOTS\n', self._knots
+        # eps = np.finfo(float).eps
+        # h = 1e-12
+        # dt = 2*h
+
+        # dz = self._comb_bsp([x-h for x in self._soltime[0:time_idx_sol]], self._C[0:self._n_ctrlpts,:], 0).T + np.asarray(self._latest_z)
+        # for dev in range(1, self.k_mod.l+1):
+        #     dz = np.append(dz, self._comb_bsp([x-h for x in self._soltime[0:time_idx_sol]], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
+
+        # dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+
+        # # get a list over time of command values u(t)
+        # uta = map(self.k_mod.phi_2, dztTp)
+
+        # dz = self._comb_bsp([x+h for x in self._soltime[0:time_idx_sol]], self._C[0:self._n_ctrlpts,:], 0).T + np.asarray(self._latest_z)
+        # for dev in range(1, self.k_mod.l+1):
+        #     dz = np.append(dz, self._comb_bsp([x+h for x in self._soltime[0:time_idx_sol]], self._C[0:self._n_ctrlpts,:], dev).T, axis=0)
+
+        # dztTp = [dzt.reshape(self.k_mod.l+1, self.k_mod.u_dim).T for dzt in dz.T]
+
+        # # get a list over time of command values u(t)
+        # utp = map(self.k_mod.phi_2, dztTp)
+
+        # acc = [(utp[0] - ut[0])/dt/2] + [(utpi - utai)/dt for utpi, utai in zip(utp[1:-1], uta[1:-1])] + [(ut[-1] - uta[-1])/dt/2]
+        
 
         # Storing
         if self._plan_state == 'ls':
@@ -1810,9 +1906,11 @@ class Robot(object):
 
         if self._plan_state == 'fs':
             self._all_dz.append(dz_sol[:, 0:time_idx_sol])
+            # self._accel += acc[0:time_idx_sol]
 #            self._all_dz.append(dz[:, 0:time_idx])
             self._all_times.extend(self._soltime[0:time_idx_sol])
         else:
+            # self._accel += acc[1:time_idx_sol]
             self._all_dz.append(dz_sol[:, 1:time_idx_sol])
             self._all_times.extend(self._soltime[1:time_idx_sol])
         # TODO rejected path
@@ -1926,6 +2024,7 @@ class Robot(object):
 #        print 'LAST mtime[-1]', self._opttime[-1]
 
         self.sol[self.eyed] = self._all_dz
+        # self.accel[self.eyed] = self._accel
         self.p_sol[self.eyed] = self._all_C
         self.rtime[self.eyed] = self._all_times
         self.ctime[self.eyed] = self._all_comp_times
@@ -1996,6 +2095,7 @@ class WorldSim(object):
         # ... (because they can support arbitrary object types)
         manager = mpc.Manager()
         solutions = manager.list(range(n_robots))
+        acceleration_solution = manager.list([[]]*n_robots)
         race_time = manager.list(range(n_robots))
         comp_time = manager.list(range(n_robots))
         paramzed_solution = manager.list([[]]*n_robots)
@@ -2008,6 +2108,7 @@ class WorldSim(object):
         [r.set_option('conflict_syncer_conds', conflict_syncer_conds) for r in self._robs]
         [r.set_option('com_link', com_link) for r in self._robs]
         [r.set_option('sol', solutions) for r in self._robs]
+        [r.set_option('accel', acceleration_solution) for r in self._robs]
         [r.set_option('p_sol', paramzed_solution) for r in self._robs]
         [r.set_option('rtime', race_time) for r in self._robs]
         [r.set_option('ctime', comp_time) for r in self._robs]
@@ -2037,9 +2138,9 @@ class WorldSim(object):
         path = range(len(self._robs))
         seg_pts_idx = [[] for _ in range(len(self._robs))]
         for i in range(len(self._robs)):
-            path[i] = self._robs[0].sol[i][0]
+            path[i] = solutions[i][0]
             seg_pts_idx[i] += [0]
-            for p in self._robs[0].sol[i][1:]:
+            for p in solutions[i][1:]:
                 c = path[i].shape[1]
                 seg_pts_idx[i] += [c]
                 path[i] = np.append(path[i], p, axis=1)
@@ -2047,9 +2148,7 @@ class WorldSim(object):
         # From [z dz ddz](t) get q(t) and u(t)
         zdzddz = [[]]*n_robots
         for i in range(n_robots):
-            zdzddz[i] = [
-                    np.asarray(z.reshape(self._robs[i].k_mod.l+1, self._robs[i].k_mod.u_dim).T)\
-                    for z in path[i].T]
+            zdzddz[i] = [np.asarray(z.reshape(self._robs[i].k_mod.l+2, self._robs[i].k_mod.u_dim).T) for z in path[i].T]
 
         # get a list over time of command values u(t)
         ut = range(len(self._robs))
@@ -2058,6 +2157,14 @@ class WorldSim(object):
             # Fixing division by near-zero value when calculating angspeed for plot
             ut[i][0][1,0] = self._robs[i].k_mod.u_init[1,0]
             ut[i][-1][1,0] = self._robs[i].k_mod.u_final[1,0]
+
+        # get a list over time of accelerations
+        at = range(len(self._robs))
+        for i in range(len(self._robs)):
+            at[i] = map(self._robs[i].k_mod.phi_3, zdzddz[i])
+            # Fixing division by near-zero
+            # at[i][0][1,0] = self._robs[i].k_mod.u_init[1,0]
+            # at[i][-1][1,0] = self._robs[i].k_mod.u_final[1,0]
 
         # get a list over time of values q(t)
         qt = range(len(self._robs))
@@ -2177,8 +2284,8 @@ class WorldSim(object):
 #            return
 
         # Interactive plot
-        if self._plot:
-            plt.ion()
+        #if self._plot:
+            #plt.ion()
 
 #        fig_obst_dist = plt.figure()
 #        ax_obst_dist= fig_obst_dist.gca()
@@ -2209,7 +2316,7 @@ class WorldSim(object):
         ax_rr_d.set_xlabel('time (s)')
         ax_rr_d.set_ylabel('Inter-robot distance (m)')
         ax_rr_d.set_title('Inter-robot distances throughout simulation')
-        ax_rr_d.set_xlim([0,min([x[-1] for x in rtime])])
+        #ax_rr_d.set_xlim([0,min([x[-1] for x in rtime])])
         handles, labels = ax_rr_d.get_legend_handles_labels()
         ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
 
@@ -2224,17 +2331,28 @@ class WorldSim(object):
         #fig_s = plt.figure()
         #ax_lin_vel = fig_s.gca()
         #axarray[0] = ax_lin_vel
-        axarray[0].set_ylabel(r'$v(m/s)$')
-        axarray[0].set_title('Linear speed')
+        axarray[0].set_ylabel(r'$v\,(m/s)$')
+        axarray[0].set_title('Linear and angular speeds')
         axarray[1].set_xlabel('time(s)')
-        axarray[0].set_xlabel('time(s)')
-        axarray[1].set_ylabel(r'$\omega(rad/s)$')
-        axarray[1].set_title('Angular speed')
+        #axarray[0].set_xlabel('time(s)')
+        axarray[1].set_ylabel(r'$\omega\,(rad/s)$')
+        #axarray[1].set_title('Angular speed')
+
+        fig_a, aaxarray = plt.subplots(2)
+        #fig_s = plt.figure()
+        #ax_lin_vel = fig_s.gca()
+        #axarray[0] = ax_lin_vel
+        aaxarray[0].set_ylabel(r'$a\,(m/s^2)$')
+        aaxarray[0].set_title('Linear and angular accelerations')
+        aaxarray[1].set_xlabel('time(s)')
+        #aaxarray[0].set_xlabel('time(s)')
+        aaxarray[1].set_ylabel(r'$\alpha\,(rad/s^2)$')
+        # aaxarray[1].set_title('Angular speed')
 
         fig = plt.figure()
         ax = fig.gca()
-        ax.set_xlabel(r'$x(m)$')
-        ax.set_ylabel(r'$y(m)$')
+        ax.set_xlabel(r'$x\,(m)$')
+        ax.set_ylabel(r'$y\,(m)$')
         ax.set_title('Generated trajectory')
         ax.axis('equal')
 
@@ -2328,26 +2446,47 @@ class WorldSim(object):
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight', dpi=300)
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.pdf', bbox_inches='tight', dpi=300)
             
-
+            auxcolors = ['b', 'y']*10
             for i in range(len(self._robs)):
                 linspeed = [x[0, 0] for x in ut[i]]
                 angspeed = [x[1, 0] for x in ut[i]]
+                # linacc = [x[0, 0] for x in acceleration_solution[i]]
+                # angacc = [x[1, 0] for x in acceleration_solution[i]]
+                linaccal = [x[0, 0] for x in at[i]]
+                angaccal = [x[1, 0] for x in at[i]]
+                # print 'LEN: ', len(linacc), len(rtime[i])
                 axarray[0].plot(rtime[i], linspeed, color=colors[i], label = r'$R_{}$'.format(i))
                 axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i))
+                # aaxarray[0].plot(rtime[i], linacc, color=auxcolors[i], label = r'$R_{}$'.format(i))
+                # aaxarray[1].plot(rtime[i], angacc, color=auxcolors[i], label = r'$R_{}$'.format(i))
+                aaxarray[0].plot(rtime[i], linaccal, color=colors[i], label = r'$R_{}$al'.format(i))
+                aaxarray[1].plot(rtime[i], angaccal, color=colors[i], label = r'$R_{}al$'.format(i))
             axarray[0].grid()
             axarray[1].grid()
+            aaxarray[0].grid()
+            aaxarray[1].grid()
             axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-            axarray[1].set_ylim([-2.0, 2.0])
+            # axarray[1].set_ylim([-2.0, 2.0])
+            # aaxarray[0].set_ylim([-1.1*self._robs[0].k_mod.a_max[0, 0]], 1.1*self._robs[0].k_mod.a_max[0, 0]])
+            aaxarray[1].set_ylim([-20.0, 20.0])
             fig_s.canvas.draw()
+            fig_a.canvas.draw()
 
             handles1, labels1 = axarray[0].get_legend_handles_labels()
             axarray[0].legend(handles1, labels1, ncol=3, loc=3)
             handles2, labels2 = axarray[1].get_legend_handles_labels()
             axarray[1].legend(handles2, labels2, ncol=3, loc=3)
+            handles1, labels1 = aaxarray[0].get_legend_handles_labels()
+            aaxarray[0].legend(handles1, labels1, ncol=3, loc=3)
+            handles2, labels2 = aaxarray[1].get_legend_handles_labels()
+            aaxarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
             fig_s.set_size_inches(1.0*18.5/2.54,1.0*13/2.54)
+            fig_a.set_size_inches(1.0*18.5/2.54,1.0*13/2.54)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.png',bbox_inches='tight', dpi=300)
             fig_s.savefig(self._direc+'/images/'+self._sn+'/multirobot-vw.pdf',bbox_inches='tight', dpi=300)
+            fig_a.savefig(self._direc+'/images/'+self._sn+'/multirobot-aalpha.png',bbox_inches='tight', dpi=300)
+            fig_a.savefig(self._direc+'/images/'+self._sn+'/multirobot-aalpha.pdf',bbox_inches='tight', dpi=300)
 
             if self._plot:
                 while True:
@@ -2475,11 +2614,14 @@ if __name__ == '__main__':
     seps = float(mpmethod.find('interrobotsafetydist').text)
     deps = float(mpmethod.find('conflictfreepathdeviation').text)
 
+
     optimizer = root.find('optimizer')
 
     f_max_it = int(optimizer.find('maxiteraction').find('first').text)
     max_it = int(optimizer.find('maxiteraction').find('inter').text)
     l_max_it = int(optimizer.find('maxiteraction').find('last').text)
+    accuracy = float(optimizer.find('xtolerance').text)
+    
 
     # iterate over obstacles
     obstacles = []
@@ -2538,13 +2680,7 @@ if __name__ == '__main__':
                 help='view results in a iteractive plot and save each frame')
         parser.add_option('-P', '--storepath', dest='direc',
                 help='path for storing simulation data', metavar='PATH', default='./simoutput')
-        parser.add_option('-S', '--timesamplingsol', dest='no_ssol', default=14,
-                action='store', type='int', help='number of time samples used for creating the solution')
-        parser.add_option('-a', '--accuracy', dest='acc', default=1E-3,
-                action='store', type='float', help='optimization accuracy')
-        parser.add_option('-r', '--detectionradius', dest='drho', default=6.0,
-                action='store', type='float',
-                help='detection radius within which the robot can detect an obstacle (in meters)')
+        parser.add_option('-S', '--timesamplingsol', dest='no_ssol', default=no_sopt, action='store', type='int', help='number of time samples used for creating the solution')
         return
 
     scriptname = sys.argv[0]
@@ -2565,13 +2701,13 @@ if __name__ == '__main__':
             '_'+str(no_sopt)+\
             '_'+str(options.no_ssol)+\
             '_'+str(no_knots)+\
-            '_'+str(options.acc)+\
+            '_'+str(accuracy)+\
             '_'+str(max_it)+\
             '_'+str(f_max_it)+\
             '_'+str(l_max_it)+\
             '_'+str(deps)+\
             '_'+str(seps)+\
-            '_'+str(options.drho)+\
+            '_'+str(6.0)+\
             '_'+str(ls_min_dist)
 
     if options.savelog:
@@ -2584,7 +2720,7 @@ if __name__ == '__main__':
     boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
     robots = []
-    for i in range(len(kine_models)):
+    for i, robot in zip(range(len(kine_models)), root.find('aivs')):
         if i-1 >= 0 and i+1 < len(kine_models):
             neigh = [i-1, i+1]
         elif i-1 >= 0:
@@ -2606,12 +2742,12 @@ if __name__ == '__main__':
             Td=time_p,
             def_epsilon=deps,       # in meters
             safe_epsilon=seps,      # in meters
-            detec_rho=options.drho,
+            detec_rho=float(robot.find('detectionradius').text),
             ls_time_opt_scale = ls_time_opt_scale,
             ls_min_dist = ls_min_dist,
-            rho = 0.54)]
+            rho = 0.5)]
 
-    [r.set_option('acc', options.acc) for r in robots] 
+    [r.set_option('acc', accuracy) for r in robots] 
     [r.set_option('maxit', max_it) for r in robots] 
     [r.set_option('ls_maxit', l_max_it) for r in robots] 
     [r.set_option('fs_maxit', f_max_it) for r in robots]

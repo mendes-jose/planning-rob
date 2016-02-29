@@ -1,0 +1,234 @@
+
+This is a file `actapolymanual.bib' which contains bibliography
+examples for the demonstration of `actapoly' bibliography style.
+
+@book {Knuth1,
+	author = {Knuth, Donald E.},
+	title = {The art of computer programming. {V}ol.~1: {F}undamental algorithms},
+	series = {Second printing},
+	publisher = {Addison-Wesley Publishing Co., Reading, Mass.-London-Don Mills, Ont},
+	year = {1969},
+	pages = {xxi+634},
+}
+
+#@incollection {TeXbook:D,
+#	author = {Donald E. Knuth},
+#	title = {Running {\TeX}},
+#	booktitle = {The {\TeX}book},
+#	chapter = {{23}},
+#	publisher = {Addison-Wesley Publishing Co., Reading},
+#	year = {1986},
+#}
+
+@misc {booktabs,
+	author = {Simon Fear and Danie Els},
+	title = {{CTAN} web interface: {P}ackage booktabs},
+	note = {[2012-06-24]},
+	eprint = {http://www.ctan.org/pkg/booktabs},
+}
+
+@misc {msc,
+	author = {{American Mathematical Society}},
+	title = {2010 {M}athematics Subject Classification},
+	eprint = {http://www.ams.org/mathscinet/msc/msc2010.html},
+}
+
+@misc {johndoe,
+	author = {John Doe},
+	title = {Example of an ar{X}iv reference},
+	eprint = {http://arxiv.org/abs/0000.0000v1},
+	archive = {arXiv:0000.0000v1},
+}
+
+@article {Ch,
+	author = {Chandrasekhar, S.},
+	title = {ON THE CONTINUOUS ABSORPTION COEFFICIENT OF THE NEGATIVE HYDROGEN ION .2.},
+	journal = {Astrophys J},
+	year = {1945},
+	volume = {102},
+	number = {3},
+	pages = {395-401},
+}
+
+@manual {doi,
+    organization = {DOI Foundation},
+    title = {{DOI} {H}andbook},
+    note = {\url{http://www.doi.org/hb.html}},
+    year = {2014},
+    doi = {10.1000/182},
+}
+	
+@misc {abcdef,
+    author = {Me},
+    title = {Your {BibTeX} file can comprise as many items as you wish, and they will not be used in the document unless you cite them
+      or you use the {\string\nocite} macro},
+}
+
+@misc{Gizmag,
+  title = {Autonomous robots are helping to pack your Amazon orders},
+  howpublished = {\url{http://www.gizmag.com/amazon-kiva-fulfillment-system/34999/}},
+  note = {Accessed: 2015-07-07}
+  author = {Stu Robarts}
+}
+
+@book{Nocedal,
+   title = "Numerical optimization : with 85 illustrations",
+   author = "Nocedal, Jorge and Wright, Steve J.",
+   series = "Springer series in operations research",
+   publisher = "Springer",
+   address = "New York, Berlin, Heidelberg",
+   url = "http://opac.inria.fr/record=b1096778",
+   isbn = "0-387-98793-2",
+   note = "Tirage corrigé: 2000",
+   year = 1999
+}
+
+@book{ericson2004real,
+  title={Real-Time Collision Detection},
+  author={Ericson, C.},
+  isbn={9780080474144},
+  series={M038/the Morgan Kaufmann Ser. in Interactive 3D Technology Series},
+  url={https://books.google.fr/books?id=4wTNBQAAQBAJ},
+  year={2004},
+  publisher={Taylor \& Francis}
+}
+
+@article{betts1998survey,
+  title={Survey of numerical methods for trajectory optimization},
+  author={Betts, John T},
+  journal={Journal of guidance, control, and dynamics},
+  volume={21},
+  number={2},
+  pages={193--207},
+  year={1998}
+}
+
+@phdthesis{milam2003real,
+  title={Real-time optimal trajectory generation for constrained dynamical systems},
+  author={Milam, Mark B},
+  year={2003},
+  school={California Institute of Technology}
+}
+
+@article{schwartz1988survey,
+  title={A survey of motion planning and related geometric algorithms},
+  author={Schwartz, Jacob T. and Sharir, Micha},
+  journal={Artificial Intelligence},
+  volume={37},
+  number={1},
+  pages={157--169},
+  year={1988},
+  publisher={Elsevier}
+}
+
+@book{latombe2012robot,
+  title={Robot motion planning},
+  author={Latombe, Jean-Claude},
+  volume={124},
+  year={2012},
+  publisher={Springer Science \& Business Media}
+}
+
+@article{fox1997dynamic,
+  title={The dynamic window approach to collision avoidance},
+  author={Fox, Dieter and Burgard, Wolfram and Thrun, Sebastian and others},
+  journal={IEEE Robotics \& Automation Magazine},
+  volume={4},
+  number={1},
+  pages={23--33},
+  year={1997}
+}
+
+@article{Kelly2003,
+abstract = {There are many situations for which a feasible nonholonomic motion plan must be generated immediately based on real-time perceptual information. Parametric trajectory representations limit computation because they reduce the search space for solutions (at the cost of potentially introducing suboptimality). The use of any parametric trajectory model converts the optimal control formulation into an equivalent nonlinear programming problem. In this paper, curvature polynomials of arbitrary order are used as the assumed form of solution. Polynomials sacrifice little in terms of spanning the set of feasible controls while permitting an expression of the general solution to the system dynamics in terms of decoupled quadratures. These quadratures are then readily linearized to express the necessary conditions for optimality. Resulting trajectories are convenient to manipulate and execute in vehicle controllers and they can be computed with a straightforward numerical procedure in real time.},
+author = {Kelly, a. and Nagy, B.},
+doi = {10.1177/02783649030227008},
+file = {:C$\backslash$:/Users/JM246044/Dev/planning-rob/references/ijrr02TrajGen.pdf:pdf},
+issn = {0278-3649},
+journal = {The International Journal of Robotics Research},
+keywords = {car-like robots,clothoid,cornu,curve generation,generation,mobile robots,nonholonomic,optimal control,spiral,trajectory},
+mendeley-groups = {PFE},
+number = {7-8},
+pages = {583--601},
+title = {{Reactive Nonholonomic Trajectory Generation via Parametric Optimal Control}},
+volume = {22},
+year = {2003}
+}
+
+@misc{Workshop,
+  title = {Workshop on On-line decision-making in multi-robot coordination},
+  howpublished = {\url{http://robotics.fel.cvut.cz/demur15/}},
+  note = {Accessed: 2015-06-22},
+  author={Workshop},
+  year = {2015}
+}
+
+@article {Defoort2007,
+	abstract = {This paper presents an architecture for the navigation of an autonomous mobile robot evolving in an uncertain environment with obstacles. The proposed strategy consists in separating the path planning from the control algorithm. The path planning is done by computing the time optimal collision-free trajectory which takes into account the limitations on the linear and angular speeds of the vehicle. The position and shape of obstacles are computed by a vision algorithm using a single camera. A saturated controller based on integral sliding mode is designed to solve the tracking problem in the presence of input saturations and of the unknown disturbances. The effectiveness, perfect performance of obstacle avoidance, real-time and high robustness properties are demonstrated by experimental results.},
+	author = {Defoort, M. and Palos, J. and Kokosy, a. and Floquet, T. and Perruquetti, W. and Boulinguez, D.},
+	doi = {10.1109/ROBOT.2007.363650},
+	file = {:home/mendes/Dev/planning-rob/docs/biblio/04209414.pdf:pdf},
+	isbn = {1-4244-0601-3},
+	issn = {1050-4729},
+	journal = {Proceedings 2007 IEEE International Conference on Robotics and Automation},
+	number = {April},
+	pages = {10--14},
+	title = {{Experimental Motion Planning and Control for an Autonomous Nonholonomic Mobile Robot}},
+	year = {2007}
+}
+
+@article{Defoort2007a,
+author = {Defoort, Michael},
+file = {:home/mendes/Dev/planning-rob/docs/biblio/these\_M.Defoort2007\_plannif-commande\_vehicules\_cooperatifs.pdf:pdf},
+journal = {Ecole Centrale de Lille},
+keywords = {<tel-00196529>},
+mendeley-tags = {<tel-00196529>},
+title = {{Contributions \`{a} la planification et \`{a} la commande pour les robots mobiles coop\'{e}ratifs}},
+url = {https://tel.archives-ouvertes.fr/tel-00196529 http://www.theses.fr/2007ECLI0012},
+year = {2007}
+}
+
+@article{Defoort2009,
+abstract = {This paper presents a decentralized motion planner for a team of nonholonomic mobile robots subject to constraints imposed by sensors and the communication network. The motion planning scheme consists of decentralized receding horizon planners that reside on each vehicle to achieve coordination among flocking agents. The advantage of the proposed algorithm is that each vehicle only requires local knowledge of its neighboring vehicles. The main requirement for designing an optimal conflict-free trajectory in a decentralized way is that each robot does not deviate too far from its presumed trajectory designed without taking the coupling constraints into account. A comparative study between the proposed algorithm and other existing algorithms is provided in order to show the advantages, especially in terms of computing time. Finally, experiments are performed on a team of three mobile robots to demonstrate the validity of the proposed approach. ?? 2009 Elsevier B.V. All rights reserved.},
+author = {Defoort, Michael and Kokosy, Annemarie and Floquet, Thierry and Perruquetti, Wilfrid and Palos, Jorge},
+doi = {10.1016/j.robot.2009.07.004},
+file = {:home/mendes/Dev/planning-rob/references/paper/1-s2.0-S092188900900092X-main.pdf:pdf},
+isbn = {0921-8890},
+issn = {09218890},
+journal = {Robotics and Autonomous Systems},
+keywords = {Decentralized intelligence,Nonholonomic mobile robot,Receding horizon planning},
+number = {11},
+pages = {1094--1106},
+publisher = {Elsevier B.V.},
+title = {{Motion planning for cooperative unicycle-type mobile robots with limited sensing ranges: A distributed receding horizon approach}},
+url = {http://dx.doi.org/10.1016/j.robot.2009.07.004},
+volume = {57},
+year = {2009}
+}
+
+@article{pyopt-paper,
+  author = {Ruben E. Perez and Peter W. Jansen and Joaquim R. R. A. Martins},
+  title = {py{O}pt: A {P}ython-Based Object-Oriented Framework for Nonlinear Constrained Optimization},
+  journal = {Structures and Multidisciplinary Optimization},
+  year = {2012},
+  volume = {45},
+  number = {1},
+  pages = {101--118},
+  doi = {10.1007/s00158-011-0666-3}
+}
+@article{Keviczky2006,
+abstract = {We present a detailed study on the design of decentralized receding horizon control (RHC) schemes for decoupled systems. We formulate an optimal control problem for a set of dynamically decoupled systems where the cost function and constraints couple the dynamical behavior of the systems. The coupling is described through a graph where each system is a node, and cost and constraints of the optimization problem associated with each node are only function of its state and the states of its neighbors. The complexity of the problem is addressed by breaking a centralized RHC controller into distinct RHC controllers of smaller sizes. Each RHC controller is associated with a different node and computes the local control inputs based only on the states of the node and of its neighbors. We analyze the properties of the proposed scheme and introduce sufficient stability conditions based on prediction errors. Finally, we focus on linear systems and show how to recast the stability conditions into a set of matrix semi-definiteness tests.},
+author = {Keviczky, Tam\'{a}s and Borrelli, Francesco and Balas, Gary J.},
+doi = {10.1016/j.automatica.2006.07.008},
+file = {:home/mendes/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Keviczky, Borrelli, Balas - 2006 - Decentralized receding horizon control for large scale dynamically decoupled systems.pdf:pdf},
+issn = {00051098},
+journal = {Automatica},
+keywords = {Decentralized predictive control,Decoupled subsystems,Receding horizon control},
+month = dec,
+number = {12},
+pages = {2105--2115},
+title = {{Decentralized receding horizon control for large scale dynamically decoupled systems}},
+url = {http://www.sciencedirect.com/science/article/pii/S0005109806003049},
+volume = {42},
+year = {2006}
+}
