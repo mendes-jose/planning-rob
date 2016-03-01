@@ -1078,7 +1078,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
 
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1254,7 +1254,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1391,7 +1391,7 @@ class Robot(object):
                 for at in atTp]))
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons # + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons + max_acc_cons
 
         # Count how many inequations are not respected
         self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1478,6 +1478,8 @@ class Robot(object):
         Return
             Array with the inequations' values.
         """
+        # self._log('d', 'R{rid}@tkref={tk:.4f} inside CO IEQ'.format(rid=self.eyed, tk=self._opttime[0]))
+
         C = x.reshape(self._n_ctrlpts, self.k_mod.u_dim)
 
         # get a list over time of the matrix [z dz ddz](t) t in [tk, tk+Tp]
@@ -1539,11 +1541,15 @@ class Robot(object):
                     d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
                             [self._com_link.latest_z[p][0], \
                             self._com_link.latest_z[p][1]]))
+                    # d_ip2 = ((float(dz[0, i-1]) - float(self._com_link.latest_z[p][0]))**2 +  (float(dz[1, i-1]) - float(self._com_link.latest_z[p][1]))**2)**(.5)
+                    # self._log('d', 'R{rid}@tkref={tk:.4f} collision CONS\nDist norm: {dist1}\nDist sqrt{dist2}'.format(rid=self.eyed, tk=self._opttime[0], dist1=d_ip, dist2=d_ip2))
                 else:
                     d_secu = 2*self.rho
                     d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
                             [self._com_link.intended_path_z1[p][i], \
                             self._com_link.intended_path_z2[p][i]]))
+                    #d_ip2 = ((float(dz[0, i-1]) - float(self._com_link.intended_path_z1[p][i]))**2 +  (float(dz[1, i-1]) - float(self._com_link.intended_path_z2[p][i]))**2)**(.5)
+                    # self._log('d', 'R{rid}@tkref={tk:.4f} collision CONS\nDist norm: {dist1}\nDist sqrt: {dist2}'.format(rid=self.eyed, tk=self._opttime[0], dist1=d_ip, dist2=d_ip2))
                 collision_cons.append(d_ip - d_secu - self._safe_epsilon)
 
         ## Deformation from intended path constraint
@@ -1553,7 +1559,7 @@ class Robot(object):
             deform_cons.append(self._def_epsilon - d_ii)
 
         # Create final array
-        ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons # + max_acc_cons
+        ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons + max_acc_cons
 
         # Count how many inequations are not respected
         unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
@@ -1577,7 +1583,10 @@ class Robot(object):
                 d_secu = 2*self.rho
                 linspeed_max = 2*self.k_mod.u_max[0, 0]
 
-            d_ip = LA.norm(self._latest_z - self._com_link.latest_z[i])
+            d_ip = LA.norm(self._latest_z.T - np.asarray([self._com_link.latest_z[i][0], self._com_link.latest_z[i][1]]))
+            #d_ip = ((float(self._latest_z[0]) - float(self._com_link.latest_z[i][0]))**2 +  (float(self._latest_z[1]) - float(self._com_link.latest_z[i][1]))**2)**(.5)
+
+            self._log('d', 'R{rid}@tkref={tk:.4f} in Compute Conflicts\n{p1}\n{p2}, {p22}\nDist: {dist}\n{lins}\n{tp}\n{dsecu}'.format(rid=self.eyed, tk=self._opttime[0], p1=self._latest_z, p2=self._com_link.latest_z[i][0], p22=self._com_link.latest_z[i][1], dist=d_ip, lins=linspeed_max, tp=self._Tp, dsecu=d_secu))
 
             # TODO shouldn't it be Tc instead of Tp?
             if d_ip <= d_secu + linspeed_max*self._Tp:
@@ -1823,6 +1832,7 @@ class Robot(object):
         if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
             self._std_alone = False
+
 
 #            self._conflict_dz = [self._read_com_link()]
 #            self._read_com_link()
@@ -2318,7 +2328,7 @@ class WorldSim(object):
         ax_rr_d.set_title('Inter-robot distances throughout simulation')
         #ax_rr_d.set_xlim([0,min([x[-1] for x in rtime])])
         handles, labels = ax_rr_d.get_legend_handles_labels()
-        ax_rr_d.legend(handles, labels, loc=1, ncol=2, prop={'size':11})
+        ax_rr_d.legend(handles, labels, loc=1, ncol=4, prop={'size':9})
 
         fig_rr_d.set_size_inches(1.0*18.5/2.54,1.0*6.5/2.54)
         fig_rr_d.savefig(self._direc+'/images/'+self._sn+'/multirobot-interr.png',\
@@ -2441,7 +2451,7 @@ class WorldSim(object):
             fig.canvas.draw()
 
             handles, labels = ax.get_legend_handles_labels()
-            ax.legend(handles, labels, loc=3, ncol=3)
+            ax.legend(handles, labels, loc=2, ncol=3)
 
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.png', bbox_inches='tight', dpi=300)
             fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path.pdf', bbox_inches='tight', dpi=300)
@@ -2457,27 +2467,29 @@ class WorldSim(object):
                 # print 'LEN: ', len(linacc), len(rtime[i])
                 axarray[0].plot(rtime[i], linspeed, color=colors[i], label = r'$R_{}$'.format(i))
                 axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i))
+                # axarray[1].plot(rtime[i], angspeed, color=colors[i])
                 # aaxarray[0].plot(rtime[i], linacc, color=auxcolors[i], label = r'$R_{}$'.format(i))
                 # aaxarray[1].plot(rtime[i], angacc, color=auxcolors[i], label = r'$R_{}$'.format(i))
-                aaxarray[0].plot(rtime[i], linaccal, color=colors[i], label = r'$R_{}$al'.format(i))
-                aaxarray[1].plot(rtime[i], angaccal, color=colors[i], label = r'$R_{}al$'.format(i))
+                aaxarray[0].plot(rtime[i], linaccal, color=colors[i], label = r'$R_{}$'.format(i))
+                # aaxarray[0].plot(rtime[i], linaccal, color=colors[i])
+                aaxarray[1].plot(rtime[i], angaccal, color=colors[i], label = r'$R_{}$'.format(i))
             axarray[0].grid()
             axarray[1].grid()
             aaxarray[0].grid()
             aaxarray[1].grid()
             axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-            # axarray[1].set_ylim([-2.0, 2.0])
+            axarray[1].set_ylim([-10.0, 10.0])
             # aaxarray[0].set_ylim([-1.1*self._robs[0].k_mod.a_max[0, 0]], 1.1*self._robs[0].k_mod.a_max[0, 0]])
-            aaxarray[1].set_ylim([-20.0, 20.0])
+            aaxarray[1].set_ylim([-15.0, 15.0])
             fig_s.canvas.draw()
             fig_a.canvas.draw()
 
             handles1, labels1 = axarray[0].get_legend_handles_labels()
             axarray[0].legend(handles1, labels1, ncol=3, loc=3)
             handles2, labels2 = axarray[1].get_legend_handles_labels()
-            axarray[1].legend(handles2, labels2, ncol=3, loc=3)
+            # axarray[1].legend(handles2, labels2, ncol=3, loc=3)
             handles1, labels1 = aaxarray[0].get_legend_handles_labels()
-            aaxarray[0].legend(handles1, labels1, ncol=3, loc=3)
+            # aaxarray[0].legend(handles1, labels1, ncol=3, loc=3)
             handles2, labels2 = aaxarray[1].get_legend_handles_labels()
             aaxarray[1].legend(handles2, labels2, ncol=3, loc=3)
 
