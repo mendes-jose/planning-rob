@@ -1002,7 +1002,7 @@ class Robot(object):
 
 		# calculate equations
 		final_theta_rf = UnicycleKineModel._signed_angle(self.k_mod.q_final[-1] - self._latest_q[-1])
-		final_q_rf = np.vstack((self._latest_rot2rob_mat*self.k_mod.q_final[0:2, 0], final_theta_rf))
+		final_q_rf = np.vstack((self._latest_rot2rob_mat*(self.k_mod.q_final[0:2, 0]-self._latest_z), final_theta_rf))
 
 		eq_cons = list(np.squeeze(np.array(self.k_mod.phi_1(dztinit))))+\
 				list(np.squeeze(np.array(self.k_mod.phi_1(dztfinal)-final_q_rf)))+\
@@ -1663,47 +1663,49 @@ class Robot(object):
 				p_criterion = self._ls_co_criterion
 				p_eqcons = self._ls_co_feqcons
 				p_ieqcons = self._ls_co_fieqcons
-
+			print 'Estimate last delta t: ', self._est_dtime
 			init_guess = np.append(np.asarray([self._est_dtime]),
 					self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
 			acc = self._acc
 			maxit = self._ls_maxit
 
-		if False: #self._plan_state != 'ls':
-			output = fmin_slsqp(
-				p_criterion,
-				init_guess,
-				eqcons=(),
-				f_eqcons=p_eqcons,
-				ieqcons=(),
-				f_ieqcons=p_ieqcons,
-				iprint=0,
-				iter=maxit,
-				acc=acc,
-				full_output=True)
-
-				#imode = output[3]
-				# TODO handle optimization exit mode
+		# if True: #self._plan_state != 'ls':
+		if True:
+			output = fmin_slsqp(p_criterion, init_guess, eqcons=(), f_eqcons=p_eqcons, ieqcons=(), f_ieqcons=p_ieqcons, iprint=0, iter=maxit, acc=acc, full_output=True)
+		else:
+			output = [[], 0, 0, 0, 0]
 			if self._plan_state == 'ls':
-				self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*(output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)).T).T
-				self._dt_final = output[0][0]
-				self._t_final = self._opttime[0] + self._dt_final
+				# print output[0].shape
+				output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+				#print output[0].shape
+				output[0] = np.insert(output[0], 0, self._est_dtime)
+				#print output[0].shape
 			else:
-				# print self._latest_rot2ref_mat.shape
-				# print (output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim))
-				self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*(output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)).T).T
-	#			#imode = output[3]
-	#			# TODO handle optimization exit mode
+				output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
 
-			self._n_it = output[2]
-			self._exit_mode = output[4]
+		if self._plan_state == 'ls':
+			#print output[0].shape
+			#print self._C.shape
+			self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*(output[0][1:].reshape(self._n_ctrlpts, self.k_mod.u_dim)).T).T
+			self._dt_final = output[0][0]
+			print 'Last delta t: ', self._dt_final
+			self._t_final = self._opttime[0] + self._dt_final
+		else:
+			# print self._latest_rot2ref_mat.shape
+			# print (output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim))
+			self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*(output[0].reshape(self._n_ctrlpts, self.k_mod.u_dim)).T).T
+#			#imode = output[3]
+#			# TODO handle optimization exit mode
+
+		self._n_it = output[2]
+		self._exit_mode = output[4]
 
 		#else:
-		if self._plan_state == 'ls':
-			self._dt_final = self._est_dtime
-			self._t_final = self._opttime[0] + self._dt_final
+		# if self._plan_state == 'ls':
+		# 	self._dt_final = self._est_dtime
+		# 	self._t_final = self._opttime[0] + self._dt_final
 
-		self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*self._C[0:self._n_ctrlpts,:].T).T
+		# self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*self._C[0:self._n_ctrlpts,:].T).T
 
 	def _plan_section(self):
 		""" This method takes care of planning a section of the final path over a :math:`T_{d/p}`
@@ -1745,9 +1747,9 @@ class Robot(object):
 			| :math:`\\Delta>0` | secant		  |
 			"""
 
-			goal_direc = self._final_z - self._latest_z
-			robot2goal_dist = LA.norm(goal_direc)
-			goal_direc = goal_direc/robot2goal_dist
+			robot2goal = self._final_z - self._latest_z
+			robot2goal_dist = LA.norm(robot2goal)
+			goal_direc = robot2goal/robot2goal_dist
 			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
 
 			# waypt_direc = self._waypoint - self._latest_z
@@ -1776,24 +1778,25 @@ class Robot(object):
 
 				discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
 
-				if discriminant > 0: #secant
+				if discriminant > 0: # secant
 					# print "Secante"
 
 					# the obstacle may be left behind already, let's check
-					obst2robot = -p1
-					obst2robt_norm = LA.norm(obst2robot)
+					robot2obst = -p1
+					robot2obst_norm = LA.norm(robot2obst)
 					# print "latest z:\n", self._latest_z
 					# print "obst center:\n", np.matrix(self._obst[i].centroid).T
-					# print "OA:\n", obst2robot
-					# print "OA norm: ", float(obst2robt_norm)
+					# print "OA:\n", robot2obst
+					# print "OA norm: ", float(robot2obst_norm)
 					# print "init Theta: ", goal_theta
-					# print "Angle between vector obst center: ", np.arctan2(obst2robot[1], obst2robot[0])
+					# print "Angle between vector obst center: ", np.arctan2(robot2obst[1], robot2obst[0])
 
 					# get the signed norm of the projection of the vector connecting the obst and latest Z in robot direction vector (positive if the projection is in the same direction as the waypt_direc vector, negative otherwise)
-					signed_norm = obst2robt_norm * np.cos(np.arctan2(obst2robot[1], obst2robot[0])-self._latest_q[-1])
+					# this is used to evaluate if the obstacle was left behind already
+					signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
 
-					print "Signed norm: ", float(signed_norm)
-					print "Robot pose: ", self._latest_q
+					#print "Signed norm: ", float(signed_norm)
+					#print "Robot pose: ", self._latest_q
 
 					if signed_norm < self.rho:
 						history += [[goal_direc, 0.0]]
@@ -1805,9 +1808,9 @@ class Robot(object):
 					rad = self._obst[i].radius+self.rho
 
 					# solving second degree eq for finding the tow m's
-					a = p1[0]**2 - rad**2
-					b = 2*p1[0]*p1[1]
-					c = p1[1]**2 - rad**2
+					a = robot2obst[0]**2 - rad**2
+					b = -2*robot2obst[0]*robot2obst[1]
+					c = robot2obst[1]**2 - rad**2
 
 					discriminant = b**2 - 4*a*c
 
@@ -1818,45 +1821,102 @@ class Robot(object):
 						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
 						print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
 
-						history += [[goal_direc, 0.0]]
+						#history += [[goal_direc, 0.0]]
+						latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+						abs_latest_d_theta = abs(self._latest_q[-1] - goal_theta)
+						history += [[latest_direc, abs_latest_d_theta]]
 						continue
 
 					elif discriminant == 0:
 						# y/x of unit vector is m
 						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
 
-						theta1 = np.arctan2(-b, 2*a) # [-pi, pi)
+						theta1 = np.arctan(-b/2*a) # [-pi, pi)
 						theta2 = theta1-np.pi # [-2pi, 0.0]
 
 					else:
-						# TODO investigante -1
-						theta1 = -1*np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi, pi]
-						theta2 = -1*np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi, pi]
+						theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
+						theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
+						# using arctan2 makes things go wrong. theta is in [-pi, pi] but the quadrands are
 
-					d_theta1 = abs(UnicycleKineModel._signed_angle(goal_theta-theta1))
-					d_theta2 = abs(UnicycleKineModel._signed_angle(goal_theta-theta2))
-					
-					
-					print 'Deltas theta: ', d_theta1, '(', float(np.sign(theta1)), '), ', d_theta2, '(', float(np.sign(theta2)), ')'
-					print 'Thetas: ', theta1, ', ', theta2
+					# two values of inclination are possible for a given line. Some computation has to be done so the two right m's are found
 
-					if d_theta1 < d_theta2:
+					self._log('d', 'Thetas (m\'s): {t1}, {t2}'.format(t1=theta1, t2=theta2))
+
+					# x1 = (robot2obst[1] + theta1**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta1**2 + 1)
+					# x2 = (robot2obst[1] + theta2**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta2**2 + 1)
+
+					# y1 = theta1*x1 + self._latest_z[1] -theta1*self._latest_z[0]
+					# y2 = theta2*x2 + self._latest_z[1] -theta2*self._latest_z[0]
+
+					# self._log('d', 'R{rid}@tkref={tk:.4f}: P1: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x1, y=y1))
+					# self._log('d', 'R{rid}@tkref={tk:.4f}: P2: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x2, y=y2))
+
+					# u1 = np.vstack((x1, y1)) - self._latest_z
+					# u2 = np.vstack((x2, y2)) - self._latest_z
+
+					# v = robot2goal
+
+					# dangle1 = np.arccos((u1[0]*v[0]+u1[1]*v[1])/(LA.norm(u1)*LA.norm(v)))
+					# dangle2 = np.arccos((u2[0]*v[0]+u2[1]*v[1])/(LA.norm(u2)*LA.norm(v)))
+					# self._log('d', 'Delta angles: {t1}, {t2}'.format(t1=dangle1, t2=dangle2))
+
+					# Not sure this is the way
+					# if x1 < self._latest_z[0]:
+					# 	theta1 = UnicycleKineModel._signed_angle(theta1-np.pi)
+					# if x2 < self._latest_z[0]:
+					# 	theta2= UnicycleKineModel._signed_angle(theta1-np.pi)
+
+					# self._log('d', 'Goal angle: {}'.format(goal_theta))
+					quad14_goal_theta = goal_theta if goal_theta <= np.pi/2 and goal_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(goal_theta-np.pi)
+					# self._log('d', 'N Goal angle: {}'.format(quad14_goal_theta))
+					
+					if (quad14_goal_theta < theta1 and quad14_goal_theta < theta2) or (quad14_goal_theta > theta1 and quad14_goal_theta > theta2):
+					 	self._log('d', 'goal not in the middle')
+					 	# if abs(quad14_goal_theta - theta1) > np.pi/2:
+					 	self._log('d', '{}'.format(quad14_goal_theta - theta1))
+					 	self._log('d', '{}'.format(quad14_goal_theta - theta2))
+					 	if abs(quad14_goal_theta - theta1) > abs(quad14_goal_theta - theta2):
+					 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
+					 	else:
+					 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
+
+					#if goal_theta > np.pi/2 and goal_theta >= -np.pi/2
+					self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
+
+					d_theta1 = quad14_goal_theta - theta1
+					d_theta2 = quad14_goal_theta - theta2
+					#d_theta1 = UnicycleKineModel._signed_angle(goal_theta - theta1)
+					#d_theta2 = UnicycleKineModel._signed_angle(goal_theta - theta2)
+					absd_theta1 = abs(d_theta1)
+					absd_theta2 = abs(d_theta2)
+					theta1 = UnicycleKineModel._signed_angle(goal_theta - d_theta1)
+					theta2 = UnicycleKineModel._signed_angle(goal_theta - d_theta2)
+					
+					self._log('d', 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2))
+					self._log('d', 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2))
+
+					if absd_theta1 < absd_theta2:
+						#norm = np.sqrt(x1**2 + y1**2)
 						direc = np.vstack((np.cos(theta1), np.sin(theta1)))
-						history += [[direc, d_theta1]]
+						#direc = np.vstack((x1/norm, y1/norm))
+						history += [[direc, absd_theta1]]
 					else:
-						if d_theta1 == d_theta2:
+						if absd_theta1 == absd_theta2:
 							self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
 
 						# print [np.cos(theta2), np.sin(theta2)]
 						# print np.matrix([np.cos(theta2), np.sin(theta2)]).T
 						direc = np.vstack((np.cos(theta2), np.sin(theta2)))
-						history += [[direc, d_theta2]]
+						# norm = np.sqrt(x2**2 + y2**2)
+						# direc = np.vstack((x2/norm, y2/norm))
+						history += [[direc, absd_theta2]]
 				else:
 					history += [[goal_direc, 0.0]]
 					
 			#end of for
-			if history != []:
-				print 'Choosen theta: ', max(history, key=lambda x:x[1])[1]
+			# if history != []:
+				# self._log('d', 'Choosen theta: {}'.format(max(history, key=lambda x:x[1])[1]))
 			if history != []:
 				direc = max(history, key=lambda x:x[1])[0]
 				waypoint = direc*robot2goal_dist + self._latest_z
@@ -1868,22 +1928,24 @@ class Robot(object):
 		# Get the direction of the robot, the new waypoint and the direction to it
 		init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
 		direc, self._waypoint = _find_direction()
-		print 'wayPoint:\n', self._waypoint
+		self._log('d', 'R{rid}@tkref={tk:.4f}: found wayPoint:\n{wp}'.format(rid=self.eyed, tk=self._opttime[0], wp=self._waypoint))
+		self._log('d', 'R{rid}@tkref={tk:.4f}: found direction angle:\n{dir}'.format(rid=self.eyed, tk=self._opttime[0], dir=np.arctan2(direc[1], direc[0])*180.0/np.pi))
+		self._log('d', 'direction:\n{dir}'.format(dir=direc))
 
 		# Get rotation matrix for absolute to robot's frame of reference
 		self._latest_rot2ref_mat = np.hstack((init_direc, np.multiply(np.flipud(init_direc), np.vstack((-1,1)))))
 		self._latest_rot2rob_mat = np.hstack((np.multiply(init_direc, np.vstack((1,-1))), np.flipud(init_direc)))
 		rotated_direc = self._latest_rot2rob_mat*direc
-		print 'Rotation2rob\n', self._latest_rot2rob_mat
-		print 'Rotation2ref\n', self._latest_rot2ref_mat
-		print 'Prod\n', self._latest_rot2rob_mat*self._latest_rot2ref_mat
+		self._log('d', 'Rotation2rob\n{}'.format(self._latest_rot2rob_mat))
+		self._log('d', 'Rotation2ref\n{}'.format(self._latest_rot2ref_mat))
+		# print 'Prod\n', self._latest_rot2rob_mat*self._latest_rot2ref_mat
 
 
 		# Get planning horizon
 		planHor = self._est_dtime if self._plan_state == 'ls' else self._Td
 
 		# Get right acceleration
-		accel = -1*self.k_mod.acc_max[0,0] if self._plan_state == 'ls' else self.k_mod.acc_max[0,0]
+		accel = -1.*self.k_mod.acc_max[0,0] if self._plan_state == 'ls' else self.k_mod.acc_max[0,0]
 
 		# Create a sampled trajectory for a "bounded uniformed accelerated motion" in x axis
 		curve_init_direc = [[]]*self.k_mod.z_dim
@@ -1909,7 +1971,7 @@ class Robot(object):
 
 			curve_init_direc[0][i] = displ
 
-		print 'Curve robot dir:\n', curve_init_direc
+		# print 'Curve robot dir:\n', curve_init_direc
 
 		# Create a sampled trajectory for a "bounded uniformed accelerated motion" in (direc-init_direc) direction in the xy plane
 		curve_waypoint_direc = [[]]*self.k_mod.z_dim
@@ -1935,7 +1997,7 @@ class Robot(object):
 			for j in range(len(rotated_direc)):
 				curve_waypoint_direc[j][i] = displ*rotated_direc[j]
 
-		print 'Curve way pt:\n', curve_waypoint_direc
+		# print 'Curve way pt:\n', curve_waypoint_direc
 
 		curve = [[]]*self.k_mod.z_dim
 		for i in range(self.k_mod.z_dim):
@@ -1944,130 +2006,42 @@ class Robot(object):
 			p = [(float(j)/(self._n_ctrlpts-1))**n for j in range(self._n_ctrlpts)]
 			curve[i] = np.array([p[j] * curve_waypoint_direc[i][j] + (1-p[j]) * curve_init_direc[i][j] for j in range(self._n_ctrlpts)])
 
-		# print 'Curve final: ', curve
-
-		print curve
-		gen_ctrlpts_from_curve(curve)
-
-		# first guess for ctrl pts
-		if self._plan_state == 'ms':
-			# get unit vector at the robot theta
-			init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-
-			direc, self._waypoint = _find_direction()
-			
-			if True: # direc is "too" diferent from init_direc
-
-				# estimate position of the last ctrl point
-				# last_ctrl_pt = self._latest_z+self._D*direc
-				last_ctrl_pt = self._D*init_direc		
-				
-				curve1 = []
-				for i in range(self.k_mod.z_dim):
-					curve1 += [np.linspace(0.0, last_ctrl_pt[i,0], self._n_ctrlpts)]
-
-				last_ctrl_pt = self._D*direc
-				
-				curve2 = []
-				for i in range(self.k_mod.z_dim):
-					curve2 += [np.linspace(0.0, last_ctrl_pt[i,0], self._n_ctrlpts)]
-
-				curve = []
-				for i in range(self.k_mod.z_dim):
-					#print 'Curve', curve2[i]
-					n = 4
-					p = [(j/(self._n_ctrlpts-1))**n for j in range(self._n_ctrlpts)]
-					curve += [[p[j] * curve2[i][j] + (1-p[j]) * curve1[i][j] for j in range(self._n_ctrlpts)]]
-					#print 'Curve final', curve[i]
-
-			else:
-				# estimate position of the last ctrl point
-				# last_ctrl_pt = self._latest_z+self._D*direc
-				last_ctrl_pt = self._D*direc
-				
-				curve = []
-				for i in range(self.k_mod.z_dim):
-					curve += [np.linspace(0.0, last_ctrl_pt[i,0], self._n_ctrlpts)]
-
-			# gen_ctrlpts_from_curve(curve)
-
-		elif self._plan_state == 'ls':
-			# final state
+		
+		if self._plan_state == 'ls':
 			last_ctrl_pt = self._final_z-self._latest_z
 
-			last_displ = (self.k_mod.u_final[0,0] + self.k_mod.u_max[0,0])/2.\
-					*self._est_dtime/(self._n_ctrlpts-1) #+ np.finfo(float).eps
+			delta_t = self._est_dtime/(self._n_ctrlpts-1)
+			last_displ = self.k_mod.acc_max/2.*delta_t**2 #+ np.finfo(float).eps
 
-			minus2th_pt = (last_ctrl_pt.T - last_displ*np.array(\
-					[np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])).T
+			minus2th_pt = (last_ctrl_pt.T - last_displ*np.array([np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])).T
 
-			# create positions thru time assuming that the speed is constant (thus the linspace)
-			curve1 = []
-			curve2 = []
-			for i in range(self.k_mod.z_dim):
-				curve1 += [np.insert(np.linspace(0.0, minus2th_pt[i,0],
-						self._n_ctrlpts-1), self._n_ctrlpts-1, last_ctrl_pt[i,0])]
-				curve2 += [np.linspace(0.0, last_ctrl_pt[i,0],
-						self._n_ctrlpts)]
-			curve = [
-					[(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
-#			curve = curve1
-			# gen_ctrlpts_from_curve(curve)
-
-#			eps = self.k_mod.u_final[0,0]*self._est_dtime/(self._n_ctrlpts-1) + np.finfo(float).eps
-
-			# correcting the [-2]th ctrl pt so it take in account the final state orientation and speed
-#			eps = np.finfo(float).eps
-#			minus2th_C = last_ctrl_pt.T - eps*np.array(\
-#					[np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])
-#			self._C[self._n_ctrlpts-2,] = minus2th_C
-
-		else: # 'fs'
-			# get the direction to target state unit vector
-			# direc = _find_direction()
-			direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-
-			#direc = self._final_z - self._latest_z
-			#direc = direc/LA.norm(direc)
-
-			# estimate position of the last ctrl point
-			last_ctrl_pt = self._D*direc
-
-			curve = []
-
-
-			first_displ = self.k_mod.u_init[0,0] + self.k_mod.acc_max[0,0]/2.*self._Td/(self._n_ctrlpts-1)			
-
-			_2th_pt = (first_displ*np.array(\
-					[np.cos(self.k_mod.q_init[-1, 0]), np.sin(self.k_mod.q_init[-1, 0])])).T
+			last_ctrl_pt = self._latest_rot2rob_mat*last_ctrl_pt
+			minus2th_pt = self._latest_rot2rob_mat*minus2th_pt
 
 			# create positions thru time assuming that the speed is constant (thus the linspace)
 			curve1 = []
 			curve2 = []
 			for i in range(self.k_mod.z_dim):
-				sec2last = np.linspace(_2th_pt[i], last_ctrl_pt[i,0],self._n_ctrlpts-1)
-				first = [0.0,0.0]
-				curve1 += [np.insert(sec2last, 0, first)]
-				curve2 += [np.linspace(0.0, last_ctrl_pt[i,0],
-						self._n_ctrlpts)]
-			curve = [[(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
-#			curve = curve1
-			# gen_ctrlpts_from_curve(curve)
+				curve1 += [np.insert(np.linspace(0.0, minus2th_pt[i,0], self._n_ctrlpts-1), self._n_ctrlpts-1, last_ctrl_pt[i,0])]
+				#curve2 += [np.linspace(0.0, last_ctrl_pt[i,0], self._n_ctrlpts)]
+			#curve = [[(ec1 + ec2)/2. for ec1, ec2 in zip(c1, c2)] for c1, c2 in zip(curve1, curve2)]
+			curve = curve1
+			# ltmp = [self._latest_rot2rob_mat*np.vstack((e1, e2)) for e1, e2 in zip(curve[0], curve[1])]
+			# for col, i in zip(ltmp, range(len(ltmp))):
+			# 	curve[0][i] = col[0]
+			# 	curve[1][i] = col[1]
 
-			# correcting the [2]th ctrl pt so it take in account the initial state orientation and speed
-#			eps = self.k_mod.u_init[0,0]*self._Td/(self._n_ctrlpts-1) + 1e-6
-#			_2th_C = final_ctrl_pt.T + eps*np.array(\
-#					[np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])])
-#			self._C[self._n_ctrlpts-2,] = minus2_C
+
+		gen_ctrlpts_from_curve(curve)
 
 		self._log('i', 'R{rid}@tkref={tk:.4f}: Ctrlpts: \n{ctrl}'.format(rid=self.eyed, tk=self._opttime[0], ctrl=self._C))
 
 		self._std_alone = True
 
 		tic = time.time()
-		print 'Control pts a:\n', self._C
+		#print 'Control pts a:\n', self._C
 		self._solve_opt_pbl()
-		print 'Control pts d:\n', self._C
+		#print 'Control pts d:\n', self._C
 		toc = time.time()
 
 		self._log('i', 'R{rid}@tkref={tk:.4f}: Ctrlpts: \n{ctrl}'.format(rid=self.eyed, tk=self._opttime[0], ctrl=self._C))
@@ -2107,7 +2081,7 @@ class Robot(object):
 				.format(self.eyed, self._opttime[0], self._conflict_robots_idx))
 
 		# Sync with every robot on the conflict list
-		#  1. notify every robot waiting on this robot that it ready for conflict solving
+		#  1. notify every robot waiting on this robot that it is ready for conflict solving
 		with self._conflict_syncer_conds[self.eyed]:
 			self._conflict_syncer[self.eyed].value = 1
 			self._conflict_syncer_conds[self.eyed].notify_all()
@@ -2293,6 +2267,8 @@ class Robot(object):
 		# while the remaining dist is greater than the max dist during Tp
 #		while LA.norm(self._latest_z - self._final_z) > self._D:
 
+		remaining_dist = -1.0
+
 		while True:
 			remaining_dist = LA.norm(self._latest_z - self._final_z)
 #			if remaining_dist < self._D:
@@ -2301,6 +2277,7 @@ class Robot(object):
 			# if remaining_dist < self._ls_min_dist + self._Tc*self.k_mod.u_max[0,0]:
 			#if remaining_dist < self._ls_min_dist + (self.k_mod.u_final[0,0]**2 - self._latest_u[0,0]**2)/(2.*self.k_mod.acc_max[0,0]):
 			if remaining_dist < self._ls_min_dist + max(abs((self.k_mod.u_final[0,0]**2 - self._latest_u[0,0]**2)/(2.*self.k_mod.acc_max[0,0])), self._Tc*self.k_mod.u_max[0,0]):
+			# if remaining_dist < max(abs((self.k_mod.u_final[0,0]**2 - self._latest_u[0,0]**2)/(2.*self.k_mod.acc_max[0,0])), self._Tc*self.k_mod.u_max[0,0]):
 			#if remaining_dist < 14.0:
 				print (self.k_mod.u_final[0,0]**2 - self._latest_u[0,0]**2)/(2.*self.k_mod.acc_max[0,0])
 				print self._Tc*self.k_mod.u_max[0,0]
@@ -2320,12 +2297,13 @@ class Robot(object):
 
 			self._plan_section()
 			self._log('i', 'R{}: --------------------------'.format(self.eyed))
-			self._log('i', 'R{}: Latest Z: {}'.format(self.eyed, self._latest_z))
+			self._log('i', 'R{}: Latest Q: {}'.format(self.eyed, self._latest_q))
 			self._log('i', 'R{}: --------------------------'.format(self.eyed))
 
 #		self._final_step = True
 		self._plan_state = 'ls'
-		self._est_dtime = LA.norm(self._latest_z - self._final_z)/(self._latest_u[0,0]+self.k_mod.u_final[0,0])*2.0
+		self._est_dtime = remaining_dist/(self._latest_u[0,0]+self.k_mod.u_final[0,0])*2.
+		print self._est_dtime
 
 		self._knots = self._gen_knots(self._opttime[0], self._opttime[0]+self._est_dtime)
 #		print 'LAST mtime[0]', self._opttime[0]
@@ -2682,7 +2660,7 @@ class WorldSim(object):
 			plt_robots_c = range(len(self._robs))
 			plt_robots_t = range(len(self._robs))
 			for i in range(len(self._robs)):
-				plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label=r'$R_{}$'.format(i))
+				plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label=r'$R_{}$'.format(i), linestyle='-')
 				plt_seg_pts[i], = ax.plot(path[i][0, seg_pts_idx[i][0]], \
 						path[i][1, seg_pts_idx[i][0]], color=colors[i], ls='None', marker='o', markersize=5)
 				plt_robots_c[i] = plt.Circle(
@@ -2769,14 +2747,14 @@ class WorldSim(object):
 				linaccal = [x[0, 0] for x in at[i]]
 				angaccal = [x[1, 0] for x in at[i]]
 				# print 'LEN: ', len(linacc), len(rtime[i])
-				axarray[0].plot(rtime[i], linspeed, color=colors[i], label = r'$R_{}$'.format(i))
-				axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i))
+				axarray[0].plot(rtime[i], linspeed, color=colors[i], label = r'$R_{}$'.format(i), linestyle='-')
+				axarray[1].plot(rtime[i], angspeed, color=colors[i], label = r'$R_{}$'.format(i), linestyle='-')
 				# axarray[1].plot(rtime[i], angspeed, color=colors[i])
-				aaxarray[0].plot(rtime[i], linacc, color=auxcolors[i], label = r'$R_{} a$'.format(i))
-				aaxarray[1].plot(rtime[i], angacc, color=auxcolors[i], label = r'$R_{} a$'.format(i))
-				aaxarray[0].plot(rtime[i], linaccal, color=colors[i], label = r'$R_{}$'.format(i))
+				# aaxarray[0].plot(rtime[i], linacc, color=auxcolors[i], label = r'$R_{} a$'.format(i))
+				# aaxarray[1].plot(rtime[i], angacc, color=auxcolors[i], label = r'$R_{} a$'.format(i))
+				aaxarray[0].plot(rtime[i], linaccal, color=colors[i], label = r'$R_{}$'.format(i), linestyle='-')
 				# aaxarray[0].plot(rtime[i], linaccal, color=colors[i])
-				aaxarray[1].plot(rtime[i], angaccal, color=colors[i], label = r'$R_{}$'.format(i))
+				aaxarray[1].plot(rtime[i], angaccal, color=colors[i], label = r'$R_{}$'.format(i), linestyle='-')
 			axarray[0].grid()
 			axarray[1].grid()
 			aaxarray[0].grid()
