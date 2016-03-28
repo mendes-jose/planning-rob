@@ -1,4 +1,4 @@
-﻿"""
+"""
 The :mod:`planning_sim` module implements classes and functions to simulate a
 navigation scenario consisting of one or more mobile robots that autonomously plan their
 motion from an initial state to a final state avoiding static obstacles and
@@ -716,7 +716,6 @@ class Robot(object):
 
 		# init planning
 		self._detected_obst_idxs = range(len(self._obst))
-		self._known_obst_idxs = []
 
 		self._latest_q = self.k_mod.q_init
 		self._latest_u = self.k_mod.u_init
@@ -941,10 +940,9 @@ class Robot(object):
 		for idx in range(len(self._obst)):
 			dist = self._obst[idx].detected_dist(np.squeeze(np.asarray(self._latest_z.T)))
 			if dist < self._d_rho:
-				idx_list += [[idx, dist-self.rho-self._obst[idx].radius]]
+				idx_list += [[idx, dist]]
 		idx_list.sort(key=lambda x:x[1])
 		self._detected_obst_idxs = [i[0] for i in idx_list]
-		self._known_obst_idxs += [i[0] for i in idx_list if i[0] not in self._known_obst_idxs]
 
 	def _ls_sa_criterion(self, x):
 		""" Cost function to be minimized used for optimizing
@@ -1740,178 +1738,8 @@ class Robot(object):
 			for i in range(self.k_mod.z_dim):
 				self._C[0:self._n_ctrlpts, i] = ctrl[i]
 
-
-
-		def isObstInRobotsWay(obstIdx):
-
-			robot2goal = self._final_z - self._latest_z
-			robot2goal_dist = LA.norm(robot2goal)
-			goal_direc = robot2goal/robot2goal_dist
-			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
-
-			robot2waypt = self._waypoint - self._latest_z
-			robot2waypt_dist = LA.norm(robot2waypt)
-			waypt_direc = robot2waypt/robot2waypt_dist
-			waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
-
-			cent2robot = self._latest_z - np.matrix(self._obst[obstIdx].centroid).T
-			robot2obst = -1.*cent2robot
-			cent2waypt = self._waypoint - np.matrix(self._obst[obstIdx].centroid).T
-
-			segment_norm = LA.norm(cent2waypt - cent2robot)
-			determinant_p1p2 = cent2robot[0, 0]*cent2waypt[1, 0] - cent2waypt[0, 0]*cent2robot[1, 0]
-
-			discriminant = (self._obst[obstIdx].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-
-
-			# if discriminant < 0: # no intersection in waypt dir, check goal
-			# 	print obstIdx, ': no intersection in waypt dir, check goal'
-			# 	cent2goal = self._final_z - np.matrix(self._obst[obstIdx].centroid).T
-			# 	segment_norm = LA.norm(cent2goal - cent2robot)
-			# 	determinant_p1p2 = cent2robot[0, 0]*cent2goal[1, 0] - cent2goal[0, 0]*cent2robot[1, 0]
-
-			# 	discriminant2 = (self._obst[obstIdx].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-			# 	if discriminant2 >= 0.0:
-			# 		print obstIdx, ': intersection in goal dir found'
-			# 		discriminant = discriminant2
-
-			# if discriminant >= 0: # secant or tangent to waypt dir or goal dir
-			
-			# 	# check if obstacle was left behind
-			# 	print obstIdx, ': check if obstacle was left behind'
-
-			# 	robot2obst_norm = LA.norm(robot2obst)
-
-			# 	signed_r2o_proj_on_wdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-waypt_theta)
-
-			# 	signed_r2o_proj_on_gdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-goal_theta)
-
-
-			# 	if signed_r2o_proj_on_wdir <= self.k_mod.u_max[0,0]*self._Tc and signed_r2o_proj_on_gdir <= self.k_mod.u_max[0,0]*self._Tc:
-			# 	#if signed_r2o_proj_on_wdir <= 0.0 and signed_r2o_proj_on_gdir <= 0.0:
-			# 		print obstIdx, ': obstacle was left behind'
-			# 		# obstacle was left behind
-			# 		#return (d_theta, d_theta, LA.norm(robot2obst)-rad)
-			# 		#return (0.0, 0.0, robot2goal_dist)
-			# 		return False
-
-			# else: # no intersection to waypt dir or goal dir
-			# 	print obstIdx, ': no intersection in waypt dir nor in goal dir'
-			# 	#return (0.0, 0.0, robot2goal_dist)
-			# 	return False
-
-			if discriminant < 0: # no intersection in waypt dir, check goal
-				print obstIdx, ': no intersection in waypt dir'
-				return False
-
-			#if discriminant >= 0: # secant or tangent to waypt dir or goal dir
-			else:
-				print obstIdx, ': intersection in waypt dir'
-				# check if obstacle was left behind
-				print obstIdx, ': check if obstacle was left behind'
-
-				robot2obst_norm = LA.norm(robot2obst)
-
-				signed_r2o_proj_on_wdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-waypt_theta)
-
-				signed_r2o_proj_on_gdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-goal_theta)
-
-
-				if signed_r2o_proj_on_wdir <= self.k_mod.u_max[0,0]*self._Tc: #0.0
-					#and signed_r2o_proj_on_gdir <= self.k_mod.u_max[0,0]*self._Tc:
-					print obstIdx, ': obstacle was left behind'
-					# obstacle was left behind
-					#return (d_theta, d_theta, LA.norm(robot2obst)-rad)
-					#return (0.0, 0.0, robot2goal_dist)
-					return False
-
-			return True
-
-		def getThetas(obstIdx):
-
-			robot2goal = self._final_z - self._latest_z
-			robot2goal_dist = LA.norm(robot2goal)
-			goal_direc = robot2goal/robot2goal_dist
-			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
-
-			robot2waypt = self._waypoint - self._latest_z
-			robot2waypt_dist = LA.norm(robot2waypt)
-			waypt_direc = robot2waypt/robot2waypt_dist
-			waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
-
-			cent2robot = self._latest_z - np.matrix(self._obst[obstIdx].centroid).T
-			robot2obst = -1.*cent2robot
-
-			rad = self._obst[obstIdx].radius+self.rho
-
-			# solving second degree eq for finding the tow m's
-			a = robot2obst[0]**2 - rad**2
-			b = -2*robot2obst[0]*robot2obst[1]
-			c = robot2obst[1]**2 - rad**2
-
-			discriminant = b**2 - 4*a*c
-
-			if discriminant < 0:
-							
-				self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-				print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
-				#d_theta = UnicycleKineModel._signed_angle(goal_theta - waypt_theta)
-				d_theta = 0.0
-				#return (d_theta[0,0], d_theta[0,0], LA.norm(robot2obst)-rad)
-				return (d_theta, d_theta, LA.norm(robot2obst)-rad)
-
-			elif discriminant == 0:
-				# y/x of unit vector is m
-				self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-				theta1 = np.arctan(-b/2*a) # [-pi, pi)
-				theta2 = theta1-np.pi # [-2pi, 0.0]
-
-			else:
-				theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-				theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-
-
-			ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
-
-			print '_______ O [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
-
-			quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
-
-			#quad14_goal_theta = goal_theta if goal_theta <= np.pi/2 and goal_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(goal_theta-np.pi)
-
-			#quad14_waypt_theta = waypt_theta if waypt_theta <= np.pi/2 and waypt_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(waypt_theta-np.pi)
-
-			if (quad14_ref_theta < theta1 and quad14_ref_theta < theta2) or (quad14_ref_theta > theta1 and quad14_ref_theta > theta2):
-			 	self._log('d', 'obj centroid not in the middle')
-			 	# if abs(quad14_ref_theta - theta1) > np.pi/2:
-			 	#self._log('d', '{}'.format(quad14_ref_theta - theta1))
-			 	#self._log('d', '{}'.format(quad14_ref_theta - theta2))
-			 	if abs(quad14_ref_theta - theta1) > abs(quad14_ref_theta - theta2):
-			 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-			 	else:
-			 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-			print '_______ O [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
-
-			d_theta1 = UnicycleKineModel._signed_angle(quad14_ref_theta - theta1)
-			d_theta2 = UnicycleKineModel._signed_angle(quad14_ref_theta - theta2)
-
-			d_theta1 = UnicycleKineModel._signed_angle(waypt_theta + d_theta1 - ref_theta)
-			d_theta2 = UnicycleKineModel._signed_angle(waypt_theta + d_theta2 - ref_theta)
-
-			#absd_theta1 = abs(d_theta1)
-			#absd_theta2 = abs(d_theta2)
-			#theta1 = UnicycleKineModel._signed_angle(goal_theta - d_theta1)
-			#theta2 = UnicycleKineModel._signed_angle(goal_theta - d_theta2)
-
-			return (d_theta1[0,0], d_theta2[0,0], LA.norm(robot2obst)-rad)
-
-
-
-
 		# Find direction for init:
-		# in: self._D, self._final_z, self._latest_z, otherRobots' pos and speed, obstacles' pos closer than self._D in the 120º (or other angle) cone in front of the robot
+		# in: self._D, self._final_z, self._latest_z, otherRobots' pos and speed, obstacles' pos closer than self._D in the 120 (or other angle) cone in front of the robot
 		# out:  direc
 		def _find_direction():
 			"""
@@ -1927,404 +1755,6 @@ class Robot(object):
 			goal_direc = robot2goal/robot2goal_dist
 			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
 
-			robot2waypt = self._waypoint - self._latest_z
-			robot2waypt_dist = LA.norm(robot2waypt)
-			waypt_direc = robot2waypt/robot2waypt_dist
-			waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
-
-			print 'known obstacles', self._known_obst_idxs
-
-			print 'Z\n', self._latest_z
-
-			if self._known_obst_idxs == []:
-				return (waypt_direc, self._waypoint)
-
-			else:
-
-				obstInfo = dict()
-				listOfGroups = []
-
-				for i in self._known_obst_idxs:
-
-					if any([i in j for j in listOfGroups]):
-						continue
-
-					listOfGroups += [[i]]
-					# obstInfo[i] = getThetas(i)
-
-					tree = [i]
-					cntr = 0
-					while cntr < len(tree):
-						root = tree[cntr]
-
-						for j in self._known_obst_idxs:
-								if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(self._obst[root].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[root].radius + self._obst[j].radius + 2*self.rho:
-
-									listOfGroups[-1] += [j]
-									# obstInfo[j] = getThetas(j, force=True)
-									tree.append(j)
-						cntr += 1
-
-				# Create dictionary with each osbtacle avoidance info
-				# if any of the obstacles in a group is tested positive then
-				# 	compute thetas to all from 2nd degree equation (Getthetas)
-				# 
-				# else (if none are tested positive) then
-				# 	put the following in the dictionary
-				#   return (0.0, 0.0, robot2goal_dist)
-				print 'listOfGroups', listOfGroups
-				i = 0
-				while i < len(listOfGroups):
-				#for group in listOfGroups:
-					group = listOfGroups[i]
-					print 'group', group
-					if any([isObstInRobotsWay(x) for x in group]):
-						j = 0
-						while j < len(group):
-						#for x in group:
-							obstXInfo = getThetas(group[j])
-
-							maxAngle = 2.8
-
-							if abs(obstXInfo[0]) > maxAngle or abs(obstXInfo[1]) > maxAngle or obstXInfo[2] > robot2goal_dist:
-								print 'take {} out'.format(x)
-								listOfGroups[i].remove(group[j])
-								print listOfGroups
-							else:
-								obstInfo[group[j]] = obstXInfo
-								j += 1
-						i += 1
-					else:
-						print '-------------------------------- group', group, 'can be ignored -----------------------'
-						# d_theta = UnicycleKineModel._signed_angle(waypt_theta - goal_theta)
-						# d_theta = 0.0
-						#for x in group:
-						#	obstInfo[x] = (d_theta[0,0], d_theta[0,0], robot2goal_dist)
-						listOfGroups.remove(group)
-
-				print 'obstInfo:', obstInfo
-
-				testList = [item for sublist in listOfGroups for item in sublist]
-				#testList = [x ]
-				#if listOfGroups == []:
-				if testList == []:
-					return (goal_direc, self._final_z)
-
-				minMaxList = []
-				print 'listOfGroups', listOfGroups
-				for i in listOfGroups:
-					for j in i:
-						if obstInfo[j][2] < 0.0:
-							#theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta)
-							#theta = UnicycleKineModel._signed_angle(goal_theta - obstInfo[j][0])
-							#direc = np.vstack((np.cos(waypt_theta), np.sin(waypt_theta)))
-
-							direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-							waypoint = direc*robot2waypt_dist + self._latest_z
-							return (direc, waypoint)
-					#subdic = [obstInfo[j] for j in i]
-					subdic = dict((k, obstInfo[k]) for k in i if k in obstInfo)
-					print 'subdic', subdic
-
-
-					doubled_keys = [val for val in [x for x in subdic] for _ in (0, 1)]
-					doubled_dists = [val[-1] for val in [subdic[x] for x in subdic] for _ in (0, 1)]
-					all_d_thetas = [item for sublist in [subdic[x] for x in subdic] for item in sublist[0:-1]]
-
-					#print 'doubled keys:', doubled_keys
-					#print 'doubled dists:', doubled_dists
-					#print 'all_d_thetas:', all_d_thetas
-
-					X = [(x, y, z) for x, y, z in sorted(zip(all_d_thetas, doubled_keys, doubled_dists))]
-					print 'Ordered index', [i[1] for i in X]
-					print 'Ordered dthetas', [i[0] for i in X]
-					#print K
-					# x[0] min dtheta
-					# x[-1] max dtheta
-					if (abs(X[0][0]) <= abs(X[-1][0])):
-						absMinVal = X[0][0]
-						absMinIdx = X[0][1]
-						absMinDist = X[0][2]
-					else:
-						absMinVal = X[-1][0]
-						absMinIdx = X[-1][1]
-						absMinDist = X[-1][2]
-					#print 'To add to minMaxList', (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])
-					minMaxList += [ (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])]
-					#add to list
-				# for i in minlist:
-					#min in dist
-
-				print 'minMaxList: ', minMaxList
-
-				sortedValMinMaxList = [i for _, i in sorted(zip([x[0] for x in minMaxList], minMaxList))]
-
-				print 'sortedValMinMaxList', sortedValMinMaxList
-				# print 'i[0]', i[0]
-				# sortedDistMinMaxList = [i for _, i in sorted(zip([x[2] for x in minMaxList], minMaxLi1st))]
-
-				for k in sortedValMinMaxList:
-					#subSortedValMinMaxList = [sortedValMinMaxList[gidx] for ginfo, gidx in zip(sortedValMinMaxList, range(len(sortedValMinMaxList))) if k[0] > ginfo[3] and k[0] > ginfo[4]]
-					subSortedValMinMaxList = [ginfo for ginfo in sortedValMinMaxList if k[0] < ginfo[3] or k[0] > ginfo[4]]
-					print 'subSortedValMinMaxList', subSortedValMinMaxList
-					if subSortedValMinMaxList != []:
-						proximityTests = [k[1] > j[1] for j in subSortedValMinMaxList]
-						print 'proximityTests:', proximityTests
-					 	if any(proximityTests):
-					 		continue
-					break
-
-
-				# dists = [obstInfo[i][-1] for i in minlist]
-				# closerAbsMinDirec = [y for x, y in sorted(zip(dists, minlist))][0]
-
-				# obstInfo[closerAbsMinDirec]
-				d_theta = k[0]
-				print 'd_theta', d_theta
-				#theta = UnicycleKineModel._signed_angle(goal_theta - d_theta)
-				eps = -0.03 if d_theta < 0.0 else +0.03
-				#eps = 0.0
-				theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta + eps)
-
-				direc = np.vstack((np.cos(theta), np.sin(theta)))
-				waypoint = direc*robot2waypt_dist + self._latest_z
-				return (direc, waypoint)
-
-
-
-				# for i in self._known_obst_idxs:
-
-				# 	if any([i in j for j in listOfGroups]):
-				# 		continue
-
-				# 	cent2robot = self._latest_z - np.matrix(self._obst[i].centroid).T
-				# 	cent2waypt = self._waypoint - np.matrix(self._obst[i].centroid).T
-
-				# 	segment_norm = LA.norm(cent2waypt - cent2robot)
-				# 	determinant_p1p2 = cent2robot[0, 0]*cent2waypt[1, 0] - cent2waypt[0, 0]*cent2robot[1, 0]
-
-				# 	discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-
-				# 	if discriminant < 0: # no intersection
-				# 		#return (waypt_direc, self._waypoint)
-				# 		# listOfGroups += [[i]]
-				# 		# dic[i] = (0.0, 0.0)
-				# 		# continue
-
-				# 		cent2goal = self._final_z - np.matrix(self._obst[i].centroid).T
-				# 		segment_norm = LA.norm(cent2goal - cent2robot)
-				# 		determinant_p1p2 = cent2robot[0, 0]*cent2goal[1, 0] - cent2goal[0, 0]*cent2robot[1, 0]
-
-				# 		discriminant2 = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-				# 		if discriminant2 >= 0.0:
-				# 			discriminant = discriminant2
-				# 		else:
-				# 			print '################## both disc < 0 ############'
-				# 			print '##################\n', self._latest_q[0:2,0]
-
-				# 	if discriminant >= 0: # secant or tangent
-				# 		robot2obst = -1.*cent2robot
-				# 		robot2obst_norm = LA.norm(robot2obst)
-
-				# 		signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
-
-				# 		if signed_norm < self.k_mod.u_max[0,0]*self._Tc:
-				# 			print 'Obst [', i, '] was left behind'
-				# 			theta = goal_theta
-
-				# 			d_theta = UnicycleKineModel._signed_angle(waypt_theta - theta)
-				# 			# if abs(d_theta) >= np.pi*7 and abs(d_theta) <= : # +- 80 deg
-				# 			# 	print 
-				# 			# 	print '1______________________________________', abs(UnicycleKineModel._signed_angle(waypt_theta - theta))
-				# 			# 	print theta
-				# 			# 	theta = UnicycleKineModel._signed_angle((1.*theta + 1.*waypt_theta)/2.)
-				# 			# 	print theta
-
-				# 			listOfGroups += [[i]]
-				# 			dic[i] = (d_theta[0,0], d_theta[0,0])
-				# 			continue
-
-				# 		rad = self._obst[i].radius+self.rho
-
-				# 		# solving second degree eq for finding the tow m's
-				# 		a = robot2obst[0]**2 - rad**2
-				# 		b = -2*robot2obst[0]*robot2obst[1]
-				# 		c = robot2obst[1]**2 - rad**2
-
-				# 		discriminant = b**2 - 4*a*c
-
-				# 		if discriminant < 0:
-							
-				# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-				# 			print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
-
-				# 			#listOfGroups += [[goal_direc, 0.0]]
-				# 			latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-				# 			#abs_latest_d_theta = abs(self._latest_q[-1] - waypt_theta)
-				# 			#listOfGroups += [[latest_direc, abs_latest_d_theta]]
-				# 			#waypoint = latest_direc*robot2waypt_dist + self._latest_z
-				# 			return (latest_direc, self._waypoint)
-				# 			# ignore obstacle
-				# 			#continue
-
-				# 		elif discriminant == 0:
-				# 			# y/x of unit vector is m
-				# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-				# 			theta1 = np.arctan(-b/2*a) # [-pi, pi)
-				# 			theta2 = theta1-np.pi # [-2pi, 0.0]
-
-				# 		else:
-				# 			theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-				# 			theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-
-
-				# 		ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
-				# 		quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
-
-				# 		quad14_waypt_theta = waypt_theta if waypt_theta <= np.pi/2 and waypt_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(waypt_theta-np.pi)
-						
-				# 		if (quad14_ref_theta < theta1 and quad14_ref_theta < theta2) or (quad14_ref_theta > theta1 and quad14_ref_theta > theta2):
-				# 		 	self._log('d', 'goal not in the middle')
-				# 		 	# if abs(quad14_ref_theta - theta1) > np.pi/2:
-				# 		 	self._log('d', '{}'.format(quad14_ref_theta - theta1))
-				# 		 	self._log('d', '{}'.format(quad14_ref_theta - theta2))
-				# 		 	if abs(quad14_ref_theta - theta1) > abs(quad14_ref_theta - theta2):
-				# 		 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-				# 		 	else:
-				# 		 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-				# 		#if ref_theta > np.pi/2 and ref_theta >= -np.pi/2
-				# 		self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
-
-				# 		d_theta1 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta1)
-				# 		d_theta2 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta2)
-				# 		#d_theta1 = UnicycleKineModel._signed_angle(ref_theta - theta1)
-				# 		#d_theta2 = UnicycleKineModel._signed_angle(ref_theta - theta2)
-				# 		absd_theta1 = abs(d_theta1)
-				# 		absd_theta2 = abs(d_theta2)
-				# 		theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-				# 		theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
-
-				# 		listOfGroups += [[i]]
-				# 		f = 1.0
-				# 		dic[i] = (d_theta1[0,0]*f, d_theta2[0,0]*f)
-
-				# 		tree = [i]
-				# 		cntr = 0
-				# 		while cntr < len(tree):
-				# 			root = tree[cntr]
-
-				# 			# root (find children)
-				# 			for j in self._known_obst_idxs:
-				# 				if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(self._obst[root].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[root].radius + self._obst[j].radius + 2*self.rho:
-				# 					print '[', j, '] too close to [', root, ']'
-
-				# 					listOfGroups[-1] += [j]
-
-				# 					#######################
-				# 					#######################dic[j] = getDeltasThetas()
-				# 					#######################
-				# 					robot2obst = np.matrix(self._obst[j].centroid).T - self._latest_z
-
-				# 					robot2obst_norm = LA.norm(robot2obst)
-
-				# 					signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
-
-				# 					if signed_norm < self.k_mod.u_max[0,0]*self._Tc:
-				# 						print 'Obst ', i, ' was left behind'
-				# 						continue
-
-				# 					rad = self._obst[j].radius+self.rho
-
-				# 					# solving second degree eq for finding the tow m's
-				# 					a = robot2obst[0]**2 - rad**2
-				# 					b = -2*robot2obst[0]*robot2obst[1]
-				# 					c = robot2obst[1]**2 - rad**2
-
-				# 					discriminant = b**2 - 4*a*c
-
-				# 					if discriminant < 0:
-				# 						latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-				# 						#waypoint = latest_direc*robot2waypt_dist + self._latest_z
-				# 						return (latest_direc, self._waypoint)
-				# 						#dic[j] = (0.0, 0.0)
-				# 						#continue
-				# 					elif discriminant == 0:
-				# 						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-				# 						theta1 = np.arctan(-b/2*a) # [-pi, pi)
-				# 						theta2 = theta1-np.pi # [-2pi, 0.0]
-
-				# 					else:
-				# 						theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-				# 						theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-
-				# 					print 'thetas: ', theta1, theta2
-
-				# 					print 'q12wt: ', quad14_waypt_theta
-
-				# 					ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
-				# 					quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
-
-				# 					if (quad14_ref_theta < theta1 and quad14_ref_theta < theta2) or (quad14_ref_theta > theta1 and quad14_ref_theta > theta2):
-				# 					 	self._log('d', 'obj centroid not in the middle')
-				# 					 	# if abs(quad14_ref_theta - theta1) > np.pi/2:
-				# 					 	#self._log('d', '{}'.format(quad14_ref_theta - theta1))
-				# 					 	#self._log('d', '{}'.format(quad14_ref_theta - theta2))
-				# 					 	if abs(quad14_ref_theta - theta1) > abs(quad14_ref_theta - theta2):
-				# 					 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-				# 					 	else:
-				# 					 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-
-				# 					d_theta1 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta1)
-				# 					d_theta2 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta2)
-				# 					absd_theta1 = abs(d_theta1)
-				# 					absd_theta2 = abs(d_theta2)
-				# 					theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-				# 					theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
-				# 					print 'final thetas: ', theta1, theta2
-				# 					#######################
-				# 					#######################
-				# 					#######################
-				# 					dic[j] = (d_theta1[0,0]*f, d_theta2[0,0]*f)
-
-				# 					tree.append(j)
-
-				# 			cntr += 1
-
-				# #end of for
-				# all_d_thetas = [item for sublist in [dic[x] for x in dic] for item in sublist]
-
-				# if all_d_thetas == []:
-				# 	return (goal_direc, self._final_z)
-
-				# print 'DIC:', dic
-				# print 'History:', listOfGroups
-				
-				# max_d_theta = max(all_d_thetas)
-				# min_d_theta = min(all_d_thetas)
-				# if abs(max_d_theta) < abs(min_d_theta):
-				# 	theta = UnicycleKineModel._signed_angle(waypt_theta - max_d_theta)
-				# else:
-				# 	theta = UnicycleKineModel._signed_angle(waypt_theta - min_d_theta)
-
-				# # d_theta = UnicycleKineModel._signed_angle(waypt_theta - theta)
-				# # if abs(d_theta) >= np.pi*60/180. and abs(d_theta) <= 2*np.pi-np.pi*60/180.: # +- 80 deg
-				# # 	print '______________________________________', abs(d_theta)
-				# # 	print theta
-				# # 	theta = UnicycleKineModel._signed_angle((1.*theta + 2.*waypt_theta)/3.)
-				# # 	print theta
-
-				# print 'Old waypt:\n', self._waypoint
-				# direc = np.vstack((np.cos(theta), np.sin(theta)))
-				# waypoint = direc*robot2waypt_dist + self._latest_z
-				# return (direc, waypoint)
-
-
-			#print 'begin find watpt: ', self._waypoint
-
 			# waypt_direc = self._waypoint - self._latest_z
 			# robot2waypt_dist = LA.norm(waypt_direc)
 			# waypt_direc = waypt_direc/robot2waypt_dist
@@ -2338,287 +1768,176 @@ class Robot(object):
 
 			# dist = abs(m*self._obst[i].x - self._obst[i].y + n)/dist_denominator
 
-			#listOfGroups = []
+			history = []
 
-			# print self._detected_obst_idxs
+			print self._detected_obst_idxs
 
-			# for i in self._detected_obst_idxs:
-			# 	p1 = self._latest_z - np.matrix(self._obst[i].centroid).T
-			# 	p2 = self._waypoint - np.matrix(self._obst[i].centroid).T
+			for i in self._detected_obst_idxs:
+				p1 = self._latest_z - np.matrix(self._obst[i].centroid).T
+				p2 = self._final_z - np.matrix(self._obst[i].centroid).T
 
-			# 	segment_norm = LA.norm(p2 - p1)
-			# 	determinant_p1p2 = p1[0, 0]*p2[1, 0] - p2[0, 0]*p1[1, 0]
+				segment_norm = LA.norm(p2 - p1)
+				determinant_p1p2 = p1[0, 0]*p2[1, 0] - p2[0, 0]*p1[1, 0]
 
-			# 	discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
+				discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
 
-			# 	print 'discriminant', discriminant
+				if discriminant > 0: # secant
+					print "Secante"
 
-			# 	if discriminant > 0: # secant
-			# 		print "Secante"
+					# the obstacle may be left behind already, let's check
+					robot2obst = -p1
+					robot2obst_norm = LA.norm(robot2obst)
+					# print "latest z:\n", self._latest_z
+					# print "obst center:\n", np.matrix(self._obst[i].centroid).T
+					# print "OA:\n", robot2obst
+					# print "OA norm: ", float(robot2obst_norm)
+					# print "init Theta: ", goal_theta
+					# print "Angle between vector obst center: ", np.arctan2(robot2obst[1], robot2obst[0])
 
-			# 		# the obstacle may be left behind already, let's check
-			# 		robot2obst = -p1
-			# 		robot2obst_norm = LA.norm(robot2obst)
-			# 		# print "latest z:\n", self._latest_z
-			# 		# print "obst center:\n", np.matrix(self._obst[i].centroid).T
-			# 		# print "OA:\n", robot2obst
-			# 		# print "OA norm: ", float(robot2obst_norm)
-			# 		# print "init Theta: ", waypt_theta
-			# 		# print "Angle between vector obst center: ", np.arctan2(robot2obst[1], robot2obst[0])
+					# get the signed norm of the projection of the vector connecting the obst and latest Z in robot direction vector (positive if the projection is in the same direction as the waypt_direc vector, negative otherwise)
+					# this is used to evaluate if the obstacle was left behind already
+					signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
 
-			# 		# get the signed norm of the projection of the vector connecting the obst and latest Z in robot direction vector (positive if the projection is in the same direction as the waypt_direc vector, negative otherwise)
-			# 		# this is used to evaluate if the obstacle was left behind already
-			# 		signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
+					#print "Signed norm: ", float(signed_norm)
+					#print "Robot pose: ", self._latest_q
 
-			# 		#print "Signed norm: ", float(signed_norm)
-			# 		#print "Robot pose: ", self._latest_q
-
-			# 		if signed_norm < self.rho:
-			# 			print 'Left behind'
-			# 			#listOfGroups += [[goal_direc, 0.0]]
-			# 			continue
+					if signed_norm < self.rho:
+						print 'Left behind'
+						history += [[goal_direc, 0.0]]
+						continue
 
 
-			# 		# print "Obst ahead"
+					# print "Obst ahead"
 
-			# 		# find the lines that are tangent to the circle and pass by latest_z point
-			# 		rad = self._obst[i].radius+self.rho
+					# find the lines that are tangent to the circle and pass by latest_z point
+					rad = self._obst[i].radius+self.rho
 
-			# 		# solving second degree eq for finding the tow m's
-			# 		a = robot2obst[0]**2 - rad**2
-			# 		b = -2*robot2obst[0]*robot2obst[1]
-			# 		c = robot2obst[1]**2 - rad**2
+					# solving second degree eq for finding the tow m's
+					a = robot2obst[0]**2 - rad**2
+					b = -2*robot2obst[0]*robot2obst[1]
+					c = robot2obst[1]**2 - rad**2
 
-			# 		discriminant = b**2 - 4*a*c
+					discriminant = b**2 - 4*a*c
 
-			# 		#print 'Discriminant: ', discriminant
+					#print 'Discriminant: ', discriminant
 
-			# 		if discriminant < 0:
+					if discriminant < 0:
 						
-			# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 			print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
+						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
+						print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
 
-			# 			#listOfGroups += [[goal_direc, 0.0]]
-			# 			latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-			# 			abs_latest_d_theta = abs(self._latest_q[-1] - waypt_theta)
-			# 			#listOfGroups += [[latest_direc, abs_latest_d_theta]]
-			# 			waypoint = latest_direc*robot2waypt_dist + self._latest_z
-			# 			return (latest_direc, waypoint)
+						#history += [[goal_direc, 0.0]]
+						latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+						abs_latest_d_theta = abs(self._latest_q[-1] - goal_theta)
+						history += [[latest_direc, abs_latest_d_theta]]
+						continue
 
-			# 		elif discriminant == 0:
-			# 			# y/x of unit vector is m
-			# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
+					elif discriminant == 0:
+						# y/x of unit vector is m
+						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
 
-			# 			theta1 = np.arctan(-b/2*a) # [-pi, pi)
-			# 			theta2 = theta1-np.pi # [-2pi, 0.0]
+						theta1 = np.arctan(-b/2*a) # [-pi, pi)
+						theta2 = theta1-np.pi # [-2pi, 0.0]
 
-			# 		else:
-			# 			theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-			# 			theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-			# 			# using arctan2 makes things go wrong. theta is in [-pi, pi] but the quadrands are
+					else:
+						theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
+						theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
+						# using arctan2 makes things go wrong. theta is in [-pi, pi] but the quadrands are
 
+					# two values of inclination are possible for a given line. Some computation has to be done so the two right m's are found
 
+					self._log('d', 'Thetas (m\'s): {t1}, {t2}'.format(t1=theta1, t2=theta2))
 
-			# 		# two values of inclination are possible for a given line. Some computation has to be done so the two right m's are found
+					# x1 = (robot2obst[1] + theta1**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta1**2 + 1)
+					# x2 = (robot2obst[1] + theta2**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta2**2 + 1)
 
-			# 		self._log('d', 'Thetas (m\'s): {t1}, {t2}'.format(t1=theta1, t2=theta2))
+					# y1 = theta1*x1 + self._latest_z[1] -theta1*self._latest_z[0]
+					# y2 = theta2*x2 + self._latest_z[1] -theta2*self._latest_z[0]
 
-			# 		# x1 = (robot2obst[1] + theta1**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta1**2 + 1)
-			# 		# x2 = (robot2obst[1] + theta2**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta2**2 + 1)
+					# self._log('d', 'R{rid}@tkref={tk:.4f}: P1: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x1, y=y1))
+					# self._log('d', 'R{rid}@tkref={tk:.4f}: P2: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x2, y=y2))
 
-			# 		# y1 = theta1*x1 + self._latest_z[1] -theta1*self._latest_z[0]
-			# 		# y2 = theta2*x2 + self._latest_z[1] -theta2*self._latest_z[0]
+					# u1 = np.vstack((x1, y1)) - self._latest_z
+					# u2 = np.vstack((x2, y2)) - self._latest_z
 
-			# 		# self._log('d', 'R{rid}@tkref={tk:.4f}: P1: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x1, y=y1))
-			# 		# self._log('d', 'R{rid}@tkref={tk:.4f}: P2: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x2, y=y2))
+					# v = robot2goal
 
-			# 		# u1 = np.vstack((x1, y1)) - self._latest_z
-			# 		# u2 = np.vstack((x2, y2)) - self._latest_z
+					# dangle1 = np.arccos((u1[0]*v[0]+u1[1]*v[1])/(LA.norm(u1)*LA.norm(v)))
+					# dangle2 = np.arccos((u2[0]*v[0]+u2[1]*v[1])/(LA.norm(u2)*LA.norm(v)))
+					# self._log('d', 'Delta angles: {t1}, {t2}'.format(t1=dangle1, t2=dangle2))
 
-			# 		# v = robot2waypt
+					# Not sure this is the way
+					# if x1 < self._latest_z[0]:
+					# 	theta1 = UnicycleKineModel._signed_angle(theta1-np.pi)
+					# if x2 < self._latest_z[0]:
+					# 	theta2= UnicycleKineModel._signed_angle(theta1-np.pi)
 
-			# 		# dangle1 = np.arccos((u1[0]*v[0]+u1[1]*v[1])/(LA.norm(u1)*LA.norm(v)))
-			# 		# dangle2 = np.arccos((u2[0]*v[0]+u2[1]*v[1])/(LA.norm(u2)*LA.norm(v)))
-			# 		# self._log('d', 'Delta angles: {t1}, {t2}'.format(t1=dangle1, t2=dangle2))
-
-			# 		# Not sure this is the way
-			# 		# if x1 < self._latest_z[0]:
-			# 		# 	theta1 = UnicycleKineModel._signed_angle(theta1-np.pi)
-			# 		# if x2 < self._latest_z[0]:
-			# 		# 	theta2= UnicycleKineModel._signed_angle(theta1-np.pi)
-
-			# 		# self._log('d', 'Goal angle: {}'.format(waypt_theta))
-			# 		quad14_goal_theta = waypt_theta if waypt_theta <= np.pi/2 and waypt_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(waypt_theta-np.pi)
-			# 		# self._log('d', 'N Goal angle: {}'.format(quad14_goal_theta))
+					# self._log('d', 'Goal angle: {}'.format(goal_theta))
+					quad14_goal_theta = goal_theta if goal_theta <= np.pi/2 and goal_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(goal_theta-np.pi)
+					# self._log('d', 'N Goal angle: {}'.format(quad14_goal_theta))
 					
-			# 		if (quad14_goal_theta < theta1 and quad14_goal_theta < theta2) or (quad14_goal_theta > theta1 and quad14_goal_theta > theta2):
-			# 		 	self._log('d', 'goal not in the middle')
-			# 		 	# if abs(quad14_goal_theta - theta1) > np.pi/2:
-			# 		 	self._log('d', '{}'.format(quad14_goal_theta - theta1))
-			# 		 	self._log('d', '{}'.format(quad14_goal_theta - theta2))
-			# 		 	if abs(quad14_goal_theta - theta1) > abs(quad14_goal_theta - theta2):
-			# 		 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-			# 		 	else:
-			# 		 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
+					if (quad14_goal_theta < theta1 and quad14_goal_theta < theta2) or (quad14_goal_theta > theta1 and quad14_goal_theta > theta2):
+					 	self._log('d', 'goal not in the middle')
+					 	# if abs(quad14_goal_theta - theta1) > np.pi/2:
+					 	self._log('d', '{}'.format(quad14_goal_theta - theta1))
+					 	self._log('d', '{}'.format(quad14_goal_theta - theta2))
+					 	if abs(quad14_goal_theta - theta1) > abs(quad14_goal_theta - theta2):
+					 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
+					 	else:
+					 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
 
-			# 		#if waypt_theta > np.pi/2 and waypt_theta >= -np.pi/2
-			# 		self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
+					#if goal_theta > np.pi/2 and goal_theta >= -np.pi/2
+					self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
 
-			# 		d_theta1 = quad14_goal_theta - theta1
-			# 		d_theta2 = quad14_goal_theta - theta2
-			# 		#d_theta1 = UnicycleKineModel._signed_angle(waypt_theta - theta1)
-			# 		#d_theta2 = UnicycleKineModel._signed_angle(waypt_theta - theta2)
-			# 		absd_theta1 = abs(d_theta1)
-			# 		absd_theta2 = abs(d_theta2)
-			# 		theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-			# 		theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
+					d_theta1 = quad14_goal_theta - theta1
+					d_theta2 = quad14_goal_theta - theta2
+					#d_theta1 = UnicycleKineModel._signed_angle(goal_theta - theta1)
+					#d_theta2 = UnicycleKineModel._signed_angle(goal_theta - theta2)
+					absd_theta1 = abs(d_theta1)
+					absd_theta2 = abs(d_theta2)
+					theta1 = UnicycleKineModel._signed_angle(goal_theta - d_theta1)
+					theta2 = UnicycleKineModel._signed_angle(goal_theta - d_theta2)
 					
-			# 		self._log('d', 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2))
-			# 		self._log('d', 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2))
-			# 		print 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2)
-			# 		print 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2)
+					self._log('d', 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2))
+					self._log('d', 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2))
+					print 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2)
+					print 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2)
+
+					if absd_theta1 < absd_theta2:
+						#norm = np.sqrt(x1**2 + y1**2)
+						direc = np.vstack((np.cos(theta1), np.sin(theta1)))
+						#direc = np.vstack((x1/norm, y1/norm))
+						history += [[direc, absd_theta1]]
+					else:
+						if absd_theta1 == absd_theta2:
+							self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
+
+						# print [np.cos(theta2), np.sin(theta2)]
+						# print np.matrix([np.cos(theta2), np.sin(theta2)]).T
+						direc = np.vstack((np.cos(theta2), np.sin(theta2)))
+						# norm = np.sqrt(x2**2 + y2**2)
+						# direc = np.vstack((x2/norm, y2/norm))
+						history += [[direc, absd_theta2]]
 
 
-			# 		# chosen = []
-
-			# 		# if absd_theta1 < absd_theta2:
-			# 		# 	direc = np.vstack((np.cos(theta1), np.sin(theta1)))
-			# 		# 	chosen = [direc, theta1, absd_theta1]
-			# 		# else:
-			# 		# 	if absd_theta1 == absd_theta2:
-			# 		# 		self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 		# 	direc = np.vstack((np.cos(theta2), np.sin(theta2)))
-			# 		# 	chosen = [direc, theta2, absd_theta2]
-
-
-			# 		#visited = [i]
-
-			# 		#abst1 = absd_theta1
-			# 		#abst2 = absd_theta2
-			# 		#print 'abst1: ', abst1
-			# 		c = 1.0
-			# 		if d_theta1 < 0.0:
-			# 			dthac = d_theta1*c
-			# 			dthc = d_theta2*c
-			# 		else:
-			# 			dthac = d_theta2*c
-			# 			dthc = d_theta1*c
-
-			# 		for j in self._detected_obst_idxs:
-
-			# 			if j != i and LA.norm(np.matrix(self._obst[i].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[i].radius + self._obst[j].radius + 2*self.rho:
-
-			# 				self._log('d', 'TOO CLOSE')
-			# 				print 'TOO CLOSE'
-							
-			# 				robot2obst2 = np.matrix(self._obst[j].centroid).T - self._latest_z
-
-			# 				newObstTheta = np.arctan2(robot2obst2[1], robot2obst2[0])
-			# 				newObstDTheta = UnicycleKineModel._signed_angle(waypt_theta - newObstTheta)
-			# 				newObstAbsDTheta = abs(newObstDTheta)
-
-			# 				print 'newObstDTheta', newObstDTheta
-
-			# 				#if tmpabsdt > abst1 or tmpabsdt:
-			# 				if newObstDTheta < 0.0:
-			# 					if dthac > newObstDTheta:
-			# 						dthac = newObstDTheta - 2*0.17453
-			# 				else:
-			# 					if dthc < newObstDTheta:
-			# 						dthc = newObstDTheta + 2*0.17453
-
-
-			# 				# if abst1 >= abst2:
-			# 				# 	if tmpabsdt > abst1:
-			# 				# 		abst1 = tmpabsdt
-			# 				# 	elif tmpabsdt < abst2:
-			# 				# 		abst2 = tmpabsdt
-			# 				# else:
-			# 				# 	if tmpabsdt < abst1:
-			# 				# 		abst1 = tmpabsdt
-			# 				# 	elif tmpabsdt > abst2:
-			# 				# 		abst2 = tmpabsdt
-
-			# 		thac = UnicycleKineModel._signed_angle(waypt_theta - dthac)
-			# 		thc = UnicycleKineModel._signed_angle(waypt_theta - dthc)
-
-			# 		if abs(dthac) < abs(dthc):
-			# 			direc = np.vstack((np.cos(thac), np.sin(thac)))
-			# 		else:
-			# 			if abs(dthac) == abs(dthc):
-			# 				self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 			direc = np.vstack((np.cos(thc), np.sin(thc)))
-
-			# 		waypoint = direc*robot2waypt_dist + self._latest_z
-			# 		return (direc, waypoint)
-
-			# 			#visited += [j]
-			# 		# print 'abst1, abst2: ', abst1, abst2
-			# 		# if abst1 > abst2:
-			# 		# 	if absd_theta1 < abst1 and absd_theta1 > abst2:
-			# 		# 		#absd_theta1 prblm
-			# 		# 		# choose absd_theta2
-			# 		# 		ch_theta1 = False
-			# 		# 	elif absd_theta2 < abst1 and absd_theta2 > abst2:
-			# 		# 		#absd_theta2 prblm
-			# 		# 		# choose absd_theta1
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		if absd_theta1 < absd_theta2:
-			# 		# 			ch_theta1 = True
-			# 		# 		else:
-			# 		# 			ch_theta1 = False
-			# 		# elif abst1 < abst2:
-			# 		# 	if absd_theta1 > abst1 and absd_theta1 < abst2:
-			# 		# 		#absd_theta1 prblm
-			# 		# 		# choose absd_theta2
-			# 		# 		ch_theta1 = False
-			# 		# 	elif absd_theta2 > abst1 and absd_theta2 < abst2:
-			# 		# 		#absd_theta2 prblm
-			# 		# 		# choose absd_theta1
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		if absd_theta1 < absd_theta2:
-			# 		# 			ch_theta1 = True
-			# 		# 		else:
-			# 		# 			ch_theta1 = False
-			# 		# else:
-			# 		# 	if absd_theta1 < absd_theta2:
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		ch_theta1 = False
-
-
-			# 		# if ch_theta1:
-			# 		# 	direc = np.vstack((np.cos(theta1), np.sin(theta1)))
-
-			# 		# else:
-			# 		# 	direc = np.vstack((np.cos(theta2), np.sin(theta2)))
-
-			# 		# waypoint = direc*robot2waypt_dist + self._latest_z
-			# 		# return (direc, waypoint)
-
-			# 	else:
-			# 		#listOfGroups += [[goal_direc, 0.0]]
-			# 		return (goal_direc, self._final_z)
+				else:
+					history += [[goal_direc, 0.0]]
 					
-			# #end of for
-			# # if listOfGroups != []:
-			# 	# self._log('d', 'Choosen theta: {}'.format(max(listOfGroups, key=lambda x:x[1])[1]))
-			# # if listOfGroups != []:
-			# # 	direc = max(listOfGroups, key=lambda x:x[1])[0]
-			# # 	waypoint = direc*robot2waypt_dist + self._latest_z
-			# # 	return (direc, waypoint)
-			# # else:
-			# return (goal_direc, self._final_z)
+			#end of for
+			# if history != []:
+				# self._log('d', 'Choosen theta: {}'.format(max(history, key=lambda x:x[1])[1]))
+			if history != []:
+				direc = max(history, key=lambda x:x[1])[0]
+				waypoint = direc*robot2goal_dist + self._latest_z
+				return (direc, waypoint)
+			else:
+				return (goal_direc, self._final_z)
 					
 
 		# Get the direction of the robot, the new waypoint and the direction to it
 		init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
 		direc, self._waypoint = _find_direction()
-		#direc, self._waypoint = _find_direction()
 		self._log('d', 'R{rid}@tkref={tk:.4f}: found wayPoint:\n{wp}'.format(rid=self.eyed, tk=self._opttime[0], wp=self._waypoint))
-		print '\n\t\t\t\twayPoint:{wp}\n'.format(wp=self._waypoint.T)
 		self._log('d', 'R{rid}@tkref={tk:.4f}: found direction angle:\n{dir}'.format(rid=self.eyed, tk=self._opttime[0], dir=np.arctan2(direc[1], direc[0])*180.0/np.pi))
 		self._log('d', 'direction:\n{dir}'.format(dir=direc))
 
@@ -2702,10 +2021,9 @@ class Robot(object):
 			p = [(float(j)/(self._n_ctrlpts-1))**n for j in range(self._n_ctrlpts)]
 			curve[i] = np.array([p[j] * curve_waypoint_direc[i][j] + (1-p[j]) * curve_init_direc[i][j] for j in range(self._n_ctrlpts)])
 
-		# if self._plan_state == 'ls':
+		#if self._plan_state == 'ls':
 		if False:
-
-			#accel = min((self.k_mod.u_final[0,0]+self._latest_u[0,0])/(planHor), self.k_mod.acc_max[0,0])
+		# 	accel = min((self.k_mod.u_final[0,0]+self._latest_u[0,0])/(planHor), self.k_mod.acc_max[0,0])
 		# 	#alpha_accel = min((self.k_mod.u_final[1,0]+self._latest_u[1,0])/(planHor), self.k_mod.acc_max[0,0])
 		# 	alpha_accel = self.k_mod.acc_max[0,0]
 
@@ -2719,8 +2037,8 @@ class Robot(object):
 
 			delta_t = (planHor/(self._n_ctrlpts-1))
 			
-			displ = self.k_mod.u_final[0,0]*delta_t + self.k_mod.acc_max[0,0]/2.*delta_t**2
-			#displ = max(displ, prev_displ) if displ-prev_displ < max_displ_var  else prev_displ + max_displ_var
+			displ = self.k_mod.u_final[0,0]*delta_t + accel/2.*delta_t**2
+			displ = max(displ, prev_displ) if displ-prev_displ < max_displ_var  else prev_displ + max_displ_var
 			
 			latest_direction = -1.*final_direc
 		# 	print 'direc: ', latest_direction

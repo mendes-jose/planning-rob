@@ -27,8 +27,19 @@ from scipy.optimize import fmin_slsqp
 from optparse import OptionParser
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
+import random
 
 __version__ = '1.0.2'
+
+def _frange(initial, final, step):
+		""" Float point range function with round at the int(round(1./step))+4 decimal position
+		"""
+		_range = []
+		n = 0
+		while n*step+initial < final:
+			_range += [round(n*step+initial, 4+int(round(1./step)))]
+			n+=1
+		return _range
 
 ###############################################################################
 # Obstacle
@@ -610,7 +621,7 @@ class UnicycleKineModel(object):
 class RobotMsg(object):
 	""" Robot message class for exchanging information about theirs intentios.
 	"""
-	def __init__(self, dp, ip_z1, ip_z2, lz):
+	def __init__(self, dp, ip_z1, ip_z2, lz, lq, lu):
 		self.done_planning = dp
 		""" Flag to indicate that the robot has finished its planning process.
 		"""
@@ -619,6 +630,12 @@ class RobotMsg(object):
 		"""
 		self.intended_path_z2 = ip_z2
 		""" Intended path (z2 coordiante).
+		"""
+		self.latest_q = lq
+		""" q value calculated on the previews planned section.
+		"""
+		self.latest_u = lu
+		""" u value calculated on the previews planned section.
 		"""
 		self.latest_z = lz
 		""" z value calculated on the previews planned section.
@@ -741,12 +758,18 @@ class Robot(object):
 
 		self._unsatisf_eq_values = []
 		self._unsatisf_ieq_values = []
+		self._unsatisf_acc_ieq_values = []
+		self._unsatisf_collcons_ieq_values = []
 		self._exit_mode = 0
 		self._n_it = 0
 		self._t_final = 0
 
 		self._opttime = np.linspace(self._t_init, self._t_init+self._Td, self._N_s)
 		self._soltime = np.linspace(self._t_init, self._t_init + self._Td, self._N_ssol)
+
+		self._conflict_robots_idx = []
+		self._collision_robots_idx = []
+		self._com_robots_idx = []
 
 		# Instantiating the planning process
 		self.planning_process = mpc.Process(target=Robot._plan, args=(self, ))
@@ -765,6 +788,7 @@ class Robot(object):
 				self._ls_maxit = value
 			elif name == 'xacc':
 				self._xacc = value
+				self._acc = value
 			elif name == 'facc':
 				self._facc = value
 			elif name == 'eacc':
@@ -1112,6 +1136,7 @@ class Robot(object):
 
 		# Count how many inequations are not respected
 		self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
+		self._unsatisf_acc_ieq_values = [ieq for ieq in max_acc_cons if ieq < 0]
 
 		return np.asarray(ieq_cons)
 
@@ -1142,21 +1167,25 @@ class Robot(object):
 		qTp = self.k_mod.phi_1(dz)
 		ptTp = self._latest_rot2ref_mat*qTp[0:-1, 0] + np.asarray(self._latest_z)
 
-		cte = 1.5 # TODO no magic constants
+		cte = 1.1 # TODO no magic constants
 		pos2target = self._waypoint - self._latest_z
 		pos2target_norm = LA.norm(pos2target)
-		if pos2target_norm > cte*self._D:
-			goal_pt = self._latest_z+pos2target/pos2target_norm*cte*self._D
-		elif pos2target_norm < self._D:
-			goal_pt = self._latest_z+pos2target/pos2target_norm*self._D
-		else:
-			goal_pt = self.k_mod.q_final[0:-1, :]
-		cost = LA.norm(ptTp - goal_pt)
+		goal_pt = self._latest_z+pos2target/pos2target_norm*cte*self._D
+		#if pos2target_norm > cte*self._D:
+		#	goal_pt = self._latest_z+pos2target/pos2target_norm*cte*self._D
+		#elif pos2target_norm < self._D:
+		#	goal_pt = self._latest_z+pos2target/pos2target_norm*cte*self._D
+		#else:
+		#	goal_pt = self.k_mod.q_final[0:-1, :]
+		cost = np.sqrt(LA.norm(ptTp - goal_pt))
 		#cost = LA.norm(qTp[0:-1, :] - self.k_mod.q_final[0:-1, :])
 		# TODO
 		if cost > 1e6:
+			#cost = self.prev_cost
 			self._log('d', 'R{}: Big problem {}'.format(self.eyed, cost))
 			print ('R{}: Big problem {}'.format(self.eyed, cost))
+
+		#self.prev_cost = cost
 		return cost
 
 	def _sa_feqcons(self, x):
@@ -1297,6 +1326,8 @@ class Robot(object):
 		unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
 		# print unsatisf_list
 		self._unsatisf_ieq_values = unsatisf_list
+		self._unsatisf_acc_ieq_values = [ieq for ieq in max_acc_cons if ieq < 0]
+
 
 		# return arrray where each element is an inequation constraint
 		return np.asarray(ieq_cons)
@@ -1432,6 +1463,7 @@ class Robot(object):
 
 		# Count how many inequations are not respected
 		self._unsatisf_ieq_values = [ieq for ieq in ieq_cons if ieq < 0]
+		self._unsatisf_acc_ieq_values = [ieq for ieq in max_acc_cons if ieq < 0]
 		return np.asarray(ieq_cons)
 
 	def _co_criterion(self, x):
@@ -1559,32 +1591,43 @@ class Robot(object):
 		com_cons = []
 		for p in self._com_robots_idx:
 			for i in range(1, self._sa_dz.shape[1]):
+				myPos = np.squeeze(np.asarray((self._latest_rot2ref_mat*np.matrix(dz[0:2, i-1]).T+self._latest_z).T))
 				if self._com_link.done_planning[p] == 1:
-					d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
-							[self._com_link.latest_z[p][0], \
-							self._com_link.latest_z[p][1]]))
+					otherPos = np.asarray([self._com_link.latest_z[p][0], self._com_link.latest_z[p][1]])
+					d_ip = LA.norm(myPos - otherPos)
 				else:
-					d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
-							[self._com_link.intended_path_z1[p][i], \
-							self._com_link.intended_path_z2[p][i]]))
+					otherPos = np.asarray([self._com_link.intended_path_z1[p][i], self._com_link.intended_path_z2[p][i]])
+					d_ip = LA.norm(myPos - otherPos)
 				com_cons.append(self._com_range - self._safe_epsilon - d_ip)
 
 		## Collision constraints
 		collision_cons = []
 		for p in self._collision_robots_idx:
 			for i in range(1, self._sa_dz.shape[1]):
+
+				myPos = np.squeeze(np.asarray((self._latest_rot2ref_mat*np.matrix(dz[0:2, i-1]).T+self._latest_z).T))
+
+
 				if self._com_link.done_planning[p] == 1:
-					d_secu = self.rho
-					d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
-							[self._com_link.latest_z[p][0], \
-							self._com_link.latest_z[p][1]]))
+					d_secu = 2*self.rho
+					
+					otherPos = np.asarray([self._com_link.latest_z[p][0], self._com_link.latest_z[p][1]])
+
+					d_ip = LA.norm(myPos - otherPos)
+
 					# d_ip2 = ((float(dz[0, i-1]) - float(self._com_link.latest_z[p][0]))**2 +  (float(dz[1, i-1]) - float(self._com_link.latest_z[p][1]))**2)**(.5)
 					# self._log('d', 'R{rid}@tkref={tk:.4f} collision CONS\nDist norm: {dist1}\nDist sqrt{dist2}'.format(rid=self.eyed, tk=self._opttime[0], dist1=d_ip, dist2=d_ip2))
 				else:
 					d_secu = 2*self.rho
-					d_ip = LA.norm(dz[0:2, i-1] - np.asarray(\
-							[self._com_link.intended_path_z1[p][i], \
-							self._com_link.intended_path_z2[p][i]]))
+
+					otherPos = np.asarray([self._com_link.intended_path_z1[p][i], self._com_link.intended_path_z2[p][i]])
+					#print 'otherpos[', i, ': ', otherPos
+					#print 'mypos[', i, ': ', myPos
+					
+					#print myPos.shape
+					#print otherPos.shape
+
+					d_ip = LA.norm(myPos - otherPos)
 					#d_ip2 = ((float(dz[0, i-1]) - float(self._com_link.intended_path_z1[p][i]))**2 +  (float(dz[1, i-1]) - float(self._com_link.intended_path_z2[p][i]))**2)**(.5)
 					# self._log('d', 'R{rid}@tkref={tk:.4f} collision CONS\nDist norm: {dist1}\nDist sqrt: {dist2}'.format(rid=self.eyed, tk=self._opttime[0], dist1=d_ip, dist2=d_ip2))
 				collision_cons.append(d_ip - d_secu - self._safe_epsilon)
@@ -1596,11 +1639,13 @@ class Robot(object):
 			deform_cons.append(self._def_epsilon - d_ii)
 
 		# Create final array
-		ieq_cons = obst_cons + max_speed_cons + com_cons + collision_cons + deform_cons + max_acc_cons
+		ieq_cons = obst_cons + max_speed_cons + collision_cons + max_acc_cons #+ ocm_cons + collision_cons #+ deform_cons
 
 		# Count how many inequations are not respected
 		unsatisf_list = [ieq for ieq in ieq_cons if ieq < 0]
 		self._unsatisf_ieq_values = unsatisf_list
+		self._unsatisf_acc_ieq_values = [ieq for ieq in max_acc_cons if ieq < 0]
+		self._unsatisf_collcons_ieq_values = [ieq for ieq in collision_cons if ieq < 0]
 
 		# return arrray where each element is an inequation constraint
 		return np.asarray(ieq_cons)
@@ -1619,7 +1664,7 @@ class Robot(object):
 			else:   # TODO each robot must know the radius of the other robot
 				d_secu = 2*self.rho
 				linspeed_max = 2*self.k_mod.u_max[0, 0]
-
+			#print 'self._com_link.latest_z', self._com_link.latest_z
 			d_ip = LA.norm(self._latest_z.T - np.asarray([self._com_link.latest_z[i][0], self._com_link.latest_z[i][1]]))
 			#d_ip = ((float(self._latest_z[0]) - float(self._com_link.latest_z[i][0]))**2 +  (float(self._latest_z[1]) - float(self._com_link.latest_z[i][1]))**2)**(.5)
 
@@ -1636,6 +1681,71 @@ class Robot(object):
 					self._com_robots_idx.append(i)
 
 		self._conflict_robots_idx = self._collision_robots_idx + self._com_robots_idx
+
+	def _robotDirecControl(self, accelChoice):
+		output = [[], 0, 0, 0, 0]
+
+		###################################################
+		init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+
+		robot2waypt = self._waypoint - self._latest_z
+		robot2waypt_dist = LA.norm(robot2waypt)
+		waypt_direc = robot2waypt/robot2waypt_dist
+		#waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
+		self._latest_rot2rob_mat = np.hstack((np.multiply(init_direc, np.vstack((1,-1))), np.flipud(init_direc)))
+
+		waypt_direc = self._latest_rot2rob_mat*waypt_direc
+
+		# Get planning horizon
+		planHor = self._est_dtime if self._plan_state == 'ls' else self._Td
+
+		# Get acceleration
+		#accelChoice = random.choice(_frange(.75*self.k_mod.acc_max[0,0], self.k_mod.acc_max[0,0], 0.01))
+		#accelChoice = accelChoice if doAccelerate else -accelChoice
+
+		max_displ_var = (planHor/(self._n_ctrlpts-1))*self.k_mod.u_max[0,0]
+		
+		# Create a sampled trajectory for a "bounded uniformed accelerated motion" in x axis
+		# And create a sampled trajectory for a "bounded uniformed accelerated motion" in waypt dir
+		curve_latest_theta = [[]]*self.k_mod.z_dim
+		curve_waypoint_direc = [[]]*self.k_mod.z_dim
+
+		for i in range(self.k_mod.z_dim):
+			curve_latest_theta[i] = np.zeros(self._n_ctrlpts)
+			curve_waypoint_direc[i] = np.zeros(self._n_ctrlpts)
+
+		prev_displ = 0.0
+
+		for i in range(self._n_ctrlpts)[1:]:
+
+			delta_t = i*(planHor/(self._n_ctrlpts-1))
+			
+			displ = self._latest_u[0,0]*delta_t + accelChoice/2.*delta_t**2
+
+			displ = max(displ, prev_displ) if displ-prev_displ < max_displ_var  else prev_displ + max_displ_var
+
+			prev_displ = displ
+
+			curve_latest_theta[0][i] = displ
+
+			for j in range(len(waypt_direc)):
+				curve_waypoint_direc[j][i] = displ*waypt_direc[j]
+
+		curve = [[]]*self.k_mod.z_dim
+		for i in range(self.k_mod.z_dim):
+			n = 1.5 # TODO no magic number, specially hardcoded
+			p = [(float(j)/(self._n_ctrlpts-1))**n for j in range(self._n_ctrlpts)]
+			curve[i] = np.array([p[j] * curve_waypoint_direc[i][j] + (1-p[j]) * curve_latest_theta[i][j] for j in range(self._n_ctrlpts)])
+
+		self._gen_ctrlpts_from_curve(curve)
+		###################################################
+
+		output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+
+		if self._plan_state == 'ls':
+			output[0] = np.insert(output[0], 0, self._est_dtime)
+
+		return output
 
 	def _solve_opt_pbl(self):
 		""" Call the optimization solver with the appropriate parameters and parse
@@ -1665,7 +1775,7 @@ class Robot(object):
 			else:
 				p_criterion = self._ls_co_criterion
 				p_eqcons = self._ls_co_feqcons
-				p_ieqcons = self._ls_co_fieqcons
+				p_ieqcons = self._ls_co_fieqcons 
 			print 'Estimate last delta t: ', self._est_dtime
 			init_guess = np.append(np.asarray([self._est_dtime]),
 					self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim))
@@ -1673,20 +1783,31 @@ class Robot(object):
 			maxit = self._ls_maxit
 
 		# if True: #self._plan_state != 'ls':
-		#if self._plan_state != 'ls':
+		if self._plan_state != 'ls':
 		#if False:
-		if True:
+		#if True:
 			output = fmin_slsqp(p_criterion, init_guess, eqcons=(), f_eqcons=p_eqcons, ieqcons=(), f_ieqcons=p_ieqcons, iprint=0, iter=maxit, acc=acc, full_output=True)
 		else:
+
 			output = [[], 0, 0, 0, 0]
+			output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+
 			if self._plan_state == 'ls':
-				# print output[0].shape
-				output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
 				#print output[0].shape
 				output[0] = np.insert(output[0], 0, self._est_dtime)
 				#print output[0].shape
-			else:
-				output[0] = self._C[0:self._n_ctrlpts,:].reshape(self._n_ctrlpts*self.k_mod.u_dim)
+
+		if any([i < -1e-2 for i in self._unsatisf_acc_ieq_values+self._unsatisf_collcons_ieq_values]): # TODO no magic number, specially hardcoded
+		#if False:
+			self._unsatisf_acc_ieq_values = []
+			self._unsatisf_collcons_ieq_values = []
+
+			random.seed(self.eyed)
+			accelChoice = random.choice(np.linspace(-self.k_mod.acc_max[0,0], self.k_mod.acc_max[0,0], 100))
+			output = self._robotDirecControl(accelChoice)
+
+			print '______________________________BAD OPT. USING "DirecCtrl" at {acc} m/s2 (ui = {ui} m/s)__________________________'.format(acc=accelChoice, ui=self._latest_u[0,0])
+			self._log('d', 'R{rid}@tkref={tk:.4f}: ______________________________BAD OPT. USING "DirecCtrl" at {acc} m/s2 (ui = {ui} m/s)__________________________'.format(rid=self.eyed, tk=self._opttime[0], acc=accelChoice, ui=self._latest_u[0,0]))
 
 		if self._plan_state == 'ls':
 			#print output[0].shape
@@ -1712,19 +1833,7 @@ class Robot(object):
 
 		# self._C[0:self._n_ctrlpts,:] = (self._latest_rot2ref_mat*self._C[0:self._n_ctrlpts,:].T).T
 
-	def _plan_section(self):
-		""" This method takes care of planning a section of the final path over a :math:`T_{d/p}`
-		time horizon.
-
-		It also performs syncronization and data exchange among the robots.
-		"""
-
-		btic = time.time()
-
-		# update detected obstacles list
-		self._detect_obst()
-
-		def gen_ctrlpts_from_curve(curve):
+	def _gen_ctrlpts_from_curve(self, curve):
 			""" Interpolate a given curve by Bezier splines defined by its control points.
 			"""
 
@@ -1740,6 +1849,59 @@ class Robot(object):
 			for i in range(self.k_mod.z_dim):
 				self._C[0:self._n_ctrlpts, i] = ctrl[i]
 
+	def _plan_section(self):
+		""" This method takes care of planning a section of the final path over a :math:`T_{d/p}`
+		time horizon.
+
+		It also performs syncronization and data exchange among the robots.
+		"""
+
+		btic = time.time()
+
+		# update detected obstacles list
+		self._detect_obst()
+
+
+		def isAnyObstInRobotWay2Goal():
+			robot2goal = self._final_z - self._latest_z
+			robot2goal_dist = LA.norm(robot2goal)
+			goal_direc = robot2goal/robot2goal_dist
+			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
+
+			
+			for obstIdx in self._known_obst_idxs:
+				cent2robot = self._latest_z - np.matrix(self._obst[obstIdx].centroid).T
+				cent2goal = self._final_z - np.matrix(self._obst[obstIdx].centroid).T
+
+				segment_norm_goal = LA.norm(cent2goal - cent2robot)
+
+				determinant_p1p2_goal = cent2robot[0, 0]*cent2goal[1, 0] - cent2goal[0, 0]*cent2robot[1, 0]
+
+				discriminant_goal = (self._obst[obstIdx].radius+self.rho)**2 * segment_norm_goal**2 - determinant_p1p2_goal**2
+
+				if discriminant_goal >= 0: # intersection
+
+					robot2obst = -1.*cent2robot
+
+					robot2obst_norm = LA.norm(robot2obst)
+
+					#signed_r2o_proj_on_wdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-waypt_theta)
+
+					signed_r2o_proj_on_gdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-goal_theta)
+
+
+					if signed_r2o_proj_on_gdir <= self.k_mod.u_max[0,0]*self._Tc: #0.0
+						#and signed_r2o_proj_on_gdir <= self.k_mod.u_max[0,0]*self._Tc:
+						print obstIdx, ': obstacle was left behind'
+						# obstacle was left behind
+						#return (d_theta, d_theta, LA.norm(robot2obst)-rad)
+						#return (0.0, 0.0, robot2goal_dist)
+						continue
+
+					return True
+
+
+			return False
 
 
 		def isObstInRobotsWay(obstIdx):
@@ -1757,11 +1919,13 @@ class Robot(object):
 			cent2robot = self._latest_z - np.matrix(self._obst[obstIdx].centroid).T
 			robot2obst = -1.*cent2robot
 			cent2waypt = self._waypoint - np.matrix(self._obst[obstIdx].centroid).T
+			cent2goal = self._final_z - np.matrix(self._obst[obstIdx].centroid).T
 
 			segment_norm = LA.norm(cent2waypt - cent2robot)
+
 			determinant_p1p2 = cent2robot[0, 0]*cent2waypt[1, 0] - cent2waypt[0, 0]*cent2robot[1, 0]
 
-			discriminant = (self._obst[obstIdx].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
+			discriminant_way = (self._obst[obstIdx].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
 
 
 			# if discriminant < 0: # no intersection in waypt dir, check goal
@@ -1800,11 +1964,11 @@ class Robot(object):
 			# 	#return (0.0, 0.0, robot2goal_dist)
 			# 	return False
 
-			if discriminant < 0: # no intersection in waypt dir, check goal
+			if discriminant_way < 0: # no intersection in waypt dir, check goal
 				print obstIdx, ': no intersection in waypt dir'
 				return False
 
-			#if discriminant >= 0: # secant or tangent to waypt dir or goal dir
+			#if discriminant_way >= 0: # secant or tangent to waypt dir or goal dir
 			else:
 				print obstIdx, ': intersection in waypt dir'
 				# check if obstacle was left behind
@@ -1814,7 +1978,7 @@ class Robot(object):
 
 				signed_r2o_proj_on_wdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-waypt_theta)
 
-				signed_r2o_proj_on_gdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-goal_theta)
+				#signed_r2o_proj_on_gdir = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-goal_theta)
 
 
 				if signed_r2o_proj_on_wdir <= self.k_mod.u_max[0,0]*self._Tc: #0.0
@@ -1824,6 +1988,12 @@ class Robot(object):
 					#return (d_theta, d_theta, LA.norm(robot2obst)-rad)
 					#return (0.0, 0.0, robot2goal_dist)
 					return False
+
+			# obstacle would be in the robots way but if it knew it can go directly to the goal so the obstacle is not really "in the way" (the way to the greater objective which is the goal)
+			if not isAnyObstInRobotWay2Goal():
+				print '{}: No robot in the way to goal'.format(self.eyed)
+				#time.sleep(2)
+				return False
 
 			return True
 
@@ -1874,7 +2044,7 @@ class Robot(object):
 
 			ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
 
-			print '_______ O [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
+			#print '_______ O [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
 
 			quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
 
@@ -1892,7 +2062,7 @@ class Robot(object):
 			 	else:
 			 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
 
-			print '_______ O [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
+			print '_______ [{}] ms ({}, {}), thetaref {}'.format(obstIdx, theta1[0,0], theta2[0,0], ref_theta[0,0])
 
 			d_theta1 = UnicycleKineModel._signed_angle(quad14_ref_theta - theta1)
 			d_theta2 = UnicycleKineModel._signed_angle(quad14_ref_theta - theta2)
@@ -1906,9 +2076,6 @@ class Robot(object):
 			#theta2 = UnicycleKineModel._signed_angle(goal_theta - d_theta2)
 
 			return (d_theta1[0,0], d_theta2[0,0], LA.norm(robot2obst)-rad)
-
-
-
 
 		# Find direction for init:
 		# in: self._D, self._final_z, self._latest_z, otherRobots' pos and speed, obstacles' pos closer than self._D in the 120º (or other angle) cone in front of the robot
@@ -1936,15 +2103,93 @@ class Robot(object):
 
 			print 'Z\n', self._latest_z
 
-			if self._known_obst_idxs == []:
-				return (waypt_direc, self._waypoint)
+			if self._known_obst_idxs == [] and self._collision_robots_idx == []:
+				return (goal_direc, self._final_z)
+
+			bubbles = self._obst
+			bubbles_idx = self._known_obst_idxs
+			fake_obstacles_cntr = 0
+
+			if self._collision_robots_idx != []:
+			#if False:
+				for oth_idx in self._collision_robots_idx:
+
+					#if oth_idx > self.eyed:
+					#	continue
+
+					otherPose = np.matrix([[self._com_link.latest_q[oth_idx][0]], [self._com_link.latest_q[oth_idx][1]], [self._com_link.latest_q[oth_idx][2]]])
+
+					#print 'otherPose', otherPose
+
+					otherPos = otherPose[0:-1]
+
+					otherDirec = np.vstack((np.cos(otherPose[-1]), np.sin(otherPose[-1])))
+
+					otherLinVel = self._com_link.latest_u[oth_idx][0]
+
+					myLinVel = self._latest_u[0,0]
+
+					myDirec = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+
+					myPos = self._latest_z
+
+					deltaVX = myLinVel*myDirec[0] - otherLinVel*otherDirec[0]
+					deltaVY = myLinVel*myDirec[1] - otherLinVel*otherDirec[1]
+
+					#print 'myPos', myPos
+					#print 'otherPos', otherPos
+
+					deltaPX = myPos[0]-otherPos[0]
+					deltaPY = myPos[1]-otherPos[1]
+
+					a = (deltaVX)**2 + (deltaVY)**2
+
+					b = 2*(deltaPX)*(deltaVX) + 2*(deltaPY)*(deltaVY)
+
+					c = deltaPX**2 + deltaPY**2 - (2*self.rho + self._safe_epsilon) # TODO get other robot radius
+
+					discriminant = b**2 - 4*a*c
+
+#					if discriminant > 0 and random.choice([True, False]): # then add buble
+					if discriminant > 0: # then add buble
+#					if False:
+
+						print '\t\t\t\t\t COLLISION'
+
+						t1 = float((-b + np.sqrt(discriminant))/(2*a))
+						t2 = float((-b - np.sqrt(discriminant))/(2*a))
+
+						if t1 < 0.0 and t2 < 0.0:
+							print '\t\t\t\t\t BUT IN THE PAST (t<0)'
+							continue
+
+						if t1 < t2 and t1 < 0.0:
+							t1 = 0.0
+
+						if t2 < t1 and t2 < 0.0:
+							t2 = 0.0
+
+						centroid = (myPos + myLinVel*myDirec*t1 + myPos + myLinVel*myDirec*t2)/2.0
+
+						radius = LA.norm((myPos + myLinVel*myDirec*t1) - (myPos + myLinVel*myDirec*t2))/2.0 /4.0
+						#/ random.choice(_frange(1.0, 2.0, .01)) # assuming that the other robot will "take care of half of the problem (update: not assuming that anymore since we're using robIDs for solving symmetry"
+
+						bubbles.append(RoundObstacle([centroid[0,0], centroid[1,0]], radius))
+						bubbles_idx.append(len(bubbles)-1)
+						fake_obstacles_cntr += 1
+
+			if bubbles == []:
+				for _ in range(fake_obstacles_cntr):
+					bubbles.pop()
+					bubbles_idx.pop()
+				return (goal_direc, self._final_z)
 
 			else:
 
 				obstInfo = dict()
 				listOfGroups = []
 
-				for i in self._known_obst_idxs:
+				for i in bubbles_idx:
 
 					if any([i in j for j in listOfGroups]):
 						continue
@@ -1957,8 +2202,8 @@ class Robot(object):
 					while cntr < len(tree):
 						root = tree[cntr]
 
-						for j in self._known_obst_idxs:
-								if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(self._obst[root].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[root].radius + self._obst[j].radius + 2*self.rho:
+						for j in bubbles_idx:
+								if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(bubbles[root].centroid).T - np.matrix(bubbles[j].centroid).T) < bubbles[root].radius + bubbles[j].radius + 2*self.rho:
 
 									listOfGroups[-1] += [j]
 									# obstInfo[j] = getThetas(j, force=True)
@@ -1983,6 +2228,7 @@ class Robot(object):
 						while j < len(group):
 						#for x in group:
 							obstXInfo = getThetas(group[j])
+							#print 'obstXInfo', obstXInfo
 
 							maxAngle = 2.8
 
@@ -2002,17 +2248,23 @@ class Robot(object):
 						#	obstInfo[x] = (d_theta[0,0], d_theta[0,0], robot2goal_dist)
 						listOfGroups.remove(group)
 
-				print 'obstInfo:', obstInfo
+				#print 'obstInfo:', obstInfo
 
 				testList = [item for sublist in listOfGroups for item in sublist]
 				#testList = [x ]
 				#if listOfGroups == []:
 				if testList == []:
+					for _ in range(fake_obstacles_cntr):
+						bubbles.pop()
+						bubbles_idx.pop()
 					return (goal_direc, self._final_z)
 
+
 				minMaxList = []
-				print 'listOfGroups', listOfGroups
+				#print 'listOfGroups', listOfGroups
 				for i in listOfGroups:
+					if i == []:
+						continue
 					for j in i:
 						if obstInfo[j][2] < 0.0:
 							#theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta)
@@ -2021,10 +2273,13 @@ class Robot(object):
 
 							direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
 							waypoint = direc*robot2waypt_dist + self._latest_z
+							for _ in range(fake_obstacles_cntr):
+								bubbles.pop()
+								bubbles_idx.pop()
 							return (direc, waypoint)
 					#subdic = [obstInfo[j] for j in i]
 					subdic = dict((k, obstInfo[k]) for k in i if k in obstInfo)
-					print 'subdic', subdic
+					#print 'subdic', subdic
 
 
 					doubled_keys = [val for val in [x for x in subdic] for _ in (0, 1)]
@@ -2036,11 +2291,12 @@ class Robot(object):
 					#print 'all_d_thetas:', all_d_thetas
 
 					X = [(x, y, z) for x, y, z in sorted(zip(all_d_thetas, doubled_keys, doubled_dists))]
-					print 'Ordered index', [i[1] for i in X]
-					print 'Ordered dthetas', [i[0] for i in X]
+					#print 'Ordered index', [i[1] for i in X]
+					#print 'Ordered dthetas', [i[0] for i in X]
 					#print K
 					# x[0] min dtheta
 					# x[-1] max dtheta
+					# print 'X', X
 					if (abs(X[0][0]) <= abs(X[-1][0])):
 						absMinVal = X[0][0]
 						absMinIdx = X[0][1]
@@ -2055,7 +2311,9 @@ class Robot(object):
 				# for i in minlist:
 					#min in dist
 
-				print 'minMaxList: ', minMaxList
+				#print 'minMaxList: ', minMaxList
+
+				#random.shuffle(minMaxList)
 
 				sortedValMinMaxList = [i for _, i in sorted(zip([x[0] for x in minMaxList], minMaxList))]
 
@@ -2065,7 +2323,7 @@ class Robot(object):
 
 				for k in sortedValMinMaxList:
 					#subSortedValMinMaxList = [sortedValMinMaxList[gidx] for ginfo, gidx in zip(sortedValMinMaxList, range(len(sortedValMinMaxList))) if k[0] > ginfo[3] and k[0] > ginfo[4]]
-					subSortedValMinMaxList = [ginfo for ginfo in sortedValMinMaxList if k[0] < ginfo[3] or k[0] > ginfo[4]]
+					subSortedValMinMaxList = [ginfo for ginfo in sortedValMinMaxList if k[0] > ginfo[3] or k[0] < ginfo[4]]
 					print 'subSortedValMinMaxList', subSortedValMinMaxList
 					if subSortedValMinMaxList != []:
 						proximityTests = [k[1] > j[1] for j in subSortedValMinMaxList]
@@ -2080,7 +2338,7 @@ class Robot(object):
 
 				# obstInfo[closerAbsMinDirec]
 				d_theta = k[0]
-				print 'd_theta', d_theta
+				#print 'd_theta', d_theta
 				#theta = UnicycleKineModel._signed_angle(goal_theta - d_theta)
 				eps = -0.03 if d_theta < 0.0 else +0.03
 				#eps = 0.0
@@ -2088,530 +2346,11 @@ class Robot(object):
 
 				direc = np.vstack((np.cos(theta), np.sin(theta)))
 				waypoint = direc*robot2waypt_dist + self._latest_z
+				for _ in range(fake_obstacles_cntr):
+					bubbles.pop()
+					bubbles_idx.pop()
 				return (direc, waypoint)
 
-
-
-				# for i in self._known_obst_idxs:
-
-				# 	if any([i in j for j in listOfGroups]):
-				# 		continue
-
-				# 	cent2robot = self._latest_z - np.matrix(self._obst[i].centroid).T
-				# 	cent2waypt = self._waypoint - np.matrix(self._obst[i].centroid).T
-
-				# 	segment_norm = LA.norm(cent2waypt - cent2robot)
-				# 	determinant_p1p2 = cent2robot[0, 0]*cent2waypt[1, 0] - cent2waypt[0, 0]*cent2robot[1, 0]
-
-				# 	discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-
-				# 	if discriminant < 0: # no intersection
-				# 		#return (waypt_direc, self._waypoint)
-				# 		# listOfGroups += [[i]]
-				# 		# dic[i] = (0.0, 0.0)
-				# 		# continue
-
-				# 		cent2goal = self._final_z - np.matrix(self._obst[i].centroid).T
-				# 		segment_norm = LA.norm(cent2goal - cent2robot)
-				# 		determinant_p1p2 = cent2robot[0, 0]*cent2goal[1, 0] - cent2goal[0, 0]*cent2robot[1, 0]
-
-				# 		discriminant2 = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-				# 		if discriminant2 >= 0.0:
-				# 			discriminant = discriminant2
-				# 		else:
-				# 			print '################## both disc < 0 ############'
-				# 			print '##################\n', self._latest_q[0:2,0]
-
-				# 	if discriminant >= 0: # secant or tangent
-				# 		robot2obst = -1.*cent2robot
-				# 		robot2obst_norm = LA.norm(robot2obst)
-
-				# 		signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
-
-				# 		if signed_norm < self.k_mod.u_max[0,0]*self._Tc:
-				# 			print 'Obst [', i, '] was left behind'
-				# 			theta = goal_theta
-
-				# 			d_theta = UnicycleKineModel._signed_angle(waypt_theta - theta)
-				# 			# if abs(d_theta) >= np.pi*7 and abs(d_theta) <= : # +- 80 deg
-				# 			# 	print 
-				# 			# 	print '1______________________________________', abs(UnicycleKineModel._signed_angle(waypt_theta - theta))
-				# 			# 	print theta
-				# 			# 	theta = UnicycleKineModel._signed_angle((1.*theta + 1.*waypt_theta)/2.)
-				# 			# 	print theta
-
-				# 			listOfGroups += [[i]]
-				# 			dic[i] = (d_theta[0,0], d_theta[0,0])
-				# 			continue
-
-				# 		rad = self._obst[i].radius+self.rho
-
-				# 		# solving second degree eq for finding the tow m's
-				# 		a = robot2obst[0]**2 - rad**2
-				# 		b = -2*robot2obst[0]*robot2obst[1]
-				# 		c = robot2obst[1]**2 - rad**2
-
-				# 		discriminant = b**2 - 4*a*c
-
-				# 		if discriminant < 0:
-							
-				# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-				# 			print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
-
-				# 			#listOfGroups += [[goal_direc, 0.0]]
-				# 			latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-				# 			#abs_latest_d_theta = abs(self._latest_q[-1] - waypt_theta)
-				# 			#listOfGroups += [[latest_direc, abs_latest_d_theta]]
-				# 			#waypoint = latest_direc*robot2waypt_dist + self._latest_z
-				# 			return (latest_direc, self._waypoint)
-				# 			# ignore obstacle
-				# 			#continue
-
-				# 		elif discriminant == 0:
-				# 			# y/x of unit vector is m
-				# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-				# 			theta1 = np.arctan(-b/2*a) # [-pi, pi)
-				# 			theta2 = theta1-np.pi # [-2pi, 0.0]
-
-				# 		else:
-				# 			theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-				# 			theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-
-
-				# 		ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
-				# 		quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
-
-				# 		quad14_waypt_theta = waypt_theta if waypt_theta <= np.pi/2 and waypt_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(waypt_theta-np.pi)
-						
-				# 		if (quad14_ref_theta < theta1 and quad14_ref_theta < theta2) or (quad14_ref_theta > theta1 and quad14_ref_theta > theta2):
-				# 		 	self._log('d', 'goal not in the middle')
-				# 		 	# if abs(quad14_ref_theta - theta1) > np.pi/2:
-				# 		 	self._log('d', '{}'.format(quad14_ref_theta - theta1))
-				# 		 	self._log('d', '{}'.format(quad14_ref_theta - theta2))
-				# 		 	if abs(quad14_ref_theta - theta1) > abs(quad14_ref_theta - theta2):
-				# 		 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-				# 		 	else:
-				# 		 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-				# 		#if ref_theta > np.pi/2 and ref_theta >= -np.pi/2
-				# 		self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
-
-				# 		d_theta1 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta1)
-				# 		d_theta2 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta2)
-				# 		#d_theta1 = UnicycleKineModel._signed_angle(ref_theta - theta1)
-				# 		#d_theta2 = UnicycleKineModel._signed_angle(ref_theta - theta2)
-				# 		absd_theta1 = abs(d_theta1)
-				# 		absd_theta2 = abs(d_theta2)
-				# 		theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-				# 		theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
-
-				# 		listOfGroups += [[i]]
-				# 		f = 1.0
-				# 		dic[i] = (d_theta1[0,0]*f, d_theta2[0,0]*f)
-
-				# 		tree = [i]
-				# 		cntr = 0
-				# 		while cntr < len(tree):
-				# 			root = tree[cntr]
-
-				# 			# root (find children)
-				# 			for j in self._known_obst_idxs:
-				# 				if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(self._obst[root].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[root].radius + self._obst[j].radius + 2*self.rho:
-				# 					print '[', j, '] too close to [', root, ']'
-
-				# 					listOfGroups[-1] += [j]
-
-				# 					#######################
-				# 					#######################dic[j] = getDeltasThetas()
-				# 					#######################
-				# 					robot2obst = np.matrix(self._obst[j].centroid).T - self._latest_z
-
-				# 					robot2obst_norm = LA.norm(robot2obst)
-
-				# 					signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
-
-				# 					if signed_norm < self.k_mod.u_max[0,0]*self._Tc:
-				# 						print 'Obst ', i, ' was left behind'
-				# 						continue
-
-				# 					rad = self._obst[j].radius+self.rho
-
-				# 					# solving second degree eq for finding the tow m's
-				# 					a = robot2obst[0]**2 - rad**2
-				# 					b = -2*robot2obst[0]*robot2obst[1]
-				# 					c = robot2obst[1]**2 - rad**2
-
-				# 					discriminant = b**2 - 4*a*c
-
-				# 					if discriminant < 0:
-				# 						latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-				# 						#waypoint = latest_direc*robot2waypt_dist + self._latest_z
-				# 						return (latest_direc, self._waypoint)
-				# 						#dic[j] = (0.0, 0.0)
-				# 						#continue
-				# 					elif discriminant == 0:
-				# 						self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-				# 						theta1 = np.arctan(-b/2*a) # [-pi, pi)
-				# 						theta2 = theta1-np.pi # [-2pi, 0.0]
-
-				# 					else:
-				# 						theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-				# 						theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-
-				# 					print 'thetas: ', theta1, theta2
-
-				# 					print 'q12wt: ', quad14_waypt_theta
-
-				# 					ref_theta = np.arctan2(robot2obst[1], robot2obst[0])
-				# 					quad14_ref_theta = ref_theta if ref_theta <= np.pi/2 and ref_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(ref_theta-np.pi)
-
-				# 					if (quad14_ref_theta < theta1 and quad14_ref_theta < theta2) or (quad14_ref_theta > theta1 and quad14_ref_theta > theta2):
-				# 					 	self._log('d', 'obj centroid not in the middle')
-				# 					 	# if abs(quad14_ref_theta - theta1) > np.pi/2:
-				# 					 	#self._log('d', '{}'.format(quad14_ref_theta - theta1))
-				# 					 	#self._log('d', '{}'.format(quad14_ref_theta - theta2))
-				# 					 	if abs(quad14_ref_theta - theta1) > abs(quad14_ref_theta - theta2):
-				# 					 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-				# 					 	else:
-				# 					 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-
-				# 					d_theta1 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta1)
-				# 					d_theta2 = UnicycleKineModel._signed_angle(quad14_waypt_theta - theta2)
-				# 					absd_theta1 = abs(d_theta1)
-				# 					absd_theta2 = abs(d_theta2)
-				# 					theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-				# 					theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
-				# 					print 'final thetas: ', theta1, theta2
-				# 					#######################
-				# 					#######################
-				# 					#######################
-				# 					dic[j] = (d_theta1[0,0]*f, d_theta2[0,0]*f)
-
-				# 					tree.append(j)
-
-				# 			cntr += 1
-
-				# #end of for
-				# all_d_thetas = [item for sublist in [dic[x] for x in dic] for item in sublist]
-
-				# if all_d_thetas == []:
-				# 	return (goal_direc, self._final_z)
-
-				# print 'DIC:', dic
-				# print 'History:', listOfGroups
-				
-				# max_d_theta = max(all_d_thetas)
-				# min_d_theta = min(all_d_thetas)
-				# if abs(max_d_theta) < abs(min_d_theta):
-				# 	theta = UnicycleKineModel._signed_angle(waypt_theta - max_d_theta)
-				# else:
-				# 	theta = UnicycleKineModel._signed_angle(waypt_theta - min_d_theta)
-
-				# # d_theta = UnicycleKineModel._signed_angle(waypt_theta - theta)
-				# # if abs(d_theta) >= np.pi*60/180. and abs(d_theta) <= 2*np.pi-np.pi*60/180.: # +- 80 deg
-				# # 	print '______________________________________', abs(d_theta)
-				# # 	print theta
-				# # 	theta = UnicycleKineModel._signed_angle((1.*theta + 2.*waypt_theta)/3.)
-				# # 	print theta
-
-				# print 'Old waypt:\n', self._waypoint
-				# direc = np.vstack((np.cos(theta), np.sin(theta)))
-				# waypoint = direc*robot2waypt_dist + self._latest_z
-				# return (direc, waypoint)
-
-
-			#print 'begin find watpt: ', self._waypoint
-
-			# waypt_direc = self._waypoint - self._latest_z
-			# robot2waypt_dist = LA.norm(waypt_direc)
-			# waypt_direc = waypt_direc/robot2waypt_dist
-			# waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
-
-			# line equation passing by latest_z and final_z
-			#init_m = (self._latest_z[1]-self._final_z[1])/(self._latest_z[0]-self._final_z[0])
-			#init_n = self._latest_z[1] - m*self._latest_z[0]
-
-			# dist_denominator = np.sqrt(m**2 + 1)
-
-			# dist = abs(m*self._obst[i].x - self._obst[i].y + n)/dist_denominator
-
-			#listOfGroups = []
-
-			# print self._detected_obst_idxs
-
-			# for i in self._detected_obst_idxs:
-			# 	p1 = self._latest_z - np.matrix(self._obst[i].centroid).T
-			# 	p2 = self._waypoint - np.matrix(self._obst[i].centroid).T
-
-			# 	segment_norm = LA.norm(p2 - p1)
-			# 	determinant_p1p2 = p1[0, 0]*p2[1, 0] - p2[0, 0]*p1[1, 0]
-
-			# 	discriminant = (self._obst[i].radius+self.rho)**2 * segment_norm**2 - determinant_p1p2**2
-
-			# 	print 'discriminant', discriminant
-
-			# 	if discriminant > 0: # secant
-			# 		print "Secante"
-
-			# 		# the obstacle may be left behind already, let's check
-			# 		robot2obst = -p1
-			# 		robot2obst_norm = LA.norm(robot2obst)
-			# 		# print "latest z:\n", self._latest_z
-			# 		# print "obst center:\n", np.matrix(self._obst[i].centroid).T
-			# 		# print "OA:\n", robot2obst
-			# 		# print "OA norm: ", float(robot2obst_norm)
-			# 		# print "init Theta: ", waypt_theta
-			# 		# print "Angle between vector obst center: ", np.arctan2(robot2obst[1], robot2obst[0])
-
-			# 		# get the signed norm of the projection of the vector connecting the obst and latest Z in robot direction vector (positive if the projection is in the same direction as the waypt_direc vector, negative otherwise)
-			# 		# this is used to evaluate if the obstacle was left behind already
-			# 		signed_norm = robot2obst_norm * np.cos(np.arctan2(robot2obst[1], robot2obst[0])-self._latest_q[-1])
-
-			# 		#print "Signed norm: ", float(signed_norm)
-			# 		#print "Robot pose: ", self._latest_q
-
-			# 		if signed_norm < self.rho:
-			# 			print 'Left behind'
-			# 			#listOfGroups += [[goal_direc, 0.0]]
-			# 			continue
-
-
-			# 		# print "Obst ahead"
-
-			# 		# find the lines that are tangent to the circle and pass by latest_z point
-			# 		rad = self._obst[i].radius+self.rho
-
-			# 		# solving second degree eq for finding the tow m's
-			# 		a = robot2obst[0]**2 - rad**2
-			# 		b = -2*robot2obst[0]*robot2obst[1]
-			# 		c = robot2obst[1]**2 - rad**2
-
-			# 		discriminant = b**2 - 4*a*c
-
-			# 		#print 'Discriminant: ', discriminant
-
-			# 		if discriminant < 0:
-						
-			# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 			print 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z inside a obstacle!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0])
-
-			# 			#listOfGroups += [[goal_direc, 0.0]]
-			# 			latest_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-			# 			abs_latest_d_theta = abs(self._latest_q[-1] - waypt_theta)
-			# 			#listOfGroups += [[latest_direc, abs_latest_d_theta]]
-			# 			waypoint = latest_direc*robot2waypt_dist + self._latest_z
-			# 			return (latest_direc, waypoint)
-
-			# 		elif discriminant == 0:
-			# 			# y/x of unit vector is m
-			# 			self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Latest Z in border of a obstacle !!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-
-			# 			theta1 = np.arctan(-b/2*a) # [-pi, pi)
-			# 			theta2 = theta1-np.pi # [-2pi, 0.0]
-
-			# 		else:
-			# 			theta1 = np.arctan((-b + np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-			# 			theta2 = np.arctan((-b - np.sqrt(discriminant))/(2*a)) # [-pi/2, pi/2]
-			# 			# using arctan2 makes things go wrong. theta is in [-pi, pi] but the quadrands are
-
-
-
-			# 		# two values of inclination are possible for a given line. Some computation has to be done so the two right m's are found
-
-			# 		self._log('d', 'Thetas (m\'s): {t1}, {t2}'.format(t1=theta1, t2=theta2))
-
-			# 		# x1 = (robot2obst[1] + theta1**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta1**2 + 1)
-			# 		# x2 = (robot2obst[1] + theta2**2*self._latest_z[0] - self._obst[i].centroid[0])/(theta2**2 + 1)
-
-			# 		# y1 = theta1*x1 + self._latest_z[1] -theta1*self._latest_z[0]
-			# 		# y2 = theta2*x2 + self._latest_z[1] -theta2*self._latest_z[0]
-
-			# 		# self._log('d', 'R{rid}@tkref={tk:.4f}: P1: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x1, y=y1))
-			# 		# self._log('d', 'R{rid}@tkref={tk:.4f}: P2: ({x}, {y})'.format(rid=self.eyed, tk=self._opttime[0], x=x2, y=y2))
-
-			# 		# u1 = np.vstack((x1, y1)) - self._latest_z
-			# 		# u2 = np.vstack((x2, y2)) - self._latest_z
-
-			# 		# v = robot2waypt
-
-			# 		# dangle1 = np.arccos((u1[0]*v[0]+u1[1]*v[1])/(LA.norm(u1)*LA.norm(v)))
-			# 		# dangle2 = np.arccos((u2[0]*v[0]+u2[1]*v[1])/(LA.norm(u2)*LA.norm(v)))
-			# 		# self._log('d', 'Delta angles: {t1}, {t2}'.format(t1=dangle1, t2=dangle2))
-
-			# 		# Not sure this is the way
-			# 		# if x1 < self._latest_z[0]:
-			# 		# 	theta1 = UnicycleKineModel._signed_angle(theta1-np.pi)
-			# 		# if x2 < self._latest_z[0]:
-			# 		# 	theta2= UnicycleKineModel._signed_angle(theta1-np.pi)
-
-			# 		# self._log('d', 'Goal angle: {}'.format(waypt_theta))
-			# 		quad14_goal_theta = waypt_theta if waypt_theta <= np.pi/2 and waypt_theta >= -np.pi/2 else UnicycleKineModel._signed_angle(waypt_theta-np.pi)
-			# 		# self._log('d', 'N Goal angle: {}'.format(quad14_goal_theta))
-					
-			# 		if (quad14_goal_theta < theta1 and quad14_goal_theta < theta2) or (quad14_goal_theta > theta1 and quad14_goal_theta > theta2):
-			# 		 	self._log('d', 'goal not in the middle')
-			# 		 	# if abs(quad14_goal_theta - theta1) > np.pi/2:
-			# 		 	self._log('d', '{}'.format(quad14_goal_theta - theta1))
-			# 		 	self._log('d', '{}'.format(quad14_goal_theta - theta2))
-			# 		 	if abs(quad14_goal_theta - theta1) > abs(quad14_goal_theta - theta2):
-			# 		 		theta1 = UnicycleKineModel._signed_angle(theta1 - np.pi)
-			# 		 	else:
-			# 		 		theta2 = UnicycleKineModel._signed_angle(theta2 - np.pi)
-
-			# 		#if waypt_theta > np.pi/2 and waypt_theta >= -np.pi/2
-			# 		self._log('d', 'Thetas interm: {t1}, {t2}'.format(t1=theta1, t2=theta2))
-
-			# 		d_theta1 = quad14_goal_theta - theta1
-			# 		d_theta2 = quad14_goal_theta - theta2
-			# 		#d_theta1 = UnicycleKineModel._signed_angle(waypt_theta - theta1)
-			# 		#d_theta2 = UnicycleKineModel._signed_angle(waypt_theta - theta2)
-			# 		absd_theta1 = abs(d_theta1)
-			# 		absd_theta2 = abs(d_theta2)
-			# 		theta1 = UnicycleKineModel._signed_angle(waypt_theta - d_theta1)
-			# 		theta2 = UnicycleKineModel._signed_angle(waypt_theta - d_theta2)
-					
-			# 		self._log('d', 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2))
-			# 		self._log('d', 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2))
-			# 		print 'Deltas theta: {t1}, {t2}'. format(t1=d_theta1, t2=d_theta2)
-			# 		print 'Thetas in the right quadrant: {t1}, {t2}'.format(t1=theta1, t2=theta2)
-
-
-			# 		# chosen = []
-
-			# 		# if absd_theta1 < absd_theta2:
-			# 		# 	direc = np.vstack((np.cos(theta1), np.sin(theta1)))
-			# 		# 	chosen = [direc, theta1, absd_theta1]
-			# 		# else:
-			# 		# 	if absd_theta1 == absd_theta2:
-			# 		# 		self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 		# 	direc = np.vstack((np.cos(theta2), np.sin(theta2)))
-			# 		# 	chosen = [direc, theta2, absd_theta2]
-
-
-			# 		#visited = [i]
-
-			# 		#abst1 = absd_theta1
-			# 		#abst2 = absd_theta2
-			# 		#print 'abst1: ', abst1
-			# 		c = 1.0
-			# 		if d_theta1 < 0.0:
-			# 			dthac = d_theta1*c
-			# 			dthc = d_theta2*c
-			# 		else:
-			# 			dthac = d_theta2*c
-			# 			dthc = d_theta1*c
-
-			# 		for j in self._detected_obst_idxs:
-
-			# 			if j != i and LA.norm(np.matrix(self._obst[i].centroid).T - np.matrix(self._obst[j].centroid).T) < self._obst[i].radius + self._obst[j].radius + 2*self.rho:
-
-			# 				self._log('d', 'TOO CLOSE')
-			# 				print 'TOO CLOSE'
-							
-			# 				robot2obst2 = np.matrix(self._obst[j].centroid).T - self._latest_z
-
-			# 				newObstTheta = np.arctan2(robot2obst2[1], robot2obst2[0])
-			# 				newObstDTheta = UnicycleKineModel._signed_angle(waypt_theta - newObstTheta)
-			# 				newObstAbsDTheta = abs(newObstDTheta)
-
-			# 				print 'newObstDTheta', newObstDTheta
-
-			# 				#if tmpabsdt > abst1 or tmpabsdt:
-			# 				if newObstDTheta < 0.0:
-			# 					if dthac > newObstDTheta:
-			# 						dthac = newObstDTheta - 2*0.17453
-			# 				else:
-			# 					if dthc < newObstDTheta:
-			# 						dthc = newObstDTheta + 2*0.17453
-
-
-			# 				# if abst1 >= abst2:
-			# 				# 	if tmpabsdt > abst1:
-			# 				# 		abst1 = tmpabsdt
-			# 				# 	elif tmpabsdt < abst2:
-			# 				# 		abst2 = tmpabsdt
-			# 				# else:
-			# 				# 	if tmpabsdt < abst1:
-			# 				# 		abst1 = tmpabsdt
-			# 				# 	elif tmpabsdt > abst2:
-			# 				# 		abst2 = tmpabsdt
-
-			# 		thac = UnicycleKineModel._signed_angle(waypt_theta - dthac)
-			# 		thc = UnicycleKineModel._signed_angle(waypt_theta - dthc)
-
-			# 		if abs(dthac) < abs(dthc):
-			# 			direc = np.vstack((np.cos(thac), np.sin(thac)))
-			# 		else:
-			# 			if abs(dthac) == abs(dthc):
-			# 				self._log('d', 'R{rid}@tkref={tk:.4f}: $$$$$ Perfect symmetry !!!!! $$$$$'.format(rid=self.eyed, tk=self._opttime[0]))
-			# 			direc = np.vstack((np.cos(thc), np.sin(thc)))
-
-			# 		waypoint = direc*robot2waypt_dist + self._latest_z
-			# 		return (direc, waypoint)
-
-			# 			#visited += [j]
-			# 		# print 'abst1, abst2: ', abst1, abst2
-			# 		# if abst1 > abst2:
-			# 		# 	if absd_theta1 < abst1 and absd_theta1 > abst2:
-			# 		# 		#absd_theta1 prblm
-			# 		# 		# choose absd_theta2
-			# 		# 		ch_theta1 = False
-			# 		# 	elif absd_theta2 < abst1 and absd_theta2 > abst2:
-			# 		# 		#absd_theta2 prblm
-			# 		# 		# choose absd_theta1
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		if absd_theta1 < absd_theta2:
-			# 		# 			ch_theta1 = True
-			# 		# 		else:
-			# 		# 			ch_theta1 = False
-			# 		# elif abst1 < abst2:
-			# 		# 	if absd_theta1 > abst1 and absd_theta1 < abst2:
-			# 		# 		#absd_theta1 prblm
-			# 		# 		# choose absd_theta2
-			# 		# 		ch_theta1 = False
-			# 		# 	elif absd_theta2 > abst1 and absd_theta2 < abst2:
-			# 		# 		#absd_theta2 prblm
-			# 		# 		# choose absd_theta1
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		if absd_theta1 < absd_theta2:
-			# 		# 			ch_theta1 = True
-			# 		# 		else:
-			# 		# 			ch_theta1 = False
-			# 		# else:
-			# 		# 	if absd_theta1 < absd_theta2:
-			# 		# 		ch_theta1 = True
-			# 		# 	else:
-			# 		# 		ch_theta1 = False
-
-
-			# 		# if ch_theta1:
-			# 		# 	direc = np.vstack((np.cos(theta1), np.sin(theta1)))
-
-			# 		# else:
-			# 		# 	direc = np.vstack((np.cos(theta2), np.sin(theta2)))
-
-			# 		# waypoint = direc*robot2waypt_dist + self._latest_z
-			# 		# return (direc, waypoint)
-
-			# 	else:
-			# 		#listOfGroups += [[goal_direc, 0.0]]
-			# 		return (goal_direc, self._final_z)
-					
-			# #end of for
-			# # if listOfGroups != []:
-			# 	# self._log('d', 'Choosen theta: {}'.format(max(listOfGroups, key=lambda x:x[1])[1]))
-			# # if listOfGroups != []:
-			# # 	direc = max(listOfGroups, key=lambda x:x[1])[0]
-			# # 	waypoint = direc*robot2waypt_dist + self._latest_z
-			# # 	return (direc, waypoint)
-			# # else:
-			# return (goal_direc, self._final_z)
-					
 
 		# Get the direction of the robot, the new waypoint and the direction to it
 		init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
@@ -2635,7 +2374,7 @@ class Robot(object):
 		planHor = self._est_dtime if self._plan_state == 'ls' else self._Td
 
 		# Get right acceleration
-		accel = -1.*min((self.k_mod.u_final[0,0]+self._latest_u[0,0])/(planHor), self.k_mod.acc_max[0,0]) if self._plan_state == 'ls' else self.k_mod.acc_max[0,0]
+		accel = -1.*min(0.99*(self.k_mod.u_final[0,0]+self._latest_u[0,0])/(planHor), self.k_mod.acc_max[0,0]) if self._plan_state == 'ls' else self.k_mod.acc_max[0,0]
 		
 		# Get direction
 		#rotated_direc = rotated_direc if self._plan_state != 'ls' else self._latest_rot2rob_mat*np.vstack((np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])))
@@ -2686,6 +2425,8 @@ class Robot(object):
 
 			displ = max(displ, prev_displ) if displ-prev_displ < max_displ_var  else prev_displ + max_displ_var
 
+			#print 'displ:', displ
+
 			#displ = displ if displ-prev_displ > 0 else 0.0
 
 			prev_displ = displ
@@ -2702,12 +2443,13 @@ class Robot(object):
 			p = [(float(j)/(self._n_ctrlpts-1))**n for j in range(self._n_ctrlpts)]
 			curve[i] = np.array([p[j] * curve_waypoint_direc[i][j] + (1-p[j]) * curve_init_direc[i][j] for j in range(self._n_ctrlpts)])
 
-		# if self._plan_state == 'ls':
+		#if self._plan_state == 'ls':
 		if False:
 
 			#accel = min((self.k_mod.u_final[0,0]+self._latest_u[0,0])/(planHor), self.k_mod.acc_max[0,0])
 		# 	#alpha_accel = min((self.k_mod.u_final[1,0]+self._latest_u[1,0])/(planHor), self.k_mod.acc_max[0,0])
 		# 	alpha_accel = self.k_mod.acc_max[0,0]
+
 
 			final_direc = self._latest_rot2rob_mat*np.vstack((np.cos(self.k_mod.q_final[-1, 0]), np.sin(self.k_mod.q_final[-1, 0])))
 
@@ -2725,8 +2467,17 @@ class Robot(object):
 			latest_direction = -1.*final_direc
 		# 	print 'direc: ', latest_direction
 
-			curve[0][-2] = curve[0][-1] + displ*latest_direction[0]
-			curve[1][-2] = curve[1][-1] + displ*latest_direction[1]
+			#curve[0][-2] = curve[0][-1] + displ*latest_direction[0]
+			#curve[1][-2] = curve[1][-1] + displ*latest_direction[1]
+
+			print curve
+			curve[0] = np.insert(curve[0], 1, (curve[0][0]+curve[0][1])/2.)
+			curve[1] = np.insert(curve[1], 1, (curve[1][0]+curve[1][1])/2.)
+			curve[0] = curve[0][0:-1]
+			curve[1] = curve[1][0:-1]
+			print curve
+
+
 		# 	print 'FINAL pt: ', curve[0][-1], ', ', curve[1][-1]
 		# 	print 'pt: ', curve[0][-2], ', ', curve[1][-2]
 		# 	init_pt_y = curve[1][-2]
@@ -2773,8 +2524,7 @@ class Robot(object):
 		# 		i -= 1
 
 
-
-		gen_ctrlpts_from_curve(curve)
+		self._gen_ctrlpts_from_curve(curve)
 
 		self._log('i', 'R{rid}@tkref={tk:.4f}: Ctrlpts: \n{ctrl}'.format(rid=self.eyed, tk=self._opttime[0], ctrl=self._C))
 
@@ -2834,15 +2584,23 @@ class Robot(object):
 					self._conflict_syncer_conds[i].wait()
 		# Now is safe to read the all robots' in the conflict list intended paths (or are done planning)
 
-		# if self._conflict_robots_idx != []:
-		# if False:
-		if self._conflict_robots_idx != [] and self._plan_state != 'ls':
+		if self._conflict_robots_idx != []:
+		#if False:
+		#if self._conflict_robots_idx != [] and self._plan_state != 'ls':
 
 			self._std_alone = False
 
 
 #			self._conflict_dz = [self._read_com_link()]
 #			self._read_com_link()
+
+			
+			self._C[0:self._n_ctrlpts,:] = (self._latest_rot2rob_mat*(self._C[0:self._n_ctrlpts,:].T)).T
+
+			if self._plan_state == 'ls':
+				self._est_dtime = self._dt_final
+				self._knots = self._gen_knots(self._opttime[0], self._opttime[0]+self._est_dtime)
+				self._opttime = np.linspace(self._opttime[0], self._opttime[0]+self._est_dtime, self._N_s)
 
 			self._sa_dz = dz
 
@@ -2861,7 +2619,7 @@ class Robot(object):
 
 #			if self._final_step:
 			if self._plan_state == 'ls':
-				self._knots = self._gen_knots(self._opttime[0], self._dt_final)
+				self._knots = self._gen_knots(self._opttime[0], self._t_final)
 				self._opttime = np.linspace(self._opttime[0], self._t_final, self._N_s)
 				self._soltime = np.linspace(self._soltime[0], self._t_final, self._N_ssol)
 
@@ -2940,6 +2698,9 @@ class Robot(object):
 		latest_z = latest_dz[0:self.k_mod.u_dim, 0].reshape(
 				self.k_mod.u_dim, 1)
 
+		latest_q = self.k_mod.phi_1(latest_dz[:, 0].reshape(self.k_mod.l+1, self.k_mod.u_dim).T)
+		latest_u = self.k_mod.phi_2(latest_dz[:, 0].reshape(self.k_mod.l+1, self.k_mod.u_dim).T)
+
 		# Sync robots here so no robot computing conflict get the wrong latest_z of some robot
 		with self._tc_syncer_cond:
 			self._tc_syncer.value += 1
@@ -2951,6 +2712,9 @@ class Robot(object):
 			self._tc_syncer.value -= 1			# decrement syncer (idem)
 			for i in range(self.k_mod.u_dim):
 				self._com_link.latest_z[self.eyed][i] = latest_z[i, 0]
+				self._com_link.latest_u[self.eyed][i] = latest_u[i, 0]
+			for i in range(self.k_mod.q_dim):
+				self._com_link.latest_q[self.eyed][i] = latest_q[i, 0]
 
 		with self._conflict_syncer_conds[self.eyed]:
 			self._conflict_syncer[self.eyed].value = 0
@@ -2962,6 +2726,8 @@ class Robot(object):
 			self._opttime = [tk+self._Tc for tk in self._opttime]
 			self._soltime = [tk+self._Tc for tk in self._soltime]
 			self._latest_z = latest_z
+			self._latest_q = latest_q
+			self._latest_u = latest_u
 			#print 'DZ:\n', dz[:, 0].reshape(
 			#		self.k_mod.l+1, self.k_mod.u_dim).T, '\nSize:\n', dz[:, 0].reshape(
 			#		self.k_mod.l+1, self.k_mod.u_dim).T.shape, '\nType:\n',type( dz[:, 0].reshape(
@@ -2970,10 +2736,6 @@ class Robot(object):
 			#		self.k_mod.l+1, self.k_mod.u_dim).T, '\nSize:\n', latest_dz[:, 0].reshape(
 			#		self.k_mod.l+1, self.k_mod.u_dim).T.shape, '\nType:\n', type(latest_dz[:, 0].reshape(
 			#		self.k_mod.l+1, self.k_mod.u_dim).T)
-			self._latest_q = self.k_mod.phi_1( latest_dz[:, 0].reshape(
-					self.k_mod.l+1, self.k_mod.u_dim).T)
-			self._latest_u = self.k_mod.phi_2( latest_dz[:, 0].reshape(
-					self.k_mod.l+1, self.k_mod.u_dim).T)
 			if self._plan_state == 'fs':
 				self._plan_state = 'ms'
 		else:
@@ -3121,11 +2883,15 @@ class WorldSim(object):
 		done_planning = [mpc.Value('I', 0) for i in range(n_robots)]
 		intended_path_z1 = [mpc.Array('d', N_s*[0.0]) for i in range(n_robots)]
 		intended_path_z2 = [mpc.Array('d', N_s*[0.0]) for i in range(n_robots)]
+		latest_q = [mpc.Array('d', [r.k_mod.q_init[0, 0], \
+				r.k_mod.q_init[1, 0], r.k_mod.q_init[2, 0]]) for r in self._robs]
 		latest_z = [mpc.Array('d', [r.k_mod.q_init[0, 0], \
 				r.k_mod.q_init[1, 0]]) for r in self._robs]
+		latest_u = [mpc.Array('d', [r.k_mod.u_init[0, 0], \
+				r.k_mod.u_init[1, 0]]) for r in self._robs]
 
 		# Packing shared memory into a RobotMsg object
-		com_link = RobotMsg(done_planning, intended_path_z1, intended_path_z2, latest_z)
+		com_link = RobotMsg(done_planning, intended_path_z1, intended_path_z2, latest_z, latest_q, latest_u)
 
 		# More complex and expense shared memory thru a server process manager ...
 		# ... (because they can support arbitrary object types)
@@ -3344,10 +3110,11 @@ class WorldSim(object):
 		# PLOT INTERROBOT DIST
 		fig_rr_d = plt.figure()
 		ax_rr_d = fig_rr_d.gca()
+		rrcolors = [[i, 1.0-i, ((2+int(i*10))%10)/10.0] for i in np.linspace(0.0, 1.0, len(rr_dist))]
 		for rrd, k in zip(rr_dist, range(len(rr_dist))):
 			plttime = rtime[robs[k][0]] if len(rtime[robs[k][0]]) < len(rtime[robs[k][1]]) else rtime[robs[k][1]]
 #			print len(rtime[robs[k][0]]), len(rtime[robs[k][1]]), len(plttime), len(rrd)
-			ax_rr_d.plot(plttime, rrd, label = r'$d(R_{0},R_{1})-\rho_{0}-\rho_{1}$'.format(robs[k][0], robs[k][1]))
+			ax_rr_d.plot(plttime, rrd, color=rrcolors[k], label = r'$d(R_{0},R_{1})-\rho_{0}-\rho_{1}$'.format(robs[k][0], robs[k][1]))
 		ax_rr_d.grid()
 		ax_rr_d.set_xlabel('time (s)')
 		ax_rr_d.set_ylabel('Inter-robot distance (m)')
@@ -3393,7 +3160,7 @@ class WorldSim(object):
 		ax.axis('equal')
 
 		aux = np.linspace(0.0, 1.0, 1e2)
-		colors = [[i, 1.0-i, np.random.choice(aux)] for i in np.linspace(0.0, 1.0, len(self._robs))]
+		colors = [[i, 1.0-i, ((2+int(i*10))%10)/10.0] for i in np.linspace(0.0, 1.0, len(self._robs))]
 
 		while True:
 			# Creating obstacles in the plot
@@ -3402,6 +3169,7 @@ class WorldSim(object):
 			plt_paths = range(len(self._robs))
 			plt_seg_pts = range(len(self._robs))
 			plt_robots_c = range(len(self._robs))
+			plt_robots_det = range(len(self._robs))
 			plt_robots_t = range(len(self._robs))
 			for i in range(len(self._robs)):
 				plt_paths[i], = ax.plot(path[i][0, 0], path[i][1, 0], color=colors[i], label=r'$R_{}$'.format(i), linestyle='-')
@@ -3413,6 +3181,7 @@ class WorldSim(object):
 						color='m',
 						ls = 'solid',
 						fill=False)
+				#plt_robots_det[i] = plt.Circle( (path[i][0, 0], path[i][1, 0]), self._robs[i]._d_rho, color=colors[i], alpha=0.5, ls = 'solid', fill=False)
 				rho = self._robs[i].rho
 				xy = np.array(
 						[[rho*np.cos(qt[i][0][-1, 0])+path[i][0, 0], \
@@ -3424,6 +3193,7 @@ class WorldSim(object):
 				plt_robots_t[i] = plt.Polygon(xy, color='m', fill=True, alpha=0.2)
 
 			[ax.add_artist(r) for r in plt_robots_c]
+			#[ax.add_artist(r) for r in plt_robots_det]
 			[ax.add_artist(r) for r in plt_robots_t]
 #			ax.add_artist(plt.Circle((3.2, 1.8), .5, color = 'r', fill=True, alpha=0.5))
 #			ax.add_artist(plt.Circle((6.5, 3.1), .5, color = 'r', fill=True, alpha=0.5))
@@ -3442,6 +3212,7 @@ class WorldSim(object):
 						plt_seg_pts[i].set_xdata(path[i][0, aux])
 						plt_seg_pts[i].set_ydata(path[i][1, aux])
 						plt_robots_c[i].center = path[i][0, ctr], path[i][1, ctr]
+						#plt_robots_det[i].center = path[i][0, ctr], path[i][1, ctr]
 						rho = self._robs[i].rho
 						xy = np.array([
 							[rho*np.cos(qt[i][ctr][-1, 0])+path[i][0, ctr],
@@ -3465,10 +3236,8 @@ class WorldSim(object):
 					handles, labels = ax.get_legend_handles_labels()
 					ax.legend(handles, labels, loc=1, ncol=3)
 
-					fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png',\
-							bbox_inches='tight', dpi=300)
-					fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.pdf',\
-							bbox_inches='tight', dpi=300)
+					fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.png', bbox_inches='tight', dpi=300)
+					#fig.savefig(self._direc+'/images/'+self._sn+'/multirobot-path-'+str(ctr)+'.pdf', bbox_inches='tight', dpi=300)
 			#end
 
 			ax.relim()
@@ -3504,7 +3273,7 @@ class WorldSim(object):
 			aaxarray[0].grid()
 			aaxarray[1].grid()
 			axarray[0].set_ylim([0.0, 1.1*self._robs[0].k_mod.u_max[0, 0]])
-			axarray[1].set_ylim([-10.0, 10.0])
+			#axarray[1].set_ylim([-1.1*self._robs[0].k_mod.u_max[1, 0], 1.1*self._robs[0].k_mod.u_max[1, 0]])
 			# aaxarray[0].set_ylim([-1.1*self._robs[0].k_mod.a_max[0, 0]], 1.1*self._robs[0].k_mod.a_max[0, 0]])
 			aaxarray[1].set_ylim([-15.0, 15.0])
 			fig_s.canvas.draw()
@@ -3587,6 +3356,11 @@ def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
 	Return
 		List containing the information to initialize a :class:`RoundObstacle` object.
 	"""
+	print boundary.y_min
+	print boundary.y_max
+	print boundary.x_min
+	print boundary.x_max
+
 	arb_max_no = int(round((boundary.x_max-boundary.x_min)*\
 			(boundary.y_max-boundary.y_min)/((min_radius*2)**2)/10.))
 	if no > arb_max_no:
@@ -3603,21 +3377,12 @@ def rand_round_obst(no, boundary, min_radius=0.15, max_radius=0.40):
 					return False
 		return True
 
-	def _frange(initial, final, step):
-		""" Float point range function with round at the int(round(1./step))+4 decimal position
-		"""
-		_range = []
-		n = 0
-		while n*step+initial < final:
-			_range += [round(n*step+initial, 4+int(round(1./step)))]
-			n+=1
-		return _range
-
 	resol = 0.0001 # meters
 
 	radius_range = _frange(min_radius, max_radius, resol)
 	x_range = _frange(boundary.x_min+max_radius, boundary.x_max-max_radius, resol)
 	y_range = _frange(boundary.y_min+max_radius, boundary.y_max-max_radius, resol)
+	print 'y_range', y_range[0], y_range[-1]
 
 	obsts = []
 	i=0
@@ -3666,18 +3431,45 @@ if __name__ == '__main__':
 
 	# iterate over obstacles
 	obstacles = []
-	for obstacle in root.find('obstacles'):
-		if obstacle.tag == 'circular':
-			obstacles.append(RoundObstacle(
-					[float(obstacle.find('cmposition').find('x').text), float(obstacle.find('cmposition').find('y').text)],
-					float(obstacle.find('radius').text)))
-		elif obstacle.tag == 'polygon':
-			vertices = []
-			for vertex in obstacle.find('vertices'):
-				vertices.append([float(vertex.find('x').text), float(vertex.find('y').text)])
-			obstacles.append(PolygonObstacle((np.array(vertices))))
-		else:
-			logging.info("Unknown type of obstacle")
+	#print rand_round_obst(6, Boundary([-6.0, 6.0], [-1.5, 1.5]), 0.3, 1.0)
+	obst_info = rand_round_obst(6, Boundary([-6.0, 6.0], [-3.5, 3.5]), 0.3, 1.0)
+	#obst_info = [([0.47740000000000027, -1.5644], 0.3785), ([-1.7155999999999998, 2.1472000000000007], 0.96740000000000004), ([1.6221000000000005, 1.5644], 0.7268), ([-3.5967000000000002, 1.0576000000000003], 0.39549999999999996), ([2.8158000000000003, -0.32899999999999974], 0.7802), ([-4.0045999999999999, -1.5223], 0.8407), ([-4.8949999999999996, -0.44329999999999981], 0.40489999999999998), ([0.96060000000000034, -2.4384999999999999], 0.31629999999999997)]
+	#obst_info = [([0.49680000000000035, 0.72990000000000022], 0.93759999999999999), ([3.1783999999999999, 1.8445], 0.49429999999999996), ([-4.6891999999999996, -0.58109999999999995], 0.32019999999999998), ([0.35390000000000033, -0.92769999999999997], 0.3125), ([-1.0412999999999997, -1.8829], 0.85339999999999994), ([-1.8340999999999998, 0.90850000000000009], 0.61370000000000002), ([-3.1894, 2.2316000000000003], 0.98540000000000005), ([-2.8441000000000001, -0.039099999999999913], 0.38519999999999999)]
+
+	#good
+	#obst_info = [([-0.1452, -0.60349999999999993], 0.52690000000000003), ([-3.0335000000000001, 1.8125999999999998], 0.69430000000000003), ([-2.9085000000000001, -1.9249000000000001], 0.73399999999999999), ([4.1028000000000002, -1.2079], 0.90149999999999997), ([1.0766, -1.7332999999999998], 0.99249999999999994), ([4.2360000000000007, 1.0126000000000004], 0.54249999999999998), ([1.9709000000000003, 0.60519999999999996], 0.48760000000000003)]
+
+	
+	# too close robots
+	#obst_info = [([-2.7424999999999997, -1.3217999999999999], 0.56369999999999998), ([-4.3575999999999997, -1.8159999999999998], 0.39479999999999998), ([2.3048999999999999, 0.65350000000000019], 0.60289999999999999), ([3.4901999999999997, -1.7970999999999999], 0.77550000000000008), ([-1.0943999999999998, 2.1657999999999999], 0.44309999999999999), ([-1.9043999999999999, 0.076600000000000001], 0.42330000000000001), ([4.7538999999999998, -1.2408999999999999], 0.37909999999999999)]
+
+	# shows problem with using waypoint instead of goal (update: not any more)
+	#obst_info = [([-0.88399999999999945, 0.77760000000000007], 0.311), ([4.8483000000000001, 2.0894000000000004], 0.54430000000000001), ([-4.1993999999999998, 1.8029000000000002], 0.88129999999999997), ([-2.234, -1.9874999999999998], 0.46040000000000003), ([2.0665000000000004, -1.3129], 0.3246), ([-4.9908000000000001, -1.0219], 0.42010000000000003), ([-0.020599999999999952, -0.26149999999999984], 0.9205000000000001)]
+
+	# wierd error after solving the previous problem (update: not anymore, there was an error)
+	#obst_info = [([4.3548000000000009, 1.5979999999999999], 0.50609999999999999), ([2.9330000000000007, -1.6259999999999999], 0.91749999999999998), ([2.5638000000000005, 2.4053000000000004], 0.91030000000000011), ([-3.6666999999999996, 1.3669000000000002], 0.56240000000000001), ([-2.0231999999999997, -0.21369999999999978], 0.96300000000000008), ([0.30909999999999993, 0.73850000000000016], 0.97680000000000011), ([-4.9151999999999996, -0.51069999999999993], 0.58260000000000001)]
+
+	#obst_info = [([1.8823000000000008, 1.0751000000000004], 0.87090000000000001), ([-2.3323, 1.7221000000000002], 0.37740000000000001), ([2.8101000000000003, -0.3254999999999999], 0.55899999999999994), ([-0.41239999999999988, -1.2206999999999999], 0.3271), ([3.7513000000000005, 0.76020000000000021], 0.55469999999999997), ([-4.5777999999999999, -0.36509999999999998], 0.68520000000000003), ([-0.40120000000000022, 1.335], 0.92430000000000012)]
+
+	# triple collision case
+	#obst_info = [([-2.5352999999999999, 1.6351000000000004], 0.43079999999999996), ([0.91250000000000053, 2.0611000000000006], 0.58960000000000001), ([-4.4641000000000002, -2.04], 0.77490000000000003), ([3.3092000000000006, -2.3753000000000002], 0.98550000000000004), ([2.1196000000000002, 1.6164000000000005], 0.3725), ([-0.42790000000000017, 0.69450000000000012], 0.4607), ([-2.1358999999999999, 0.76829999999999998], 0.42999999999999999)]
+
+	#obst_info = [([2.3321000000000005, 2.1857000000000006], 0.73380000000000001), ([-0.64290000000000003, 2.2968000000000002], 0.31379999999999997), ([2.8586, 0.15080000000000027], 0.94829999999999992), ([-2.8447, -0.12719999999999976], 0.33299999999999996), ([-3.6498999999999997, -2.1516000000000002], 0.69579999999999997), ([4.3231999999999999, 2.4077999999999999], 0.65129999999999999), ([-1.3243, -1.8136999999999999], 0.8015000000000001)]
+
+	obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
+	print obst_info
+	# for obstacle in root.find('obstacles'):
+	# 	if obstacle.tag == 'circular':
+	# 		obstacles.append(RoundObstacle(
+	# 				[float(obstacle.find('cmposition').find('x').text), float(obstacle.find('cmposition').find('y').text)],
+	# 				float(obstacle.find('radius').text)))
+	# 	elif obstacle.tag == 'polygon':
+	# 		vertices = []
+	# 		for vertex in obstacle.find('vertices'):
+	# 			vertices.append([float(vertex.find('x').text), float(vertex.find('y').text)])
+	# 		obstacles.append(PolygonObstacle((np.array(vertices))))
+	# 	else:
+	# 		logging.info("Unknown type of obstacle")
 
 	boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
@@ -3757,6 +3549,9 @@ if __name__ == '__main__':
 				filemode='w', level=logging.DEBUG)
 	else:
 		logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+
+
+	logging.debug('\nObstInfo\n{}'.format(obst_info))
 
 	boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
