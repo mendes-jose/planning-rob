@@ -28,6 +28,7 @@ from optparse import OptionParser
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 import random
+import time
 
 __version__ = '1.0.2'
 
@@ -1032,7 +1033,7 @@ class Robot(object):
 		final_q_rf = np.vstack((self._latest_rot2rob_mat*(self.k_mod.q_final[0:2, 0]-self._latest_z), final_theta_rf))
 
 		eq_cons = list(np.squeeze(np.array(self.k_mod.phi_1(dztinit))))+\
-				list(np.squeeze(np.array(self.k_mod.phi_1(dztfinal)-final_q_rf)))+\
+				list(np.squeeze(np.array(self.k_mod.phi_1(dztfinal)[0:-1]-final_q_rf[0:-1])))+\
 				list(np.squeeze(np.array(self.k_mod.phi_2(dztinit)-self._latest_u)))+\
 				list(np.squeeze(np.array(self.k_mod.phi_2(dztfinal)-self.k_mod.u_final)))
 
@@ -1784,8 +1785,8 @@ class Robot(object):
 
 		# if True: #self._plan_state != 'ls':
 		if self._plan_state != 'ls':
-		#if False:
-		#if True:
+		# if False:
+		# if True:
 			output = fmin_slsqp(p_criterion, init_guess, eqcons=(), f_eqcons=p_eqcons, ieqcons=(), f_ieqcons=p_ieqcons, iprint=0, iter=maxit, acc=acc, full_output=True)
 		else:
 
@@ -1797,13 +1798,13 @@ class Robot(object):
 				output[0] = np.insert(output[0], 0, self._est_dtime)
 				#print output[0].shape
 
-		if any([i < -1e-2 for i in self._unsatisf_acc_ieq_values+self._unsatisf_collcons_ieq_values]): # TODO no magic number, specially hardcoded
+		if any([i < -1e-2 for i in self._unsatisf_acc_ieq_values+self._unsatisf_collcons_ieq_values]) and self._plan_state != 'fs': # TODO no magic number, specially hardcoded
 		#if False:
 			self._unsatisf_acc_ieq_values = []
 			self._unsatisf_collcons_ieq_values = []
 
-			random.seed(self.eyed)
-			accelChoice = random.choice(np.linspace(-self.k_mod.acc_max[0,0], self.k_mod.acc_max[0,0], 100))
+			random.seed(self.eyed*time.clock)
+			accelChoice = random.choice(np.linspace(-self.k_mod.acc_max[0,0], self.k_mod.acc_max[0,0]/10.0, 100))
 			output = self._robotDirecControl(accelChoice)
 
 			print '______________________________BAD OPT. USING "DirecCtrl" at {acc} m/s2 (ui = {ui} m/s)__________________________'.format(acc=accelChoice, ui=self._latest_u[0,0])
@@ -2089,37 +2090,21 @@ class Robot(object):
 			| :math:`\\Delta>0` | secant		  |
 			"""
 
-			robot2goal = self._final_z - self._latest_z
-			robot2goal_dist = LA.norm(robot2goal)
-			goal_direc = robot2goal/robot2goal_dist
-			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
-
-			robot2waypt = self._waypoint - self._latest_z
-			robot2waypt_dist = LA.norm(robot2waypt)
-			waypt_direc = robot2waypt/robot2waypt_dist
-			waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
-
-			print 'known obstacles', self._known_obst_idxs
-
-			print 'Z\n', self._latest_z
-
+			# If no known obstacle and no other robot in the area then return goal
 			if self._known_obst_idxs == [] and self._collision_robots_idx == []:
 				return (goal_direc, self._final_z)
 
-			bubbles = self._obst
-			bubbles_idx = self._known_obst_idxs
-			fake_obstacles_cntr = 0
+			self._log('d', 'R{rid} at tkref={tk:.4f}: known obstacles:\n{ko}'.format(rid=self.eyed, tk=self._opttime[0], ko=self._known_obst_idxs))
+
+			forbiddenSpace = self._obst
+			forbiddenSpaceIdx = self._known_obst_idxs
+			collForbiddenSpaceCntr = 0
+
 
 			if self._collision_robots_idx != []:
-			#if False:
 				for oth_idx in self._collision_robots_idx:
 
-					#if oth_idx > self.eyed:
-					#	continue
-
 					otherPose = np.matrix([[self._com_link.latest_q[oth_idx][0]], [self._com_link.latest_q[oth_idx][1]], [self._com_link.latest_q[oth_idx][2]]])
-
-					#print 'otherPose', otherPose
 
 					otherPos = otherPose[0:-1]
 
@@ -2136,9 +2121,6 @@ class Robot(object):
 					deltaVX = myLinVel*myDirec[0] - otherLinVel*otherDirec[0]
 					deltaVY = myLinVel*myDirec[1] - otherLinVel*otherDirec[1]
 
-					#print 'myPos', myPos
-					#print 'otherPos', otherPos
-
 					deltaPX = myPos[0]-otherPos[0]
 					deltaPY = myPos[1]-otherPos[1]
 
@@ -2151,16 +2133,16 @@ class Robot(object):
 					discriminant = b**2 - 4*a*c
 
 #					if discriminant > 0 and random.choice([True, False]): # then add buble
-					if discriminant > 0: # then add buble
 #					if False:
+					if discriminant > 0: # then theirs paths cross at some point
 
-						print '\t\t\t\t\t COLLISION'
+						self._log('d', 'R{rid} at tkref={tk:.4f}: My path and R{oi}\'s cross each other'.format(rid=self.eyed, tk=self._opttime[0], oi=oth_idx))
 
 						t1 = float((-b + np.sqrt(discriminant))/(2*a))
 						t2 = float((-b - np.sqrt(discriminant))/(2*a))
 
 						if t1 < 0.0 and t2 < 0.0:
-							print '\t\t\t\t\t BUT IN THE PAST (t<0)'
+							self._log('d', 'R{rid} at tkref={tk:.4f}: But they cross each other in the past (t<0)'.format(rid=self.eyed, tk=self._opttime[0]))
 							continue
 
 						if t1 < t2 and t1 < 0.0:
@@ -2169,195 +2151,210 @@ class Robot(object):
 						if t2 < t1 and t2 < 0.0:
 							t2 = 0.0
 
-						centroid = (myPos + myLinVel*myDirec*t1 + myPos + myLinVel*myDirec*t2)/2.0
+						forbiddenSpaceCentroid = (myPos + myLinVel*myDirec*t1 + myPos + myLinVel*myDirec*t2)/2.0
 
-						radius = LA.norm((myPos + myLinVel*myDirec*t1) - (myPos + myLinVel*myDirec*t2))/2.0 /4.0
+						forbiddenSpaceRadius = LA.norm((myPos + myLinVel*myDirec*t1) - (myPos + myLinVel*myDirec*t2))/2.0
 						#/ random.choice(_frange(1.0, 2.0, .01)) # assuming that the other robot will "take care of half of the problem (update: not assuming that anymore since we're using robIDs for solving symmetry"
 
-						bubbles.append(RoundObstacle([centroid[0,0], centroid[1,0]], radius))
-						bubbles_idx.append(len(bubbles)-1)
-						fake_obstacles_cntr += 1
+						forbiddenSpace.append(RoundObstacle([centroid[0,0], centroid[1,0]], radius))
+						forbiddenSpaceIdx.append(len(forbiddeSpnace)-1)
+						collForbiddenSpaceCntr += 1
 
-			if bubbles == []:
-				for _ in range(fake_obstacles_cntr):
-					bubbles.pop()
-					bubbles_idx.pop()
+
+			robot2goal = self._final_z - self._latest_z
+			robot2goal_dist = LA.norm(robot2goal)
+			goal_direc = robot2goal/robot2goal_dist
+			goal_theta = np.arctan2(goal_direc[1], goal_direc[0])
+
+			robot2waypt = self._waypoint - self._latest_z
+			robot2waypt_dist = LA.norm(robot2waypt)
+			waypt_direc = robot2waypt/robot2waypt_dist
+			waypt_theta = np.arctan2(waypt_direc[1], waypt_direc[0])
+
+			if forbiddenSpace == []:
 				return (goal_direc, self._final_z)
 
-			else:
+			obstInfo = dict()
+			listOfGroups = []
 
-				obstInfo = dict()
-				listOfGroups = []
+			for i in forbiddenSpaceIdx:
 
-				for i in bubbles_idx:
+				if any([i in j for j in listOfGroups]):
+					continue
 
-					if any([i in j for j in listOfGroups]):
-						continue
+				listOfGroups += [[i]]
+				# obstInfo[i] = getThetas(i)
 
-					listOfGroups += [[i]]
-					# obstInfo[i] = getThetas(i)
+				tree = [i]
+				cntr = 0
+				while cntr < len(tree):
+					root = tree[cntr]
 
-					tree = [i]
-					cntr = 0
-					while cntr < len(tree):
-						root = tree[cntr]
+					for j in forbiddenSpaceIdx:
+							if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(forbiddenSpace[root].centroid).T - np.matrix(forbiddenSpace[j].centroid).T) < forbiddenSpace[root].radius + forbiddenSpace[j].radius + 2*self.rho:
 
-						for j in bubbles_idx:
-								if j != root and not any([j in k for k in listOfGroups]) and LA.norm(np.matrix(bubbles[root].centroid).T - np.matrix(bubbles[j].centroid).T) < bubbles[root].radius + bubbles[j].radius + 2*self.rho:
+								listOfGroups[-1] += [j]
+								# obstInfo[j] = getThetas(j, force=True)
+								tree.append(j)
+					cntr += 1
 
-									listOfGroups[-1] += [j]
-									# obstInfo[j] = getThetas(j, force=True)
-									tree.append(j)
-						cntr += 1
+			# Create dictionary with each osbtacle avoidance info
+			# if any of the obstacles in a group is tested positive then
+			# 	compute thetas to all from 2nd degree equation (Getthetas)
+			# 
+			# else (if none are tested positive) then
+			# 	put the following in the dictionary
+			#   return (0.0, 0.0, robot2goal_dist)
+			print 'listOfGroups', listOfGroups
 
-				# Create dictionary with each osbtacle avoidance info
-				# if any of the obstacles in a group is tested positive then
-				# 	compute thetas to all from 2nd degree equation (Getthetas)
-				# 
-				# else (if none are tested positive) then
-				# 	put the following in the dictionary
-				#   return (0.0, 0.0, robot2goal_dist)
-				print 'listOfGroups', listOfGroups
-				i = 0
-				while i < len(listOfGroups):
-				#for group in listOfGroups:
-					group = listOfGroups[i]
-					print 'group', group
-					if any([isObstInRobotsWay(x) for x in group]):
-						j = 0
-						while j < len(group):
-						#for x in group:
-							obstXInfo = getThetas(group[j])
-							#print 'obstXInfo', obstXInfo
+			i = 0
+			while i < len(listOfGroups):
+			#for group in listOfGroups:
+				group = listOfGroups[i]
+				print 'group', group
+				if any([isObstInRobotsWay(x) for x in group]):
+					j = 0
+					while j < len(group):
+					#for x in group:
+						obstXInfo = getThetas(group[j]) # [theta left, theta right, distance]
+						#print 'obstXInfo', obstXInfo
 
-							maxAngle = 2.8
+						maxAngle = 2.8
 
-							if abs(obstXInfo[0]) > maxAngle or abs(obstXInfo[1]) > maxAngle or obstXInfo[2] > robot2goal_dist:
-								print 'take {} out'.format(x)
-								listOfGroups[i].remove(group[j])
-								print listOfGroups
-							else:
-								obstInfo[group[j]] = obstXInfo
-								j += 1
-						i += 1
-					else:
-						print '-------------------------------- group', group, 'can be ignored -----------------------'
-						# d_theta = UnicycleKineModel._signed_angle(waypt_theta - goal_theta)
-						# d_theta = 0.0
-						#for x in group:
-						#	obstInfo[x] = (d_theta[0,0], d_theta[0,0], robot2goal_dist)
-						listOfGroups.remove(group)
+						if abs(obstXInfo[0]) > maxAngle or abs(obstXInfo[1]) > maxAngle or obstXInfo[2] > robot2goal_dist:
+							print 'take {} out'.format(x)
+							listOfGroups[i].remove(group[j])
+							print listOfGroups
+						else:
+							obstInfo[group[j]] = obstXInfo
+							j += 1
+					i += 1
+				else:
+					print '-------------------------------- group', group, 'can be ignored -----------------------'
+					# d_theta = UnicycleKineModel._signed_angle(waypt_theta - goal_theta)
+					# d_theta = 0.0
+					#for x in group:
+					#	obstInfo[x] = (d_theta[0,0], d_theta[0,0], robot2goal_dist)
+					listOfGroups.remove(group)
 
-				#print 'obstInfo:', obstInfo
+			#print 'obstInfo:', obstInfo
 
-				testList = [item for sublist in listOfGroups for item in sublist]
-				#testList = [x ]
-				#if listOfGroups == []:
-				if testList == []:
-					for _ in range(fake_obstacles_cntr):
-						bubbles.pop()
-						bubbles_idx.pop()
-					return (goal_direc, self._final_z)
-
-
-				minMaxList = []
-				#print 'listOfGroups', listOfGroups
-				for i in listOfGroups:
-					if i == []:
-						continue
-					for j in i:
-						if obstInfo[j][2] < 0.0:
-							#theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta)
-							#theta = UnicycleKineModel._signed_angle(goal_theta - obstInfo[j][0])
-							#direc = np.vstack((np.cos(waypt_theta), np.sin(waypt_theta)))
-
-							direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
-							waypoint = direc*robot2waypt_dist + self._latest_z
-							for _ in range(fake_obstacles_cntr):
-								bubbles.pop()
-								bubbles_idx.pop()
-							return (direc, waypoint)
-					#subdic = [obstInfo[j] for j in i]
-					subdic = dict((k, obstInfo[k]) for k in i if k in obstInfo)
-					#print 'subdic', subdic
+			testList = [item for sublist in listOfGroups for item in sublist]
+			#testList = [x ]
+			#if listOfGroups == []:
+			if testList == []:
+				for _ in range(collForbiddenSpaceCntr):
+					forbiddenSpace.pop()
+					forbiddenSpaceIdx.pop()
+				return (goal_direc, self._final_z)
 
 
-					doubled_keys = [val for val in [x for x in subdic] for _ in (0, 1)]
-					doubled_dists = [val[-1] for val in [subdic[x] for x in subdic] for _ in (0, 1)]
-					all_d_thetas = [item for sublist in [subdic[x] for x in subdic] for item in sublist[0:-1]]
+			minMaxList = []
+			#print 'listOfGroups', listOfGroups
+			for i in listOfGroups:
+				if i == []:
+					continue
+				for j in i:
+					if obstInfo[j][2] < 0.0: #inside the obstacle
+					
+						#theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta)
+						#theta = UnicycleKineModel._signed_angle(goal_theta - obstInfo[j][0])
+						#direc = np.vstack((np.cos(waypt_theta), np.sin(waypt_theta)))
 
-					#print 'doubled keys:', doubled_keys
-					#print 'doubled dists:', doubled_dists
-					#print 'all_d_thetas:', all_d_thetas
-
-					X = [(x, y, z) for x, y, z in sorted(zip(all_d_thetas, doubled_keys, doubled_dists))]
-					#print 'Ordered index', [i[1] for i in X]
-					#print 'Ordered dthetas', [i[0] for i in X]
-					#print K
-					# x[0] min dtheta
-					# x[-1] max dtheta
-					# print 'X', X
-					if (abs(X[0][0]) <= abs(X[-1][0])):
-						absMinVal = X[0][0]
-						absMinIdx = X[0][1]
-						absMinDist = X[0][2]
-					else:
-						absMinVal = X[-1][0]
-						absMinIdx = X[-1][1]
-						absMinDist = X[-1][2]
-					#print 'To add to minMaxList', (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])
-					minMaxList += [ (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])]
-					#add to list
-				# for i in minlist:
-					#min in dist
-
-				#print 'minMaxList: ', minMaxList
-
-				#random.shuffle(minMaxList)
-
-				sortedValMinMaxList = [i for _, i in sorted(zip([x[0] for x in minMaxList], minMaxList))]
-
-				print 'sortedValMinMaxList', sortedValMinMaxList
-				# print 'i[0]', i[0]
-				# sortedDistMinMaxList = [i for _, i in sorted(zip([x[2] for x in minMaxList], minMaxLi1st))]
-
-				for k in sortedValMinMaxList:
-					#subSortedValMinMaxList = [sortedValMinMaxList[gidx] for ginfo, gidx in zip(sortedValMinMaxList, range(len(sortedValMinMaxList))) if k[0] > ginfo[3] and k[0] > ginfo[4]]
-					subSortedValMinMaxList = [ginfo for ginfo in sortedValMinMaxList if k[0] > ginfo[3] or k[0] < ginfo[4]]
-					print 'subSortedValMinMaxList', subSortedValMinMaxList
-					if subSortedValMinMaxList != []:
-						proximityTests = [k[1] > j[1] for j in subSortedValMinMaxList]
-						print 'proximityTests:', proximityTests
-					 	if any(proximityTests):
-					 		continue
-					break
+						direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+						waypoint = direc*robot2waypt_dist + self._latest_z
+						for _ in range(collForbiddenSpaceCntr):
+							forbiddenSpace.pop()
+							forbiddenSpaceIdx.pop()
+						return (direc, waypoint)
+				#subdic = [obstInfo[j] for j in i]
+				subdic = dict((k, obstInfo[k]) for k in i if k in obstInfo)
+				#print 'subdic', subdic
 
 
-				# dists = [obstInfo[i][-1] for i in minlist]
-				# closerAbsMinDirec = [y for x, y in sorted(zip(dists, minlist))][0]
+				doubled_keys = [val for val in [x for x in subdic] for _ in (0, 1)]
+				doubled_dists = [val[-1] for val in [subdic[x] for x in subdic] for _ in (0, 1)]
+				all_d_thetas = [item for sublist in [subdic[x] for x in subdic] for item in sublist[0:-1]]
 
-				# obstInfo[closerAbsMinDirec]
-				d_theta = k[0]
-				#print 'd_theta', d_theta
-				#theta = UnicycleKineModel._signed_angle(goal_theta - d_theta)
-				eps = -0.03 if d_theta < 0.0 else +0.03
-				#eps = 0.0
-				theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta + eps)
+				#print 'doubled keys:', doubled_keys
+				#print 'doubled dists:', doubled_dists
+				#print 'all_d_thetas:', all_d_thetas
 
-				direc = np.vstack((np.cos(theta), np.sin(theta)))
-				waypoint = direc*robot2waypt_dist + self._latest_z
-				for _ in range(fake_obstacles_cntr):
-					bubbles.pop()
-					bubbles_idx.pop()
-				return (direc, waypoint)
+				X = [(x, y, z) for x, y, z in sorted(zip(all_d_thetas, doubled_keys, doubled_dists))]
+				#print 'Ordered index', [i[1] for i in X]
+				#print 'Ordered dthetas', [i[0] for i in X]
+				#print K
+				# x[0] min dtheta
+				# x[-1] max dtheta
+				# print 'X', X
+				if (abs(X[0][0]) <= abs(X[-1][0])):
+					absMinVal = X[0][0]
+					absMinIdx = X[0][1]
+					absMinDist = X[0][2]
+				else:
+					absMinVal = X[-1][0]
+					absMinIdx = X[-1][1]
+					absMinDist = X[-1][2]
+				#print 'To add to minMaxList', (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])
+				minMaxList += [ (absMinVal, absMinDist, absMinIdx, X[0][0], X[-1][0], X[0][2], X[-1][2], X[0][1], X[-1][1])]
+				#add to list
+			# for i in minlist:
+				#min in dist
+
+			#print 'minMaxList: ', minMaxList
+
+			#random.shuffle(minMaxList)
+
+			sortedValMinMaxList = [i for _, i in sorted(zip([x[0] for x in minMaxList], minMaxList))]
+
+			print 'sortedValMinMaxList', sortedValMinMaxList
+			# print 'i[0]', i[0]
+			# sortedDistMinMaxList = [i for _, i in sorted(zip([x[2] for x in minMaxList], minMaxLi1st))]
+
+			for k in sortedValMinMaxList:
+				#subSortedValMinMaxList = [sortedValMinMaxList[gidx] for ginfo, gidx in zip(sortedValMinMaxList, range(len(sortedValMinMaxList))) if k[0] > ginfo[3] and k[0] > ginfo[4]]
+				subSortedValMinMaxList = [ginfo for ginfo in sortedValMinMaxList if k[0] > ginfo[3] or k[0] < ginfo[4]]
+				print 'subSortedValMinMaxList', subSortedValMinMaxList
+				if subSortedValMinMaxList != []:
+					proximityTests = [k[1] > j[1] for j in subSortedValMinMaxList]
+					print 'proximityTests:', proximityTests
+				 	if any(proximityTests):
+				 		continue
+				break
+
+
+			# dists = [obstInfo[i][-1] for i in minlist]
+			# closerAbsMinDirec = [y for x, y in sorted(zip(dists, minlist))][0]
+
+			# obstInfo[closerAbsMinDirec]
+			d_theta = k[0]
+			#print 'd_theta', d_theta
+			#theta = UnicycleKineModel._signed_angle(goal_theta - d_theta)
+			eps = -0.03 if d_theta < 0.0 else +0.03
+			#eps = 0.0
+			theta = UnicycleKineModel._signed_angle(waypt_theta - d_theta + eps)
+
+			direc = np.vstack((np.cos(theta), np.sin(theta)))
+			waypoint = direc*robot2waypt_dist + self._latest_z
+			for _ in range(collForbiddenSpaceCntr):
+				forbiddenSpace.pop()
+				forbiddenSpaceIdx.pop()
+			return (direc, waypoint)
 
 
 		# Get the direction of the robot, the new waypoint and the direction to it
 		init_direc = np.vstack((np.cos(self._latest_q[-1]), np.sin(self._latest_q[-1])))
+
+		#robot2goal = self._final_z - self._latest_z
+		#robot2goal_dist = LA.norm(robot2goal)
+		#goal_direc = robot2goal/robot2goal_dist
+		#direc = goal_direc
+
 		direc, self._waypoint = _find_direction()
-		#direc, self._waypoint = _find_direction()
+		
+
 		self._log('d', 'R{rid}@tkref={tk:.4f}: found wayPoint:\n{wp}'.format(rid=self.eyed, tk=self._opttime[0], wp=self._waypoint))
-		print '\n\t\t\t\twayPoint:{wp}\n'.format(wp=self._waypoint.T)
+		print '{rid}\n\t\t\t\twayPoint:{wp}\n'.format(rid=self.eyed, wp=self._waypoint.T)
 		self._log('d', 'R{rid}@tkref={tk:.4f}: found direction angle:\n{dir}'.format(rid=self.eyed, tk=self._opttime[0], dir=np.arctan2(direc[1], direc[0])*180.0/np.pi))
 		self._log('d', 'direction:\n{dir}'.format(dir=direc))
 
@@ -3432,7 +3429,7 @@ if __name__ == '__main__':
 	# iterate over obstacles
 	obstacles = []
 	#print rand_round_obst(6, Boundary([-6.0, 6.0], [-1.5, 1.5]), 0.3, 1.0)
-	obst_info = rand_round_obst(6, Boundary([-6.0, 6.0], [-3.5, 3.5]), 0.3, 1.0)
+	#obst_info = rand_round_obst(6, Boundary([-6.0, 6.0], [-3.5, 3.5]), 0.3, 1.0)
 	#obst_info = [([0.47740000000000027, -1.5644], 0.3785), ([-1.7155999999999998, 2.1472000000000007], 0.96740000000000004), ([1.6221000000000005, 1.5644], 0.7268), ([-3.5967000000000002, 1.0576000000000003], 0.39549999999999996), ([2.8158000000000003, -0.32899999999999974], 0.7802), ([-4.0045999999999999, -1.5223], 0.8407), ([-4.8949999999999996, -0.44329999999999981], 0.40489999999999998), ([0.96060000000000034, -2.4384999999999999], 0.31629999999999997)]
 	#obst_info = [([0.49680000000000035, 0.72990000000000022], 0.93759999999999999), ([3.1783999999999999, 1.8445], 0.49429999999999996), ([-4.6891999999999996, -0.58109999999999995], 0.32019999999999998), ([0.35390000000000033, -0.92769999999999997], 0.3125), ([-1.0412999999999997, -1.8829], 0.85339999999999994), ([-1.8340999999999998, 0.90850000000000009], 0.61370000000000002), ([-3.1894, 2.2316000000000003], 0.98540000000000005), ([-2.8441000000000001, -0.039099999999999913], 0.38519999999999999)]
 
@@ -3455,6 +3452,8 @@ if __name__ == '__main__':
 	#obst_info = [([-2.5352999999999999, 1.6351000000000004], 0.43079999999999996), ([0.91250000000000053, 2.0611000000000006], 0.58960000000000001), ([-4.4641000000000002, -2.04], 0.77490000000000003), ([3.3092000000000006, -2.3753000000000002], 0.98550000000000004), ([2.1196000000000002, 1.6164000000000005], 0.3725), ([-0.42790000000000017, 0.69450000000000012], 0.4607), ([-2.1358999999999999, 0.76829999999999998], 0.42999999999999999)]
 
 	#obst_info = [([2.3321000000000005, 2.1857000000000006], 0.73380000000000001), ([-0.64290000000000003, 2.2968000000000002], 0.31379999999999997), ([2.8586, 0.15080000000000027], 0.94829999999999992), ([-2.8447, -0.12719999999999976], 0.33299999999999996), ([-3.6498999999999997, -2.1516000000000002], 0.69579999999999997), ([4.3231999999999999, 2.4077999999999999], 0.65129999999999999), ([-1.3243, -1.8136999999999999], 0.8015000000000001)]
+
+	obst_info = [([-3.9256000000000002, -2.3411], 0.71219999999999994), ([3.0935000000000006, 0.29580000000000028], 0.85420000000000007), ([-1.6727999999999996, 1.5415999999999999], 0.76859999999999995), ([-4.2463999999999995, 0.28520000000000012], 0.55959999999999999), ([3.7912999999999997, -1.5628], 0.59160000000000001), ([0.95110000000000028, -2.3167], 0.66179999999999994)]
 
 	obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
 	print obst_info
