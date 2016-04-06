@@ -48,25 +48,43 @@ findWaypoint():
 
 			for forbiddenSpace in cluster:
 
-				# get angular variation and distance for avoiding this forbiddenSpace by passing by its left and its right 
-				forbiddenSpace.avoidanceInfo = getAngularVariationForAvoidanceAndDist(forbiddenSpace, mySelf)
+				# get two angular variations (positive if clockwise, negative otherwise) and distance for avoiding this forbiddenSpace
+				forbiddenSpace.avoidanceInfo = getAngularVariationAndDistForAvoidance(forbiddenSpace, mySelf)
 
 		else:
 			# this cluster can be ignored in the finding of a waypoint
 			clustersOfForbiddenSpacesList.remove(cluster)
 
+	# Did all clusters were removed? In this case return goal
 	if clustersOfForbiddenSpacesList.isEmpty() == True:
 		return goal
 
 	for cluster in clustersOfForbiddenSpacesList:
+		# Am I inside a forbiddenSpace? In this case return previous waypoint
 		for forbiddenSpace in cluster:
 			if forbiddenSpace.avoidanceInfo.distance < 0.0: #inside the obstacle
 				return previousWayPoint
 
+		# Sort cluster
+		sortForbiddenSpacesAccordingToAngularVariation(cluster)
 
+		# Save minimum absolute angular variontion
+		cluster.minAbsAngVar = minAbsAngVar(cluster)
 
+	# Sort list of clusters
+	sortClustersAccordingToMinAbsAngVariation(clustersOfForbiddenSpacesList)
 
+	# The fist cluster in the list is a first guess for the cluster which will give the right direction to the new waypoint (based on the angular variation that gave the minimum absolute angular variation). But it has to respect a condition: do not suggest a direction that goes towards another clusters that is closer to the robot than the first cluster. In case it fails, check the following clusters
+	for cluster in clustersOfForbiddenSpacesList:
 
+		possibleBlockingClustersList = []
+		for otherCluster in clustersOfForbiddenSpacesList.remove(cluster):
+			if cluster's angular variation that gave the min abs ang var is between otherCluster's min and max angular variation:
+				possibleBlockingClustersList.append(otherCluster)
 
+		if possibleBlockingClustersList.isEmpty() == False:
+			if any cluster in possibleBlockingClustersList is closer than cluster:
+				continue
+		break
 
-clustersOfForbiddenSpacesList.append(newCluster(forbiddenSpace))
+	return waypointFromCluster(cluster)
