@@ -3454,22 +3454,23 @@ if __name__ == '__main__':
 
 	#obst_info = [([2.3321000000000005, 2.1857000000000006], 0.73380000000000001), ([-0.64290000000000003, 2.2968000000000002], 0.31379999999999997), ([2.8586, 0.15080000000000027], 0.94829999999999992), ([-2.8447, -0.12719999999999976], 0.33299999999999996), ([-3.6498999999999997, -2.1516000000000002], 0.69579999999999997), ([4.3231999999999999, 2.4077999999999999], 0.65129999999999999), ([-1.3243, -1.8136999999999999], 0.8015000000000001)]
 
-	obst_info = [([-3.9256000000000002, -2.3411], 0.71219999999999994), ([3.0935000000000006, 0.29580000000000028], 0.85420000000000007), ([-1.6727999999999996, 1.5415999999999999], 0.76859999999999995), ([-4.2463999999999995, 0.28520000000000012], 0.55959999999999999), ([3.7912999999999997, -1.5628], 0.59160000000000001), ([0.95110000000000028, -2.3167], 0.66179999999999994)]
+	#obst_info = [([-3.9256000000000002, -2.3411], 0.71219999999999994), ([3.0935000000000006, 0.29580000000000028], 0.85420000000000007), ([-1.6727999999999996, 1.5415999999999999], 0.76859999999999995), ([-4.2463999999999995, 0.28520000000000012], 0.55959999999999999), ([3.7912999999999997, -1.5628], 0.59160000000000001), ([0.95110000000000028, -2.3167], 0.66179999999999994)]
 
-	obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
-	print obst_info
-	# for obstacle in root.find('obstacles'):
-	# 	if obstacle.tag == 'circular':
-	# 		obstacles.append(RoundObstacle(
-	# 				[float(obstacle.find('cmposition').find('x').text), float(obstacle.find('cmposition').find('y').text)],
-	# 				float(obstacle.find('radius').text)))
-	# 	elif obstacle.tag == 'polygon':
-	# 		vertices = []
-	# 		for vertex in obstacle.find('vertices'):
-	# 			vertices.append([float(vertex.find('x').text), float(vertex.find('y').text)])
-	# 		obstacles.append(PolygonObstacle((np.array(vertices))))
-	# 	else:
-	# 		logging.info("Unknown type of obstacle")
+	#obstacles = [RoundObstacle(i[0], i[1]) for i in obst_info]
+	#print obst_info
+
+	for obstacle in root.find('obstacles'):
+		if obstacle.tag == 'circular':
+			obstacles.append(RoundObstacle(
+					[float(obstacle.find('cmposition').find('x').text), float(obstacle.find('cmposition').find('y').text)],
+					float(obstacle.find('radius').text)))
+		elif obstacle.tag == 'polygon':
+			vertices = []
+			for vertex in obstacle.find('vertices'):
+				vertices.append([float(vertex.find('x').text), float(vertex.find('y').text)])
+			obstacles.append(PolygonObstacle((np.array(vertices))))
+		else:
+			logging.info("Unknown type of obstacle")
 
 	boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
@@ -3551,7 +3552,7 @@ if __name__ == '__main__':
 		logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
-	logging.debug('\nObstInfo\n{}'.format(obst_info))
+	#logging.debug('\nObstInfo\n{}'.format(obst_info))
 
 	boundary = Boundary([-12.0, 12.0], [-12.0, 12.0])
 
